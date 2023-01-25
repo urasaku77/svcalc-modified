@@ -1,0 +1,23 @@
+<PartyInputPopupContent>
+    orientation: "vertical"
+    padding: 5
+    spacing: 5
+    BoxLayout:
+        size_hint_y: None
+        height: 40
+        PartyIconPanel:
+            id: _party
+            on_select: root.on_select_party(self.selected_index)
+        Button:
+            size_hint_x: None
+            width: 40
+            font_size: 12
+            text: "決定"
+            on_release: root.dispatch("on_complete")
+    PokeNameComboEdit:
+        id: _input
+        size_hint_y: None
+        height: 30
+        hint_text: "1匹目のポケモン名を入力"
+        on_confirm: root.on_input_name(self.text)
+    Label:

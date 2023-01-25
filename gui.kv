@@ -1,0 +1,221 @@
+#:import DB data.db.DB
+
+<InputPopup>
+    size_hint: (None, 0.9)
+    width: 400
+
+<ActivePokemonPanel>
+    icon: _icon
+    formchange_icon: _formchange_icon
+    evs_combobox: _evs_combobox
+    teras_button: _teras_button
+    BoxLayout:
+        size_hint_x: None
+        width: 60
+        orientation: "vertical"
+        IconButton:
+            id: _icon
+            icon: root.pokemon.icon if root.pokemon is not None else ""
+            size_hint: None, None
+            size: 60, 60
+            on_release: root.dispatch("on_click_icon")
+        IconButton:
+            id: _teras_button
+            size_hint_y: None
+            height: 30
+            icon: root.battle_terastype_icon
+            font_size: 14
+            on_release: root.select_terastype()
+        IconButton:
+            id: _formchange_icon
+            icon: root.pokemon.next_form_icon if root.pokemon is not None else ""
+            size_hint_y: None
+            height: 30
+            on_release: root.form_change()
+    GridLayout:
+        cols: 2
+        rows: 4
+        spacing: 5
+        ShortLabel:
+            text: "ステータス"
+        DropDownButton:
+            id: _evs_combobox
+            text: root.pokemon.marked_status_text if root.pokemon is not None else ""
+            items: DORYOKU_PRESET.keys()
+            font_size: dp(12)
+            on_select_item: root.on_select_doryoku_preset(self.button_text)
+        ShortLabel:
+            text: "持ち物"
+        DropDownButton:
+            text: root.pokemon.item if root.pokemon is not None else ""
+            image_enable: True
+            items: ["なし", "こだわりハチマキ", "こだわりメガネ", "いのちのたま", "たつじんのおび", "とつげきチョッキ", "しんかのきせき", "ブーストエナジー"]
+            on_select_item: root.pokemon.item = self.button_text
+        ShortLabel:
+            text: "特性"
+        BoxLayout:
+            DropDownButton:
+                items: root.pokemon.abilities if root.pokemon is not None else ""
+                text: root.pokemon.ability if root.pokemon is not None else ""
+                on_select_item: root.pokemon.ability = self.button_text
+            CheckBox:
+                size_hint_x: None
+                width: 30
+                active: root.ability_enable
+                on_press: root.pokemon.ability_enable = self.active
+            ShortLabel:
+                text: "発動"
+                width: 40
+        ShortLabel:
+            text: "ランク"
+
+<ChosenPokemonPanel>
+    icon: _icon
+    evs_combobox: _evs_combobox
+    teras_button: _teras_button
+    BoxLayout:
+        size_hint_x: None
+        width: 60
+        orientation: "vertical"
+        IconButton:
+            id: _icon
+            icon: root.pokemon.icon if root.pokemon is not None else ""
+            size_hint: None, None
+            size: 60, 60
+            on_release: root.dispatch("on_click_icon")
+        IconButton:
+            id: _teras_button
+            size_hint_y: None
+            height: 30
+            icon: root.battle_terastype_icon
+            font_size: 14
+            on_release: root.select_terastype()
+        IconButton:
+            id: _formchange_icon
+            icon: root.pokemon.next_form_icon if root.pokemon is not None else ""
+            size_hint_y: None
+            height: 30
+            on_release: root.form_change()
+    GridLayout:
+        cols: 2
+        rows: 4
+        spacing: 5
+        ShortLabel:
+            text: "ステータス"
+        DropDownButton:
+            id: _evs_combobox
+            text: root.pokemon.marked_status_text if root.pokemon is not None else ""
+            items: DORYOKU_PRESET.keys()
+            font_size: dp(12)
+            on_select_item: root.on_select_doryoku_preset(self.button_text)
+        ShortLabel:
+            text: "持ち物"
+        DropDownButton:
+            text: root.pokemon.item if root.pokemon is not None else ""
+            image_enable: True
+            items: ["なし", "こだわりハチマキ", "こだわりメガネ", "いのちのたま", "たつじんのおび", "とつげきチョッキ", "しんかのきせき", "ブーストエナジー"]
+            on_select_item: root.pokemon.item = self.button_text
+        ShortLabel:
+            text: "特性"
+        DropDownButton:
+            items: root.pokemon.abilities if root.pokemon is not None else ""
+            text: root.pokemon.ability if root.pokemon is not None else ""
+            on_select_item: root.pokemon.ability = self.button_text
+
+<ShortLabel@Label>
+    size_hint_x: None
+    width: 60
+    font_size: dp(12)
+
+<ColorLabel>
+    canvas.before:
+        Color:
+            rgba: self.back_color
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<MyButton>
+    canvas.before:
+        Color:
+            rgba: (1, 1, 1, 1)
+        Line:
+            rounded_rectangle: [*self.pos, *self.size, 5, ]
+            width: 1
+        Color:
+            rgba: self.back_color_down if self.state=='down' else self.back_color
+        RoundedRectangle:
+            size: [self.width - 2, self.height - 2]
+            pos: [self.x + 1, self.y + 1]
+            radius: [5]
+
+<IconButton>
+    AnchorLayout:
+        anchor_x: "center"
+        anchor_y: "center"
+        size_hint_x: None
+        width: root.height if len(root.icon) > 0 else 0
+        padding: [5] if len(root.icon) > 0 else [0]
+        Image:
+            allow_stretch: True
+            source: root.icon
+    Label:
+        text: root.button_text
+        font_size: root.font_size
+        markup: True
+
+<IconToggleButton>
+    padding: [0, 0, 0, 2]
+    Image:
+        allow_stretch: True
+        source: root.icon
+
+<HpBarPanel>
+    orientation: "vertical"
+    BoxLayout:
+        Label:
+            id: damage_label
+            text: root.damage_text
+        Label:
+            id: damage_per_label
+            font_size: int(damage_label.font_size * .75)
+            text: root.damage_per_text
+    BoxLayout:
+        size_hint_y: None
+        height: root.hp_bar_height
+        ColorLabel:
+            id: hp_bar_1
+            size_hint_x: .0000001
+        ColorLabel:
+            id: hp_bar_2
+            size_hint_x: .0000001
+        ColorLabel:
+            id: hp_bar_3
+            size_hint_x: 1
+
+<WazaButton>
+    WazaNameComboEdit:
+        id: comboedit
+        disabled: True
+        size_hint: (None, None)
+        size: root.size if self.disabled == False else (0, 0)
+        opacity: 1 if self.disabled == False else 0
+        on_focus: root.focus_comboedit(self.focus)
+        on_confirm: root.waza_confirm(self.text)
+    LabelButton:
+        id: button
+        size: root.size
+        disabled: False
+        size_hint: (None, None)
+        size: root.size if self.disabled == False else (0, 0)
+        opacity: 1 if self.disabled == False else 0
+        on_release: root.click()
+
+<PartyChooserPopupContent>
+    orientation: "vertical"
+    FileChooserListView:
+        path: 'party'
+        id: filechooser
+    SimpleButton:
+        text: "submit"
+        on_release: root.submit(filechooser.selection)
