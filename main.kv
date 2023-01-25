@@ -14,50 +14,211 @@ RootWidget:
             pos: self.pos
     partyPanels: [party1, party2]
     activePokemonPanels: [_playerActivePokemon, _opponentActivePokemon]
+    chosenPokemonPanels:[[_selfFirstChosenPokemon, _selfSecondChosenPokemon, _selfThirdChosenPokemon],[_opponentFirstChosenPokemon, _opponentSecondChosenPokemon, _opponentThirdChosenPokemon]]
     wazaListPanels: [_playerWazaList, _opponentWazaList]
+    opponentwazaListPanels: [_firstPokemonWazaList, _secondPokemonWazaList,_thirdPokemonWazaList]
     GridLayout:
-        cols: 2
+        cols: 3
         padding: [5, 5]
         spacing: [5, 5]
+        GridLayout:
+            cols:1
+            BoxLayout:
+                size_hint_y: None
+                height: 40
+                PartyIconPanel:
+                    id: party1
+                    on_select: root.select_party_pokemon(0, self.selected_index)
+                SimpleButton:
+                    text: "読取"
+                SimpleButton:
+                    text: "PT"
+                    on_release: root.load_party()
+                SimpleButton:
+                    text: "編集"
+                    on_release: root.edit_party(0)
+            BoxLayout:
+                size_hint_y: None
+                height: 40
+                Button:
+                    text: "1"
+                    on_release: root.select_chosen_pokemon(0, 0)
+                Button:
+                    text: "2"
+                    on_release: root.select_chosen_pokemon(0, 1)
+                Button:
+                    text: "3"
+                    on_release: root.select_chosen_pokemon(0, 2)
+            ActivePokemonPanel:
+                id: _playerActivePokemon
+                player: 0
+                size_hint_y: None
+                height: 120
+                on_click_icon: print(self.pokemon)
+            WazaListPanel:
+                id: _playerWazaList
+        #CameraPreview:
+        #    id: camera_preview
+        #    size: root.size
+        #    size_hint_x: 2
+        Image:
+            source: "dummy.png"
+            size: root.size
+            size_hint_x: 2
+        GridLayout:
+            cols:1
+            BoxLayout:
+                size_hint_y: None
+                height: 40
+                PartyIconPanel:
+                    id: party2
+                    on_select: root.select_party_pokemon(1, self.selected_index)
+                SimpleButton:
+                    text: "読取"
+                SimpleButton:
+                    text: "編集"
+                    on_release: root.edit_party(1)
+                SimpleButton:
+                    text: "クリア"
+                    on_release: root.clear_party(1)
+            BoxLayout:
+                size_hint_y: None
+                height: 40
+                Button:
+                    text: "1"
+                    on_release: root.select_chosen_pokemon(1, 0)
+                Button:
+                    text: "2"
+                    on_release: root.select_chosen_pokemon(1, 1)
+                Button:
+                    text: "3"
+                    on_release: root.select_chosen_pokemon(1, 2)
+            ActivePokemonPanel:
+                id: _opponentActivePokemon
+                player: 1
+                size_hint_y: None
+                height: 120
+            WazaListPanel:
+                id: _opponentWazaList
+    GridLayout:
+        cols:7
+        rows:5
+        padding: [5, 5]
+        spacing: [5, 5]
+        Label:
+            text: "Home情報"
+            size_hint_y: 4
+            size_hint_x: 5
+            height: 120
+        Label:
+            text: "Home情報"
+            size_hint_x: 5
+            size_hint_y: 4
+            height: 120
+        Label:
+            text: "対戦情報"
+            size_hint_x: 5
+            size_hint_y: 4
+            height: 120
+        Label:
+            text: "試合時間"
+            size_hint_x: 3
+            size_hint_y: 2
+            height: 120
+        Label:
+            text: "対戦情報"
+            size_hint_x: 5
+            size_hint_y: 4
+            height: 120
+        Label:
+            text: "Home情報"
+            size_hint_x: 5
+            size_hint_y: 4
+            height: 120
+        Label:
+            text: "Home情報"
+            size_hint_x: 5
+            size_hint_y: 4
+            height: 120
+        ChosenPokemonPanel:
+            id: _selfFirstChosenPokemon
+            chosen_num: 0
+            size_hint_x: 5
+            size_hint_y: 2
+            height: 120
+        ChosenPokemonPanel:
+            id: _selfSecondChosenPokemon
+            chosen_num: 1
+            size_hint_x: 5
+            size_hint_y: 2
+            height: 120
+        ChosenPokemonPanel:
+            id: _selfThirdChosenPokemon
+            chosen_num: 2
+            size_hint_x: 5
+            size_hint_y: 2
+            height: 120
+        Image:
+            source: "top.jpg"
+            size: root.size
+            size_hint_x: 3
+            size_hint_y: 2
+        ChosenPokemonPanel:
+            id: _opponentFirstChosenPokemon
+            chosen_num: 0
+            size_hint_x: 5
+            size_hint_y: 2
+            height: 120
+        ChosenPokemonPanel:
+            id: _opponentSecondChosenPokemon
+            chosen_num: 1
+            size_hint_x: 5
+            size_hint_y: 2
+            height: 120
+        ChosenPokemonPanel:
+            id: _opponentThirdChosenPokemon
+            chosen_num: 2
+            size_hint_x: 5
+            size_hint_y: 2
+            height: 120
+        OpponentWazaListPanel:
+            id: _firstPokemonWazaList
+            size_hint_x: 5
+            size_hint_y: 3
+        OpponentWazaListPanel:
+            id: _secondPokemonWazaList
+            size_hint_x: 5
+            size_hint_y: 3
+        OpponentWazaListPanel:
+            id: _thirdPokemonWazaList
+            size_hint_x: 5
+            size_hint_y: 3
         BoxLayout:
-            size_hint_y: None
-            height: 40
-            PartyIconPanel:
-                id: party1
-                on_select: root.select_party_pokemon(0, self.selected_index)
-            SimpleButton:
-                text: "PT"
-                on_release: root.load_party()
-            SimpleButton:
-                text: "編集"
-                on_release: root.edit_party(0)
-        BoxLayout:
-            size_hint_y: None
-            height: 40
-            PartyIconPanel:
-                id: party2
-                on_select: root.select_party_pokemon(1, self.selected_index)
-            SimpleButton:
-                text: "編集"
-                on_release: root.edit_party(1)
-            SimpleButton:
+            orientation: "vertical"
+            padding:[50,50,50,50]
+            spacing:25
+            size_hint_x: 3
+            Button:
+                text: "登録"
+                size_hint_y: 1
+                height: 50
+            Button:
                 text: "クリア"
-                on_release: root.clear_party(1)
-        ActivePokemonPanel:
-            id: _playerActivePokemon
-            player: 0
-            size_hint_y: None
-            height: 120
-            on_click_icon: print(self.pokemon)
-        ActivePokemonPanel:
-            id: _opponentActivePokemon
-            player: 1
-            size_hint_y: None
-            height: 120
-        WazaListPanel:
-            id: _playerWazaList
-        WazaListPanel:
-            id: _opponentWazaList
+                size_hint_y: 1
+                height: 50
+        OpponentWazaListPanel:
+            id: _firstPokemonWazaList
+            size_hint_x: 5
+            size_hint_y: 3
+        OpponentWazaListPanel:
+            id: _secondPokemonWazaList
+            size_hint_x: 5
+            size_hint_y: 3
+        OpponentWazaListPanel:
+            id: _thirdPokemonWazaList
+            size_hint_x: 5
+            size_hint_y: 3
+        
     Label:
         size_hint_y: None
         height: 30

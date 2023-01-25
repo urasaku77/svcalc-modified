@@ -5,6 +5,9 @@ from kivy.app import App
 from kivy.properties import ListProperty, StringProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.core.window import Window
+from kivy.graphics.texture import Texture
+from kivy.clock import Clock
+from kivy.uix.image import Image
 
 from kivy_gui.popup import PartyInputPopup
 from pokedata.pokemon import Pokemon
@@ -13,7 +16,9 @@ from data.db import DB
 from kivy.core.text import LabelBase, DEFAULT_FONT
 from kivy.resources import resource_add_path
 
-Window.size = (800, 500)
+import cv2
+
+Window.size = (2400, 1200)
 resource_add_path("font")
 LabelBase.register(DEFAULT_FONT, "NotoSansJP-Medium.otf")
 
@@ -21,12 +26,18 @@ LabelBase.register(DEFAULT_FONT, "NotoSansJP-Medium.otf")
 class RootWidget(BoxLayout):
     partyPanels = ListProperty()
     activePokemonPanels = ListProperty()
+    choosePokemonPanels = ListProperty()
     wazaListPanels = ListProperty()
+    opponentWazaListPanels = ListProperty()
+    chosenPokemonPanels = ListProperty()
     status = StringProperty("")
 
     def __init__(self, **kwargs):
         super(RootWidget, self).__init__(**kwargs)
         self.active_pokemons: list[Optional[Pokemon]] = [None, None]
+        self.chosen_pokemons: list[list[Optional[Pokemon]]] = [
+            [None for _ in range(3)], [None for _ in range(3)]
+        ]
         self.party_popup: PartyInputPopup = PartyInputPopup(title="パーティ入力")
         self.party_popup.bind(
             on_popup_close=lambda _: self.submit_party())
@@ -53,6 +64,12 @@ class RootWidget(BoxLayout):
         pokemon = self.party[player_id][index]
         if pokemon is not None:
             self.set_active_pokemon(player_id, pokemon)
+    
+    def select_chosen_pokemon(self, player_id: int, chosen_num: int):
+        pokemon = self.active_pokemons[player_id]
+        if pokemon is not None:
+            self.set_chosen_pokemon(player_id, chosen_num, pokemon)
+
 
     # パーティパネルのアイコンを再表示する
     def refresh_party_icons(self):
@@ -88,6 +105,17 @@ class RootWidget(BoxLayout):
         self.activePokemonPanels[player_id].pokemon = pokemon
         self.wazaListPanels[player_id].set_pokemon(pokemon)
         self.calc_damage()
+    
+    def set_chosen_pokemon(self, player_id:int, chosen_num: int, pokemon: Pokemon):
+        chosen_pokemons = self.chosen_pokemons[player_id]
+        # データ処理
+        pokemon.on_stage()
+        if chosen_pokemons[chosen_num] is not None:
+            chosen_pokemons[chosen_num].statechanged_handler = None
+        chosen_pokemons[chosen_num] = pokemon
+        chosen_pokemons[chosen_num].statechanged_handler = self.pokemon_state_changed
+        # GUI処理
+        self.chosenPokemonPanels[player_id][chosen_num].pokemon = pokemon
 
     def calc_damage(self):
         pokemon1 = self.active_pokemons[0]
@@ -104,6 +132,26 @@ class RootWidget(BoxLayout):
 
     def pokemon_state_changed(self):
         self.calc_damage()
+
+# カメラに接続
+class CameraPreview(Image):
+    def __init__(self, **kwargs):
+        super(CameraPreview, self).__init__(**kwargs)
+        self.capture = cv2.VideoCapture(1)
+        self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+        self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+        Clock.schedule_interval(self.update, 1.0 / 60)
+
+    # インターバルで実行する描画メソッド
+    def update(self, dt):
+        # フレームを読み込み
+        ret, self.frame = self.capture.read()
+        # Kivy Textureに変換
+        buf = cv2.flip(self.frame, 0).tostring()
+        texture = Texture.create(size=(self.frame.shape[1], self.frame.shape[0]), colorfmt='bgr') 
+        texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
+        # インスタンスのtextureを変更
+        self.texture = texture
 
 
 class MainApp(App):

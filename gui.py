@@ -413,6 +413,75 @@ class HpBarPanel(BoxLayout):
         self.hp_bar_2.size_hint_x = w2
         self.hp_bar_3.size_hint_x = 1 - w1 - w2
 
+#相手の選出されたポケモン表示パネル
+class ChosenPokemonPanel(BoxLayout, EventDispatcher):
+
+    __events__ = ("on_click_icon", )
+
+    pokemon = ObjectProperty(None, allownone=True)
+    chosen_num = NumericProperty(-1)
+    evs_combobox = ObjectProperty()
+    teras_button = ObjectProperty()
+    icon = ObjectProperty()
+    formchange_icon = ObjectProperty()
+
+
+    def __init__(self, **kw):
+        from kivy_gui.popup import TypeSelectPopupContent
+        super(ChosenPokemonPanel, self).__init__(**kw)
+        self.popup = Popup(
+            title="テラスタイプ選択",
+            content=TypeSelectPopupContent(selected=self.on_select_terastype),
+            size_hint=(0.8, 0.6))
+
+    @property
+    def battle_terastype_icon(self):
+        if self.pokemon is None:
+            return Types.なし.icon
+        return self.pokemon.battle_terastype.icon
+
+    def on_pokemon(self, *args):
+        pokemon: Pokemon = self.pokemon
+        
+
+    def on_click_icon(self, *args):
+        self.pokemon = None
+        self.teras_button.icon = Types.なし.icon
+
+    def form_change(self):
+        pokemon: Pokemon = self.pokemon
+        if pokemon is not None:
+            pokemon.form_change()
+            self.evs_combobox.text = pokemon.marked_status_text
+            self.icon.icon = pokemon.icon
+            self.icon.formchange_icon = pokemon.next_form_icon    
+
+    def on_select_doryoku_preset(self, value):
+        self.pokemon.set_doryoku_preset(value)
+        self.evs_combobox.text = self.pokemon.marked_status_text
+
+    def select_terastype(self, *_args):
+        self.popup.open()
+
+    def on_select_terastype(self, value):
+        if self.pokemon is not None:
+            terastype = Types[value]
+            self.pokemon.battle_terastype = terastype
+            self.teras_button.icon = terastype.icon
+            self.popup.dismiss()
+
+class OpponentWazaListPanel(BoxLayout):
+
+    def __init__(self, **kw):
+        super(OpponentWazaListPanel, self).__init__(**kw)
+        self.pokemon: Optional[Pokemon] = None
+        self.orientation = "vertical"
+        self.wazapanel_list: list[WazaPanel] = []
+
+        for i in range(4):
+            wazapanel = WazaPanel(index=i)
+            self.add_widget(wazapanel)
+            self.wazapanel_list.append(wazapanel)
 
 # 背景色指定ボタン（kvファイル設定あり）
 class ColorButton(Button):
