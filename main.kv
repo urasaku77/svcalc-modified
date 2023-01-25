@@ -1,0 +1,69 @@
+#:import Pokemon pokedata.pokemon.Pokemon
+#:import DORYOKU_PRESET pokedata.const.DORYOKU_PRESET
+#:import * gui
+#:include gui.kv
+#:include kivy_gui/popup.kv
+
+RootWidget:
+    orientation: "vertical"
+    canvas.before:
+        Color:
+            rgb: (0.15, 0.15, 0.15)
+        Rectangle:
+            size: self.size
+            pos: self.pos
+    partyPanels: [party1, party2]
+    activePokemonPanels: [_playerActivePokemon, _opponentActivePokemon]
+    wazaListPanels: [_playerWazaList, _opponentWazaList]
+    GridLayout:
+        cols: 2
+        padding: [5, 5]
+        spacing: [5, 5]
+        BoxLayout:
+            size_hint_y: None
+            height: 40
+            PartyIconPanel:
+                id: party1
+                on_select: root.select_party_pokemon(0, self.selected_index)
+            SimpleButton:
+                text: "PT"
+                on_release: root.load_party()
+            SimpleButton:
+                text: "編集"
+                on_release: root.edit_party(0)
+        BoxLayout:
+            size_hint_y: None
+            height: 40
+            PartyIconPanel:
+                id: party2
+                on_select: root.select_party_pokemon(1, self.selected_index)
+            SimpleButton:
+                text: "編集"
+                on_release: root.edit_party(1)
+            SimpleButton:
+                text: "クリア"
+                on_release: root.clear_party(1)
+        ActivePokemonPanel:
+            id: _playerActivePokemon
+            player: 0
+            size_hint_y: None
+            height: 120
+            on_click_icon: print(self.pokemon)
+        ActivePokemonPanel:
+            id: _opponentActivePokemon
+            player: 1
+            size_hint_y: None
+            height: 120
+        WazaListPanel:
+            id: _playerWazaList
+        WazaListPanel:
+            id: _opponentWazaList
+    Label:
+        size_hint_y: None
+        height: 30
+        text: root.status
+
+<SimpleButton@Button>
+    size_hint_x: None
+    width: 40
+    font_size: 12
