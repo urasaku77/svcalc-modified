@@ -474,14 +474,64 @@ class OpponentWazaListPanel(BoxLayout):
 
     def __init__(self, **kw):
         super(OpponentWazaListPanel, self).__init__(**kw)
-        self.pokemon: Optional[Pokemon] = None
         self.orientation = "vertical"
-        self.wazapanel_list: list[WazaPanel] = []
+        self.wazapanel_list: list[OpponentWazaPanel] = []
 
         for i in range(4):
-            wazapanel = WazaPanel(index=i)
+            wazapanel = OpponentWazaPanel(index=i)
             self.add_widget(wazapanel)
             self.wazapanel_list.append(wazapanel)
+
+class OpponentWazaPanel(BoxLayout):
+
+    index = NumericProperty(-1)
+
+    def __init__(self, **kw):
+        super(OpponentWazaPanel, self).__init__(**kw)
+        self.waza: str = ""
+        self.pp: int = 0
+
+        # クリアボタン
+        self.center_button = Button(size_hint_x=None, width=40, on_press=self.click_center_button)
+        # 技名ボタン
+        self.waza_button: WazaButton = WazaButton()
+        self.waza_button.bind(on_confirm=lambda x: self.on_select_waza(x.text))
+        # マイナスボタン
+        self.minus_button = Button(text="-", size_hint_x=None, width=40, on_press=self.click_minus_button)
+        # PP
+        self.pp_text = Label(text=str(self.pp), size_hint_x=None, width=40)
+        # プラスボタン
+        self.plus_button = Button(text="+", size_hint_x=None, width=40, on_press=self.click_plus_button)
+
+        self.add_widget(self.center_button)
+        self.add_widget(self.waza_button)
+        self.add_widget(self.minus_button)
+        self.add_widget(self.pp_text)
+        self.add_widget(self.plus_button)
+        self.spacing = 5
+
+    # 技名コンボボックスが決定された時
+    def on_select_waza(self, value: str) -> None:
+        if value is not None:
+            self.waza = value
+            self.waza_button.text = self.waza
+
+    # 中央ボタンが押された時
+    def click_center_button(self, *args):
+        self.waza = ""
+        self.waza_button.text = ""
+    
+    # マイナスボタンが押された時
+    def click_minus_button(self, *args):
+        if self.pp > 0:
+            self.pp = self.pp - 1
+            self.pp_text.text = str(self.pp)
+    
+    # プラスボタンが押された時
+    def click_plus_button(self, *args):
+        if self.pp < 64:
+            self.pp = self.pp + 1
+            self.pp_text.text = str(self.pp)
 
 # 背景色指定ボタン（kvファイル設定あり）
 class ColorButton(Button):

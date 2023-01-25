@@ -76,8 +76,6 @@ RootWidget:
                 SimpleButton:
                     text: "検索"
                 SimpleButton:
-                    text: "読取"
-                SimpleButton:
                     text: "編集"
                     on_release: root.edit_party(1)
                 SimpleButton:
@@ -100,8 +98,36 @@ RootWidget:
                 player: 1
                 size_hint_y: None
                 height: 120
-            WazaListPanel:
-                id: _opponentWazaList
+            GridLayout:
+                cols:2
+                padding: [0, 5]
+                BoxLayout:
+                    orientation: "vertical"
+                    size_hint_x: 0.1
+                    Button:
+                        height: 40
+                    Button:
+                        height: 40
+                    Button:
+                        height: 40
+                    Button:
+                        height: 40
+                    Button:
+                        height: 40
+                    Button:
+                        height: 40
+                    Button:
+                        height: 40
+                    Button:
+                        height: 40
+                    Button:
+                        height: 40
+                    Button:
+                        height: 40
+
+                WazaListPanel:
+                    size_hint_x: 1
+                    id: _opponentWazaList
     GridLayout:
         cols:7
         rows:5
