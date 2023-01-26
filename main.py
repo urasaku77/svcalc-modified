@@ -121,7 +121,7 @@ class RootWidget(BoxLayout):
         waza_name = self.wazaListPanels[1].wazapanel_list[waza_index].waza_button.text
         for pokemon_index in range(len(self.chosenPokemonPanels)):
             if self.chosenPokemonPanels[1][pokemon_index].pokemon is not None and self.chosenPokemonPanels[1][pokemon_index].pokemon.name == self.active_pokemons[1].name:
-                self.chosenPokemonPanels[1][pokemon_index].register_opponent_waza(waza_name)
+                self.chosenPokemonPanels[1][pokemon_index].register_chosen_waza(waza_name)
 
 # カメラに接続
 class CameraPreview(Image):
