@@ -5,7 +5,7 @@
     icon: _icon
     evs_combobox: _evs_combobox
     teras_button: _teras_button
-    chosenWazaListPanels: [_chosenWazaListPanel]
+    chosenWazaListPanel: chosenWazaListPanel
     BoxLayout:
         orientation: "vertical"
         spacing:5
@@ -59,4 +59,4 @@
                     text: root.pokemon.ability if root.pokemon is not None else ""
                     on_select_item: root.pokemon.ability = self.button_text
         ChosenWazaListPanel:
-            id: _chosenWazaListPanel
+            id: chosenWazaListPanel

@@ -63,7 +63,8 @@ class RootWidget(BoxLayout):
     def select_chosen_pokemon(self, player_id: int, chosen_num: int):
         pokemon = self.active_pokemons[player_id]
         if pokemon is not None:
-            self.chosenPokemonPanels[player_id][chosen_num].pokemon = pokemon
+            self.chosenPokemonPanels[player_id][chosen_num].set_pokemon(player_id, pokemon)
+            
 
 
     # パーティパネルのアイコンを再表示する

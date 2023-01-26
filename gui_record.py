@@ -29,7 +29,7 @@ class ChosenPokemonPanel(BoxLayout, EventDispatcher):
 
     __events__ = ("on_click_icon", )
 
-    chosenWazaListPanels = ListProperty()
+    chosenWazaListPanel = ObjectProperty()
     pokemon = ObjectProperty(None, allownone=True)
     chosen_num = NumericProperty(-1)
     evs_combobox = ObjectProperty()
@@ -52,14 +52,17 @@ class ChosenPokemonPanel(BoxLayout, EventDispatcher):
             return Types.なし.icon
         return self.pokemon.battle_terastype.icon
 
-    def on_pokemon(self, *args):
-        pokemon: Pokemon = self.pokemon
-        
+    def set_pokemon(self, player_id: int, pokemon: Pokemon):
+        self.pokemon: Pokemon = pokemon
+        if player_id is 0:
+            for i in range(4):
+                waza = pokemon.waza_list[i].name if pokemon.waza_list[i] is not None else ""
+                self.register_chosen_waza(waza)
 
     def on_click_icon(self, *args):
         self.pokemon = None
         self.teras_button.icon = Types.なし.icon
-        self.chosenWazaListPanels[0].clear_all_chosen_waza()
+        self.chosenWazaListPanel.clear_all_chosen_waza()
 
     def form_change(self):
         pokemon: Pokemon = self.pokemon
@@ -84,7 +87,7 @@ class ChosenPokemonPanel(BoxLayout, EventDispatcher):
             self.popup.dismiss()
 
     def register_chosen_waza(self, waza: str):
-        self.chosenWazaListPanels[0].register_chosen_waza(waza)
+        self.chosenWazaListPanel.register_chosen_waza(waza)
 
 # 技パネル一式
 class ChosenWazaListPanel(BoxLayout):
