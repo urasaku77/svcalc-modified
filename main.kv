@@ -16,7 +16,6 @@ RootWidget:
     activePokemonPanels: [_playerActivePokemon, _opponentActivePokemon]
     chosenPokemonPanels:[[_selfFirstChosenPokemon, _selfSecondChosenPokemon, _selfThirdChosenPokemon],[_opponentFirstChosenPokemon, _opponentSecondChosenPokemon, _opponentThirdChosenPokemon]]
     wazaListPanels: [_playerWazaList, _opponentWazaList]
-    opponentwazaListPanels: [_firstPokemonWazaList, _secondPokemonWazaList,_thirdPokemonWazaList]
     GridLayout:
         cols: 3
         padding: [5, 5]
@@ -106,25 +105,34 @@ RootWidget:
                     size_hint_x: 0.1
                     Button:
                         height: 40
+                        on_release: root.set_opponent_waza(0)
                     Button:
                         height: 40
+                        on_release: root.set_opponent_waza(1)
                     Button:
                         height: 40
+                        on_release: root.set_opponent_waza(2)
                     Button:
                         height: 40
+                        on_release: root.set_opponent_waza(3)
                     Button:
                         height: 40
+                        on_release: root.set_opponent_waza(4)
                     Button:
                         height: 40
+                        on_release: root.set_opponent_waza(5)
                     Button:
                         height: 40
+                        on_release: root.set_opponent_waza(6)
                     Button:
                         height: 40
+                        on_release: root.set_opponent_waza(7)
                     Button:
                         height: 40
+                        on_release: root.set_opponent_waza(8)
                     Button:
                         height: 40
-
+                        on_release: root.set_opponent_waza(9)
                 WazaListPanel:
                     size_hint_x: 1
                     id: _opponentWazaList
@@ -135,18 +143,18 @@ RootWidget:
         spacing: [5, 5]
         Label:
             text: "Home情報"
-            size_hint_y: 4
             size_hint_x: 5
+            size_hint_y: 2
             height: 120
         Label:
             text: "Home情報"
             size_hint_x: 5
-            size_hint_y: 4
+            size_hint_y: 2
             height: 120
         Label:
             text: "対戦情報"
             size_hint_x: 5
-            size_hint_y: 4
+            size_hint_y: 2
             height: 120
         Label:
             text: "試合時間"
@@ -156,35 +164,35 @@ RootWidget:
         Label:
             text: "対戦情報"
             size_hint_x: 5
-            size_hint_y: 4
+            size_hint_y: 2
             height: 120
         Label:
             text: "Home情報"
             size_hint_x: 5
-            size_hint_y: 4
+            size_hint_y: 2
             height: 120
         Label:
             text: "Home情報"
             size_hint_x: 5
-            size_hint_y: 4
+            size_hint_y: 2
             height: 120
         ChosenPokemonPanel:
             id: _selfFirstChosenPokemon
             chosen_num: 0
             size_hint_x: 5
-            size_hint_y: 2
+            size_hint_y: 3
             height: 120
         ChosenPokemonPanel:
             id: _selfSecondChosenPokemon
             chosen_num: 1
             size_hint_x: 5
-            size_hint_y: 2
+            size_hint_y: 3
             height: 120
         ChosenPokemonPanel:
             id: _selfThirdChosenPokemon
             chosen_num: 2
             size_hint_x: 5
-            size_hint_y: 2
+            size_hint_y: 3
             height: 120
         BoxLayout:
             orientation: "vertical"
@@ -193,65 +201,26 @@ RootWidget:
             size_hint_x: 3
             Button:
                 text: "素早さ比較"
-                size_hint_y: 1
+                size_hint_y: 3
                 height: 50
         ChosenPokemonPanel:
             id: _opponentFirstChosenPokemon
             chosen_num: 0
             size_hint_x: 5
-            size_hint_y: 2
+            size_hint_y: 3
             height: 120
         ChosenPokemonPanel:
             id: _opponentSecondChosenPokemon
             chosen_num: 1
             size_hint_x: 5
-            size_hint_y: 2
+            size_hint_y: 3
             height: 120
         ChosenPokemonPanel:
             id: _opponentThirdChosenPokemon
             chosen_num: 2
             size_hint_x: 5
-            size_hint_y: 2
+            size_hint_y: 3
             height: 120
-        OpponentWazaListPanel:
-            id: _firstPokemonWazaList
-            size_hint_x: 5
-            size_hint_y: 3
-        OpponentWazaListPanel:
-            id: _secondPokemonWazaList
-            size_hint_x: 5
-            size_hint_y: 3
-        OpponentWazaListPanel:
-            id: _thirdPokemonWazaList
-            size_hint_x: 5
-            size_hint_y: 3
-        BoxLayout:
-            orientation: "vertical"
-            spacing:25
-            size_hint_x: 3
-            Image:
-                source: "top.jpg"
-                size_hint_y: 2
-                size: root.size
-            BoxLayout:
-                height: 50
-                size_hint_y: 1
-                Button:
-                    text: "登録"
-                Button:
-                    text: "クリア"
-        OpponentWazaListPanel:
-            id: _firstPokemonWazaList
-            size_hint_x: 5
-            size_hint_y: 3
-        OpponentWazaListPanel:
-            id: _secondPokemonWazaList
-            size_hint_x: 5
-            size_hint_y: 3
-        OpponentWazaListPanel:
-            id: _thirdPokemonWazaList
-            size_hint_x: 5
-            size_hint_y: 3
         
     Label:
         size_hint_y: None

@@ -26,18 +26,13 @@ LabelBase.register(DEFAULT_FONT, "NotoSansJP-Medium.otf")
 class RootWidget(BoxLayout):
     partyPanels = ListProperty()
     activePokemonPanels = ListProperty()
-    choosePokemonPanels = ListProperty()
     wazaListPanels = ListProperty()
-    opponentWazaListPanels = ListProperty()
-    chosenPokemonPanels = ListProperty()
     status = StringProperty("")
+    chosenPokemonPanels = ListProperty()
 
     def __init__(self, **kwargs):
         super(RootWidget, self).__init__(**kwargs)
         self.active_pokemons: list[Optional[Pokemon]] = [None, None]
-        self.chosen_pokemons: list[list[Optional[Pokemon]]] = [
-            [None for _ in range(3)], [None for _ in range(3)]
-        ]
         self.party_popup: PartyInputPopup = PartyInputPopup(title="パーティ入力")
         self.party_popup.bind(
             on_popup_close=lambda _: self.submit_party())
@@ -68,7 +63,7 @@ class RootWidget(BoxLayout):
     def select_chosen_pokemon(self, player_id: int, chosen_num: int):
         pokemon = self.active_pokemons[player_id]
         if pokemon is not None:
-            self.set_chosen_pokemon(player_id, chosen_num, pokemon)
+            self.chosenPokemonPanels[player_id][chosen_num].pokemon = pokemon
 
 
     # パーティパネルのアイコンを再表示する
@@ -105,17 +100,6 @@ class RootWidget(BoxLayout):
         self.activePokemonPanels[player_id].pokemon = pokemon
         self.wazaListPanels[player_id].set_pokemon(pokemon)
         self.calc_damage()
-    
-    def set_chosen_pokemon(self, player_id:int, chosen_num: int, pokemon: Pokemon):
-        chosen_pokemons = self.chosen_pokemons[player_id]
-        # データ処理
-        pokemon.on_stage()
-        if chosen_pokemons[chosen_num] is not None:
-            chosen_pokemons[chosen_num].statechanged_handler = None
-        chosen_pokemons[chosen_num] = pokemon
-        chosen_pokemons[chosen_num].statechanged_handler = self.pokemon_state_changed
-        # GUI処理
-        self.chosenPokemonPanels[player_id][chosen_num].pokemon = pokemon
 
     def calc_damage(self):
         pokemon1 = self.active_pokemons[0]
@@ -132,6 +116,12 @@ class RootWidget(BoxLayout):
 
     def pokemon_state_changed(self):
         self.calc_damage()
+
+    def set_opponent_waza(self, waza_index: int):
+        waza_name = self.wazaListPanels[1].wazapanel_list[waza_index].waza_button.text
+        for pokemon_index in range(len(self.chosenPokemonPanels)):
+            if self.chosenPokemonPanels[1][pokemon_index].pokemon is not None and self.chosenPokemonPanels[1][pokemon_index].pokemon.name == self.active_pokemons[1].name:
+                self.chosenPokemonPanels[1][pokemon_index].register_opponent_waza(waza_name)
 
 # カメラに接続
 class CameraPreview(Image):

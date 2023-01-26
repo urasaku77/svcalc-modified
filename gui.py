@@ -418,6 +418,7 @@ class ChosenPokemonPanel(BoxLayout, EventDispatcher):
 
     __events__ = ("on_click_icon", )
 
+    opponentWazaListPanels = ListProperty()
     pokemon = ObjectProperty(None, allownone=True)
     chosen_num = NumericProperty(-1)
     evs_combobox = ObjectProperty()
@@ -447,6 +448,7 @@ class ChosenPokemonPanel(BoxLayout, EventDispatcher):
     def on_click_icon(self, *args):
         self.pokemon = None
         self.teras_button.icon = Types.なし.icon
+        self.opponentWazaListPanels[0].clear_all_opponent_waza()
 
     def form_change(self):
         pokemon: Pokemon = self.pokemon
@@ -470,6 +472,10 @@ class ChosenPokemonPanel(BoxLayout, EventDispatcher):
             self.teras_button.icon = terastype.icon
             self.popup.dismiss()
 
+    def register_opponent_waza(self, waza: str):
+        self.opponentWazaListPanels[0].register_opponent_waza(waza)
+
+
 class OpponentWazaListPanel(BoxLayout):
 
     def __init__(self, **kw):
@@ -481,6 +487,20 @@ class OpponentWazaListPanel(BoxLayout):
             wazapanel = OpponentWazaPanel(index=i)
             self.add_widget(wazapanel)
             self.wazapanel_list.append(wazapanel)
+        
+    def register_opponent_waza(self, waza: str):
+        waza_list: list[str] = []
+        for index in range(len(self.wazapanel_list)):
+            waza_list.append(self.wazapanel_list[index].waza)
+        if not waza in waza_list and "" in waza_list:
+            self.wazapanel_list[waza_list.index("")].waza = waza
+            self.wazapanel_list[waza_list.index("")].waza_button.text = waza
+    
+    def clear_all_opponent_waza(self):
+        for waza in self.wazapanel_list:
+            waza.waza = ""
+            waza.waza_button.text = ""
+
 
 class OpponentWazaPanel(BoxLayout):
 
@@ -492,16 +512,16 @@ class OpponentWazaPanel(BoxLayout):
         self.pp: int = 0
 
         # クリアボタン
-        self.center_button = Button(size_hint_x=None, width=40, on_press=self.click_center_button)
+        self.center_button = Button(size_hint_x=None, width=30, on_press=self.click_center_button)
         # 技名ボタン
         self.waza_button: WazaButton = WazaButton()
         self.waza_button.bind(on_confirm=lambda x: self.on_select_waza(x.text))
         # マイナスボタン
-        self.minus_button = Button(text="-", size_hint_x=None, width=40, on_press=self.click_minus_button)
+        self.minus_button = Button(text="-", size_hint_x=None, width=20, on_press=self.click_minus_button)
         # PP
-        self.pp_text = Label(text=str(self.pp), size_hint_x=None, width=40)
+        self.pp_text = Label(text=str(self.pp), size_hint_x=None, width=10)
         # プラスボタン
-        self.plus_button = Button(text="+", size_hint_x=None, width=40, on_press=self.click_plus_button)
+        self.plus_button = Button(text="+", size_hint_x=None, width=20, on_press=self.click_plus_button)
 
         self.add_widget(self.center_button)
         self.add_widget(self.waza_button)
@@ -520,6 +540,8 @@ class OpponentWazaPanel(BoxLayout):
     def click_center_button(self, *args):
         self.waza = ""
         self.waza_button.text = ""
+        self.pp = 0
+        self.pp_text.text = str(self.pp)
     
     # マイナスボタンが押された時
     def click_minus_button(self, *args):
