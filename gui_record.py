@@ -1,29 +1,15 @@
 from kivy.event import EventDispatcher
 from kivy.properties import ListProperty, ObjectProperty, StringProperty, NumericProperty, BooleanProperty
-from kivy.uix.anchorlayout import AnchorLayout
-from kivy.uix.behaviors import ButtonBehavior, ToggleButtonBehavior
+
 from kivy.uix.boxlayout import BoxLayout
-from functools import partial
 from kivy.clock import Clock
 
 from kivy.uix.button import Button
-from kivy.uix.dropdown import DropDown
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
-from kivy.uix.relativelayout import RelativeLayout
-from kivy.uix.textinput import TextInput
-from kivy.uix.widget import Widget
 
-from typing import Callable, Optional, Union, TYPE_CHECKING
-from data.db import DB
 from pokedata.const import 変化, Types
 from pokedata.pokemon import Pokemon
-from pokedata.waza import WazaBase
-from pokedata.calc import DamageCalcResult
-
-import datetime
 
 from gui import WazaButton
 
@@ -57,7 +43,7 @@ class ChosenPokemonPanel(BoxLayout, EventDispatcher):
 
     def set_pokemon(self, player_id: int, pokemon: Pokemon):
         self.pokemon: Pokemon = pokemon
-        if player_id is 0:
+        if player_id == 0:
             for i in range(4):
                 waza = pokemon.waza_list[i].name if pokemon.waza_list[i] is not None else ""
                 self.register_chosen_waza(waza)
@@ -201,9 +187,9 @@ class TimerLabel(BoxLayout):
     def update(self, *kwargs):
         if int(self.minutes) == 0 and int(self.seconds) == 0:
             self.stop()
-        elif int(self.seconds) is not 0:
+        elif int(self.seconds) != 0:
             self.seconds = str(int(self.seconds) - 1).zfill(2)
-        elif int(self.seconds) is 0:
+        elif int(self.seconds) == 0:
             self.seconds = "59"
             self.minutes = str(int(self.minutes) - 1).zfill(2)
 	

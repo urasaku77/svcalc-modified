@@ -1,14 +1,10 @@
 from kivy.event import EventDispatcher
 from kivy.properties import ListProperty, ObjectProperty, StringProperty, NumericProperty, BooleanProperty
-from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.behaviors import ButtonBehavior, ToggleButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
-from functools import partial
-from kivy.clock import Clock
 
 from kivy.uix.button import Button
 from kivy.uix.dropdown import DropDown
-from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.relativelayout import RelativeLayout
@@ -267,14 +263,14 @@ class WazaPanel(BoxLayout):
         self.value: Optional[Union[float, int]] = None
 
         # 技名ボタン
-        self.waza_button: WazaButton = WazaButton()
+        self.waza_button: WazaButton = WazaButton(size_hint_x=3)
         self.waza_button.bind(on_confirm=lambda x: self.on_select_waza(x.text))
         # 中央ボタン
         self.center_button = Button(
-            size_hint_x=None, width=40, on_press=self.click_center_button)
+            size_hint_x=1, width=40, on_press=self.click_center_button,)
         self.center_button.disabled = True
         # ダメージ計算結果表示パネル
-        self.hpbar_panel: HpBarPanel = HpBarPanel()
+        self.hpbar_panel: HpBarPanel = HpBarPanel(size_hint_x=5)
 
         self.add_widget(self.waza_button)
         self.add_widget(self.center_button)
