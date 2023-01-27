@@ -9,6 +9,7 @@ from kivy.clock import Clock
 from kivy.uix.button import Button
 from kivy.uix.dropdown import DropDown
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.relativelayout import RelativeLayout
@@ -21,6 +22,8 @@ from pokedata.const import 変化, Types
 from pokedata.pokemon import Pokemon
 from pokedata.waza import WazaBase
 from pokedata.calc import DamageCalcResult
+
+import datetime
 
 from gui import WazaButton
 
@@ -170,3 +173,49 @@ class ChosenWazaPanel(BoxLayout):
         if self.pp < 64:
             self.pp = self.pp + 1
             self.pp_text.text = str(self.pp)
+
+class TimerLabel(BoxLayout):
+    minutes = StringProperty()
+    seconds = StringProperty()
+    state = StringProperty()
+    running = BooleanProperty(False)
+
+    def __init__(self, **kwargs):
+        super(TimerLabel, self).__init__(**kwargs)
+        self.minutes = "20"
+        self.seconds = "00"
+        self.state = "開始"
+
+    def start(self):
+        if not self.running:
+            self.running = True
+            self.state = "停止"
+            Clock.schedule_interval(self.update, 1)
+
+    def stop(self):
+        if self.running:
+            self.running = False
+            self.state = "開始"
+            Clock.unschedule(self.update)
+
+    def update(self, *kwargs):
+        if int(self.minutes) == 0 and int(self.seconds) == 0:
+            self.stop()
+        elif int(self.seconds) is not 0:
+            self.seconds = str(int(self.seconds) - 1).zfill(2)
+        elif int(self.seconds) is 0:
+            self.seconds = "59"
+            self.minutes = str(int(self.minutes) - 1).zfill(2)
+	
+    def toggle(self):
+        if self.running:
+            self.stop()
+        else:
+            self.start()
+    
+    def reset(self):
+        self.stop()
+        self.minutes = "20"
+        self.seconds = "00"
+
+    

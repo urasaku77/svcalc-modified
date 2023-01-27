@@ -60,3 +60,20 @@
                     on_select_item: root.pokemon.ability = self.button_text
         ChosenWazaListPanel:
             id: chosenWazaListPanel
+
+<TimerLabel>:
+    BoxLayout:
+        orientation: "vertical"
+        spacing: 15
+        Label:
+            text: root.minutes+":"+root.seconds
+            size_hint_y: 2
+            font_size: 0.9*self.height
+        BoxLayout:
+            size_hint_y: 1
+            Button:
+                text: root.state
+                on_release: root.toggle()
+            Button:
+                text: "リセット"
+                on_release: root.reset()

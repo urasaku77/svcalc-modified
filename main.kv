@@ -24,6 +24,7 @@ RootWidget:
         spacing: [5, 5]
         GridLayout:
             cols:1
+            size_hint_x: 1
             BoxLayout:
                 size_hint_y: None
                 height: 40
@@ -68,6 +69,7 @@ RootWidget:
             size_hint_x: 2
         GridLayout:
             cols:1
+            size_hint_x: 1
             BoxLayout:
                 size_hint_y: None
                 height: 40
@@ -159,7 +161,7 @@ RootWidget:
             size_hint_y: 2
             height: 120
         Label:
-            text: "試合時間"
+            text: "対戦情報"
             size_hint_x: 3
             size_hint_y: 2
             height: 120
@@ -198,16 +200,14 @@ RootWidget:
             height: 120
         BoxLayout:
             orientation: "vertical"
-            padding:[20,20,20,20]
+            padding:[10,0,10,0]
             spacing:25
             size_hint_x: 3
-            Button:
-                text: "素早さ比較"
+            TimerLabel:
                 size_hint_y: 3
-                height: 50
             Image:
                 source: "top.jpg"
-                size_hint_y: 2
+                size_hint_y: 2.5
                 size: root.size
             BoxLayout:
                 height: 50
