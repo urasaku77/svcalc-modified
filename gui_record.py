@@ -24,8 +24,6 @@ class ChosenPokemonPanel(BoxLayout, EventDispatcher):
     evs_combobox = ObjectProperty()
     teras_button = ObjectProperty()
     icon = ObjectProperty()
-    formchange_icon = ObjectProperty()
-
 
     def __init__(self, **kw):
         from kivy_gui.popup import TypeSelectPopupContent
@@ -52,14 +50,6 @@ class ChosenPokemonPanel(BoxLayout, EventDispatcher):
         self.pokemon = None
         self.teras_button.icon = Types.なし.icon
         self.chosenWazaListPanel.clear_all_chosen_waza()
-
-    def form_change(self):
-        pokemon: Pokemon = self.pokemon
-        if pokemon is not None:
-            pokemon.form_change()
-            self.evs_combobox.text = pokemon.marked_status_text
-            self.icon.icon = pokemon.icon
-            self.icon.formchange_icon = pokemon.next_form_icon    
 
     def on_select_doryoku_preset(self, value):
         self.pokemon.set_doryoku_preset(value)

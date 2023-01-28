@@ -10,9 +10,9 @@
         orientation: "vertical"
         spacing:5
         BoxLayout:
+            size_hint_y: 1
             BoxLayout:
                 size_hint_x: None
-                size_hint_y: 1
                 width: 60
                 orientation: "vertical"
                 IconButton:
@@ -28,12 +28,6 @@
                     icon: root.battle_terastype_icon
                     font_size: 14
                     on_release: root.select_terastype()
-                IconButton:
-                    id: _formchange_icon
-                    icon: root.pokemon.next_form_icon if root.pokemon is not None else ""
-                    size_hint_y: None
-                    height: 30
-                    on_release: root.form_change()
             GridLayout:
                 cols: 2
                 rows: 4
@@ -61,7 +55,7 @@
                     on_select_item: root.pokemon.ability = self.button_text
         ChosenWazaListPanel:
             id: chosenWazaListPanel
-            size_hint_y: 1.5
+            size_hint_y: 2
 
 <TimerLabel>:
     BoxLayout:
