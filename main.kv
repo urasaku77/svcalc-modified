@@ -18,6 +18,7 @@ RootWidget:
     activePokemonPanels: [_playerActivePokemon, _opponentActivePokemon]
     chosenPokemonPanels:[[_selfFirstChosenPokemon, _selfSecondChosenPokemon, _selfThirdChosenPokemon],[_opponentFirstChosenPokemon, _opponentSecondChosenPokemon, _opponentThirdChosenPokemon]]
     wazaListPanels: [_playerWazaList, _opponentWazaList]
+    trainerInfoPanels: [_playerInfo, _opponentInfo]
     GridLayout:
         cols: 3
         padding: [5, 5]
@@ -155,18 +156,17 @@ RootWidget:
             size_hint_x: 5
             size_hint_y: 2
             height: 120
-        Label:
-            text: "対戦情報"
+        TrainerInfoPanel:
+            id: _playerInfo
             size_hint_x: 5
             size_hint_y: 2
             height: 120
-        Label:
-            text: "対戦情報"
+        TimerLabel:
             size_hint_x: 3
             size_hint_y: 2
             height: 120
-        Label:
-            text: "対戦情報"
+        TrainerInfoPanel:
+            id: _opponentInfo
             size_hint_x: 5
             size_hint_y: 2
             height: 120
@@ -200,11 +200,12 @@ RootWidget:
             height: 120
         BoxLayout:
             orientation: "vertical"
-            padding:[10,0,10,0]
+            padding:[10,10,10,0]
             spacing:25
             size_hint_x: 3
-            TimerLabel:
-                size_hint_y: 3
+            Button:
+                text: "素早さ比較"
+                size_hint_y: 1
             Image:
                 source: "top.jpg"
                 size_hint_y: 2.5

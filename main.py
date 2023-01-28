@@ -29,6 +29,7 @@ class RootWidget(BoxLayout):
     wazaListPanels = ListProperty()
     status = StringProperty("")
     chosenPokemonPanels = ListProperty()
+    trainerInfoPanels = ListProperty()
 
     def __init__(self, **kwargs):
         super(RootWidget, self).__init__(**kwargs)

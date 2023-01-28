@@ -203,5 +203,14 @@ class TimerLabel(BoxLayout):
         self.stop()
         self.minutes = "20"
         self.seconds = "00"
-
     
+class TrainerInfoPanel(BoxLayout):
+    name = StringProperty()
+    rank = StringProperty()
+    memo = StringProperty()
+
+    def __init__(self, **kwargs):
+        super(TrainerInfoPanel, self).__init__(**kwargs)
+        self.name = ""
+        self.rank = ""
+        self.memo = ""

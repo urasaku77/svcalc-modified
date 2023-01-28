@@ -68,7 +68,7 @@
         Label:
             text: root.minutes+":"+root.seconds
             size_hint_y: 2
-            font_size: 0.9*self.height
+            font_size: 0.5*self.height
         BoxLayout:
             size_hint_y: 1
             Button:
@@ -77,3 +77,31 @@
             Button:
                 text: "リセット"
                 on_release: root.reset()
+
+<TrainerInfoPanel>
+    BoxLayout:
+        orientation: "vertical"
+        BoxLayout:
+            size_hint_y: 1
+            Label:
+                text: 'TN'
+                size_hint_x: 1
+            TextInput:
+                text: root.name
+                size_hint_x: 5
+        BoxLayout:
+            size_hint_y: 1
+            Label:
+                text: 'ランク'
+                size_hint_x: 1
+            TextInput:
+                text: root.rank
+                size_hint_x: 5
+        BoxLayout:
+            size_hint_y: 5
+            Label:
+                text: 'メモ'
+                size_hint_x: 1
+            TextInput:
+                text: root.memo
+                size_hint_x: 5
