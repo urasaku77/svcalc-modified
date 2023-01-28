@@ -184,19 +184,19 @@ RootWidget:
             id: _selfFirstChosenPokemon
             chosen_num: 0
             size_hint_x: 5
-            size_hint_y: 3
+            size_hint_y: 2
             height: 120
         ChosenPokemonPanel:
             id: _selfSecondChosenPokemon
             chosen_num: 1
             size_hint_x: 5
-            size_hint_y: 3
+            size_hint_y: 2
             height: 120
         ChosenPokemonPanel:
             id: _selfThirdChosenPokemon
             chosen_num: 2
             size_hint_x: 5
-            size_hint_y: 3
+            size_hint_y: 2
             height: 120
         BoxLayout:
             orientation: "vertical"
@@ -221,26 +221,22 @@ RootWidget:
             id: _opponentFirstChosenPokemon
             chosen_num: 0
             size_hint_x: 5
-            size_hint_y: 3
+            size_hint_y: 2
             height: 120
         ChosenPokemonPanel:
             id: _opponentSecondChosenPokemon
             chosen_num: 1
             size_hint_x: 5
-            size_hint_y: 3
+            size_hint_y: 2
             height: 120
         ChosenPokemonPanel:
             id: _opponentThirdChosenPokemon
             chosen_num: 2
             size_hint_x: 5
-            size_hint_y: 3
+            size_hint_y: 2
             height: 120
         
-    Label:
-        size_hint_y: None
-        height: 30
-        text: root.status
-
+    
 <SimpleButton@Button>
     size_hint_x: None
     width: 40

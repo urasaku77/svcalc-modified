@@ -27,7 +27,6 @@ class RootWidget(BoxLayout):
     partyPanels = ListProperty()
     activePokemonPanels = ListProperty()
     wazaListPanels = ListProperty()
-    status = StringProperty("")
     chosenPokemonPanels = ListProperty()
     trainerInfoPanels = ListProperty()
 
