@@ -19,6 +19,7 @@ RootWidget:
     chosenPokemonPanels:[[_selfFirstChosenPokemon, _selfSecondChosenPokemon, _selfThirdChosenPokemon],[_opponentFirstChosenPokemon, _opponentSecondChosenPokemon, _opponentThirdChosenPokemon]]
     wazaListPanels: [_playerWazaList, _opponentWazaList]
     trainerInfoPanels: [_playerInfo, _opponentInfo]
+    timerLabel: _time
     GridLayout:
         cols: 3
         padding: [5, 5]
@@ -149,36 +150,61 @@ RootWidget:
         Label:
             text: "Home情報"
             size_hint_x: 5
-            size_hint_y: 2
+            size_hint_y: 2.5
             height: 120
         Label:
             text: "Home情報"
             size_hint_x: 5
-            size_hint_y: 2
+            size_hint_y: 2.5
             height: 120
         TrainerInfoPanel:
             id: _playerInfo
             size_hint_x: 5
-            size_hint_y: 2
+            size_hint_y: 2.5
             height: 120
-        TimerLabel:
+        BoxLayout:
+            orientation: "vertical"
+            padding:[10,10,10,0]
+            spacing:25
             size_hint_x: 3
-            size_hint_y: 2
-            height: 120
+            Image:
+                source: "top.jpg"
+                size_hint_y: 2.5
+                size: root.size
+            BoxLayout:
+                CheckBox:
+                    group: 'radio'
+                    on_press: root.change_result(self, 1)
+                Label:
+                    text: "勝ち"
+                CheckBox:
+                    group: 'radio'
+                    on_press: root.change_result(self, 0)
+                Label:
+                    text: "負け"
+            BoxLayout:
+                height: 50
+                size_hint_y: 1
+                Button:
+                    text: "登録"
+                    on_release: root.record_battle()
+                Button:
+                    text: "クリア"
+                    on_release: root.init_battle()
         TrainerInfoPanel:
             id: _opponentInfo
             size_hint_x: 5
-            size_hint_y: 2
+            size_hint_y: 2.5
             height: 120
         Label:
             text: "Home情報"
             size_hint_x: 5
-            size_hint_y: 2
+            size_hint_y: 2.5
             height: 120
         Label:
             text: "Home情報"
             size_hint_x: 5
-            size_hint_y: 2
+            size_hint_y: 2.5
             height: 120
         ChosenPokemonPanel:
             id: _selfFirstChosenPokemon
@@ -198,25 +224,17 @@ RootWidget:
             size_hint_x: 5
             size_hint_y: 2
             height: 120
-        BoxLayout:
+        BoxLayout
             orientation: "vertical"
-            padding:[10,10,10,0]
-            spacing:25
             size_hint_x: 3
+            size_hint_y: 2
             Button:
                 text: "素早さ比較"
                 size_hint_y: 1
-            Image:
-                source: "top.jpg"
-                size_hint_y: 2.5
-                size: root.size
-            BoxLayout:
-                height: 50
-                size_hint_y: 1
-                Button:
-                    text: "登録"
-                Button:
-                    text: "クリア"
+            TimerLabel:
+                id: _time
+                size_hint_y: 3
+                height: 120
         ChosenPokemonPanel:
             id: _opponentFirstChosenPokemon
             chosen_num: 0

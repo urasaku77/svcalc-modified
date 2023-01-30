@@ -8,6 +8,8 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 
+import pandas as pd
+
 from pokedata.const import 変化, Types
 from pokedata.pokemon import Pokemon
 
@@ -19,12 +21,20 @@ class ChosenPokemonPanel(BoxLayout, EventDispatcher):
     __events__ = ("on_click_icon", )
 
     chosenWazaListPanel = ObjectProperty()
-    pokemon = ObjectProperty(None, allownone=True)
+
+    name = StringProperty("")
+    doryoku = StringProperty("")
+    items = ListProperty([])
+    item = StringProperty("")
+    abilities = ListProperty([])
+    ability = StringProperty("")
+    terastype = ObjectProperty(Types.なし)
+
     chosen_num = NumericProperty(-1)
     evs_combobox = ObjectProperty()
     teras_button = ObjectProperty()
-    icon = ObjectProperty()
-
+    icon = StringProperty("")
+    
     def __init__(self, **kw):
         from kivy_gui.popup import TypeSelectPopupContent
         super(ChosenPokemonPanel, self).__init__(**kw)
@@ -35,33 +45,45 @@ class ChosenPokemonPanel(BoxLayout, EventDispatcher):
 
     @property
     def battle_terastype_icon(self):
-        if self.pokemon is None:
+        if self.name == "":
             return Types.なし.icon
-        return self.pokemon.battle_terastype.icon
+        return self.terastype.icon
 
     def set_pokemon(self, player_id: int, pokemon: Pokemon):
-        self.pokemon: Pokemon = pokemon
+        self.name = pokemon.name
+        self.icon = pokemon.icon
+        self.items = pd.read_csv("battle/item.csv",encoding="utf_8",sep=',',index_col=0).index.tolist()
+        self.abilities = pokemon.abilities
         if player_id == 0:
+            self.doryoku = pokemon.doryoku.to_string
+            self.item = pokemon.item
+            self.ability = pokemon.ability
             for i in range(4):
                 waza = pokemon.waza_list[i].name if pokemon.waza_list[i] is not None else ""
                 self.register_chosen_waza(waza)
 
     def on_click_icon(self, *args):
-        self.pokemon = None
         self.teras_button.icon = Types.なし.icon
+        self.name = ""
+        self.icon = ""
+        self.items = []
+        self.item = ""
+        self.abilities = []
+        self.ability = ""
+        self.doryoku = ""
         self.chosenWazaListPanel.clear_all_chosen_waza()
 
     def on_select_doryoku_preset(self, value):
-        self.pokemon.set_doryoku_preset(value)
-        self.evs_combobox.text = self.pokemon.marked_status_text
+        self.doryoku = value
+        self.evs_combobox.text = value
 
     def select_terastype(self, *_args):
         self.popup.open()
 
     def on_select_terastype(self, value):
-        if self.pokemon is not None:
+        if self.name != "":
             terastype = Types[value]
-            self.pokemon.battle_terastype = terastype
+            self.terastype = terastype
             self.teras_button.icon = terastype.icon
             self.popup.dismiss()
 
@@ -150,6 +172,7 @@ class ChosenWazaPanel(BoxLayout):
             self.pp = self.pp + 1
             self.pp_text.text = str(self.pp)
 
+# 20分タイマー部品一式
 class TimerLabel(BoxLayout):
     minutes = StringProperty()
     seconds = StringProperty()
@@ -193,14 +216,28 @@ class TimerLabel(BoxLayout):
         self.stop()
         self.minutes = "20"
         self.seconds = "00"
-    
+
+# 対戦情報入力パネル   
 class TrainerInfoPanel(BoxLayout):
-    name = StringProperty()
-    rank = StringProperty()
-    memo = StringProperty()
+    name = StringProperty("")
+    rank = StringProperty("")
+    memo = StringProperty("")
 
     def __init__(self, **kwargs):
         super(TrainerInfoPanel, self).__init__(**kwargs)
-        self.name = ""
-        self.rank = ""
+    
+    def update(self):
+        self.name = self.ids["name"].text    
+        self.rank = self.ids["rank"].text    
+        self.memo = self.ids["memo"].text
+
+    def clear(self, player: bool):
         self.memo = ""
+        self.ids["memo"].text = ""
+        if player is False:
+            self.name = ""
+            self.rank = ""
+            self.ids["name"].text = ""
+            self.ids["rank"].text = ""
+
+

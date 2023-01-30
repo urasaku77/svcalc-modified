@@ -267,7 +267,7 @@ class WazaPanel(BoxLayout):
         self.waza_button.bind(on_confirm=lambda x: self.on_select_waza(x.text))
         # 中央ボタン
         self.center_button = Button(
-            size_hint_x=1, width=40, on_press=self.click_center_button,)
+            size_hint_x=1, width=40, on_press=self.click_center_button)
         self.center_button.disabled = True
         # ダメージ計算結果表示パネル
         self.hpbar_panel: HpBarPanel = HpBarPanel(size_hint_x=5)

@@ -2,7 +2,6 @@
 #:include gui.kv
 
 <ChosenPokemonPanel>
-    icon: _icon
     evs_combobox: _evs_combobox
     teras_button: _teras_button
     chosenWazaListPanel: chosenWazaListPanel
@@ -16,8 +15,7 @@
                 width: 60
                 orientation: "vertical"
                 IconButton:
-                    id: _icon
-                    icon: root.pokemon.icon if root.pokemon is not None else ""
+                    icon: root.icon
                     size_hint: None, None
                     size: 60, 60
                     on_release: root.dispatch("on_click_icon")
@@ -36,23 +34,23 @@
                     text: "ステータス"
                 DropDownButton:
                     id: _evs_combobox
-                    text: root.pokemon.marked_status_text if root.pokemon is not None else ""
+                    text: root.doryoku
                     items: DORYOKU_PRESET.keys()
                     font_size: dp(12)
                     on_select_item: root.on_select_doryoku_preset(self.button_text)
                 ShortLabel:
                     text: "持ち物"
                 DropDownButton:
-                    text: root.pokemon.item if root.pokemon is not None else ""
+                    text: root.item if root.name != "" else ""
                     image_enable: True
-                    items: ["なし", "こだわりハチマキ", "こだわりメガネ", "いのちのたま", "たつじんのおび", "とつげきチョッキ", "しんかのきせき", "ブーストエナジー"]
-                    on_select_item: root.pokemon.item = self.button_text
+                    items: root.items if root.name != "" else ""
+                    on_select_item: root.item = self.button_text
                 ShortLabel:
                     text: "特性"
                 DropDownButton:
-                    items: root.pokemon.abilities if root.pokemon is not None else ""
-                    text: root.pokemon.ability if root.pokemon is not None else ""
-                    on_select_item: root.pokemon.ability = self.button_text
+                    text: root.ability if root.name != "" else ""
+                    items: root.abilities if root.name != "" else ""
+                    on_select_item: root.ability = self.button_text
         ChosenWazaListPanel:
             id: chosenWazaListPanel
             size_hint_y: 2
@@ -64,7 +62,7 @@
         Label:
             text: root.minutes+":"+root.seconds
             size_hint_y: 2
-            font_size: 0.4*self.height
+            font_size: 0.6*self.height
         BoxLayout:
             size_hint_y: 1
             Button:
@@ -83,7 +81,8 @@
                 text: 'TN'
                 size_hint_x: 1
             TextInput:
-                text: root.name
+                id: name
+                text: ""
                 size_hint_x: 5
         BoxLayout:
             size_hint_y: 1
@@ -91,7 +90,8 @@
                 text: 'ランク'
                 size_hint_x: 1
             TextInput:
-                text: root.rank
+                id: rank
+                text: ""
                 size_hint_x: 5
         BoxLayout:
             size_hint_y: 5
@@ -99,5 +99,6 @@
                 text: 'メモ'
                 size_hint_x: 1
             TextInput:
-                text: root.memo
+                id: memo
+                text: ""
                 size_hint_x: 5

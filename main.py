@@ -1,22 +1,24 @@
-import atexit
-from typing import Optional
-
 from kivy.app import App
-from kivy.properties import ListProperty, StringProperty
+from kivy.properties import ListProperty, StringProperty, ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.core.window import Window
 from kivy.graphics.texture import Texture
 from kivy.clock import Clock
 from kivy.uix.image import Image
-
+from kivy.core.text import LabelBase, DEFAULT_FONT
+from kivy.resources import resource_add_path
 from kivy_gui.popup import PartyInputPopup
 from pokedata.pokemon import Pokemon
 from data.db import DB
 
-from kivy.core.text import LabelBase, DEFAULT_FONT
-from kivy.resources import resource_add_path
+from battle.battle import Battle
+from battle.DB_battle import DB_battle
 
+from typing import Optional
+import atexit
 import cv2
+import datetime
+import dataclasses
 
 Window.size = (2400, 1200)
 resource_add_path("font")
@@ -29,6 +31,7 @@ class RootWidget(BoxLayout):
     wazaListPanels = ListProperty()
     chosenPokemonPanels = ListProperty()
     trainerInfoPanels = ListProperty()
+    timerLabel = ObjectProperty()
 
     def __init__(self, **kwargs):
         super(RootWidget, self).__init__(**kwargs)
@@ -39,6 +42,7 @@ class RootWidget(BoxLayout):
         self.party: list[list[Optional[Pokemon]]] = [
             [None for _ in range(6)], [None for _ in range(6)]
         ]
+        self.result = 2
 
     def load_party(self):
         from pokedata.loader import get_party_data
@@ -120,9 +124,115 @@ class RootWidget(BoxLayout):
 
     def set_opponent_waza(self, waza_index: int):
         waza_name = self.wazaListPanels[1].wazapanel_list[waza_index].waza_button.text
-        for pokemon_index in range(len(self.chosenPokemonPanels)):
-            if self.chosenPokemonPanels[1][pokemon_index].pokemon is not None and self.chosenPokemonPanels[1][pokemon_index].pokemon.name == self.active_pokemons[1].name:
+        for pokemon_index in range(len(self.chosenPokemonPanels[1])):
+            if self.chosenPokemonPanels[1][pokemon_index].name != "" and self.chosenPokemonPanels[1][pokemon_index].name == self.active_pokemons[1].name:
                 self.chosenPokemonPanels[1][pokemon_index].register_chosen_waza(waza_name)
+    
+    def change_result(self, checkbox, result: int):
+        if checkbox.active is False:
+            self.result = 2
+        else:
+            self.result = result
+    
+    def init_battle(self):
+        self.result = 2
+        self.trainerInfoPanels[0].clear(True)
+        self.trainerInfoPanels[1].clear(False)
+        self.party[1] = [None for _ in range(6)]
+        # self.active_pokemons = [None, None]
+        self.refresh_party_icons()
+        for player in range(len(self.chosenPokemonPanels)):
+            for chosen_num in range(len(self.chosenPokemonPanels[player])):
+                self.chosenPokemonPanels[player][chosen_num].on_click_icon()
+
+    def record_battle(self):
+        time = 20*60 - ( int(self.timerLabel.minutes) + int(self.timerLabel.seconds)*60 )
+        self.trainerInfoPanels[0].update()
+        self.trainerInfoPanels[1].update()
+
+        battle = Battle(
+            None, 
+            str(datetime.datetime.now()), 
+            time, 
+            self.result,
+            self.trainerInfoPanels[0].name, 
+            self.trainerInfoPanels[1].name, 
+            self.trainerInfoPanels[0].rank, 
+            self.trainerInfoPanels[1].rank, 
+            self.trainerInfoPanels[0].memo, 
+            self.trainerInfoPanels[1].memo, 
+            self.party[0][0].name if self.party[0][0] is not None else "", 
+            self.party[0][1].name if self.party[0][1] is not None else "", 
+            self.party[0][2].name if self.party[0][2] is not None else "", 
+            self.party[0][3].name if self.party[0][3] is not None else "", 
+            self.party[0][4].name if self.party[0][4] is not None else "", 
+            self.party[0][5].name if self.party[0][5] is not None else "", 
+            self.party[1][0].name if self.party[1][0] is not None else "", 
+            self.party[1][1].name if self.party[1][1] is not None else "", 
+            self.party[1][2].name if self.party[1][2] is not None else "", 
+            self.party[1][3].name if self.party[1][3] is not None else "", 
+            self.party[1][4].name if self.party[1][4] is not None else "", 
+            self.party[1][5].name if self.party[1][5] is not None else "", 
+            self.chosenPokemonPanels[0][0].name, 
+            self.chosenPokemonPanels[0][0].doryoku, 
+            self.chosenPokemonPanels[0][0].item, 
+            self.chosenPokemonPanels[0][0].ability, 
+            self.chosenPokemonPanels[0][0].terastype.name, 
+            self.chosenPokemonPanels[0][0].chosenWazaListPanel.wazapanel_list[0].waza if self.chosenPokemonPanels[0][0].name != "" else "", 
+            self.chosenPokemonPanels[0][0].chosenWazaListPanel.wazapanel_list[1].waza if self.chosenPokemonPanels[0][0].name != "" else "", 
+            self.chosenPokemonPanels[0][0].chosenWazaListPanel.wazapanel_list[2].waza if self.chosenPokemonPanels[0][0].name != "" else "", 
+            self.chosenPokemonPanels[0][0].chosenWazaListPanel.wazapanel_list[3].waza if self.chosenPokemonPanels[0][0].name != "" else "", 
+            self.chosenPokemonPanels[0][1].name, 
+            self.chosenPokemonPanels[0][1].doryoku, 
+            self.chosenPokemonPanels[0][1].item, 
+            self.chosenPokemonPanels[0][1].ability, 
+            self.chosenPokemonPanels[0][1].terastype.name, 
+            self.chosenPokemonPanels[0][1].chosenWazaListPanel.wazapanel_list[0].waza if self.chosenPokemonPanels[0][1].name != "" else "", 
+            self.chosenPokemonPanels[0][1].chosenWazaListPanel.wazapanel_list[1].waza if self.chosenPokemonPanels[0][1].name != "" else "", 
+            self.chosenPokemonPanels[0][1].chosenWazaListPanel.wazapanel_list[2].waza if self.chosenPokemonPanels[0][1].name != "" else "", 
+            self.chosenPokemonPanels[0][1].chosenWazaListPanel.wazapanel_list[3].waza if self.chosenPokemonPanels[0][1].name != "" else "", 
+            self.chosenPokemonPanels[0][2].name, 
+            self.chosenPokemonPanels[0][2].doryoku, 
+            self.chosenPokemonPanels[0][2].item, 
+            self.chosenPokemonPanels[0][2].ability, 
+            self.chosenPokemonPanels[0][2].terastype.name, 
+            self.chosenPokemonPanels[0][2].chosenWazaListPanel.wazapanel_list[0].waza if self.chosenPokemonPanels[0][2].name != "" else "", 
+            self.chosenPokemonPanels[0][2].chosenWazaListPanel.wazapanel_list[1].waza if self.chosenPokemonPanels[0][2].name != "" else "", 
+            self.chosenPokemonPanels[0][2].chosenWazaListPanel.wazapanel_list[2].waza if self.chosenPokemonPanels[0][2].name != "" else "", 
+            self.chosenPokemonPanels[0][2].chosenWazaListPanel.wazapanel_list[3].waza if self.chosenPokemonPanels[0][2].name != "" else "", 
+            self.chosenPokemonPanels[1][0].name, 
+            self.chosenPokemonPanels[1][0].doryoku, 
+            self.chosenPokemonPanels[1][0].item, 
+            self.chosenPokemonPanels[1][0].ability, 
+            self.chosenPokemonPanels[1][0].terastype.name, 
+            self.chosenPokemonPanels[1][0].chosenWazaListPanel.wazapanel_list[0].waza if self.chosenPokemonPanels[1][0].name != "" else "", 
+            self.chosenPokemonPanels[1][0].chosenWazaListPanel.wazapanel_list[1].waza if self.chosenPokemonPanels[1][0].name != "" else "", 
+            self.chosenPokemonPanels[1][0].chosenWazaListPanel.wazapanel_list[2].waza if self.chosenPokemonPanels[1][0].name != "" else "", 
+            self.chosenPokemonPanels[1][0].chosenWazaListPanel.wazapanel_list[3].waza if self.chosenPokemonPanels[1][0].name != "" else "", 
+            self.chosenPokemonPanels[1][1].name, 
+            self.chosenPokemonPanels[1][1].doryoku, 
+            self.chosenPokemonPanels[1][1].item, 
+            self.chosenPokemonPanels[1][1].ability, 
+            self.chosenPokemonPanels[1][1].terastype.name, 
+            self.chosenPokemonPanels[1][1].chosenWazaListPanel.wazapanel_list[0].waza if self.chosenPokemonPanels[1][1].name != "" else "", 
+            self.chosenPokemonPanels[1][1].chosenWazaListPanel.wazapanel_list[1].waza if self.chosenPokemonPanels[1][1].name != "" else "", 
+            self.chosenPokemonPanels[1][1].chosenWazaListPanel.wazapanel_list[2].waza if self.chosenPokemonPanels[1][1].name != "" else "", 
+            self.chosenPokemonPanels[1][1].chosenWazaListPanel.wazapanel_list[3].waza if self.chosenPokemonPanels[1][1].name != "" else "", 
+            self.chosenPokemonPanels[1][2].name, 
+            self.chosenPokemonPanels[1][2].doryoku, 
+            self.chosenPokemonPanels[1][2].item, 
+            self.chosenPokemonPanels[1][2].ability, 
+            self.chosenPokemonPanels[1][2].terastype.name, 
+            self.chosenPokemonPanels[1][2].chosenWazaListPanel.wazapanel_list[0].waza if self.chosenPokemonPanels[1][2].name != "" else "", 
+            self.chosenPokemonPanels[1][2].chosenWazaListPanel.wazapanel_list[1].waza if self.chosenPokemonPanels[1][2].name != "" else "", 
+            self.chosenPokemonPanels[1][2].chosenWazaListPanel.wazapanel_list[2].waza if self.chosenPokemonPanels[1][2].name != "" else "", 
+            self.chosenPokemonPanels[1][2].chosenWazaListPanel.wazapanel_list[3].waza if self.chosenPokemonPanels[1][2].name != "" else ""
+            )
+        battle_data = dataclasses.astuple(battle)
+        print(battle_data)
+        DB_battle.register_battle(battle_data)
+
+        self.init_battle()
 
 # カメラに接続
 class CameraPreview(Image):
