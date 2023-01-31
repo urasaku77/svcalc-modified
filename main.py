@@ -259,15 +259,16 @@ class CameraPreview(Image):
         ret, self.frame = self.capture.read()
         if self.frame is not None:
             # Kivy Textureに変換
-            buf = cv2.flip(self.frame, 0).tostring()
+            buf = cv2.flip(self.frame, 0).tobytes()
             texture = Texture.create(size=(self.frame.shape[1], self.frame.shape[0]), colorfmt='bgr') 
             texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
             # インスタンスのtextureを変更
             self.texture = texture
+            cv2.imwrite("capture.png", self.frame)
         else:
             Clock.unschedule(self.update)
             self.display_dummy_image()
-
+   
     def display_dummy_image(self):
         image = Picture.open("./top.jpg")
         texture = Texture.create(size=image.size) 
