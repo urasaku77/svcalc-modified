@@ -1,1 +1,1 @@
-python main.py
+py -3.10 -m main
