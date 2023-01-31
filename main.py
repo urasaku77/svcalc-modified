@@ -1,5 +1,5 @@
 from kivy.app import App
-from kivy.properties import ListProperty, StringProperty, ObjectProperty
+from kivy.properties import ListProperty, ObjectProperty, NumericProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.core.window import Window
 from kivy.graphics.texture import Texture
@@ -16,9 +16,12 @@ from battle.DB_battle import DB_battle
 
 from typing import Optional
 import atexit
+import os
+os.environ["OPENCV_VIDEOIO_MSMF_ENABLE_HW_TRANSFORMS"] = "0"
 import cv2
 import datetime
 import dataclasses
+from PIL import Image as Picture
 
 Window.size = (2400, 1200)
 resource_add_path("font")
@@ -26,6 +29,8 @@ LabelBase.register(DEFAULT_FONT, "NotoSansJP-Medium.otf")
 
 
 class RootWidget(BoxLayout):
+    cameraPreview = ObjectProperty()
+    cameraId = NumericProperty(1)
     partyPanels = ListProperty()
     activePokemonPanels = ListProperty()
     wazaListPanels = ListProperty()
@@ -69,7 +74,9 @@ class RootWidget(BoxLayout):
         if pokemon is not None:
             self.chosenPokemonPanels[player_id][chosen_num].set_pokemon(player_id, pokemon)
             
-
+    def set_camera(self):
+        self.cameraId = int(self.ids["camera_id"].text)
+        self.cameraPreview.start(self.cameraId)
 
     # パーティパネルのアイコンを再表示する
     def refresh_party_icons(self):
@@ -238,7 +245,10 @@ class RootWidget(BoxLayout):
 class CameraPreview(Image):
     def __init__(self, **kwargs):
         super(CameraPreview, self).__init__(**kwargs)
-        self.capture = cv2.VideoCapture(1)
+        self.display_dummy_image()
+        
+    def start(self, camera_id: int):
+        self.capture = cv2.VideoCapture(camera_id, cv2.CAP_DSHOW)
         self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
         self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
         Clock.schedule_interval(self.update, 1.0 / 60)
@@ -247,11 +257,22 @@ class CameraPreview(Image):
     def update(self, dt):
         # フレームを読み込み
         ret, self.frame = self.capture.read()
-        # Kivy Textureに変換
-        buf = cv2.flip(self.frame, 0).tostring()
-        texture = Texture.create(size=(self.frame.shape[1], self.frame.shape[0]), colorfmt='bgr') 
-        texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
-        # インスタンスのtextureを変更
+        if self.frame is not None:
+            # Kivy Textureに変換
+            buf = cv2.flip(self.frame, 0).tostring()
+            texture = Texture.create(size=(self.frame.shape[1], self.frame.shape[0]), colorfmt='bgr') 
+            texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
+            # インスタンスのtextureを変更
+            self.texture = texture
+        else:
+            Clock.unschedule(self.update)
+            self.display_dummy_image()
+
+    def display_dummy_image(self):
+        image = Picture.open("./top.jpg")
+        texture = Texture.create(size=image.size) 
+        texture.blit_buffer(image.tobytes())
+        texture.flip_vertical()
         self.texture = texture
 
 

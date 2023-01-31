@@ -14,6 +14,7 @@ RootWidget:
         Rectangle:
             size: self.size
             pos: self.pos
+    cameraPreview: camera_preview
     partyPanels: [party1, party2]
     activePokemonPanels: [_playerActivePokemon, _opponentActivePokemon]
     chosenPokemonPanels:[[_selfFirstChosenPokemon, _selfSecondChosenPokemon, _selfThirdChosenPokemon],[_opponentFirstChosenPokemon, _opponentSecondChosenPokemon, _opponentThirdChosenPokemon]]
@@ -61,12 +62,8 @@ RootWidget:
                 on_click_icon: print(self.pokemon)
             WazaListPanel:
                 id: _playerWazaList
-        #CameraPreview:
-        #    id: camera_preview
-        #    size: root.size
-        #    size_hint_x: 2
-        Image:
-            source: "dummy.png"
+        CameraPreview:
+            id: camera_preview
             size: root.size
             size_hint_x: 2
         GridLayout:
@@ -167,11 +164,19 @@ RootWidget:
             padding:[10,10,10,0]
             spacing:25
             size_hint_x: 3
-            Image:
-                source: "top.jpg"
-                size_hint_y: 2.5
-                size: root.size
             BoxLayout:
+                size_hint_y: 0.5
+                Label:
+                    text: "カメラID"
+                TextInput:
+                    id: camera_id
+                    text: str(root.cameraId)
+                    multiline: False
+            Button:
+                text: "カメラ開始/切替"
+                on_release: root.set_camera()
+            BoxLayout:
+                size_hint_y: 1.5
                 CheckBox:
                     group: 'radio'
                     on_press: root.change_result(self, 1)
