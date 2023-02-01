@@ -270,7 +270,7 @@ class CameraPreview(Image):
             self.display_dummy_image()
    
     def display_dummy_image(self):
-        image = Picture.open("./top.jpg")
+        image = Picture.open("image/top.jpg")
         texture = Texture.create(size=image.size) 
         texture.blit_buffer(image.tobytes())
         texture.flip_vertical()
