@@ -7,7 +7,7 @@ from kivy.clock import Clock
 from kivy.uix.image import Image
 from kivy.core.text import LabelBase, DEFAULT_FONT
 from kivy.resources import resource_add_path
-from kivy_gui.popup import PartyInputPopup
+from kivy_gui.popup import PartyInputPopup, SpeedCheckPopup
 from pokedata.pokemon import Pokemon
 from data.db import DB
 
@@ -140,6 +140,12 @@ class RootWidget(BoxLayout):
             self.result = 2
         else:
             self.result = result
+    
+    def set_speed_check(self):
+        if self.active_pokemons[0] is not None and self.active_pokemons[1] is not None:
+            self.speed_check: SpeedCheckPopup = SpeedCheckPopup(title="素早さ比較")
+            self.speed_check.set_pokemon(self.active_pokemons)
+            self.speed_check.open()
     
     def init_battle(self):
         self.result = 2
