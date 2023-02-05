@@ -36,6 +36,7 @@ RootWidget:
                     on_select: root.select_party_pokemon(0, self.selected_index)
                 SimpleButton:
                     text: "読取"
+                    on_release: root.recognize_party()
                 SimpleButton:
                     text: "PT"
                     on_release: root.load_party()

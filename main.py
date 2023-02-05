@@ -8,11 +8,6 @@ from kivy.uix.image import Image
 from kivy.core.text import LabelBase, DEFAULT_FONT
 from kivy.resources import resource_add_path
 from kivy_gui.popup import PartyInputPopup, SpeedCheckPopup
-from pokedata.pokemon import Pokemon
-from data.db import DB
-
-from battle.battle import Battle
-from battle.DB_battle import DB_battle
 
 from typing import Optional
 import atexit
@@ -22,6 +17,13 @@ import cv2
 import datetime
 import dataclasses
 from PIL import Image as Picture
+import glob
+
+from pokedata.pokemon import Pokemon
+from data.db import DB
+from battle.battle import Battle
+from battle.DB_battle import DB_battle
+from recog.image_recognition import ImageRecognition
 
 Window.size = (2400, 1200)
 resource_add_path("font")
@@ -40,6 +42,7 @@ class RootWidget(BoxLayout):
 
     def __init__(self, **kwargs):
         super(RootWidget, self).__init__(**kwargs)
+        self.cameraPreview = self.CameraPreview()
         self.active_pokemons: list[Optional[Pokemon]] = [None, None]
         self.party_popup: PartyInputPopup = PartyInputPopup(title="パーティ入力")
         self.party_popup.bind(
@@ -47,6 +50,7 @@ class RootWidget(BoxLayout):
         self.party: list[list[Optional[Pokemon]]] = [
             [None for _ in range(6)], [None for _ in range(6)]
         ]
+        self.battle_status = False
         self.result = 2
 
     def load_party(self):
@@ -77,6 +81,16 @@ class RootWidget(BoxLayout):
     def set_camera(self):
         self.cameraId = int(self.ids["camera_id"].text)
         self.cameraPreview.start(self.cameraId)
+        Clock.schedule_interval(self.cameraPreview.update, 1.0 / 60)
+        Clock.schedule_interval(self.start_battle, 1.0 / 60)
+    
+    def start_battle(self, dt):
+        if not self.cameraPreview.is_recording:
+            Clock.unschedule(self.start_battle)
+            return
+        if not self.battle_status and self.cameraPreview.imgRecog.is_exist_image("recog/recogImg/situation/aitewomiru.jpg",0.8,"aitewomiru"):
+            self.timerLabel.start()
+            self.battle_status = True
 
     # パーティパネルのアイコンを再表示する
     def refresh_party_icons(self):
@@ -147,7 +161,37 @@ class RootWidget(BoxLayout):
             self.speed_check.set_pokemon(self.active_pokemons)
             self.speed_check.open()
     
+    def recognize_party(self):
+        self.set_oppo_tn()
+        if self.cameraPreview.imgRecog.is_exist_image("recog/recogImg/situation/sensyutu.jpg",0.8,"sensyutu") or self.cameraPreview.imgRecog.is_exist_image("recog/recogImg/situation/sensyutu2.jpg",0.8,"sensyutu"):
+            self.recognize_banme()
+
+            pokemonImages = glob.glob("recog/recogImg/pokemon/**/*")
+            coordsList = ["opoPoke1", "opoPoke2", "opoPoke3", "opoPoke4", "opoPoke5", "opoPoke6"]
+
+            for coord in range(len(coordsList)):
+                oppo = self.cameraPreview.imgRecog.is_exist_image_max(pokemonImages, 0.7, coordsList[coord])
+                if oppo != "":
+                    oppo_shaped = self.cameraPreview.imgRecog.shape_poke_num(oppo)
+                    oppo_pokemon = Pokemon.by_pid(oppo_shaped)
+                    self.set_party_pokemon(1, coord, oppo_pokemon)
+
+    def recognize_banme(self):
+        if self.cameraPreview.imgRecog.is_banme():
+            return
+
+        for banme in range(3):
+            '''何番目まで選んでいるかカウント'''
+            banmeResult =self.cameraPreview.imgRecog.sensyutu_num_recognition(banme)
+            if banmeResult != -1 and self.party[0][banmeResult] is not None:
+                self.chosenPokemonPanels[0][banme].set_pokemon(0, self.party[0][banmeResult])
+    
+    def set_oppo_tn(self):
+        oppo_tn = self.cameraPreview.imgRecog.recognize_oppo_tn() or ""
+        self.trainerInfoPanels[1].set_name = oppo_tn
+    
     def init_battle(self):
+        self.battle_status = False
         self.result = 2
         self.trainerInfoPanels[0].clear(True)
         self.trainerInfoPanels[1].clear(False)
@@ -242,45 +286,47 @@ class RootWidget(BoxLayout):
             self.chosenPokemonPanels[1][2].chosenWazaListPanel.wazapanel_list[3].waza if self.chosenPokemonPanels[1][2].name != "" else ""
             )
         battle_data = dataclasses.astuple(battle)
-        print(battle_data)
         DB_battle.register_battle(battle_data)
-
+        self.timerLabel.reset()
         self.init_battle()
 
-# カメラに接続
-class CameraPreview(Image):
-    def __init__(self, **kwargs):
-        super(CameraPreview, self).__init__(**kwargs)
-        self.display_dummy_image()
-        
-    def start(self, camera_id: int):
-        self.capture = cv2.VideoCapture(camera_id, cv2.CAP_DSHOW)
-        self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-        self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
-        Clock.schedule_interval(self.update, 1.0 / 60)
-
-    # インターバルで実行する描画メソッド
-    def update(self, dt):
-        # フレームを読み込み
-        ret, self.frame = self.capture.read()
-        if self.frame is not None:
-            # Kivy Textureに変換
-            buf = cv2.flip(self.frame, 0).tobytes()
-            texture = Texture.create(size=(self.frame.shape[1], self.frame.shape[0]), colorfmt='bgr') 
-            texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
-            # インスタンスのtextureを変更
-            self.texture = texture
-            cv2.imwrite("capture.png", self.frame)
-        else:
-            Clock.unschedule(self.update)
+    # カメラに接続
+    class CameraPreview(Image):
+        def __init__(self, **kwargs):
+            super().__init__(**kwargs)
             self.display_dummy_image()
-   
-    def display_dummy_image(self):
-        image = Picture.open("image/top.jpg")
-        texture = Texture.create(size=image.size) 
-        texture.blit_buffer(image.tobytes())
-        texture.flip_vertical()
-        self.texture = texture
+            self.imgRecog=ImageRecognition()
+            self.is_recording=False
+            
+        def start(self, camera_id: int):
+            self.capture = cv2.VideoCapture(camera_id, cv2.CAP_DSHOW)
+            self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+            self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+            self.capture.set(cv2.CAP_PROP_FPS, 60)
+
+        # インターバルで実行する描画メソッド
+        def update(self, dt):
+            ret, self.frame = self.capture.read()
+            if self.frame is not None:
+                self.is_recording=True
+                # Kivy Textureに変換
+                buf = cv2.flip(self.frame, 0).tobytes()
+                texture = Texture.create(size=(self.frame.shape[1], self.frame.shape[0]), colorfmt='bgr') 
+                texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
+                # インスタンスのtextureを変更
+                self.texture = texture
+                self.imgRecog.set_image(cv2.resize(self.frame, None, None, 1.5, 1.5))
+            else:
+                Clock.unschedule(self.update)
+                self.display_dummy_image()
+                self.is_recording=False
+    
+        def display_dummy_image(self):
+            image = Picture.open("image/top.jpg")
+            texture = Texture.create(size=image.size) 
+            texture.blit_buffer(image.tobytes())
+            texture.flip_vertical()
+            self.texture = texture
 
 
 class MainApp(App):

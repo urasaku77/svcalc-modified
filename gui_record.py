@@ -226,6 +226,14 @@ class TrainerInfoPanel(BoxLayout):
     def __init__(self, **kwargs):
         super(TrainerInfoPanel, self).__init__(**kwargs)
     
+    @property
+    def name(self):
+        return self.ids["name"].text
+
+    @name.setter
+    def set_name(self, value):
+        self.ids["name"].text = value
+
     def update(self):
         self.name = self.ids["name"].text    
         self.rank = self.ids["rank"].text    
