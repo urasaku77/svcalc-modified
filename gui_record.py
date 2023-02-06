@@ -1,9 +1,7 @@
 from kivy.event import EventDispatcher
 from kivy.properties import ListProperty, ObjectProperty, StringProperty, NumericProperty, BooleanProperty
-
 from kivy.uix.boxlayout import BoxLayout
 from kivy.clock import Clock
-
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
@@ -12,7 +10,6 @@ import pandas as pd
 
 from pokedata.const import 変化, Types
 from pokedata.pokemon import Pokemon
-
 from gui import WazaButton
 
 #選出されたポケモン表示パネル
@@ -226,11 +223,6 @@ class TrainerInfoPanel(BoxLayout):
     def __init__(self, **kwargs):
         super(TrainerInfoPanel, self).__init__(**kwargs)
     
-    @property
-    def name(self):
-        return self.ids["name"].text
-
-    @name.setter
     def set_name(self, value):
         self.ids["name"].text = value
 
@@ -247,5 +239,3 @@ class TrainerInfoPanel(BoxLayout):
             self.rank = ""
             self.ids["name"].text = ""
             self.ids["rank"].text = ""
-
-

@@ -38,7 +38,7 @@ class ImageRecognition(object):
         for pt in zip(*loc[::-1]):
             result=True
         return result
-    
+
     def is_exist_image_max(self,temp_imgge_name,accuracy,coord_name):
         coord=self.coords.dicCoord[coord_name]
         img1 = self.img[coord.top : coord.bottom, coord.left: coord.right]
@@ -58,12 +58,12 @@ class ImageRecognition(object):
                     pass
                 
             max_val_list.append(max(tmp_max_val))
-        
+
         if max(max_val_list) >= accuracy:
             return temp_imgge_name[max_val_list.index(max(max_val_list))]
         else:
             return ""
-    
+
     def is_banme(self):
         for num in range(6):
             img=self.img[165+num*115:175+num*115,1144:1153]
@@ -76,18 +76,17 @@ class ImageRecognition(object):
                 return True
         return False
 
-    def sensyutu_num_recognition(self,banme):
+    def recognize_chosen_num(self,banme):
         for num in range(6):
             if self.is_exist_image("recog\\recogImg\\sensyutu\\banme\\banme" + str(banme+1) +".jpg",0.85,"banme"+str(num+1)):
                 return num
         return -1
-    
+
     def recognize_oppo_tn(self):
         coord=self.coords.dicCoord["opoTn"]
         img=self.img[coord.top : coord.bottom, coord.left: coord.right]
-        tn = self.OCR(img)
+        tn = self.ocr_full(img)
         return tn.replace(' ', '')
-
 
     def shape_poke_num(self, origin: str):
         try:
@@ -97,8 +96,8 @@ class ImageRecognition(object):
             return check_hyphen
         except:
             return ""
-    
-    def OCR(self, img):
+
+    def ocr_full(self, img):
         try:
             if self.path_tesseract not in os.environ["PATH"].split(os.pathsep):
                 os.environ["PATH"] += os.pathsep + self.path_tesseract

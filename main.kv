@@ -166,7 +166,7 @@ RootWidget:
             spacing:25
             size_hint_x: 3
             BoxLayout:
-                size_hint_y: 0.5
+                size_hint_y: 1
                 Label:
                     text: "カメラID"
                 TextInput:
@@ -177,7 +177,7 @@ RootWidget:
                 text: "カメラ開始/切替"
                 on_release: root.set_camera()
             BoxLayout:
-                size_hint_y: 1.5
+                size_hint_y: 0.5
                 CheckBox:
                     group: 'radio'
                     on_press: root.change_result(self, 1)
@@ -260,8 +260,7 @@ RootWidget:
             size_hint_x: 5
             size_hint_y: 2
             height: 120
-        
-    
+
 <SimpleButton@Button>
     size_hint_x: None
     width: 40
