@@ -10,7 +10,7 @@
     cameraPreview: camera_preview
     partyPanels: [party1, party2]
     activePokemonPanels: [_playerActivePokemon, _opponentActivePokemon]
-    playerChosenPokemonPanels:[_playerFirstChosenPokemon, _playerSecondChosenPokemon, _playerThirdChosenPokemon]
+    playerChosenPokemonPanel:_playerChosenPokemon
     opponentChosenPokemonPanels:[_opponentFirstChosenPokemon, _opponentSecondChosenPokemon, _opponentThirdChosenPokemon]
     wazaListPanels: [_playerWazaList, _opponentWazaList]
     trainerInfoPanels: [_playerInfo, _opponentInfo]
@@ -31,23 +31,12 @@
                         id: party1
                         on_select: root.select_party_pokemon(0, self.selected_index)
                     BoxLayout:
-                        Label:
-                            text:"選出"
+                        padding:[30,0,0,0]
                         PlayerChosenPokemonPanel:
-                            id:_playerFirstChosenPokemon
-                        PlayerChosenPokemonPanel:
-                            id:_playerSecondChosenPokemon
-                        PlayerChosenPokemonPanel:
-                            id:_playerThirdChosenPokemon
-                    SimpleButton:
-                        text: "読取"
-                        on_release: root.recognize_party()
+                            id:_playerChosenPokemon
                     SimpleButton:
                         text: "PT"
                         on_release: root.load_party()
-                    SimpleButton:
-                        text: "編集"
-                        on_release: root.edit_party(0)
                 BoxLayout:
                     size_hint_y: None
                     height: 40
@@ -82,7 +71,8 @@
                         id: party2
                         on_select: root.select_party_pokemon(1, self.selected_index)
                     SimpleButton:
-                        text: "検索"
+                        text: "読取"
+                        on_release: root.recognize_party()                    
                     SimpleButton:
                         text: "編集"
                         on_release: root.edit_party(1)
@@ -146,103 +136,105 @@
                         size_hint_x: 1
                         id: _opponentWazaList
         GridLayout:
-            cols:7
+            cols:6
             rows:5
             padding: [5, 5]
             spacing: [5, 5]
-            TrainerInfoPanel:
-                id: _playerInfo
-                size_hint_x: 5
+            Label:
+                text: "基本情報（自分）"
                 size_hint_y: 2.5
                 height: 120
-            BoxLayout:
-                orientation: "vertical"
-                padding:[10,10,10,0]
-                spacing:25
-                size_hint_x: 3
-                BoxLayout:
-                    size_hint_y: 1
-                    Label:
-                        text: "カメラID"
-                    TextInput:
-                        id: camera_id
-                        text: str(root.cameraId)
-                        multiline: False
-                Button:
-                    text: "カメラ開始/切替"
-                    on_release: root.set_camera()
-                BoxLayout:
-                    size_hint_y: 0.5
-                    CheckBox:
-                        group: 'radio'
-                        on_press: root.change_result(self, 1)
-                    Label:
-                        text: "勝ち"
-                    CheckBox:
-                        group: 'radio'
-                        on_press: root.change_result(self, 0)
-                    Label:
-                        text: "負け"
-                BoxLayout:
-                    height: 50
-                    size_hint_y: 1
-                    Button:
-                        text: "登録"
-                        on_release: root.record_battle()
-                    Button:
-                        text: "クリア"
-                        on_release: root.init_battle()
             Label:
                 text: "せいかく"
-                size_hint_x: 5
                 size_hint_y: 2.5
                 height: 120
             Label:
                 text: "もちもの"
-                size_hint_x: 5
                 size_hint_y: 2.5
                 height: 120
             Label:
                 text: "とくせい"
-                size_hint_x: 5
                 size_hint_y: 2.5
                 height: 120
             Label:
                 text: "テラスタイプ"
-                size_hint_x: 5
+                size_hint_y: 2.5
+                height: 120
+            Label:
+                text: "基本情報（相手）"
                 size_hint_y: 2.5
                 height: 120
             TrainerInfoPanel:
-                id: _opponentInfo
-                size_hint_x: 5
+                id: _playerInfo
                 size_hint_y: 2.5
                 height: 120
-            BoxLayout
-                orientation: "vertical"
-                size_hint_x: 3
-                size_hint_y: 2
-                Button:
-                    text: "素早さ比較"
-                    size_hint_y: 1
-                    on_release: root.set_speed_check()
-                TimerLabel:
-                    id: _time
-                    size_hint_y: 3
-                    height: 120
+            BoxLayout:
+                size_hint_y: 2.5
+                BoxLayout:
+                    orientation: "vertical"
+                    padding:[10,10,10,0]
+                    spacing:25
+                    size_hint_x: 0.4
+                    BoxLayout:
+                        size_hint_y: 1
+                        Label:
+                            text: "カメラID"
+                            size_hint_x: 0.6
+                        TextInput:
+                            id: camera_id
+                            size_hint_x: 0.4
+                            text: str(root.cameraId)
+                            multiline: False
+                    Button:
+                        text: "開始/切替"
+                        on_release: root.set_camera()
+                    BoxLayout:
+                        size_hint_y: 0.5
+                        CheckBox:
+                            group: 'radio'
+                            on_press: root.change_result(self, 1)
+                        Label:
+                            text: "勝ち"
+                        CheckBox:
+                            group: 'radio'
+                            on_press: root.change_result(self, 0)
+                        Label:
+                            text: "負け"
+                    BoxLayout:
+                        height: 50
+                        size_hint_y: 1
+                        Button:
+                            text: "登録"
+                            on_release: root.record_battle()
+                        Button:
+                            text: "クリア"
+                            on_release: root.init_battle()
+                BoxLayout
+                    orientation: "vertical"
+                    size_hint_x: 0.6
+                    Button:
+                        text: "素早さ比較"
+                        size_hint_y: 1
+                        on_release: root.set_speed_check()
+                    TimerLabel:
+                        id: _time
+                        size_hint_y: 3
+                        height: 120
             OpponentChosenPokemonPanel:
                 id: _opponentFirstChosenPokemon
-                size_hint_x: 5
                 size_hint_y: 2
                 height: 120
             OpponentChosenPokemonPanel:
                 id: _opponentSecondChosenPokemon
-                size_hint_x: 5
                 size_hint_y: 2
                 height: 120
             OpponentChosenPokemonPanel:
                 id: _opponentThirdChosenPokemon
-                size_hint_x: 5
                 size_hint_y: 2
+                height: 120
+            TrainerInfoPanel:
+                id: _opponentInfo
+                size_hint_y: 2.5
                 height: 120
 
 <SimpleButton@Button>

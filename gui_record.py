@@ -14,38 +14,43 @@ from gui import WazaButton, IconToggleButton
 
 #選出された自分ポケモン表示パネル
 class PlayerChosenPokemonPanel(BoxLayout):
-    name = StringProperty("")
-    doryoku = StringProperty("")
-    item = StringProperty("")
-    ability = StringProperty("")
-    terastype = ObjectProperty(Types.なし)
-    waza_list = ListProperty([])
+    name = ListProperty(["","",""])
+    doryoku = ListProperty(["","",""])
+    item = ListProperty(["","",""])
+    ability = ListProperty(["","",""])
+    terastype = ObjectProperty([Types.なし,Types.なし,Types.なし])
+    waza_list = ListProperty([["","","",""],["","","",""],["","","",""]])
 
     def __init__(self, **kw):
         super(PlayerChosenPokemonPanel, self).__init__(**kw)
-        self.__buttons = IconToggleButton(
-            size_hint=(None, None), size=(40, 40), group="party",on_release=self.on_click_icon)
-        self.add_widget(self.__buttons)
+        self.__buttons: list[IconToggleButton] = []
+        label = Label(text="選出",size_hint=(None, None), size=(40, 40))
+        self.add_widget(label)
+        for i in range(3):
+            btn = IconToggleButton(no=i,size_hint=(None, None), size=(40, 40), group="party")
+            btn.bind(on_release=lambda x: self.on_click_icon(x.no))
+            self.__buttons.append(btn)
+            self.add_widget(btn)
 
-    def set_pokemon(self, pokemon: Pokemon):
-        self.__buttons.icon = pokemon.icon
-        self.name = pokemon.name
-        self.doryoku = pokemon.doryoku.to_string
-        self.item = pokemon.item
-        self.ability = pokemon.ability
-        self.terastype = pokemon.terastype
+    def set_pokemon(self, chosen_num: int, pokemon: Pokemon):
+        self.__buttons[chosen_num].icon = pokemon.icon
+        self.name[chosen_num] = pokemon.name
+        self.doryoku[chosen_num] = pokemon.doryoku.to_string
+        self.item[chosen_num] = pokemon.item
+        self.ability[chosen_num] = pokemon.ability
+        self.terastype[chosen_num] = pokemon.terastype
         for i in range(4):
-            waza = pokemon.waza_list[i].name if pokemon.waza_list[i] is not None else ""
-            self.waza_list.append(waza)
+            self.waza_list[chosen_num][i] = pokemon.waza_list[i].name if pokemon.waza_list[i] is not None else ""
 
-    def on_click_icon(self, *args):
-        self.__buttons.icon = "image/blank.png"
-        self.name = ""
-        self.item = ""
-        self.ability = ""
-        self.terastype = Types.なし
-        self.doryoku = ""
-        self.waza_list = []
+
+    def on_click_icon(self, chosen_num:int):
+        self.__buttons[chosen_num].icon = "image/blank.png"
+        self.name[chosen_num] = ""
+        self.item[chosen_num] = ""
+        self.ability[chosen_num] = ""
+        self.terastype[chosen_num] = Types.なし
+        self.doryoku[chosen_num] = ""
+        self.waza_list[chosen_num] = ["","","",""]
 
 #選出された相手ポケモン表示パネル
 class OpponentChosenPokemonPanel(BoxLayout, EventDispatcher):

@@ -26,7 +26,7 @@ class CalcRecWidget(BoxLayout):
     partyPanels = ListProperty()
     activePokemonPanels = ListProperty()
     wazaListPanels = ListProperty()
-    playerChosenPokemonPanels = ListProperty()
+    playerChosenPokemonPanel = ObjectProperty
     opponentChosenPokemonPanels = ListProperty()
     trainerInfoPanels = ListProperty()
     timerLabel = ObjectProperty()
@@ -67,7 +67,7 @@ class CalcRecWidget(BoxLayout):
     def select_player_chosen_pokemon(self, chosen_num: int):
         pokemon = self.active_pokemons[0]
         if pokemon is not None:
-            self.playerChosenPokemonPanels[chosen_num].set_pokemon(pokemon)
+            self.playerChosenPokemonPanel.set_pokemon(chosen_num,pokemon)
     
     def select_opponent_chosen_pokemon(self, chosen_num: int):
         pokemon = self.active_pokemons[1]
@@ -174,7 +174,7 @@ class CalcRecWidget(BoxLayout):
         for banme in range(3):
             banmeResult =self.cameraPreview.imgRecog.recognize_chosen_num(banme)
             if banmeResult != -1 and self.party[0][banmeResult] is not None:
-                self.playerChosenPokemonPanels[banme].set_pokemon(self.party[0][banmeResult])
+                self.playerChosenPokemonPanel[banme].set_pokemon(self.party[0][banmeResult])
 
     def recognize_oppo_tn(self):
         oppo_tn = self.cameraPreview.imgRecog.recognize_oppo_tn() or ""
@@ -189,15 +189,15 @@ class CalcRecWidget(BoxLayout):
         self.refresh_party_icons()
         for chosen_num in range(len(self.opponentChosenPokemonPanels)):
             self.opponentChosenPokemonPanels[chosen_num].on_click_icon()
-        for chosen_num in range(len(self.playerChosenPokemonPanels)):
-            self.playerChosenPokemonPanels[chosen_num].on_click_icon()
+        for chosen_num in range(3):
+            self.playerChosenPokemonPanel.on_click_icon(chosen_num)
 
     def record_battle(self):
         time = 20*60 - ( int(self.timerLabel.minutes) + int(self.timerLabel.seconds)*60 )
         self.trainerInfoPanels[0].update()
         self.trainerInfoPanels[1].update()
 
-        battle = Battle.set_battle(self.trainerInfoPanels, self.party, self.playerChosenPokemonPanels, self.opponentChosenPokemonPanels, time, self.result)
+        battle = Battle.set_battle(self.trainerInfoPanels, self.party, self.playerChosenPokemonPanel, self.opponentChosenPokemonPanels, time, self.result)
         battle_data = dataclasses.astuple(battle)
         DB_battle.register_battle(battle_data)
         self.timerLabel.reset()

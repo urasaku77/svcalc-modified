@@ -300,7 +300,7 @@ class Pokemon:
             self.__seikaku = data[3]
             self.__item = data[4]
             self.__ability = data[5]
-            self.__terastype = Types[data[6]] or Types.なし
+            self.__terastype = Types[data[6]] if data[6] != "" else Types.なし
             for i in range(6):
                 if len(data[i+7]):
                     self.__waza_list[i] = WazaBase(data[i+7])
