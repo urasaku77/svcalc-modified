@@ -10,10 +10,45 @@ import pandas as pd
 
 from pokedata.const import 変化, Types
 from pokedata.pokemon import Pokemon
-from gui import WazaButton
+from gui import WazaButton, IconToggleButton
 
-#選出されたポケモン表示パネル
-class ChosenPokemonPanel(BoxLayout, EventDispatcher):
+#選出された自分ポケモン表示パネル
+class PlayerChosenPokemonPanel(BoxLayout):
+    name = StringProperty("")
+    doryoku = StringProperty("")
+    item = StringProperty("")
+    ability = StringProperty("")
+    terastype = ObjectProperty(Types.なし)
+    waza_list = ListProperty([])
+
+    def __init__(self, **kw):
+        super(PlayerChosenPokemonPanel, self).__init__(**kw)
+        self.__buttons = IconToggleButton(
+            size_hint=(None, None), size=(40, 40), group="party",on_release=self.on_click_icon)
+        self.add_widget(self.__buttons)
+
+    def set_pokemon(self, pokemon: Pokemon):
+        self.__buttons.icon = pokemon.icon
+        self.name = pokemon.name
+        self.doryoku = pokemon.doryoku.to_string
+        self.item = pokemon.item
+        self.ability = pokemon.ability
+        self.terastype = pokemon.terastype
+        for i in range(4):
+            waza = pokemon.waza_list[i].name if pokemon.waza_list[i] is not None else ""
+            self.waza_list.append(waza)
+
+    def on_click_icon(self, *args):
+        self.__buttons.icon = "image/blank.png"
+        self.name = ""
+        self.item = ""
+        self.ability = ""
+        self.terastype = Types.なし
+        self.doryoku = ""
+        self.waza_list = []
+
+#選出された相手ポケモン表示パネル
+class OpponentChosenPokemonPanel(BoxLayout, EventDispatcher):
 
     __events__ = ("on_click_icon", )
 
@@ -26,15 +61,14 @@ class ChosenPokemonPanel(BoxLayout, EventDispatcher):
     abilities = ListProperty([])
     ability = StringProperty("")
     terastype = ObjectProperty(Types.なし)
+    terastype_icon = ObjectProperty(Types.なし.icon)
 
-    chosen_num = NumericProperty(-1)
     evs_combobox = ObjectProperty()
-    teras_button = ObjectProperty()
     icon = StringProperty("")
     
     def __init__(self, **kw):
         from kivy_gui.popup import TypeSelectPopupContent
-        super(ChosenPokemonPanel, self).__init__(**kw)
+        super(OpponentChosenPokemonPanel, self).__init__(**kw)
         self.popup = Popup(
             title="テラスタイプ選択",
             content=TypeSelectPopupContent(selected=self.on_select_terastype),
@@ -46,21 +80,13 @@ class ChosenPokemonPanel(BoxLayout, EventDispatcher):
             return Types.なし.icon
         return self.terastype.icon
 
-    def set_pokemon(self, player_id: int, pokemon: Pokemon):
+    def set_pokemon(self, pokemon: Pokemon):
         self.name = pokemon.name
         self.icon = pokemon.icon
         self.items = pd.read_csv("battle/item.csv",encoding="utf_8",sep=',',index_col=0).index.tolist()
         self.abilities = pokemon.abilities
-        if player_id == 0:
-            self.doryoku = pokemon.doryoku.to_string
-            self.item = pokemon.item
-            self.ability = pokemon.ability
-            for i in range(4):
-                waza = pokemon.waza_list[i].name if pokemon.waza_list[i] is not None else ""
-                self.register_chosen_waza(waza)
 
     def on_click_icon(self, *args):
-        self.teras_button.icon = Types.なし.icon
         self.name = ""
         self.icon = ""
         self.items = []
@@ -68,6 +94,8 @@ class ChosenPokemonPanel(BoxLayout, EventDispatcher):
         self.abilities = []
         self.ability = ""
         self.doryoku = ""
+        self.terastype = Types.なし
+        self.terastype_icon = Types.なし.icon
         self.chosenWazaListPanel.clear_all_chosen_waza()
 
     def on_select_doryoku_preset(self, value):
@@ -81,7 +109,7 @@ class ChosenPokemonPanel(BoxLayout, EventDispatcher):
         if self.name != "":
             terastype = Types[value]
             self.terastype = terastype
-            self.teras_button.icon = terastype.icon
+            self.terastype_icon = terastype.icon
             self.popup.dismiss()
 
     def register_chosen_waza(self, waza: str):

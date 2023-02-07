@@ -1,9 +1,8 @@
 #:import * gui
 #:include gui.kv
 
-<ChosenPokemonPanel>
+<OpponentChosenPokemonPanel>
     evs_combobox: _evs_combobox
-    teras_button: _teras_button
     chosenWazaListPanel: chosenWazaListPanel
     BoxLayout:
         orientation: "vertical"
@@ -20,10 +19,9 @@
                     size: 60, 60
                     on_release: root.dispatch("on_click_icon")
                 IconButton:
-                    id: _teras_button
                     size_hint_y: None
                     height: 30
-                    icon: root.battle_terastype_icon
+                    icon: root.terastype_icon
                     font_size: 14
                     on_release: root.select_terastype()
             GridLayout:
