@@ -408,5 +408,5 @@ class Pokemon:
             self.statechanged()
 
     def on_stage(self):
-        self.__battle_terastype = Types.なし
+        #self.__battle_terastype = Types.なし
         self.__rank = Stats(init_value=0)

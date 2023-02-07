@@ -199,6 +199,7 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
     def on_pokemon(self, *args):
         pokemon: Pokemon = self.pokemon
         self.ability_enable = pokemon.ability_enable
+        self.teras_button.icon = pokemon.battle_terastype.icon
 
     def on_click_icon(self, *args):
         pass

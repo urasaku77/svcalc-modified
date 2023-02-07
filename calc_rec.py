@@ -73,6 +73,7 @@ class CalcRecWidget(BoxLayout):
         pokemon = self.active_pokemons[1]
         if pokemon is not None:
             self.opponentChosenPokemonPanels[chosen_num].set_pokemon(pokemon)
+            self.opponentChosenPokemonPanels[chosen_num].set_func_for_terastype(self.change_opponent_chosen_terastype)
 
     def set_camera(self):
         self.cameraId = int(self.ids["camera_id"].text)
@@ -138,6 +139,14 @@ class CalcRecWidget(BoxLayout):
         for pokemon_index in range(len(self.opponentChosenPokemonPanels)):
             if self.opponentChosenPokemonPanels[pokemon_index].name != "" and self.opponentChosenPokemonPanels[pokemon_index].name == self.active_pokemons[1].name:
                 self.opponentChosenPokemonPanels[pokemon_index].register_chosen_waza(waza_name)
+
+    def change_opponent_chosen_terastype(self, name:str, terastype):
+        for i in range(6):
+            if self.party[1][i] is not None and self.party[1][i].name == name:
+                self.party[1][i].terastype = terastype
+                self.party[1][i].battle_terastype = terastype
+                if self.active_pokemons[1] is not None and self.active_pokemons[1].name == name:
+                    self.activePokemonPanels[1].on_select_terastype(terastype.name)
 
     def change_result(self, checkbox, result: int):
         if checkbox.active is False:

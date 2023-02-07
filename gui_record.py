@@ -42,7 +42,6 @@ class PlayerChosenPokemonPanel(BoxLayout):
         for i in range(4):
             self.waza_list[chosen_num][i] = pokemon.waza_list[i].name if pokemon.waza_list[i] is not None else ""
 
-
     def on_click_icon(self, chosen_num:int):
         self.__buttons[chosen_num].icon = "image/blank.png"
         self.name[chosen_num] = ""
@@ -74,10 +73,14 @@ class OpponentChosenPokemonPanel(BoxLayout, EventDispatcher):
     def __init__(self, **kw):
         from kivy_gui.popup import TypeSelectPopupContent
         super(OpponentChosenPokemonPanel, self).__init__(**kw)
+        self.func_for_terastype = self.dummy
         self.popup = Popup(
             title="テラスタイプ選択",
             content=TypeSelectPopupContent(selected=self.on_select_terastype),
             size_hint=(0.8, 0.6))
+
+    def set_func_for_terastype(self,func):
+        self.func_for_terastype = func
 
     @property
     def battle_terastype_icon(self):
@@ -115,10 +118,14 @@ class OpponentChosenPokemonPanel(BoxLayout, EventDispatcher):
             terastype = Types[value]
             self.terastype = terastype
             self.terastype_icon = terastype.icon
+            self.func_for_terastype(self.name, self.terastype)
             self.popup.dismiss()
 
     def register_chosen_waza(self, waza: str):
         self.chosenWazaListPanel.register_chosen_waza(waza)
+    
+    def dummy(self):
+        pass
 
 # 技パネル一式
 class ChosenWazaListPanel(BoxLayout):
