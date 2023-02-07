@@ -216,6 +216,12 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
         self.pokemon.set_doryoku_preset(value)
         self.evs_combobox.text = self.pokemon.marked_status_text
 
+    def on_click_terasicon(self):
+        if self.player == 0:
+            self.set_terastype()
+        else:
+            self.select_terastype()
+
     def set_terastype(self):
         if self.pokemon.battle_terastype == Types.なし:
             self.on_select_terastype(self.pokemon.terastype.name)

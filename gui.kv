@@ -25,7 +25,7 @@
             height: 30
             icon: root.battle_terastype_icon
             font_size: 14
-            on_release: root.set_terastype()
+            on_release: root.on_click_terasicon()
         IconButton:
             id: _formchange_icon
             icon: root.pokemon.next_form_icon if root.pokemon is not None else ""
