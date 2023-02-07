@@ -14,6 +14,7 @@
     opponentChosenPokemonPanels:[_opponentFirstChosenPokemon, _opponentSecondChosenPokemon, _opponentThirdChosenPokemon]
     wazaListPanels: [_playerWazaList, _opponentWazaList]
     trainerInfoPanels: [_playerInfo, _opponentInfo]
+    pokemonInfoPanels: [_playerPokemonInfo, _opponentPokemonInfo]
     timerLabel: _time
     BoxLayout:
         orientation: "vertical"
@@ -140,8 +141,8 @@
             rows:5
             padding: [5, 5]
             spacing: [5, 5]
-            Label:
-                text: "基本情報（自分）"
+            PokemonInfoPanel:
+                id:_playerPokemonInfo
                 size_hint_y: 2.5
                 height: 120
             Label:
@@ -160,8 +161,8 @@
                 text: "テラスタイプ"
                 size_hint_y: 2.5
                 height: 120
-            Label:
-                text: "基本情報（相手）"
+            PokemonInfoPanel:
+                id:_opponentPokemonInfo
                 size_hint_y: 2.5
                 height: 120
             TrainerInfoPanel:

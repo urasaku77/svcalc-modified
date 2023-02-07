@@ -279,3 +279,45 @@ class TrainerInfoPanel(BoxLayout):
             self.rank = ""
             self.ids["name"].text = ""
             self.ids["rank"].text = ""
+
+class PokemonInfoPanel(BoxLayout):
+    type1 = StringProperty("")
+    type1_img = StringProperty(Types.なし.icon)
+    type2 = StringProperty("")
+    type2_img = StringProperty(Types.なし.icon)
+    h = StringProperty("")
+    a = StringProperty("")
+    b = StringProperty("")
+    c = StringProperty("")
+    d = StringProperty("")
+    s = StringProperty("")
+    weight = StringProperty("")
+    ketaguri = StringProperty("")
+
+    def __init__(self, **kwargs):
+        super(PokemonInfoPanel, self).__init__(**kwargs)
+
+    def set_pokemon(self, pokemon: Pokemon):
+        self.type1 = pokemon.type[0].name
+        self.type1_img = pokemon.type[0].icon
+        self.type2 = pokemon.type[1].name if len(pokemon.type) > 1 else ""
+        self.type2_img = pokemon.type[1].icon if self.type2 != "" else Types.なし.icon
+        self.h = str(pokemon.syuzoku.H)
+        self.a = str(pokemon.syuzoku.A)
+        self.b = str(pokemon.syuzoku.B)
+        self.c = str(pokemon.syuzoku.C)
+        self.d = str(pokemon.syuzoku.D)
+        self.s = str(pokemon.syuzoku.S)
+        self.weight = str(pokemon.weight)
+        if pokemon.weight < 10:
+            self.ketaguri = str(20)
+        elif pokemon.weight < 25:
+            self.ketaguri = str(40)
+        elif pokemon.weight < 50:
+            self.ketaguri = str(60)
+        elif pokemon.weight < 100:
+            self.ketaguri = str(80)
+        elif pokemon.weight < 200:
+            self.ketaguri = str(100)
+        else:
+            self.ketaguri = str(120)

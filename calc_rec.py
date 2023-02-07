@@ -29,6 +29,7 @@ class CalcRecWidget(BoxLayout):
     playerChosenPokemonPanel = ObjectProperty
     opponentChosenPokemonPanels = ListProperty()
     trainerInfoPanels = ListProperty()
+    pokemonInfoPanels = ListProperty()
     timerLabel = ObjectProperty()
 
     def __init__(self, **kwargs):
@@ -116,6 +117,7 @@ class CalcRecWidget(BoxLayout):
         self.active_pokemons[player_id].statechanged_handler = self.pokemon_state_changed
         self.activePokemonPanels[player_id].pokemon = pokemon
         self.wazaListPanels[player_id].set_pokemon(pokemon)
+        self.pokemonInfoPanels[player_id].set_pokemon(pokemon)
         self.calc_damage()
 
     def calc_damage(self):

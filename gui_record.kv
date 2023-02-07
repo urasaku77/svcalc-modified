@@ -100,3 +100,66 @@
                 id: memo
                 text: ""
                 size_hint_x: 5
+
+<PokemonInfoPanel>
+    BoxLayout:
+        orientation: "vertical"
+        BoxLayout:
+            BoxLayout
+                Image:
+                    source: root.type1_img
+                Label:
+                    text:root.type1
+            BoxLayout
+                Image:
+                    source: root.type2_img
+                Label:
+                    text:root.type2
+        BoxLayout:
+            BoxLayout:
+                orientation: "vertical"
+                Label:
+                    text:"HP"
+                Label:
+                    text:root.h
+                    font_size: 0.5*self.width
+            BoxLayout:
+                orientation: "vertical"
+                Label:
+                    text:"攻撃"
+                Label:
+                    text:root.a
+                    font_size: 0.5*self.width
+            BoxLayout:
+                orientation: "vertical"
+                Label:
+                    text:"防御"
+                Label:
+                    text:root.b
+                    font_size: 0.5*self.width
+            BoxLayout:
+                orientation: "vertical"
+                Label:
+                    text:"特攻"
+                Label:
+                    text:root.c
+                    font_size: 0.5*self.width
+            BoxLayout:
+                orientation: "vertical"
+                Label:
+                    text:"特防"
+                Label:
+                    text:root.d
+                    font_size: 0.5*self.width
+            BoxLayout:
+                orientation: "vertical"
+                Label:
+                    text:"素早さ"
+                Label:
+                    text:root.s
+                    font_size: 0.5*self.width
+        BoxLayout:
+            Label:
+                text:"重さ："+root.weight
+            Label:
+                text:"けたぐりの威力："+root.ketaguri
