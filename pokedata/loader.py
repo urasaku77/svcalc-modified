@@ -17,6 +17,14 @@ def get_party_data(file_path: str = 'custom/party.csv') -> list[list[str]]:
         data = data[1:7]
         return data
 
+def get_home_data(name:str, file_path: str):
+    data_list:list[list[str]] = []
+    with open(file_path, encoding="utf-8") as csv_file:
+        data = [x for x in csv.reader(csv_file)]
+        for i in range(len(data)):
+            if data[i][0] == name:
+                data_list.append([data[i][1],data[i][2]])
+    return data_list
 
 if __name__ == '__main__':
 

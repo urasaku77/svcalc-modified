@@ -15,6 +15,7 @@
     wazaListPanels: [_playerWazaList, _opponentWazaList]
     trainerInfoPanels: [_playerInfo, _opponentInfo]
     pokemonInfoPanels: [_playerPokemonInfo, _opponentPokemonInfo]
+    homeInfoPanels: [_tokusei, _motimono, _tarastype]
     timerLabel: _time
     BoxLayout:
         orientation: "vertical"
@@ -146,19 +147,22 @@
                 size_hint_y: 2.5
                 height: 120
             Label:
-                text: "せいかく"
+                text: "工事中"
                 size_hint_y: 2.5
                 height: 120
-            Label:
-                text: "もちもの"
+            HomeInfoPanel:
+                id: _tokusei
+                title_name: "とくせい"
                 size_hint_y: 2.5
                 height: 120
-            Label:
-                text: "とくせい"
+            HomeInfoPanel:
+                id: _motimono
+                title_name: "もちもの"
                 size_hint_y: 2.5
                 height: 120
-            Label:
-                text: "テラスタイプ"
+            HomeInfoPanel:
+                id: _tarastype
+                title_name: "テラスタイプ"
                 size_hint_y: 2.5
                 height: 120
             PokemonInfoPanel:

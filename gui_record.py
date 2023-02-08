@@ -280,6 +280,7 @@ class TrainerInfoPanel(BoxLayout):
             self.ids["name"].text = ""
             self.ids["rank"].text = ""
 
+#ポケモン基本情報表示パネル
 class PokemonInfoPanel(BoxLayout):
     type1 = StringProperty("")
     type1_img = StringProperty(Types.なし.icon)
@@ -321,3 +322,40 @@ class PokemonInfoPanel(BoxLayout):
             self.ketaguri = str(100)
         else:
             self.ketaguri = str(120)
+
+class HomeInfoPanel(BoxLayout):
+    title_name = StringProperty("")
+    data_list = ListProperty([])
+
+    def __init__(self, **kw):
+        super(HomeInfoPanel, self).__init__(**kw)
+        self.orientation = "vertical"
+        label_title = Label(text="HOME情報", markup=True)
+        self.add_widget(label_title)
+
+    def set_home_data(self,name:str):
+        file_path = ""
+        match self.title_name:
+            case "せいかく":
+                pass
+            case "もちもの":
+                file_path = "./home/home_motimono.csv"
+            case "とくせい":
+                file_path = "./home/home_tokusei.csv"
+            case "テラスタイプ":
+                file_path = "./home/home_terastal.csv"
+
+        from pokedata.loader import get_home_data
+        data_list = get_home_data(name, file_path)
+        self.clear_widgets()
+        label_title = Label(text='[u][b]' + self.title_name + '[/b][/u]', markup=True)
+        self.add_widget(label_title)
+        for i in range(len(data_list)):
+            bl = BoxLayout()
+            label_rank = Label(text=str(i+1))
+            label_name = Label(text=data_list[i][0])
+            label_rate = Label(text=data_list[i][1])
+            bl.add_widget(label_rank)
+            bl.add_widget(label_name)
+            bl.add_widget(label_rate)
+            self.add_widget(bl)
