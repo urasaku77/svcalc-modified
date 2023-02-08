@@ -9,6 +9,7 @@ class home():
     ts2 = ""
     pdetail = {}
 
+    print("ランクマッチ情報取得")
     url = 'https://api.battle.pokemon-home.com/tt/cbd/competition/rankmatch/list'
     headers = {
         "accept": "application/json, text/javascript, */*",
@@ -28,6 +29,7 @@ class home():
         rst = rankmatch_list["list"][next(iter(rankmatch_list["list"]))][cid]["rst"]
         ts2 = rankmatch_list["list"][next(iter(rankmatch_list["list"]))][cid]["ts2"]
     
+    print("ポケモン情報取得")
     for i in range(1,7):
         url = 'https://resource.pokemon-home.com/battledata/ranking/scvi/'+str(cid)+"/"+str(rst)+"/"+str(ts2)+"/pdetail-"+str(i)
         headers = {
@@ -40,14 +42,15 @@ class home():
             pdetail = dict(pdetail, **pdetail_tmp)
         
     pokedex = ""
-    with open('./home/bundle.json', 'r',encoding="utf-8") as json_open:
+    with open('./bundle.json', 'r',encoding="utf-8") as json_open:
         pokedex = json.load(json_open)
 
-    os.remove('./home/home_waza.csv')
-    os.remove('./home/home_tokusei.csv')
-    os.remove('./home/home_motimono.csv')
-    os.remove('./home/home_terastal.csv')
+    os.remove('./home_waza.csv')
+    os.remove('./home_tokusei.csv')
+    os.remove('./home_motimono.csv')
+    os.remove('./home_terastal.csv')
 
+    print("CSV更新")
     for pokenum in pdetail.keys():
         for p_detail_id in pdetail[pokenum].keys():
             name = ""
@@ -117,23 +120,23 @@ class home():
             else:
                 name = pokedex['poke'][int(pokenum) -1]
             
-            with open('./home/home_waza.csv', 'a',encoding="utf-8") as waza_csv:
+            with open('./home_waza.csv', 'a',encoding="utf-8") as waza_csv:
                 for waza in pdetail[pokenum][p_detail_id]['temoti']['waza']:
                         writer = csv.writer(waza_csv, lineterminator="\n")
                         writer.writerow([name, pokedex['waza'][waza['id']],waza['val']])
 
-            with open('./home/home_tokusei.csv', 'a',encoding="utf-8") as tokusei_csv:
+            with open('./home_tokusei.csv', 'a',encoding="utf-8") as tokusei_csv:
                 for tokusei in pdetail[pokenum][p_detail_id]['temoti']['tokusei']:
                         writer = csv.writer(tokusei_csv, lineterminator="\n")
                         writer.writerow([name, pokedex['tokusei'][tokusei['id']],tokusei['val']])
             
-            with open('./home/home_motimono.csv', 'a',encoding="utf-8") as motimono_csv:
+            with open('./home_motimono.csv', 'a',encoding="utf-8") as motimono_csv:
                 for motimono in pdetail[pokenum][p_detail_id]['temoti']['motimono']:
                         writer = csv.writer(motimono_csv, lineterminator="\n")
                         writer.writerow([name, pokedex['itemname'][motimono['id']],motimono['val']])
 
-            with open('./home/home_terastal.csv', 'a',encoding="utf-8") as terastal_csv:
+            with open('./home_terastal.csv', 'a',encoding="utf-8") as terastal_csv:
                 for terastal in pdetail[pokenum][p_detail_id]['temoti']['terastal']:
                         writer = csv.writer(terastal_csv, lineterminator="\n")
                         writer.writerow([name, pokedex['pokeType'][int(terastal['id'])],terastal['val']])
-
+    print("CSV更新完了")
