@@ -296,6 +296,7 @@ class Pokemon:
         from pokedata.loader import get_default_data
         data = get_default_data(self.name)
         self.set_load_data(data, False)
+        self.set_waza_from_home()
 
     # CSV読み込みデータの設定
     def set_load_data(self, data, use_data:bool):
@@ -306,16 +307,17 @@ class Pokemon:
             self.__item = data[4]
             self.__ability = data[5]
             self.__terastype = Types[data[6]] if data[6] != "" else Types.なし
-            from pokedata.loader import get_home_data
-            waza_data = get_home_data(self.name, "./home/home_waza.csv")
             if use_data:
                 for i in range(6):
                     if len(data[i+7]):
-                        self.__waza_list[i] = WazaBase(data[i+7])
-            else:
-                for i in range(len(waza_data)):
-                    self.__waza_list[i] = WazaBase(waza_data[i][0])
-                    self.__waza_rate_list[i] = waza_data[i][1]
+                        self.__waza_list[i] = WazaBase(data[i+7])                              
+    
+    def set_waza_from_home(self):
+        from pokedata.loader import get_home_data
+        waza_data = get_home_data(self.name, "./home/home_waza.csv")
+        for i in range(len(waza_data)):
+            self.__waza_list[i] = WazaBase(waza_data[i][0])
+            self.__waza_rate_list[i] = waza_data[i][1]
 
     # タイプ相性値
     # テラスタイプがある場合、そのタイプで算出
