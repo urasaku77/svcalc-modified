@@ -35,6 +35,7 @@ class Pokemon:
         self.__ability: str = self.__abilities[0]
         self.__ability_enable: bool = False
         self.__waza_list: list[Optional[WazaBase]] = [None for _ in range(10)]
+        self.__waza_rate_list: list[Optional[float]] = [0.0 for _ in range(10)]
         self.__weight: float = 0.0
         self.__statechanged_handler: Optional[callable] = None
 
@@ -200,6 +201,10 @@ class Pokemon:
     @property
     def waza_list(self) -> list[WazaBase]:
         return self.__waza_list
+    
+    @property
+    def waza_rate_list(self) -> list[float]:
+        return self.__waza_rate_list
 
     @property
     def weight(self) -> float:
@@ -290,10 +295,10 @@ class Pokemon:
     def set_default_data(self):
         from pokedata.loader import get_default_data
         data = get_default_data(self.name)
-        self.set_load_data(data)
+        self.set_load_data(data, False)
 
     # CSV読み込みデータの設定
-    def set_load_data(self, data):
+    def set_load_data(self, data, use_data:bool):
         if len(data):
             self.__kotai.set_values_from_string(data[1])
             self.__doryoku.set_values_from_string(data[2])
@@ -301,9 +306,16 @@ class Pokemon:
             self.__item = data[4]
             self.__ability = data[5]
             self.__terastype = Types[data[6]] if data[6] != "" else Types.なし
-            for i in range(6):
-                if len(data[i+7]):
-                    self.__waza_list[i] = WazaBase(data[i+7])
+            from pokedata.loader import get_home_data
+            waza_data = get_home_data(self.name, "./home/home_waza.csv")
+            if use_data:
+                for i in range(6):
+                    if len(data[i+7]):
+                        self.__waza_list[i] = WazaBase(data[i+7])
+            else:
+                for i in range(len(waza_data)):
+                    self.__waza_list[i] = WazaBase(waza_data[i][0])
+                    self.__waza_rate_list[i] = waza_data[i][1]
 
     # タイプ相性値
     # テラスタイプがある場合、そのタイプで算出

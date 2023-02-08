@@ -26,6 +26,7 @@ class CalcRecWidget(BoxLayout):
     partyPanels = ListProperty()
     activePokemonPanels = ListProperty()
     wazaListPanels = ListProperty()
+    wazaRateList = ListProperty(["","","","","","","","","",""])
     playerChosenPokemonPanel = ObjectProperty
     opponentChosenPokemonPanels = ListProperty()
     trainerInfoPanels = ListProperty()
@@ -50,7 +51,7 @@ class CalcRecWidget(BoxLayout):
         from pokedata.loader import get_party_data
         for i, data in enumerate(get_party_data()):
             pokemon: Pokemon = Pokemon.by_name(data[0])
-            pokemon.set_load_data(data)
+            pokemon.set_load_data(data, True)
             self.set_party_pokemon(pokemon=pokemon, player_id=0, index=i)
 
     def edit_party(self, player_id: int):
@@ -122,6 +123,8 @@ class CalcRecWidget(BoxLayout):
         if player_id == 1:
             for homeInfoPanel in self.homeInfoPanels:
                 homeInfoPanel.set_home_data(pokemon.name)
+            for i in range(10):
+                self.wazaRateList[i] = str(pokemon.waza_rate_list[i])
         self.calc_damage()
 
     def calc_damage(self):
