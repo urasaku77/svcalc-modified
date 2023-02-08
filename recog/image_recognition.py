@@ -17,13 +17,17 @@ class ImageRecognition(object):
         '''
         self.coords=ConfCoordinate()
         self.path_tesseract = r"E:\Tesseract-OCR"
+        self.img_flag=False
 
     def set_image(self,img):
         self.img=img
+        self.img_flag=True
 
     def is_exist_image(self,temp_imgge_name,accuracy,coord_name):
         result=False
         coord=self.coords.dicCoord[coord_name]
+        if not self.img_flag:
+            return 
         img1 = self.img[coord.top : coord.bottom, coord.left: coord.right]
         temp=cv2.imread(temp_imgge_name)
         if temp is None:

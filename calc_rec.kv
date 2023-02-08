@@ -74,7 +74,7 @@
                         on_select: root.select_party_pokemon(1, self.selected_index)
                     SimpleButton:
                         text: "読取"
-                        on_release: root.recognize_party()                    
+                        on_release: root.recognize_before_battle()                    
                     SimpleButton:
                         text: "編集"
                         on_release: root.edit_party(1)

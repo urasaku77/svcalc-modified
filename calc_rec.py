@@ -85,7 +85,7 @@ class CalcRecWidget(BoxLayout):
         Clock.schedule_interval(self.start_battle, 1.0 / 60)
     
     def start_battle(self, dt):
-        if not self.cameraPreview.is_recording:
+        if not self.cameraPreview.imgRecog.img_flag:
             Clock.unschedule(self.start_battle)
             return
         if not self.battle_status and self.cameraPreview.imgRecog.is_exist_image("recog/recogImg/situation/aitewomiru.jpg",0.8,"aitewomiru"):
@@ -183,7 +183,7 @@ class CalcRecWidget(BoxLayout):
             oppo = self.cameraPreview.imgRecog.is_exist_image_max(pokemonImages, 0.7, coordsList[coord])
             if oppo != "":
                 oppo_shaped = self.cameraPreview.imgRecog.shape_poke_num(oppo)
-                oppo_pokemon = Pokemon.by_pid(oppo_shaped)
+                oppo_pokemon = Pokemon.by_pid(oppo_shaped, True)
                 self.set_party_pokemon(1, coord, oppo_pokemon)
 
     def recognize_player_banme(self):
@@ -192,11 +192,11 @@ class CalcRecWidget(BoxLayout):
         for banme in range(3):
             banmeResult =self.cameraPreview.imgRecog.recognize_chosen_num(banme)
             if banmeResult != -1 and self.party[0][banmeResult] is not None:
-                self.playerChosenPokemonPanel[banme].set_pokemon(self.party[0][banmeResult])
+                self.playerChosenPokemonPanel.set_pokemon(banme, self.party[0][banmeResult])
 
     def recognize_oppo_tn(self):
         oppo_tn = self.cameraPreview.imgRecog.recognize_oppo_tn() or ""
-        self.trainerInfoPanels[1].set_name = oppo_tn
+        self.trainerInfoPanels[1].set_name(oppo_tn)
 
     def init_battle(self):
         self.battle_status = False
@@ -227,7 +227,6 @@ class CalcRecWidget(BoxLayout):
             super().__init__(**kwargs)
             self.display_dummy_image()
             self.imgRecog=ImageRecognition()
-            self.is_recording=False
 
         def start(self, camera_id: int):
             self.capture = cv2.VideoCapture(camera_id, cv2.CAP_DSHOW)
@@ -239,7 +238,6 @@ class CalcRecWidget(BoxLayout):
         def update(self, dt):
             ret, self.frame = self.capture.read()
             if self.frame is not None:
-                self.is_recording=True
                 # Kivy Textureに変換
                 buf = cv2.flip(self.frame, 0).tobytes()
                 texture = Texture.create(size=(self.frame.shape[1], self.frame.shape[0]), colorfmt='bgr') 
@@ -250,7 +248,7 @@ class CalcRecWidget(BoxLayout):
             else:
                 Clock.unschedule(self.update)
                 self.display_dummy_image()
-                self.is_recording=False
+                self.imgRecog.img_flag=False
 
         def display_dummy_image(self):
             image = Picture.open("image/top.jpg")
