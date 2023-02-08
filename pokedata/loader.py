@@ -18,6 +18,8 @@ def get_party_data(file_path: str = 'custom/party.csv') -> list[list[str]]:
         return data
 
 def get_home_data(name:str, file_path: str):
+    if "イルカマン" in name:
+        name = "イルカマン"
     data_list:list[list[str]] = []
     with open(file_path, encoding="utf-8") as csv_file:
         data = [x for x in csv.reader(csv_file)]
