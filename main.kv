@@ -1,0 +1,26 @@
+#:import * calc_rec
+#:include calc_rec.kv
+
+RootWidget:
+    orientation: "vertical"
+    canvas.before:
+        Color:
+            rgb: (0.15, 0.15, 0.15)
+        Rectangle:
+            size: self.size
+            pos: self.pos
+    calcRecWidget: _calcRecWidget
+    TabbedPanel:
+        do_default_tab: False
+        TabbedPanelItem:
+            text: "対戦"
+            CalcRecWidget:
+                id: _calcRecWidget
+        TabbedPanelItem:
+            text: "分析"
+            Label:
+                text: "工事中"
+        TabbedPanelItem:
+            text: "パーティ"
+            Label:
+                text: "工事中"
