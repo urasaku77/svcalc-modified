@@ -1,0 +1,48 @@
+#:import Pokemon pokedata.pokemon.Pokemon
+#:import DORYOKU_PRESET pokedata.const.DORYOKU_PRESET
+#:import * gui
+#:include gui.kv
+#:import * gui_party
+#:include gui_party.kv
+#:include kivy_gui/popup.kv
+
+<EditPartyWidget>
+    partyPokemonPanels: [0,1,2,3,4,5]
+    GridLayout:
+        cols:3
+        rows:3
+        padding: [5, 5]
+        spacing: [5, 5]
+        Label:
+            text: "工事中"
+            size_hint_y: 1
+        Label:
+            text: "工事中"
+            size_hint_y: 1
+        Label:
+            text: "工事中"
+            size_hint_y: 1
+        PartyPokemonPanel:
+            id: 0
+            num: "1"
+            size_hint_y: 2
+        PartyPokemonPanel:
+            id: 1
+            num: "2"
+            size_hint_y: 2
+        PartyPokemonPanel:
+            id: 2
+            num: "3"
+            size_hint_y: 2
+        PartyPokemonPanel:
+            id: 3
+            num: "4"
+            size_hint_y: 2
+        PartyPokemonPanel:
+            id: 4
+            num: "5"
+            size_hint_y: 2
+        PartyPokemonPanel:
+            id: 5
+            num: "6"
+            size_hint_y: 2

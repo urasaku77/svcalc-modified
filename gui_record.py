@@ -82,12 +82,6 @@ class OpponentChosenPokemonPanel(BoxLayout, EventDispatcher):
     def set_func_for_terastype(self,func):
         self.func_for_terastype = func
 
-    @property
-    def battle_terastype_icon(self):
-        if self.name == "":
-            return Types.なし.icon
-        return self.terastype.icon
-
     def set_pokemon(self, pokemon: Pokemon):
         self.name = pokemon.name
         self.icon = pokemon.icon

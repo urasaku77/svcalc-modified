@@ -1,5 +1,7 @@
 #:import * calc_rec
 #:include calc_rec.kv
+#:import * edit_party
+#:include edit_party.kv
 
 RootWidget:
     orientation: "vertical"
@@ -10,6 +12,7 @@ RootWidget:
             size: self.size
             pos: self.pos
     calcRecWidget: _calcRecWidget
+    editPartyWidget: _editPartyWidget
     TabbedPanel:
         do_default_tab: False
         TabbedPanelItem:
@@ -22,5 +25,5 @@ RootWidget:
                 text: "工事中"
         TabbedPanelItem:
             text: "パーティ"
-            Label:
-                text: "工事中"
+            EditPartyWidget:
+                id: _editPartyWidget

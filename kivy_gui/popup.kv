@@ -250,3 +250,18 @@
                 on_press: root.set_wind(1)
             CheckBox:
                 on_press: root.set_bind(1)
+<PartyRegisterPopupContent>
+    PokeNameComboEdit:
+        id: _input
+        size_hint_x: 5 
+        size_hint_y: None
+        height: 30
+        hint_text: "ポケモン名を入力"
+        on_confirm: root.on_input_name(self.text)
+    Button:
+        size_hint_x: 1
+        size_hint_y: None
+        height: 30
+        font_size: 12
+        text: "クリア"
+        on_release: root.clear()

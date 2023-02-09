@@ -1,0 +1,71 @@
+#:import * gui
+#:include gui.kv
+
+<PartyPokemonPanel>
+    wazaListLabel: wazaListLabel
+    BoxLayout:
+        orientation: "vertical"
+        spacing:5
+        BoxLayout:
+            size_hint_y: 1
+            BoxLayout:
+                orientation: "vertical"
+                padding: [10,10,10,10]
+                spacing: 5
+                size_hint_x: 1
+                Label:
+                    text:root.num
+                IconButton:
+                    icon: root.icon
+                    on_release: root.on_click_icon()
+            BoxLayout:
+                orientation: "vertical"
+                padding: [10,10,10,10]
+                spacing: 5
+                size_hint_x: 3
+                Label:
+                    size_hint_y: 3
+                    text: root.name
+                BoxLayout:
+                    size_hint_y: 1
+                    ShortLabel:
+                        text: "テラス"
+                    IconButton:
+                        icon: root.terastype_icon
+                        text: root.terastype_name
+                        font_size: 14
+                        on_release: root.select_terastype()
+            GridLayout:
+                size_hint_x: 4
+                cols: 2
+                rows: 4
+                spacing: 5
+                padding: [10,10,10,10]
+                ShortLabel:
+                    text: "性格"
+                DropDownButton:
+                    text: root.character
+                    items: root.characters
+                    on_select_item: root.character = self.button_text
+                ShortLabel:
+                    text: "持ち物"
+                DropDownButton:
+                    text: root.item
+                    image_enable: True
+                    items: root.items
+                    on_select_item: root.item = self.button_text
+                ShortLabel:
+                    text: "特性"
+                DropDownButton:
+                    text: root.ability if root.name != "" else ""
+                    items: root.abilities if root.name != "" else ""
+                    on_select_item: root.ability = self.button_text
+        BoxLayout:
+            size_hint_y: 2
+            Label:
+                size_hint_x: 2
+                text:"個体値・努力値"
+            WazaListLabel:
+                id: wazaListLabel      
+                size_hint_x: 1
+                        

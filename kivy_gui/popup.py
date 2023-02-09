@@ -274,3 +274,34 @@ class SpeedCheckPopup(Popup):
             self.compare = ">"
         else:
             self.compare = "="
+
+class PartyRegisterPopup(Popup):
+
+    def __init__(self, **kwargs) -> None:
+        super(PartyRegisterPopup, self).__init__(**kwargs)
+        self.bind(on_open=lambda _: self.content.on_open())
+
+# パーティ登録用ポップアップコンテンツ
+class PartyRegisterPopupContent(BoxLayout):
+
+    selected = ObjectProperty(None)
+
+    def __init__(self, **kwargs) -> None:
+        super(PartyRegisterPopupContent, self).__init__(**kwargs)
+    
+    def on_open(self):
+        if self.pokename_input.text == "":
+            self.pokename_input.focus = True
+
+    @property
+    def pokename_input(self) -> PokeNameComboEdit:
+        return self.ids["_input"]
+    
+    # ポケモン名が入力された時
+    def on_input_name(self, name: str):
+        pokemon: Pokemon = Pokemon.by_name(name, default=True)
+        self.selected(pokemon)
+
+    def clear(self):
+        self.selected(None)
+        self.pokename_input.text = ""

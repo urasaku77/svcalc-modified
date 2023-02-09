@@ -30,6 +30,8 @@ __natures = {
     "むじゃき": __Nature(StatsKey.S, StatsKey.D),
 }
 
+def get_seikaku_list() -> list[str]:
+    return  [x for x in __natures.keys()]
 
 def get_seikaku_hosei(seikaku: str, key: StatsKey) -> float:
     if seikaku not in __natures:
