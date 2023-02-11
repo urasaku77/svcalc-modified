@@ -5,6 +5,12 @@
     wazaListLabel: wazaListLabel
     statusListPanel: statusListPanel
     BoxLayout:
+        canvas.before:
+            Color:
+                rgba: 1, 1, 1, 1
+            Line:
+                width: 1.5
+                rectangle: self.x, self.y, self.width, self.height
         orientation: "vertical"
         spacing:5
         BoxLayout:
@@ -63,6 +69,8 @@
                     on_select_item: root.ability = self.button_text
         BoxLayout:
             size_hint_y: 2
+            spacing: 5
+            padding: [10,10,10,10]
             StatusListPanel:
                 id: statusListPanel
                 size_hint_x: 3
