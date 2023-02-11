@@ -7,7 +7,7 @@
 #:include kivy_gui/popup.kv
 
 <EditPartyWidget>
-    partyPokemonPanels: [0,1,2,3,4,5]
+    partyPokemonPanels: [_first,_second,_third,_forth,_fifth,_sixth]
     GridLayout:
         cols:3
         rows:3
@@ -28,6 +28,7 @@
                 anchor_x:"center"
                 anchor_y:"center"
                 TextInput:
+                    id: num
                     size_hint_y: None
                     text:root.num
                     height: 40
@@ -38,6 +39,7 @@
                 anchor_x:"center"
                 anchor_y:"center"
                 TextInput:
+                    id: sub_num
                     size_hint_y: None
                     text:root.sub_num
                     height: 40
@@ -52,6 +54,7 @@
                 anchor_x:"center"
                 anchor_y:"center"
                 TextInput:
+                    id: title
                     size_hint_y: None
                     text:root.title
                     height: 40
@@ -64,7 +67,7 @@
                     size_hint_y: None
                     text: "保存"
                     height: 40
-                    on_release: root.save_csv
+                    on_release: root.save_csv()
         BoxLayout:
             size_hint_y: 0.5
             Label:
@@ -88,26 +91,26 @@
                     height: 40
                     on_release: root.change_using_csv
         PartyPokemonPanel:
-            id: 0
+            id: _first
             num: "1"
             size_hint_y: 2
         PartyPokemonPanel:
-            id: 1
+            id: _second
             num: "2"
             size_hint_y: 2
         PartyPokemonPanel:
-            id: 2
+            id: _third
             num: "3"
             size_hint_y: 2
         PartyPokemonPanel:
-            id: 3
+            id: _forth
             num: "4"
             size_hint_y: 2
         PartyPokemonPanel:
-            id: 4
+            id: _fifth
             num: "5"
             size_hint_y: 2
         PartyPokemonPanel:
-            id: 5
+            id: _sixth
             num: "6"
             size_hint_y: 2

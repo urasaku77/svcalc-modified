@@ -57,7 +57,10 @@ class PartyPokemonPanel(BoxLayout):
             self.icon = self.pokemon.icon
             self.abilities = self.pokemon.abilities
             for i in range(4):
-                self.register_chosen_waza(self.pokemon.waza_list[i].name)
+                if self.pokemon.waza_list[i] is not None:
+                    self.register_chosen_waza(self.pokemon.waza_list[i].name)
+                else:
+                    self.register_chosen_waza("")
         self.pokemon_popup.dismiss()
 
     def select_terastype(self, *_args):
@@ -86,6 +89,16 @@ class PartyPokemonPanel(BoxLayout):
         self.terastype_icon = Types.なし.icon
         self.terastype_name = Types.なし.name
         self.wazaListLabel.clear_all_chosen_waza()
+    
+    def set_csv_row(self):
+        waza_list = self.wazaListLabel.get_all_waza()
+        all_kotai = self.statusListPanel.get_all_kotai()
+        all_doryoku = self.statusListPanel.get_all_doryoku()
+
+        if self.pokemon is None:
+            return ""
+        else:
+            return [self.name, all_kotai, all_doryoku, self.character, self.item, self.ability, self.terastype_name if self.terastype_name != Types.なし.name else "", waza_list[0], waza_list[1], waza_list[2], waza_list[3]]
 
 # 技コンボボックスリスト
 class WazaListLabel(BoxLayout):
@@ -112,6 +125,12 @@ class WazaListLabel(BoxLayout):
         for waza in self.wazapanel_list:
             waza.waza = ""
             waza.waza_button.text = ""
+    
+    def get_all_waza(self):
+        waza_list = []
+        for waza in self.wazapanel_list:
+            waza_list.append(waza.waza)
+        return waza_list
 
 # 技コンボボックス
 class WazaPanel(BoxLayout):
@@ -137,8 +156,11 @@ class WazaPanel(BoxLayout):
 
 class StatusListPanel(BoxLayout):
 
+    statusPanels = ListProperty()
+
     def __init__(self, **kw):
         super(StatusListPanel, self).__init__(**kw)
+        self.type_list=["H","A","B","C","D","S"]
         self.orientation = "vertical"
         bl=BoxLayout()
         title_label = Label(text="",size_hint_x=0.6)
@@ -152,8 +174,23 @@ class StatusListPanel(BoxLayout):
         self.add_widget(bl)
 
         for i in range(6):
-            statusPanel = StatusPanel(index=i)
-            self.add_widget(statusPanel)        
+            self.statusPanel = StatusPanel(index=i)
+            self.statusPanels.append(self.statusPanel)
+            self.add_widget(self.statusPanel)
+    
+    def get_all_kotai(self):
+        all_kotai = ""
+        for i in range(len(self.statusPanels)):
+            if self.statusPanels[i].kotai != "31":
+                all_kotai += self.type_list[i] + str(self.statusPanels[i].kotai)
+        return all_kotai
+
+    def get_all_doryoku(self):
+        all_doryoku = ""
+        for i in range(len(self.statusPanels)):
+            if self.statusPanels[i].doryoku != "0":
+                all_doryoku += self.type_list[i] + str(self.statusPanels[i].doryoku)
+        return all_doryoku
 
 class StatusPanel(BoxLayout):
     index=NumericProperty(-1)
