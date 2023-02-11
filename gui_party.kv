@@ -3,6 +3,7 @@
 
 <PartyPokemonPanel>
     wazaListLabel: wazaListLabel
+    statusListPanel: statusListPanel
     BoxLayout:
         orientation: "vertical"
         spacing:5
@@ -62,10 +63,71 @@
                     on_select_item: root.ability = self.button_text
         BoxLayout:
             size_hint_y: 2
-            Label:
-                size_hint_x: 2
-                text:"個体値・努力値"
-            WazaListLabel:
-                id: wazaListLabel      
+            StatusListPanel:
+                id: statusListPanel
+                size_hint_x: 3
+            BoxLayout:
+                orientation: "vertical"
                 size_hint_x: 1
-                        
+                Label:
+                    text:"わざ"
+                    size_hint_y: 1
+                WazaListLabel:
+                    id: wazaListLabel      
+                    size_hint_y: 5
+<StatusPanel>
+    spacing: 5
+    padding: [5,5,5,5]
+    Label:
+        text:root.type
+        size_hint_x: 1
+    Label:
+        text:"0"
+        size_hint_x: 1.5
+    BoxLayout:
+        size_hint_x: 2
+        TextInput:
+            size_hint_x: 1.5
+            text:root.kotai
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint_x: 1
+            Button:
+                text:"▲"
+                on_release: root.change_kotai(up=True)
+            Button:
+                text:"▼"
+                on_release: root.change_kotai(up=False)
+    Button:
+        text:"0"
+        size_hint_x: 1
+        on_release: root.change_kotai(num=0)
+    Button:
+        text:"31"
+        size_hint_x: 1
+        on_release: root.change_kotai(num=31)
+    Slider:
+        id:slider
+        size_hint_x: 5
+        min: 0
+        max: 252
+        step: 4
+        orientation: "horizontal"
+        on_touch_move: root.change_doryoku(slider=True)
+    BoxLayout:
+        size_hint_x: 2
+        TextInput:
+            size_hint_x: 1.5
+            text:root.doryoku
+            on_text_validate: slider.value = int(self.text)
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint_x: 1
+            Button:
+                text:"▲"
+                on_release: root.change_doryoku(up=True)
+            Button:
+                text:"▼"
+                on_release: root.change_doryoku(up=False)
+<Spinbox@BoxLayout>:
+    

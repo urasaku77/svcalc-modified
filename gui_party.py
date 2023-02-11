@@ -2,6 +2,7 @@ from kivy.properties import ListProperty, ObjectProperty, StringProperty, Numeri
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.popup import Popup
 from kivy_gui.popup import PartyRegisterPopup, PartyRegisterPopupContent
+from kivy.uix.label import Label
 
 import pandas as pd
 
@@ -25,7 +26,9 @@ class PartyPokemonPanel(BoxLayout):
     terastype = ObjectProperty(Types.なし)
     terastype_icon = ObjectProperty(Types.なし.icon)
     terastype_name = ObjectProperty(Types.なし.name)
+    
     wazaListLabel = ObjectProperty()
+    statusListPanel = ObjectProperty()
 
     icon = StringProperty("")
     
@@ -132,3 +135,54 @@ class WazaPanel(BoxLayout):
             self.waza = value
             self.waza_button.text = self.waza
 
+class StatusListPanel(BoxLayout):
+
+    def __init__(self, **kw):
+        super(StatusListPanel, self).__init__(**kw)
+        self.orientation = "vertical"
+        bl=BoxLayout()
+        title_label = Label(text="",size_hint_x=0.6)
+        jisuu_label = Label(text="実数値",size_hint_x=0.5)
+        kotai_label = Label(text="個体値",size_hint_x=2)
+        doryoku_label = Label(text="努力値",size_hint_x=4)
+        bl.add_widget(title_label)
+        bl.add_widget(jisuu_label)
+        bl.add_widget(kotai_label)
+        bl.add_widget(doryoku_label)
+        self.add_widget(bl)
+
+        for i in range(6):
+            statusPanel = StatusPanel(index=i)
+            self.add_widget(statusPanel)        
+
+class StatusPanel(BoxLayout):
+    index=NumericProperty(-1)
+    type=StringProperty("")
+
+    kotai = StringProperty("31")
+    doryoku = StringProperty("0")
+
+    def __init__(self, **kw):
+        super(StatusPanel, self).__init__(**kw)
+        self.type_list=["HP","攻撃","防御","特攻","特防","素早さ"]
+        self.type=self.type_list[self.index]
+
+    def change_kotai(self, num: int=1, up:bool=True):
+        kotai=int(self.kotai)
+        if num !=1:
+            self.kotai=str(num)
+        elif up and kotai < 31:
+            self.kotai=str(int(kotai) + 1)
+        elif not up and kotai > 0:
+            self.kotai=str(int(kotai) - 1)
+    
+    def change_doryoku(self, slider: bool=False, up:bool=True):
+        doryoku=int(self.doryoku)
+        if slider:
+            self.doryoku=str(int(self.ids.slider.value))
+        elif up and doryoku < 252:
+            self.ids.slider.value = int(doryoku) + 4
+            self.doryoku=str(self.ids.slider.value)
+        elif not up and doryoku > 0:
+            self.ids.slider.value = int(doryoku) - 4
+            self.doryoku=str(self.ids.slider.value)
