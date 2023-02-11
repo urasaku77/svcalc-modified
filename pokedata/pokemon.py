@@ -328,10 +328,10 @@ class Pokemon:
             match waza.name:
                 case "フリーズドライ":
                     value = value * Decimal(2.0) if type_effective.df_type == Types.みず \
-                        else Decimal(type_effective.value)
+                        else value * Decimal(type_effective.value)
                 case "サウザンアロー":
                     value = value * Decimal(1.0) if type_effective.df_type == Types.じめん \
-                        else Decimal(type_effective.value)
+                        else value * Decimal(type_effective.value)
                 case _:
                     value = value * Decimal(type_effective.value)
         return float(value)
