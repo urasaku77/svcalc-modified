@@ -22,7 +22,7 @@
                 size_hint_x: 1
                 Label:
                     text:root.num
-                    font_size: self.height*0.6
+                    font_size: self.height*0.5
                 IconButton:
                     icon: root.icon
                     on_release: root.on_click_icon()
@@ -32,11 +32,12 @@
                 spacing: 5
                 size_hint_x: 3
                 Label:
-                    size_hint_y: 1.5
+                    size_hint_y: 2
                     text: root.name
+                    font_size: self.height*0.5
                 Label:
                     id: info
-                    size_hint_y: 1.5
+                    size_hint_y: 1
                     text: ""
                 BoxLayout:
                     size_hint_y: 1
