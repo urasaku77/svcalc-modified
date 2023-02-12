@@ -8,7 +8,7 @@ import pandas as pd
 
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
-from pokedata.nature import get_seikaku_list
+from pokedata.nature import StatsKey, get_seikaku_hosei, get_seikaku_list
 from gui import WazaButton
 
 class PartyPokemonPanel(BoxLayout):
@@ -61,6 +61,7 @@ class PartyPokemonPanel(BoxLayout):
                     self.register_chosen_waza(self.pokemon.waza_list[i].name)
                 else:
                     self.register_chosen_waza("")
+            self.statusListPanel.set_syuzoku(value)
         self.pokemon_popup.dismiss()
 
     def select_terastype(self, *_args):
@@ -76,7 +77,11 @@ class PartyPokemonPanel(BoxLayout):
 
     def register_chosen_waza(self, waza: str):
         self.wazaListLabel.register_chosen_waza(waza)
-    
+
+    def choose_character(self, value):
+        self.character = value
+        self.statusListPanel.change_character(value)
+
     def clear_pokemon(self):
         self.pokemon = ObjectProperty(None)
         self.name = ""
@@ -178,6 +183,17 @@ class StatusListPanel(BoxLayout):
             self.statusPanels.append(self.statusPanel)
             self.add_widget(self.statusPanel)
     
+    def set_syuzoku(self,pokemon:Pokemon):
+        self.syuzoku_list = [pokemon.syuzoku.H, pokemon.syuzoku.A, pokemon.syuzoku.B, pokemon.syuzoku.C, pokemon.syuzoku.D, pokemon.syuzoku.S]
+        for i in range(len(self.statusPanels)):
+            self.statusPanels[i].syuzoku = self.syuzoku_list[i]
+            self.statusPanels[i].calc_status()
+    
+    def change_character(self, value:str):
+        for i in range(len(self.statusPanels)):
+            self.statusPanels[i].hosei = get_seikaku_hosei(value, StatsKey(i))
+            self.statusPanels[i].calc_status()
+
     def get_all_kotai(self):
         all_kotai = ""
         for i in range(len(self.statusPanels)):
@@ -195,7 +211,10 @@ class StatusListPanel(BoxLayout):
 class StatusPanel(BoxLayout):
     index=NumericProperty(-1)
     type=StringProperty("")
+    hosei=NumericProperty(1.0)
 
+    status=StringProperty("0")
+    syuzoku = NumericProperty(0)
     kotai = StringProperty("31")
     doryoku = StringProperty("0")
 
@@ -203,6 +222,12 @@ class StatusPanel(BoxLayout):
         super(StatusPanel, self).__init__(**kw)
         self.type_list=["HP","攻撃","防御","特攻","特防","素早さ"]
         self.type=self.type_list[self.index]
+    
+    def calc_status(self):
+        if self.index == 0:
+            self.ids["status"].text = str(int(self.syuzoku + float(self.kotai)/2+float(self.doryoku)/8+60))
+        else:
+            self.ids["status"].text = str(int((self.syuzoku + float(self.kotai)/2+float(self.doryoku)/8+5)*self.hosei))
 
     def change_kotai(self, num: int=1, up:bool=True):
         kotai=int(self.kotai)
