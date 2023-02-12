@@ -1,7 +1,7 @@
-#:import * calc_rec
-#:include calc_rec.kv
-#:import * edit_party
-#:include edit_party.kv
+#:import * page_battle
+#:include page_battle.kv
+#:import * page_party
+#:include page_party.kv
 
 RootWidget:
     orientation: "vertical"
@@ -16,6 +16,10 @@ RootWidget:
     TabbedPanel:
         do_default_tab: False
         TabbedPanelItem:
+            text: "パーティ"
+            EditPartyWidget:
+                id: _editPartyWidget
+        TabbedPanelItem:
             text: "対戦"
             CalcRecWidget:
                 id: _calcRecWidget
@@ -23,7 +27,3 @@ RootWidget:
             text: "分析"
             Label:
                 text: "工事中"
-        TabbedPanelItem:
-            text: "パーティ"
-            EditPartyWidget:
-                id: _editPartyWidget

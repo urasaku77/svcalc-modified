@@ -7,8 +7,8 @@ from kivy.resources import resource_add_path
 
 import atexit
 
-from calc_rec import CalcRecWidget
-from edit_party import EditPartyWidget
+from page_battle import CalcRecWidget
+from page_party import EditPartyWidget
 
 Window.size = (2400, 1200)
 resource_add_path("font")
