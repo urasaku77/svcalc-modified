@@ -568,3 +568,6 @@ class DropDownButton(IconButton):
 class LabelButton(ButtonBehavior, ColorLabel):
     def __init__(self, **kw):
         super(LabelButton, self).__init__(**kw)
+
+def dummy(self):
+    pass

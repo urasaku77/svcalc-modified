@@ -9,7 +9,7 @@ import pandas as pd
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
 from pokedata.nature import StatsKey, get_seikaku_hosei, get_seikaku_list
-from gui import WazaButton
+from gui import WazaButton, dummy
 
 class PartyPokemonPanel(BoxLayout):
 
@@ -26,7 +26,7 @@ class PartyPokemonPanel(BoxLayout):
     terastype = ObjectProperty(Types.なし)
     terastype_icon = ObjectProperty(Types.なし.icon)
     terastype_name = ObjectProperty(Types.なし.name)
-    
+
     wazaListLabel = ObjectProperty()
     statusListPanel = ObjectProperty()
 
@@ -48,7 +48,7 @@ class PartyPokemonPanel(BoxLayout):
 
     def on_click_icon(self, *args):
         self.pokemon_popup.open()
-    
+
     def on_select_pokemon(self, value:Pokemon):
         self.clear_pokemon()
         if value is not None:
@@ -94,7 +94,7 @@ class PartyPokemonPanel(BoxLayout):
         self.terastype_icon = Types.なし.icon
         self.terastype_name = Types.なし.name
         self.wazaListLabel.clear_all_chosen_waza()
-    
+
     def set_csv_row(self):
         waza_list = self.wazaListLabel.get_all_waza()
         all_kotai = self.statusListPanel.get_all_kotai()
@@ -158,10 +158,12 @@ class WazaPanel(BoxLayout):
         if value is not None:
             self.waza = value
             self.waza_button.text = self.waza
-
+# 個体値・努力値調整パネルリスト
 class StatusListPanel(BoxLayout):
 
     statusPanels = ListProperty()
+    doryoku_total = NumericProperty(0)
+    doryoku_list = ListProperty([0,0,0,0,0,0])
 
     def __init__(self, **kw):
         super(StatusListPanel, self).__init__(**kw)
@@ -171,15 +173,19 @@ class StatusListPanel(BoxLayout):
         title_label = Label(text="",size_hint_x=0.6)
         jisuu_label = Label(text="実数値",size_hint_x=0.5)
         kotai_label = Label(text="個体値",size_hint_x=2)
-        doryoku_label = Label(text="努力値",size_hint_x=4)
+        doryoku_label = Label(text="努力値",size_hint_x=1)
+        doryoku_total_label = Label(text="合計：0",size_hint_x=1)
+        self.ids['doryoku_total'] =doryoku_total_label
         bl.add_widget(title_label)
         bl.add_widget(jisuu_label)
         bl.add_widget(kotai_label)
         bl.add_widget(doryoku_label)
+        bl.add_widget(doryoku_total_label)
         self.add_widget(bl)
 
         for i in range(6):
             self.statusPanel = StatusPanel(index=i)
+            self.statusPanel.set_func_for_doryoku(self.update_doryoku)
             self.statusPanels.append(self.statusPanel)
             self.add_widget(self.statusPanel)
     
@@ -193,6 +199,11 @@ class StatusListPanel(BoxLayout):
         for i in range(len(self.statusPanels)):
             self.statusPanels[i].hosei = get_seikaku_hosei(value, StatsKey(i))
             self.statusPanels[i].calc_status()
+
+    def update_doryoku(self, index:int, value: int):
+        self.doryoku_list[index] = value
+        self.doryoku_total = sum(self.doryoku_list)
+        self.ids["doryoku_total"].text = "合計："+str(self.doryoku_total)
 
     def get_all_kotai(self):
         all_kotai = ""
@@ -208,6 +219,7 @@ class StatusListPanel(BoxLayout):
                 all_doryoku += self.type_list[i] + str(self.statusPanels[i].doryoku)
         return all_doryoku
 
+# 個体値・努力値調整パネル
 class StatusPanel(BoxLayout):
     index=NumericProperty(-1)
     type=StringProperty("")
@@ -222,8 +234,14 @@ class StatusPanel(BoxLayout):
         super(StatusPanel, self).__init__(**kw)
         self.type_list=["HP","攻撃","防御","特攻","特防","素早さ"]
         self.type=self.type_list[self.index]
-    
+        self.func_for_doryoku = dummy
+
+    def set_func_for_doryoku(self,func):
+        self.func_for_doryoku = func
+
     def calc_status(self):
+        if self.syuzoku == 0:
+            return
         if self.index == 0:
             self.ids["status"].text = str(int(self.syuzoku + float(self.kotai)/2+float(self.doryoku)/8+60))
         else:
@@ -248,3 +266,4 @@ class StatusPanel(BoxLayout):
         elif not up and doryoku > 0:
             self.ids.slider.value = int(doryoku) - 4
             self.doryoku=str(self.ids.slider.value)
+        self.func_for_doryoku(self.index, int(self.doryoku))

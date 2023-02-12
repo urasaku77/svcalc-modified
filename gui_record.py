@@ -10,7 +10,7 @@ import pandas as pd
 
 from pokedata.const import 変化, Types
 from pokedata.pokemon import Pokemon
-from gui import WazaButton, IconToggleButton
+from gui import WazaButton, IconToggleButton,dummy
 
 #選出された自分ポケモン表示パネル
 class PlayerChosenPokemonPanel(BoxLayout):
@@ -73,7 +73,7 @@ class OpponentChosenPokemonPanel(BoxLayout, EventDispatcher):
     def __init__(self, **kw):
         from kivy_gui.popup import TypeSelectPopupContent
         super(OpponentChosenPokemonPanel, self).__init__(**kw)
-        self.func_for_terastype = self.dummy
+        self.func_for_terastype = dummy
         self.popup = Popup(
             title="テラスタイプ選択",
             content=TypeSelectPopupContent(selected=self.on_select_terastype),
@@ -117,9 +117,6 @@ class OpponentChosenPokemonPanel(BoxLayout, EventDispatcher):
 
     def register_chosen_waza(self, waza: str):
         self.chosenWazaListPanel.register_chosen_waza(waza)
-    
-    def dummy(self):
-        pass
 
 # 技パネル一式
 class ChosenWazaListPanel(BoxLayout):
