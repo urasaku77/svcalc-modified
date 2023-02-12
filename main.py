@@ -7,21 +7,21 @@ from kivy.resources import resource_add_path
 
 import atexit
 
-from page_battle import CalcRecWidget
-from page_party import EditPartyWidget
+from page_battle import PageBattleWidget
+from page_party import PagePartyWidget
 
 Window.size = (2400, 1200)
 resource_add_path("font")
 LabelBase.register(DEFAULT_FONT, "NotoSansJP-Medium.otf")
 
 class RootWidget(BoxLayout):
-    calcRecWidget = ObjectProperty()
-    editPartyWidget = ObjectProperty()
+    pageBattleWidget = ObjectProperty()
+    pagePartyWidget = ObjectProperty()
 
     def __init__(self, **kwargs):
         super(RootWidget, self).__init__(**kwargs)
-        self.calcRecWidget = CalcRecWidget()
-        self.editPartyWidget = EditPartyWidget()
+        self.pageBattleWidget = PageBattleWidget()
+        self.pagePartyWidget = PagePartyWidget()
 
 class MainApp(App):
     pass

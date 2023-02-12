@@ -7,7 +7,7 @@ from pokedata.pokemon import Pokemon
 import glob
 import csv
 
-class EditPartyWidget(BoxLayout):
+class PagePartyWidget(BoxLayout):
     partyPokemonPanels = ListProperty()
     title=StringProperty("")
     num=StringProperty("")
@@ -16,7 +16,7 @@ class EditPartyWidget(BoxLayout):
     set_default = BooleanProperty(True)
 
     def __init__(self, **kwargs):
-        super(EditPartyWidget, self).__init__(**kwargs)
+        super(PagePartyWidget, self).__init__(**kwargs)
         self.get_using_csv()
 
     def open_csv(self):

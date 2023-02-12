@@ -20,7 +20,7 @@ from battle.battle import Battle
 from battle.DB_battle import DB_battle
 from recog.image_recognition import ImageRecognition
 
-class CalcRecWidget(BoxLayout):
+class PageBattleWidget(BoxLayout):
     cameraPreview = ObjectProperty()
     cameraId = NumericProperty(1)
     partyPanels = ListProperty()
@@ -35,7 +35,7 @@ class CalcRecWidget(BoxLayout):
     timerLabel = ObjectProperty()
 
     def __init__(self, **kwargs):
-        super(CalcRecWidget, self).__init__(**kwargs)
+        super(PageBattleWidget, self).__init__(**kwargs)
         self.cameraPreview = self.CameraPreview()
         self.active_pokemons: list[Optional[Pokemon]] = [None, None]
         self.party_popup: PartyInputPopup = PartyInputPopup(title="パーティ入力")

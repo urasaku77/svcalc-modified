@@ -12,18 +12,18 @@ RootWidget:
         Rectangle:
             size: self.size
             pos: self.pos
-    calcRecWidget: _calcRecWidget
-    editPartyWidget: _editPartyWidget
+    pageBattleWidget: _pageBattleWidget
+    pagePartyWidget: _pagePartyWidget
     TabbedPanel:
         do_default_tab: False
         TabbedPanelItem:
             text: "パーティ"
-            EditPartyWidget:
-                id: _editPartyWidget
+            PagePartyWidget:
+                id: _pagePartyWidget
         TabbedPanelItem:
             text: "対戦"
-            CalcRecWidget:
-                id: _calcRecWidget
+            PageBattleWidget:
+                id: _pageBattleWidget
         TabbedPanelItem:
             text: "分析"
             Label:
