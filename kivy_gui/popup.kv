@@ -265,3 +265,8 @@
         font_size: 12
         text: "クリア"
         on_release: root.clear()
+<CsvChooserPopup>
+    FileChooserListView:
+        rootpath: 'party/csv'
+        filters: ['*.csv']
+        on_selection: root.select(self.selection[0])

@@ -1,10 +1,8 @@
-from kivy.app import App
 from kivy.properties import ListProperty, StringProperty
 from kivy.uix.boxlayout import BoxLayout
-from kivy.graphics.texture import Texture
-from kivy.clock import Clock
-from kivy.uix.image import Image
-from kivy_gui.popup import PartyInputPopup, SpeedCheckPopup
+from kivy_gui.popup import CsvChooserPopup
+
+from pokedata.pokemon import Pokemon
 
 import glob
 import csv
@@ -20,7 +18,23 @@ class EditPartyWidget(BoxLayout):
         super(EditPartyWidget, self).__init__(**kwargs)
     
     def open_csv(self):
-        pass
+        self.chooser_popup = CsvChooserPopup(selected=self.select_csv,title="CSV選択")
+        self.chooser_popup.open()
+
+    def select_csv(self, csv:str):
+        file = csv.split('party\\csv\\')[1]
+        self.ids["num"].text = file.split("-")[0]
+        self.ids["sub_num"].text = file.split("-")[1].split("_")[0]
+        self.ids["title"].text = file.split("-")[1].split("_")[1].split(".")[0]
+        self.load_party(csv)
+        self.chooser_popup.dismiss()
+
+    def load_party(self, path:str):
+        from pokedata.loader import get_party_data
+        for i, data in enumerate(get_party_data(file_path=path)):
+            pokemon: Pokemon = Pokemon.by_name(data[0])
+            pokemon.set_load_data(data, True)
+            self.partyPokemonPanels[i].on_select_pokemon(pokemon)
 
     def save_csv(self):
         self.title = self.ids["title"].text

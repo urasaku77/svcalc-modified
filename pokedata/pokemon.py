@@ -308,8 +308,9 @@ class Pokemon:
             self.__ability = data[5]
             self.__terastype = Types[data[6]] if data[6] != "" else Types.なし
             if use_data:
-                for i in range(6):
-                    if len(data[i+7]):
+                for i in range(10):
+                    if i+7 < len(data):
+                        print(len(data))
                         self.__waza_list[i] = WazaBase(data[i+7])                              
     
     def set_waza_from_home(self):

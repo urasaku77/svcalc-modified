@@ -4,6 +4,7 @@ from kivy.properties import ObjectProperty, ListProperty, StringProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.popup import Popup
+from kivy.uix.filechooser import FileChooserListView
 from gui import PokeNameComboEdit, PartyIconPanel, IconButton
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
@@ -305,3 +306,13 @@ class PartyRegisterPopupContent(BoxLayout):
     def clear(self):
         self.selected(None)
         self.pokename_input.text = ""
+
+class CsvChooserPopup(InputPopup):
+    selected = ObjectProperty(None)
+
+    def __init__(self, **kwargs) -> None:
+        super(CsvChooserPopup, self).__init__(**kwargs)
+    
+    def select(self, csv:str):
+        self.selected(csv)
+    

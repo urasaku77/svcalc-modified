@@ -8,7 +8,7 @@ import pandas as pd
 
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
-from pokedata.nature import StatsKey, get_seikaku_hosei, get_seikaku_list
+from pokedata.nature import Stats,StatsKey, get_seikaku_hosei, get_seikaku_list
 from gui import WazaButton, dummy
 
 class PartyPokemonPanel(BoxLayout):
@@ -53,9 +53,20 @@ class PartyPokemonPanel(BoxLayout):
         self.clear_pokemon()
         if value is not None:
             self.pokemon = value
-            self.name = self.pokemon.name
             self.icon = self.pokemon.icon
+
+            self.name = self.pokemon.name
+            self.item = self.pokemon.item if self.pokemon.item != "なし" else ""
+            self.character = self.pokemon.seikaku
+            self.ability = self.pokemon.ability
             self.abilities = self.pokemon.abilities
+            self.terastype = self.pokemon.terastype
+            self.terastype_icon = self.terastype.icon
+            self.terastype_name = self.terastype.name
+
+            self.statusListPanel.set_kotai(self.pokemon.kotai)
+            self.statusListPanel.set_doryoku(self.pokemon.doryoku)
+            
             for i in range(4):
                 if self.pokemon.waza_list[i] is not None:
                     self.register_chosen_waza(self.pokemon.waza_list[i].name)
@@ -195,6 +206,18 @@ class StatusListPanel(BoxLayout):
             self.statusPanels[i].syuzoku = self.syuzoku_list[i]
             self.statusPanels[i].calc_status()
     
+    def set_kotai(self,kotai:Stats):
+        self.kotai_list = [kotai.H, kotai.A, kotai.B, kotai.C, kotai.D, kotai.S]
+        for i in range(len(self.statusPanels)):
+            self.statusPanels[i].change_kotai(num=self.kotai_list[i])
+            self.statusPanels[i].calc_status()
+    
+    def set_doryoku(self,doryoku:Stats):
+        self.doryoku_list = [doryoku.H, doryoku.A, doryoku.B, doryoku.C, doryoku.D, doryoku.S]
+        for i in range(len(self.statusPanels)):
+            self.statusPanels[i].change_doryoku(num=self.doryoku_list[i])
+            self.statusPanels[i].calc_status()
+    
     def change_character(self, value:str):
         for i in range(len(self.statusPanels)):
             self.statusPanels[i].hosei = get_seikaku_hosei(value, StatsKey(i))
@@ -256,9 +279,12 @@ class StatusPanel(BoxLayout):
         elif not up and kotai > 0:
             self.kotai=str(int(kotai) - 1)
     
-    def change_doryoku(self, slider: bool=False, up:bool=True):
+    def change_doryoku(self, num: int=4, slider: bool=False, up:bool=True):
         doryoku=int(self.doryoku)
-        if slider:
+        if num !=4:
+            self.doryoku=str(num)
+            self.ids.slider.value = self.doryoku
+        elif slider:
             self.doryoku=str(int(self.ids.slider.value))
         elif up and doryoku < 252:
             self.ids.slider.value = int(doryoku) + 4
