@@ -14,73 +14,112 @@
         padding: [5, 5]
         spacing: [5, 5]
         BoxLayout:
-            size_hint_y: 0.5
+            size_hint_y: 0.3
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_x: 1
+                BoxLayout:
+                    ShortLabel:
+                        text:"番号"
+                        size_hint_x: 1
+                    AnchorLayout:
+                        size_hint_x: 2
+                        anchor_x:"center"
+                        anchor_y:"center"
+                        TextInput:
+                            id: num
+                            size_hint_y: None
+                            text:root.num
+                            height: 40
+                            multiline: False
+                BoxLayout:
+                    ShortLabel:
+                        text:"連番"
+                        size_hint_x: 1
+                    AnchorLayout:
+                        size_hint_x: 2
+                        anchor_x:"center"
+                        anchor_y:"center"
+                        TextInput:
+                            id: sub_num
+                            size_hint_y: None
+                            text:root.sub_num
+                            height: 40
+                            multiline: False
+            BoxLayout:
+                size_hint_x: 4
+                AnchorLayout:
+                    size_hint_x: 1
+                    anchor_x:"center"
+                    anchor_y:"center"
+                    Label:
+                        text:"タイトル"
+                AnchorLayout:
+                    size_hint_x: 4
+                    anchor_x:"center"
+                    anchor_y:"center"
+                    TextInput:
+                        id: title
+                        size_hint_y: None
+                        text:root.title
+                        height: 40
+                        multiline: False
+                AnchorLayout:
+                    size_hint_x: 1
+                    anchor_x:"center"
+                    anchor_y:"center"
+                    Button:
+                        size_hint_y: None
+                        text: "保存"
+                        height: 40
+                        on_release: root.save_csv()
+        BoxLayout:
+            size_hint_y: 0.3
+            CheckBox:
+                active: root.set_default
+                on_press: root.set_default = self.active
+                size_hint_x: 1
             AnchorLayout:
+                size_hint_x: 2
+                anchor_x:"left"
+                anchor_y:"center"
+                ShortLabel:
+                    text: "使用するパーティに設定"
+            AnchorLayout:
+                size_hint_x: 2
                 anchor_x:"center"
                 anchor_y:"center"
                 Button:
                     text: "CSVを開く" 
+                    size_hint_y: None
                     height: 70
-                    size_hint_y: None
                     on_release: root.open_csv()
-            Label:
-                text:"番号"
             AnchorLayout:
-                anchor_x:"center"
-                anchor_y:"center"
-                TextInput:
-                    id: num
-                    size_hint_y: None
-                    text:root.num
-                    height: 40
-                    multiline: False
-            Label:
-                text:"連番"
-            AnchorLayout:
-                anchor_x:"center"
-                anchor_y:"center"
-                TextInput:
-                    id: sub_num
-                    size_hint_y: None
-                    text:root.sub_num
-                    height: 40
-                    multiline: False
-        BoxLayout:
-            size_hint_y: 0.5
-            Label:
-                size_hint_x: 1
-                text:"タイトル"
-            AnchorLayout:
-                size_hint_x: 4
-                anchor_x:"center"
-                anchor_y:"center"
-                TextInput:
-                    id: title
-                    size_hint_y: None
-                    text:root.title
-                    height: 40
-                    multiline: False
-            AnchorLayout:
-                size_hint_x: 1
+                size_hint_x: 2
                 anchor_x:"center"
                 anchor_y:"center"
                 Button:
+                    text: "全クリア" 
                     size_hint_y: None
-                    text: "保存"
-                    height: 40
-                    on_release: root.save_csv()
+                    height: 70
+                    on_release: root.open_csv()
         BoxLayout:
-            size_hint_y: 0.5
-            Label:
+            size_hint_y: 0.3
+            AnchorLayout:
                 size_hint_x: 2
-                text:"使用するパーティ"
+                anchor_x:"center"
+                anchor_y:"center"
+                Label:
+                    size_hint_y: None
+                    text:"使用するパーティ"
             AnchorLayout:
                 size_hint_x: 4
                 anchor_x:"center"
                 anchor_y:"center"
                 Label:
+                    id: using
                     size_hint_y: None
-                    text:root.using_csv
+                    text:root.using
                     height: 40
             AnchorLayout:
                 size_hint_x: 1
@@ -90,7 +129,7 @@
                     size_hint_y: None
                     text: "変更"
                     height: 40
-                    on_release: root.change_using_csv
+                    on_release: root.change_using_csv()
         PartyPokemonPanel:
             id: _first
             num: "1"

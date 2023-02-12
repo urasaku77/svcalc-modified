@@ -1,4 +1,4 @@
-from kivy.properties import ListProperty, StringProperty
+from kivy.properties import ListProperty, StringProperty, BooleanProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy_gui.popup import CsvChooserPopup
 
@@ -12,14 +12,16 @@ class EditPartyWidget(BoxLayout):
     title=StringProperty("")
     num=StringProperty("")
     sub_num=StringProperty("")
-    using_csv=StringProperty("")
+    using=StringProperty("")
+    set_default = BooleanProperty(True)
 
     def __init__(self, **kwargs):
         super(EditPartyWidget, self).__init__(**kwargs)
-    
+        self.get_using_csv()
+
     def open_csv(self):
-        self.chooser_popup = CsvChooserPopup(selected=self.select_csv,title="CSV選択")
-        self.chooser_popup.open()
+        self.set_chooser_popup = CsvChooserPopup(selected=self.select_csv,title="CSV選択")
+        self.set_chooser_popup.open()
 
     def select_csv(self, csv:str):
         file = csv.split('party\\csv\\')[1]
@@ -27,7 +29,7 @@ class EditPartyWidget(BoxLayout):
         self.ids["sub_num"].text = file.split("-")[1].split("_")[0]
         self.ids["title"].text = file.split("-")[1].split("_")[1].split(".")[0]
         self.load_party(csv)
-        self.chooser_popup.dismiss()
+        self.set_chooser_popup.dismiss()
 
     def load_party(self, path:str):
         from pokedata.loader import get_party_data
@@ -53,7 +55,7 @@ class EditPartyWidget(BoxLayout):
             last_same_num_file=sorted(same_num_list)[len(same_num_list)-1]
             self.sub_num = str(int(last_same_num_file.split("-")[1][0])+1)
         
-        filepath = "party/csv/"+self.num + "-" + self.sub_num + "_" + self.title + ".csv"
+        filepath = "party\\csv\\"+self.num + "-" + self.sub_num + "_" + self.title + ".csv"
         with open(filepath, 'w') as party_csv:
             writer = csv.writer(party_csv, lineterminator="\n")
             writer.writerow(["名前", "個体値", "努力値", "性格", "持ち物", "特性", "テラス", "技", "技", "技", "技"])
@@ -61,6 +63,22 @@ class EditPartyWidget(BoxLayout):
                 row = partyPokemonPanel.set_csv_row()
                 writer.writerow(row)
         
+        if self.set_default:
+           self.change_csv(filepath) 
+
+    def get_using_csv(self):
+        with open('party/setting.txt', 'r') as txt:
+            self.using = txt.read().split('party\\csv\\')[1]
+            txt.close()
 
     def change_using_csv(self):
-        pass
+        self.change_chooser_popup = CsvChooserPopup(selected=self.change_csv,title="CSV選択")
+        self.change_chooser_popup.open()
+    
+    def change_csv(self, value:str):
+        with open('party/setting.txt', 'w') as txt:
+            txt.write(value)
+            self.using = value.split('party\\csv\\')[1]
+            self.ids["using"].text= self.using
+            txt.close()
+        self.change_chooser_popup.dismiss()
