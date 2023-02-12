@@ -57,7 +57,7 @@ class PartyPokemonPanel(BoxLayout):
 
             self.name = self.pokemon.name
             self.item = self.pokemon.item if self.pokemon.item != "なし" else ""
-            self.character = self.pokemon.seikaku
+            self.choose_character(self.pokemon.seikaku)
             self.ability = self.pokemon.ability
             self.abilities = self.pokemon.abilities
             self.terastype = self.pokemon.terastype
@@ -172,6 +172,7 @@ class WazaPanel(BoxLayout):
         if value is not None:
             self.waza = value
             self.waza_button.text = self.waza
+
 # 個体値・努力値調整パネルリスト
 class StatusListPanel(BoxLayout):
 
