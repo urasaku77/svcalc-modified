@@ -66,6 +66,8 @@ class PartyPokemonPanel(BoxLayout):
 
             self.statusListPanel.set_kotai(self.pokemon.kotai)
             self.statusListPanel.set_doryoku(self.pokemon.doryoku)
+
+            self.ids["info"].text = "H"+str(value.syuzoku.H)+"-A"+str(value.syuzoku.A)+"-B"+str(value.syuzoku.B)+"-C"+str(value.syuzoku.C)+"-D"+str(value.syuzoku.D)+"-S"+str(value.syuzoku.S)
             
             for i in range(4):
                 if self.pokemon.waza_list[i] is not None:
@@ -105,6 +107,7 @@ class PartyPokemonPanel(BoxLayout):
         self.terastype_icon = Types.なし.icon
         self.terastype_name = Types.なし.name
         self.wazaListLabel.clear_all_chosen_waza()
+        self.ids["info"].text = ""
 
     def set_csv_row(self):
         waza_list = self.wazaListLabel.get_all_waza()
