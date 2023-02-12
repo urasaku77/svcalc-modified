@@ -38,6 +38,10 @@ class EditPartyWidget(BoxLayout):
             pokemon.set_load_data(data, True)
             self.partyPokemonPanels[i].on_select_pokemon(pokemon)
 
+    def clear_party(self):
+        for partyPokemonPanel in self.partyPokemonPanels:
+            partyPokemonPanel.on_select_pokemon(None)
+
     def save_csv(self):
         self.title = self.ids["title"].text
         self.num = self.ids["num"].text
