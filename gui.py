@@ -229,7 +229,7 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
         self.evs_combobox.text = self.pokemon.marked_status_text
 
     def on_click_terasicon(self):
-        if self.player == 0:
+        if self.player == 0 and self.pokemon.terastype != Types.なし:
             self.set_terastype()
         else:
             self.select_terastype()
