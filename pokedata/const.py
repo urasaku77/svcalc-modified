@@ -32,6 +32,12 @@ class Types(IntEnum):
     def all() -> list:
         return [x for x in Types if (1 <= x <= 17)]
 
+    @staticmethod
+    def get(type_name: str):
+        try:
+            return Types[type_name]
+        except KeyError:
+            return Types.なし
 
 # 天候定義
 class Weathers(IntEnum):
@@ -69,3 +75,11 @@ DORYOKU_PRESET = {
 物理 = "物理"
 特殊 = "特殊"
 変化 = "変化"
+
+
+# 特性値定義
+ABILITY_VALUES: dict[str, list[str]] = {
+    "そうだいしょう": ["1.0", "1.1", "1.2"],
+    "こだいかっせい": ["なし", "A", "B", "C", "D", "S"],
+    "クォークチャージ": ["なし", "A", "B", "C", "D", "S"],
+}

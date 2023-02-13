@@ -56,17 +56,16 @@
             text: "特性"
         BoxLayout:
             DropDownButton:
+                size_hint_x: 3
                 items: root.pokemon.abilities if root.pokemon is not None else ""
                 text: root.pokemon.ability if root.pokemon is not None else ""
-                on_select_item: root.pokemon.ability = self.button_text
-            CheckBox:
-                size_hint_x: None
-                width: 30
-                active: root.ability_enable
-                on_press: root.pokemon.ability_enable = self.active
-            ShortLabel:
-                text: "発動"
-                width: 40
+                on_select_item: root.set_ability(self.button_text)
+            DropDownButton:
+                id: abilities_valid
+                size_hint_x: 1
+                items: root.ability_values
+                text: root.pokemon.ability_value if root.pokemon is not None else ""
+                on_select_item: root.pokemon.ability_value = self.button_text
         ShortLabel:
             text: "ランク"
 

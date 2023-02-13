@@ -6,11 +6,9 @@ from typing import Optional
 from pokedata.const import *
 from data.db import DB
 from pokedata.nature import get_seikaku_hosei
-from stage import Stage
 from pokedata.stats import Stats, StatsKey
 from pokedata.waza import Waza, WazaBase
-
-icons = {}
+from pokedata.const import ABILITY_VALUES
 
 
 class Pokemon:
@@ -33,7 +31,7 @@ class Pokemon:
         self.__battle_terastype: Types = Types.なし
         self.__abilities: list[str] = [""]
         self.__ability: str = self.__abilities[0]
-        self.__ability_enable: bool = False
+        self.__ability_value: str = ""
         self.__waza_list: list[Optional[WazaBase]] = [None for _ in range(10)]
         self.__waza_rate_list: list[Optional[float]] = [0.0 for _ in range(10)]
         self.__weight: float = 0.0
@@ -163,6 +161,7 @@ class Pokemon:
     @ability.setter
     def ability(self, value) -> None:
         self.__ability = value
+        self.set_default_ability_value()
         self.statechanged()
 
     @property
@@ -190,18 +189,22 @@ class Pokemon:
         return self.get_ranked_stats(StatsKey.S)
 
     @property
-    def ability_enable(self) -> bool:
-        return self.__ability_enable
+    def ability_value(self) -> str:
+        return self.__ability_value
 
-    @ability_enable.setter
-    def ability_enable(self, value: bool):
-        self.__ability_enable = value
+    @ability_value.setter
+    def ability_value(self, value: str):
+        self.__ability_value = value
         self.statechanged()
+
+    @property
+    def ability_enable(self) -> bool:
+        return self.__ability_value == "有効"
 
     @property
     def waza_list(self) -> list[WazaBase]:
         return self.__waza_list
-    
+
     @property
     def waza_rate_list(self) -> list[float]:
         return self.__waza_rate_list
@@ -212,7 +215,7 @@ class Pokemon:
 
     @property
     def status_text(self) -> str:
-        return "-".join([str(self.get_ranked_stats(x)) for x in StatsKey])
+        return "-".join([str(self.__get_stats(x)) for x in StatsKey])
 
     @property
     def marked_status_text(self) -> str:
@@ -253,6 +256,10 @@ class Pokemon:
     @statechanged_handler.setter
     def statechanged_handler(self, handler: Optional[callable]):
         self.__statechanged_handler = handler
+
+    @property
+    def is_empty(self) -> bool:
+        return self.__no == -1
 
     @property
     def is_flying(self) -> bool:
@@ -310,8 +317,8 @@ class Pokemon:
             if use_data:
                 for i in range(10):
                     if i+7 < len(data):
-                        self.__waza_list[i] = WazaBase(data[i+7])                              
-    
+                        self.__waza_list[i] = WazaBase(data[i+7])
+
     def set_waza_from_home(self):
         from pokedata.loader import get_home_data
         waza_data = get_home_data(self.name, "./home/home_waza.csv")
@@ -327,27 +334,39 @@ class Pokemon:
         for type_effective in DB.get_type_effective(waza.type, types):
             match waza.name:
                 case "フリーズドライ":
-                    value = value * Decimal(2.0) if type_effective.df_type == Types.みず \
-                        else value * Decimal(type_effective.value)
+                    if type_effective.df_type == Types.みず:
+                        value = value * Decimal(2.0)
+                    else:
+                        value = value * Decimal(type_effective.value)
                 case "サウザンアロー":
-                    value = value * Decimal(1.0) if type_effective.df_type == Types.じめん \
-                        else value * Decimal(type_effective.value)
+                    if type_effective.df_type == Types.じめん:
+                        value = value * Decimal(2.0)
+                    else:
+                        value = value * Decimal(type_effective.value)
                 case _:
                     value = value * Decimal(type_effective.value)
         return float(value)
 
     # 技の編集
     def set_waza(self, index: int, waza_name: str):
-        if index < len(self.__waza_list):
+        if len(waza_name) == 0:
+            self.__waza_list[index] = None
+        elif index < len(self.__waza_list):
             self.__waza_list[index] = WazaBase(waza_name)
         else:
             self.__waza_list.append(WazaBase(waza_name))
         self.statechanged()
 
     # 技の回数、威力などの編集
-    def set_waza_next_value(self, index):
-        self.__waza_list[index].set_next_value()
-        self.statechanged()
+    def use_waza_effect(self, index):
+        wazabase = self.__waza_list[index]
+        if wazabase is not None:
+            if wazabase.has_value_list:
+                wazabase.set_next_value()
+                self.statechanged()
+            elif wazabase.is_self_buff:
+                self.__rank.add_values_from_string(wazabase.value)
+                self.statechanged()
 
     # 対象のタイプを持っているか（テラスタイプの場合含む）
     def has_type(self, _type: Types) -> bool:
@@ -422,5 +441,10 @@ class Pokemon:
             self.statechanged()
 
     def on_stage(self):
-        #self.__battle_terastype = Types.なし
         self.__rank = Stats(init_value=0)
+        self.set_default_ability_value()
+
+    def set_default_ability_value(self):
+        for k, v in ABILITY_VALUES.items():
+            if self.__ability == k:
+                self.__ability_value = v[0]

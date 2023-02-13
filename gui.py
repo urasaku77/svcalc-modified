@@ -11,9 +11,9 @@ from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.textinput import TextInput
 from kivy.uix.widget import Widget
 
-from typing import Callable, Optional, Union, TYPE_CHECKING
+from typing import Optional, Union
 from data.db import DB
-from pokedata.const import 変化, Types
+from pokedata.const import Types, ABILITY_VALUES
 from pokedata.pokemon import Pokemon
 from pokedata.waza import WazaBase
 from pokedata.calc import DamageCalcResult
@@ -180,7 +180,7 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
     teras_button = ObjectProperty()
     icon = ObjectProperty()
     formchange_icon = ObjectProperty()
-    ability_enable = BooleanProperty(True)
+    ability_values = ListProperty(["無効","有効"])
 
     def __init__(self, **kw):
         from kivy_gui.popup import TypeSelectPopupContent
@@ -198,8 +198,20 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
 
     def on_pokemon(self, *args):
         pokemon: Pokemon = self.pokemon
-        self.ability_enable = pokemon.ability_enable
+        self.set_ability(pokemon.ability, is_pokemon_change=True)
         self.teras_button.icon = pokemon.battle_terastype.icon
+
+    def set_ability(self, ability: str,is_pokemon_change:bool=False):
+        self.ability_values = ["無効","有効"]
+        for k, v in ABILITY_VALUES.items():
+            if ability == k:
+                self.ability_values = v
+                break
+        if not is_pokemon_change:
+            self.pokemon.ability = ability
+            self.pokemon.ability_value = self.ability_values[0]
+        self.ids["abilities_valid"].items = self.ability_values
+        self.ids["abilities_valid"].text = self.pokemon.ability_value
 
     def on_click_icon(self, *args):
         pass
@@ -255,7 +267,7 @@ class WazaListPanel(BoxLayout):
 
     def set_pokemon(self, pokemon: Pokemon):
         self.pokemon = pokemon
-        for i, waza_base in enumerate(self.pokemon.waza_list):
+        for i, wazabase in enumerate(self.pokemon.waza_list):
             self.wazapanel_list[i].set_pokemon(self.pokemon)
 
     def set_damage_calc_results(self, results: list['DamageCalcResult']):
@@ -272,8 +284,6 @@ class WazaPanel(BoxLayout):
     def __init__(self, **kw):
         super(WazaPanel, self).__init__(**kw)
         self.pokemon: Optional[Pokemon] = None
-        self.value_type: Optional[int] = None
-        self.value: Optional[Union[float, int]] = None
 
         # 技名ボタン
         self.waza_button: WazaButton = WazaButton(size_hint_x=3)
@@ -293,32 +303,35 @@ class WazaPanel(BoxLayout):
     # ポケモン情報のセット
     def set_pokemon(self, pokemon: Pokemon):
         self.pokemon = pokemon
-        self.show_waza_base_info()
+        self.show_wazabase_info()
 
     @property
-    def waza_base(self) -> WazaBase:
+    def wazabase(self) -> WazaBase:
         return self.pokemon.waza_list[self.index]
 
     # 技情報の表示
-    def show_waza_base_info(self):
-        waza_base = self.waza_base
-        if waza_base is None:
+    def show_wazabase_info(self):
+        wazabase = self.wazabase
+        if wazabase is None:
             self.waza_button.text = ""
             self.center_button.text = ""
             self.center_button.disabled = True
             return
 
         # 技名セット
-        self.waza_button.text = waza_base.name
+        self.waza_button.text = wazabase.name
 
         # 回数や威力補正がある技の場合
-        self.value_type, self.value = waza_base.options
-        if self.value_type == WazaBase.TYPE_NONE:
-            self.center_button.text = ""
-            self.center_button.disabled = True
-        else:
-            self.center_button.text = "×" + str(self.value)
-            self.center_button.disabled = False
+        match wazabase.type:
+            case wazabase.TYPE_ADD_POWER | wazabase.TYPE_MULTI_HIT | wazabase.TYPE_POWER_HOSEI:
+                self.center_button.text = "x" + str(wazabase.value)
+                self.center_button.disabled = False
+            case wazabase.TYPE_SELF_BUFF:
+                self.center_button.text = "＋"
+                self.center_button.disabled = False
+            case _:
+                self.center_button.text = ""
+                self.center_button.disabled = True
 
     # ダメージ計算結果のセット
     def set_damage_calc_result(self, result: 'DamageCalcResult'):
@@ -327,13 +340,12 @@ class WazaPanel(BoxLayout):
     # 技名コンボボックスが決定された時
     def on_select_waza(self, value) -> None:
         self.pokemon.set_waza(self.index, value)
-        self.show_waza_base_info()
+        self.show_wazabase_info()
 
     # 中央ボタンが押された時
     def click_center_button(self, *args):
-        self.pokemon.set_waza_next_value(self.index)
-        _, self.value = self.waza_base.options
-        self.center_button.text = "×" + str(self.value)
+        self.pokemon.use_waza_effect(self.index)
+        self.center_button.text = "×" + str(self.wazabase.value)
 
     # イベント用
     def on_confirm_waza(self, *args):
@@ -521,7 +533,6 @@ class PartyIconPanel(BoxLayout):
             self.__buttons[index].icon = icon_source
         else:
             self.__buttons[index].icon = "image/blank.png"
-
 
 # ドロップダウン付きアイコンボタン
 # options に、ドロップダウン用のウィジェットを追加して使用する

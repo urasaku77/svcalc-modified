@@ -77,7 +77,7 @@ class DB:
         if len(DB.__waza_namedict) == 0:
             sql = "SELECT name FROM waza_data"
             for row in DB.__select(sql):
-                DB.__waza_namedict[row["name"]] = jaconv.hira2kata(row["name"])
+                DB.__waza_namedict[jaconv.hira2kata(row["name"])] = row["name"]
 
     @staticmethod
     def get_type_effective(attack_type: Types, target_type: list[Types]) -> list[TypeEffective]:

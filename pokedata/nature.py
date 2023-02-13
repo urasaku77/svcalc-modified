@@ -55,16 +55,9 @@ def get_default_doryoku(seikaku: str, syuzoku: Stats) -> Stats:
     if seikaku in ["おだやか", "しんちょう", "なまいき"]:
         doryoku.set_values(h=252, d=252)
     if seikaku in ["いじっぱり", "さみしがり", "やんちゃ"]:
-        doryoku.set_values(a=252,
-                           s=252 if syuzoku.S >= 90 else 0,
-                           h=252 if syuzoku.S < 90 else 0)
+        doryoku.set_values(a=252, s=252 if syuzoku.S >= 90 else 0, h=252 if syuzoku.S < 90 else 0)
     if seikaku in ["ひかえめ", "おっとり", "うっかりや"]:
-        doryoku.set_values(c=252,
-                           s=252 if syuzoku.S >= 90 else 0,
-                           h=252 if syuzoku.S < 90 else 0)
+        doryoku.set_values(c=252, s=252 if syuzoku.S >= 90 else 0, h=252 if syuzoku.S < 90 else 0)
     if seikaku in ["せっかち", "むじゃき"]:
-        doryoku.set_values(a=252 if syuzoku.A > syuzoku.C else 0,
-                           c=252 if syuzoku.C > syuzoku.A else 0,
-                           s=252)
+        doryoku.set_values(a=252 if syuzoku.A > syuzoku.C else 0, c=252 if syuzoku.C > syuzoku.A else 0, s=252)
     return doryoku
-
