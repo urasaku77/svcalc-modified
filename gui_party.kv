@@ -36,23 +36,26 @@
                     size_hint_y: 2
                     text: root.name
                     font_size: self.height*0.5
+                BoxLayout:
+                    size_hint_y: 1
+                    BoxLayout:
+                        Image:
+                            source: root.type1_img
+                        Label:
+                            text:root.type1
+                    BoxLayout:
+                        Image:
+                            source: root.type2_img
+                        Label:
+                            text:root.type2
                 Label:
                     id: info
                     size_hint_y: 1
                     text: ""
-                BoxLayout:
-                    size_hint_y: 1
-                    ShortLabel:
-                        text: "テラス"
-                    IconButton:
-                        icon: root.terastype_icon
-                        text: root.terastype_name
-                        font_size: 14
-                        on_release: root.select_terastype()
             GridLayout:
                 size_hint_x: 4
                 cols: 2
-                rows: 4
+                rows: 5
                 spacing: 5
                 padding: [10,10,10,10]
                 ShortLabel:
@@ -74,6 +77,12 @@
                     text: root.ability if root.name != "" else ""
                     items: root.abilities if root.name != "" else ""
                     on_select_item: root.ability = self.button_text
+                ShortLabel:
+                    text: "テラス"
+                IconButton:
+                    icon: root.terastype_icon
+                    text: root.terastype_name
+                    on_release: root.select_terastype()
         BoxLayout:
             size_hint_y: 2
             spacing: 5

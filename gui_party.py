@@ -15,6 +15,11 @@ class PartyPokemonPanel(BoxLayout):
 
     num = StringProperty("")
     pokemon = ObjectProperty(None)
+    type1 = StringProperty("")
+    type1_img = StringProperty(Types.なし.icon)
+    type2 = StringProperty("")
+    type2_img = StringProperty(Types.なし.icon)
+
 
     name = StringProperty("")
     items = ListProperty([])
@@ -54,6 +59,10 @@ class PartyPokemonPanel(BoxLayout):
         if value is not None:
             self.pokemon = value
             self.icon = self.pokemon.icon
+            self.type1 = self.pokemon.type[0].name
+            self.type1_img = self.pokemon.type[0].icon
+            self.type2 = self.pokemon.type[1].name if len(self.pokemon.type) > 1 else ""
+            self.type2_img = self.pokemon.type[1].icon if self.type2 != "" else Types.なし.icon
 
             self.name = self.pokemon.name
             self.item = self.pokemon.item if self.pokemon.item != "なし" else ""
@@ -99,6 +108,10 @@ class PartyPokemonPanel(BoxLayout):
         self.pokemon = ObjectProperty(None)
         self.name = ""
         self.icon = ""
+        self.type1 = ""
+        self.type1_img = Types.なし.icon
+        self.type2 = ""
+        self.type2_img = Types.なし.icon
         self.item = ""
         self.character = ""
         self.abilities = []
@@ -185,9 +198,9 @@ class StatusListPanel(BoxLayout):
         self.type_list=["H","A","B","C","D","S"]
         self.orientation = "vertical"
         bl=BoxLayout()
-        title_label = Label(text="",size_hint_x=0.6)
+        title_label = Label(text="",size_hint_x=0.4)
         jisuu_label = Label(text="実数値",size_hint_x=0.5)
-        kotai_label = Label(text="個体値",size_hint_x=2)
+        kotai_label = Label(text="個体値",size_hint_x=1.5)
         doryoku_label = Label(text="努力値",size_hint_x=1)
         doryoku_total_label = Label(text="合計：0",size_hint_x=1)
         self.ids['doryoku_total'] =doryoku_total_label
