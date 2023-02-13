@@ -181,7 +181,7 @@ class ChosenWazaPanel(BoxLayout):
             self.waza = value
             self.waza_button.text = self.waza
 
-    # 中央ボタンが押された時
+    # クリアボタンが押された時
     def click_center_button(self, *args):
         self.waza = ""
         self.waza_button.text = ""
