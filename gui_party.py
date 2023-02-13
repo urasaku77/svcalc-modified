@@ -31,7 +31,7 @@ class PartyPokemonPanel(BoxLayout):
     statusListPanel = ObjectProperty()
 
     icon = StringProperty("")
-    
+
     def __init__(self, **kw):
         from kivy_gui.popup import TypeSelectPopupContent
         super(PartyPokemonPanel, self).__init__(**kw)
@@ -68,7 +68,7 @@ class PartyPokemonPanel(BoxLayout):
             self.statusListPanel.set_doryoku(self.pokemon.doryoku)
 
             self.ids["info"].text = "H"+str(value.syuzoku.H)+"-A"+str(value.syuzoku.A)+"-B"+str(value.syuzoku.B)+"-C"+str(value.syuzoku.C)+"-D"+str(value.syuzoku.D)+"-S"+str(value.syuzoku.S)
-            
+
             for i in range(4):
                 if self.pokemon.waza_list[i] is not None:
                     self.register_chosen_waza(self.pokemon.waza_list[i].name)
@@ -131,7 +131,7 @@ class WazaListLabel(BoxLayout):
             wazapanel = WazaPanel(index=i)
             self.add_widget(wazapanel)
             self.wazapanel_list.append(wazapanel)
-        
+
     def register_chosen_waza(self, waza: str):
         waza_list: list[str] = []
         for index in range(len(self.wazapanel_list)):
@@ -139,12 +139,12 @@ class WazaListLabel(BoxLayout):
         if not waza in waza_list and "" in waza_list:
             self.wazapanel_list[waza_list.index("")].waza = waza
             self.wazapanel_list[waza_list.index("")].waza_button.text = waza
-    
+
     def clear_all_chosen_waza(self):
         for waza in self.wazapanel_list:
             waza.waza = ""
             waza.waza_button.text = ""
-    
+
     def get_all_waza(self):
         waza_list = []
         for waza in self.wazapanel_list:
@@ -203,25 +203,25 @@ class StatusListPanel(BoxLayout):
             self.statusPanel.set_func_for_doryoku(self.update_doryoku)
             self.statusPanels.append(self.statusPanel)
             self.add_widget(self.statusPanel)
-    
+
     def set_syuzoku(self,pokemon:Pokemon):
         self.syuzoku_list = [pokemon.syuzoku.H, pokemon.syuzoku.A, pokemon.syuzoku.B, pokemon.syuzoku.C, pokemon.syuzoku.D, pokemon.syuzoku.S]
         for i in range(len(self.statusPanels)):
             self.statusPanels[i].syuzoku = self.syuzoku_list[i]
             self.statusPanels[i].calc_status()
-    
+
     def set_kotai(self,kotai:Stats):
         self.kotai_list = [kotai.H, kotai.A, kotai.B, kotai.C, kotai.D, kotai.S]
         for i in range(len(self.statusPanels)):
             self.statusPanels[i].change_kotai(num=self.kotai_list[i])
             self.statusPanels[i].calc_status()
-    
+
     def set_doryoku(self,doryoku:Stats):
         self.doryoku_list = [doryoku.H, doryoku.A, doryoku.B, doryoku.C, doryoku.D, doryoku.S]
         for i in range(len(self.statusPanels)):
             self.statusPanels[i].change_doryoku(num=self.doryoku_list[i])
             self.statusPanels[i].calc_status()
-    
+
     def change_character(self, value:str):
         for i in range(len(self.statusPanels)):
             self.statusPanels[i].hosei = get_seikaku_hosei(value, StatsKey(i))
@@ -282,7 +282,7 @@ class StatusPanel(BoxLayout):
             self.kotai=str(int(kotai) + 1)
         elif not up and kotai > 0:
             self.kotai=str(int(kotai) - 1)
-    
+
     def change_doryoku(self, num: int=4, slider: bool=False, up:bool=True):
         doryoku=int(self.doryoku)
         if num !=4:

@@ -66,12 +66,12 @@ class PageBattleWidget(BoxLayout):
         pokemon = self.party[player_id][index]
         if pokemon is not None:
             self.set_active_pokemon(player_id, pokemon)
-    
+
     def select_player_chosen_pokemon(self, chosen_num: int):
         pokemon = self.active_pokemons[0]
         if pokemon is not None:
             self.playerChosenPokemonPanel.set_pokemon(chosen_num,pokemon)
-    
+
     def select_opponent_chosen_pokemon(self, chosen_num: int):
         pokemon = self.active_pokemons[1]
         if pokemon is not None:
@@ -83,7 +83,7 @@ class PageBattleWidget(BoxLayout):
         self.cameraPreview.start(self.cameraId)
         Clock.schedule_interval(self.cameraPreview.update, 1.0 / 60)
         Clock.schedule_interval(self.start_battle, 1.0 / 60)
-    
+
     def start_battle(self, dt):
         if not self.cameraPreview.imgRecog.img_flag:
             Clock.unschedule(self.start_battle)
@@ -240,7 +240,7 @@ class PageBattleWidget(BoxLayout):
             if self.frame is not None:
                 # Kivy Textureに変換
                 buf = cv2.flip(self.frame, 0).tobytes()
-                texture = Texture.create(size=(self.frame.shape[1], self.frame.shape[0]), colorfmt='bgr') 
+                texture = Texture.create(size=(self.frame.shape[1], self.frame.shape[0]), colorfmt='bgr')
                 texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
                 # インスタンスのtextureを変更
                 self.texture = texture
@@ -252,7 +252,7 @@ class PageBattleWidget(BoxLayout):
 
         def display_dummy_image(self):
             image = Picture.open("image/top.jpg")
-            texture = Texture.create(size=image.size) 
+            texture = Texture.create(size=image.size)
             texture.blit_buffer(image.tobytes())
             texture.flip_vertical()
             self.texture = texture

@@ -46,19 +46,19 @@ class PagePartyWidget(BoxLayout):
         self.title = self.ids["title"].text
         self.num = self.ids["num"].text
         self.sub_num = self.ids["sub_num"].text
-        
+
         if self.title == "":
             return
         file_list = sorted(glob.glob("party/csv/*"))
         last_file = file_list[len(file_list)-1]
-        if self.num == "":           
+        if self.num == "":
             self.num = str(int(last_file.replace('party/csv\\', '')[0])+1)
             self.sub_num = "0"
         elif self.sub_num == "":
             same_num_list= [file for file in file_list if file.startswith('party/csv\\'+self.num+"-")]
             last_same_num_file=sorted(same_num_list)[len(same_num_list)-1]
             self.sub_num = str(int(last_same_num_file.split("-")[1][0])+1)
-        
+
         filepath = "party\\csv\\"+self.num + "-" + self.sub_num + "_" + self.title + ".csv"
         with open(filepath, 'w') as party_csv:
             writer = csv.writer(party_csv, lineterminator="\n")
@@ -66,9 +66,9 @@ class PagePartyWidget(BoxLayout):
             for partyPokemonPanel in self.partyPokemonPanels:
                 row = partyPokemonPanel.set_csv_row()
                 writer.writerow(row)
-        
+
         if self.set_default:
-           self.change_csv(filepath) 
+            self.change_csv(filepath,popup=False)
 
     def get_using_csv(self):
         with open('party/setting.txt', 'r') as txt:
@@ -78,11 +78,12 @@ class PagePartyWidget(BoxLayout):
     def change_using_csv(self):
         self.change_chooser_popup = CsvChooserPopup(selected=self.change_csv,title="CSV選択")
         self.change_chooser_popup.open()
-    
-    def change_csv(self, value:str):
+
+    def change_csv(self, value:str, popup:bool=True):
         with open('party/setting.txt', 'w') as txt:
             txt.write(value)
             self.using = value.split('party\\csv\\')[1]
             self.ids["using"].text= self.using
             txt.close()
-        self.change_chooser_popup.dismiss()
+        if popup:
+            self.change_chooser_popup.dismiss()

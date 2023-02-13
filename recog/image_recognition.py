@@ -27,7 +27,7 @@ class ImageRecognition(object):
         result=False
         coord=self.coords.dicCoord[coord_name]
         if not self.img_flag:
-            return 
+            return
         img1 = self.img[coord.top : coord.bottom, coord.left: coord.right]
         temp=cv2.imread(temp_imgge_name)
         if temp is None:
@@ -60,7 +60,7 @@ class ImageRecognition(object):
                     tmp_max_val.append(max_val)
                 except:
                     pass
-                
+
             max_val_list.append(max(tmp_max_val))
 
         if max(max_val_list) >= accuracy:

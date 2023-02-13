@@ -8,7 +8,7 @@ from kivy.uix.popup import Popup
 
 import pandas as pd
 
-from pokedata.const import 変化, Types
+from pokedata.const import Types
 from pokedata.pokemon import Pokemon
 from gui import WazaButton, IconToggleButton,dummy
 
@@ -69,7 +69,7 @@ class OpponentChosenPokemonPanel(BoxLayout, EventDispatcher):
 
     evs_combobox = ObjectProperty()
     icon = StringProperty("")
-    
+
     def __init__(self, **kw):
         from kivy_gui.popup import TypeSelectPopupContent
         super(OpponentChosenPokemonPanel, self).__init__(**kw)
@@ -130,7 +130,7 @@ class ChosenWazaListPanel(BoxLayout):
             wazapanel = ChosenWazaPanel(index=i)
             self.add_widget(wazapanel)
             self.wazapanel_list.append(wazapanel)
-        
+
     def register_chosen_waza(self, waza: str):
         waza_list: list[str] = []
         for index in range(len(self.wazapanel_list)):
@@ -138,7 +138,7 @@ class ChosenWazaListPanel(BoxLayout):
         if not waza in waza_list and "" in waza_list:
             self.wazapanel_list[waza_list.index("")].waza = waza
             self.wazapanel_list[waza_list.index("")].waza_button.text = waza
-    
+
     def clear_all_chosen_waza(self):
         for waza in self.wazapanel_list:
             waza.waza = ""
@@ -187,13 +187,13 @@ class ChosenWazaPanel(BoxLayout):
         self.waza_button.text = ""
         self.pp = 0
         self.pp_text.text = str(self.pp)
-    
+
     # マイナスボタンが押された時
     def click_minus_button(self, *args):
         if self.pp > 0:
             self.pp = self.pp - 1
             self.pp_text.text = str(self.pp)
-    
+
     # プラスボタンが押された時
     def click_plus_button(self, *args):
         if self.pp < 64:
@@ -233,19 +233,19 @@ class TimerLabel(BoxLayout):
         elif int(self.seconds) == 0:
             self.seconds = "59"
             self.minutes = str(int(self.minutes) - 1).zfill(2)
-	
+
     def toggle(self):
         if self.running:
             self.stop()
         else:
             self.start()
-    
+
     def reset(self):
         self.stop()
         self.minutes = "20"
         self.seconds = "00"
 
-# 対戦情報入力パネル   
+# 対戦情報入力パネル
 class TrainerInfoPanel(BoxLayout):
     name = StringProperty("")
     rank = StringProperty("")
@@ -253,13 +253,13 @@ class TrainerInfoPanel(BoxLayout):
 
     def __init__(self, **kwargs):
         super(TrainerInfoPanel, self).__init__(**kwargs)
-    
+
     def set_name(self, value):
         self.ids["name"].text = value
 
     def update(self):
-        self.name = self.ids["name"].text    
-        self.rank = self.ids["rank"].text    
+        self.name = self.ids["name"].text
+        self.rank = self.ids["rank"].text
         self.memo = self.ids["memo"].text
 
     def clear(self, player: bool):
