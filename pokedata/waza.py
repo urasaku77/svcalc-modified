@@ -145,6 +145,10 @@ class WazaBase:
     def critical(self) -> bool:
         return self.__critical
 
+    @critical.setter
+    def critical(self, value) -> None:
+        self.__critical = value
+
     @property
     def type(self) -> int:
         return self.__type

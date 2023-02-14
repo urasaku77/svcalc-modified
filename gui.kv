@@ -197,6 +197,14 @@
                             text:"-"
                             on_release: root.change_rank("S", False)
                             size_hint_x: 1
+                BoxLayout:
+                    size_hint_x: 2
+                    CheckBox:
+                        active: root.critical
+                        on_press: root.change_critical()
+                    ShortLabel:
+                        text: "急所"
+
 
 <ShortLabel@Label>
     size_hint_x: None

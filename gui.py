@@ -181,6 +181,7 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
     icon = ObjectProperty()
     formchange_icon = ObjectProperty()
     ability_values = ListProperty(["無効","有効"])
+    critical = BooleanProperty(False)
 
     def __init__(self, **kw):
         from kivy_gui.popup import TypeSelectPopupContent
@@ -239,6 +240,14 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
                 return
             self.pokemon.rank.set_values_from_int(type, last_value)
             self.pokemon.statechanged()
+    def change_critical(self):
+        self.critical = not self.critical
+        if self.pokemon is None:
+            return
+        for waza in self.pokemon.waza_list:
+            if waza is not None:
+                waza.critical = self.critical
+        self.pokemon.statechanged()
 
     def change_ranks(self):
         if self.pokemon is not None:
