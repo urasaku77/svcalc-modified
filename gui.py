@@ -235,8 +235,14 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
         else:
             last_value = value - 1
         self.pokemon.rank.set_values_from_int(type, last_value)
-        self.ids[type].text = str(last_value)
         self.pokemon.statechanged()
+
+    def change_ranks(self):
+        self.ids["A"].text = str(self.pokemon.rank.A)
+        self.ids["B"].text = str(self.pokemon.rank.B)
+        self.ids["C"].text = str(self.pokemon.rank.C)
+        self.ids["D"].text = str(self.pokemon.rank.D)
+        self.ids["S"].text = str(self.pokemon.rank.S)
 
     def form_change(self):
         pokemon: Pokemon = self.pokemon

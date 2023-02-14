@@ -142,6 +142,7 @@ class PageBattleWidget(BoxLayout):
 
     def pokemon_state_changed(self):
         self.calc_damage()
+        self.activePokemonPanels[1].change_ranks()
 
     def set_opponent_waza(self, waza_index: int):
         waza_name = self.wazaListPanels[1].wazapanel_list[waza_index].waza_button.text
