@@ -295,7 +295,7 @@ class Pokemon:
         if rank > 0:
             stats = math.floor(stats / 2 * (2 + rank))
         elif rank < 0:
-            stats = math.floor(stats / (2 + rank) * 2)
+            stats = math.floor(stats / (2 - rank) * 2)
         return stats
 
     # デフォルトデータ設定
