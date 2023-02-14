@@ -217,32 +217,34 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
         pass
 
     def change_rank(self, type:str, up:bool):
-        value = 0
-        last_value = 0
-        match type:
-            case "A":
-                value = self.pokemon.rank.A
-            case "B":
-                value = self.pokemon.rank.B
-            case "C":
-                value = self.pokemon.rank.C
-            case "D":
-                value = self.pokemon.rank.D
-            case "S":
-                value = self.pokemon.rank.S
-        if up:
-            last_value = value + 1
-        else:
-            last_value = value - 1
-        self.pokemon.rank.set_values_from_int(type, last_value)
-        self.pokemon.statechanged()
+        if self.pokemon is not None:
+            value = 0
+            last_value = 0
+            match type:
+                case "A":
+                    value = self.pokemon.rank.A
+                case "B":
+                    value = self.pokemon.rank.B
+                case "C":
+                    value = self.pokemon.rank.C
+                case "D":
+                    value = self.pokemon.rank.D
+                case "S":
+                    value = self.pokemon.rank.S
+            if up:
+                last_value = value + 1
+            else:
+                last_value = value - 1
+            self.pokemon.rank.set_values_from_int(type, last_value)
+            self.pokemon.statechanged()
 
     def change_ranks(self):
-        self.ids["A"].text = str(self.pokemon.rank.A)
-        self.ids["B"].text = str(self.pokemon.rank.B)
-        self.ids["C"].text = str(self.pokemon.rank.C)
-        self.ids["D"].text = str(self.pokemon.rank.D)
-        self.ids["S"].text = str(self.pokemon.rank.S)
+        if self.pokemon is not None:
+            self.ids["A"].text = str(self.pokemon.rank.A)
+            self.ids["B"].text = str(self.pokemon.rank.B)
+            self.ids["C"].text = str(self.pokemon.rank.C)
+            self.ids["D"].text = str(self.pokemon.rank.D)
+            self.ids["S"].text = str(self.pokemon.rank.S)
 
     def form_change(self):
         pokemon: Pokemon = self.pokemon
@@ -253,14 +255,16 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
             self.icon.formchange_icon = pokemon.next_form_icon
 
     def on_select_doryoku_preset(self, value):
-        self.pokemon.set_doryoku_preset(value)
-        self.evs_combobox.text = self.pokemon.marked_status_text
+        if self.pokemon is not None:
+            self.pokemon.set_doryoku_preset(value)
+            self.evs_combobox.text = self.pokemon.marked_status_text
 
     def on_click_terasicon(self):
-        if self.player == 0 and self.pokemon.terastype != Types.なし:
-            self.set_terastype()
-        else:
-            self.select_terastype()
+        if self.pokemon is not None:
+            if self.player == 0 and self.pokemon.terastype != Types.なし:
+                self.set_terastype()
+            else:
+                self.select_terastype()
 
     def set_terastype(self):
         if self.pokemon.battle_terastype == Types.なし:
