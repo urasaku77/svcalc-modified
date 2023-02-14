@@ -149,7 +149,7 @@ class SpeedCheckPopup(Popup):
     player_scarf = ObjectProperty(False)
     player_seikaku_up = ObjectProperty(False)
     player_seikaku_down = ObjectProperty(False)
-    rank = ["-6", "-5", "-4", "-3", "-2", "-1", "0", "+1", "+2", "+3", "+4", "+5", "+6"]
+    rank = ["-6", "-5", "-4", "-3", "-2", "-1", "0", "1", "2", "3", "4", "5", "6"]
 
     def set_pokemon(self, active_pokemons: list[Optional[Pokemon]]):
         self.players_pokemon = active_pokemons[0]
@@ -161,11 +161,14 @@ class SpeedCheckPopup(Popup):
         self.kotais[0] = self.players_pokemon.kotai.S
         self.ids["player_kotai"].text = str(self.players_pokemon.kotai.S)
         self.doryokus[0] = self.players_pokemon.doryoku.S
-        self.ids["player_doryoku"].text = str(self.players_pokemon.doryoku.S) 
+        self.ids["player_doryoku"].text = str(self.players_pokemon.doryoku.S)
+        self.ranks = [self.rank.index(str(self.players_pokemon.rank.S)), self.rank.index(str(self.opponent_pokemon.rank.S))]
+        self.ids["player_rank"].text = str(self.rank[self.ranks[0]])
+        self.ids["opponent_rank"].text = str(self.rank[self.ranks[1]])
 
         self.set_player_status()
         self.calc_speed()
-        
+
     def set_player_status(self):
         if self.players_pokemon.seikaku in ["おくびょう","せっかち","やんちゃ","ようき",]:
             self.player_seikaku_up = True
@@ -181,20 +184,20 @@ class SpeedCheckPopup(Popup):
         if value.isdecimal():
             self.kotais[player] = int(value)
             if player == 0:
-                self.ids["player_kotai"].text = value 
+                self.ids["player_kotai"].text = value
             else:
-                self.ids["opponent_kotai"].text = value 
+                self.ids["opponent_kotai"].text = value
         else:
             self.kotais[player] = 0
         self.calc_speed()
-    
+
     def set_doryoku(self, player: int, value: str):
         if value.isdecimal():
             self.doryokus[player] = int(value)
             if player == 0:
-                self.ids["player_doryoku"].text = value 
+                self.ids["player_doryoku"].text = value
             else:
-                self.ids["opponent_doryoku"].text = value 
+                self.ids["opponent_doryoku"].text = value
         else:
             self.doryokus[player] = 0
         self.calc_speed()
@@ -244,27 +247,27 @@ class SpeedCheckPopup(Popup):
             match self.rank[self.ranks[i]]:
                 case "0":
                     self.results[i] = int(base[i])
-                case "+1":
+                case "1":
                     self.results[i] = int(base[i] * 1.5)
                 case "-1":
                     self.results[i] = int(base[i] * 2 / 3)
-                case "+2":
+                case "2":
                     self.results[i] = int(base[i] * 2)
                 case "-2":
                     self.results[i] = int(base[i] / 2)
-                case "+3":
+                case "3":
                     self.results[i] = int(base[i] * 2.5)
                 case "-3":
                     self.results[i] = int(base[i] * 2 / 5)
-                case "+4":
+                case "4":
                     self.results[i] = int(base[i] * 3)
                 case "-4":
                     self.results[i] = int(base[i] / 3)
-                case "+5":
+                case "5":
                     self.results[i] = int(base[i] * 3.5)
                 case "-5":
                     self.results[i] = int(base[i] * 2 / 7)
-                case "+6":
+                case "6":
                     self.results[i] = int(base[i] * 4)
                 case "-6":
                     self.results[i] = int(base[i] / 4)
@@ -289,7 +292,7 @@ class PartyRegisterPopupContent(BoxLayout):
 
     def __init__(self, **kwargs) -> None:
         super(PartyRegisterPopupContent, self).__init__(**kwargs)
-    
+
     def on_open(self):
         if self.pokename_input.text == "":
             self.pokename_input.focus = True
@@ -297,7 +300,7 @@ class PartyRegisterPopupContent(BoxLayout):
     @property
     def pokename_input(self) -> PokeNameComboEdit:
         return self.ids["_input"]
-    
+
     # ポケモン名が入力された時
     def on_input_name(self, name: str):
         pokemon: Pokemon = Pokemon.by_name(name, default=True)
@@ -312,7 +315,6 @@ class CsvChooserPopup(InputPopup):
 
     def __init__(self, **kwargs) -> None:
         super(CsvChooserPopup, self).__init__(**kwargs)
-    
+
     def select(self, csv:str):
         self.selected(csv)
-    

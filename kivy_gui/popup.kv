@@ -86,6 +86,7 @@
                     text: "-1"
                     on_release: root.set_rank(0, False)
                 Label:
+                    id: player_rank
                     text: root.rank[root.ranks[0]]
                 Button:
                     text: "+1"
@@ -212,6 +213,7 @@
                     text: "-1"
                     on_release: root.set_rank(1, False)
                 Label:
+                    id: opponent_rank
                     text: root.rank[root.ranks[1]]
                 Button:
                     text: "+1"
