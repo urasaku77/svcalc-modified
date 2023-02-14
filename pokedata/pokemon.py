@@ -365,7 +365,7 @@ class Pokemon:
                 wazabase.set_next_value()
                 self.statechanged()
             elif wazabase.is_self_buff:
-                self.__rank.add_values_from_string(wazabase.value)
+                self.__rank.add_values_from_string(wazabase.value, True)
                 self.statechanged()
 
     # 対象のタイプを持っているか（テラスタイプの場合含む）

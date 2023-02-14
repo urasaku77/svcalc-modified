@@ -157,7 +157,7 @@ class Stats:
             case "S":
                 self.__S = value
 
-    def add_values_from_string(self, values_string: str):
+    def add_values_from_string(self, values_string: str, rank:bool=False):
         values_list = re.findall(pattern, values_string, re.S)
         for values in values_list:
             value: int = int(values[1])
@@ -166,15 +166,30 @@ class Stats:
                     case "H":
                         self.__H += value
                     case "A":
-                        self.__A += value
+                        if not rank:
+                            self.__A += value
+                        elif self.__A + value <= 6:
+                            self.__A += value
                     case "B":
-                        self.__B += value
+                        if not rank:
+                            self.__B += value
+                        elif self.__B + value <= 6:
+                            self.__B += value
                     case "C":
-                        self.__C += value
+                        if not rank:
+                            self.__C += value
+                        elif self.__C + value <= 6:
+                            self.__C += value
                     case "D":
-                        self.__D += value
+                        if not rank:
+                            self.__D += value
+                        elif self.__D + value <= 6:
+                            self.__D += value
                     case "S":
-                        self.__S += value
+                        if not rank:
+                            self.__S += value
+                        elif self.__S + value <= 6:
+                            self.__S += value
 
     def max_stats(self) -> StatsKey:
         max_key: StatsKey = StatsKey.S

@@ -235,6 +235,8 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
                 last_value = value + 1
             else:
                 last_value = value - 1
+            if last_value > 6 or last_value < -6:
+                return
             self.pokemon.rank.set_values_from_int(type, last_value)
             self.pokemon.statechanged()
 
