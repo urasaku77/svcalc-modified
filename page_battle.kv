@@ -40,23 +40,11 @@
                     SimpleButton:
                         text: "PT"
                         on_release: root.load_party()
-                BoxLayout:
-                    size_hint_y: None
-                    height: 40
-                    Button:
-                        text: "1"
-                        on_release: root.select_player_chosen_pokemon(0)
-                    Button:
-                        text: "2"
-                        on_release: root.select_player_chosen_pokemon(1)
-                    Button:
-                        text: "3"
-                        on_release: root.select_player_chosen_pokemon(2)
                 ActivePokemonPanel:
                     id: _playerActivePokemon
                     player: 0
                     size_hint_y: None
-                    height: 120
+                    height: 140
                     on_click_icon: print(self.pokemon)
                 WazaListPanel:
                     id: _playerWazaList
@@ -82,23 +70,11 @@
                     SimpleButton:
                         text: "クリア"
                         on_release: root.clear_party(1)
-                BoxLayout:
-                    size_hint_y: None
-                    height: 40
-                    Button:
-                        text: "1"
-                        on_release: root.select_opponent_chosen_pokemon(0)
-                    Button:
-                        text: "2"
-                        on_release: root.select_opponent_chosen_pokemon(1)
-                    Button:
-                        text: "3"
-                        on_release: root.select_opponent_chosen_pokemon(2)
                 ActivePokemonPanel:
                     id: _opponentActivePokemon
                     player: 1
                     size_hint_y: None
-                    height: 120
+                    height: 140
                 GridLayout:
                     cols:2
                     padding: [0, 5]
@@ -153,10 +129,25 @@
             rows:5
             padding: [5, 5]
             spacing: [5, 5]
-            PokemonInfoPanel:
-                id:_playerPokemonInfo
+            BoxLayout:
                 size_hint_y: 2.5
-                height: 120
+                orientation: "vertical"
+                BoxLayout:
+                    size_hint_y: 1
+                    height: 40
+                    Button:
+                        text: "1"
+                        on_release: root.select_player_chosen_pokemon(0)
+                    Button:
+                        text: "2"
+                        on_release: root.select_player_chosen_pokemon(1)
+                    Button:
+                        text: "3"
+                        on_release: root.select_player_chosen_pokemon(2)
+                PokemonInfoPanel:
+                    id:_playerPokemonInfo
+                    size_hint_y: 4
+                    height: 120
             Label:
                 text: "工事中"
                 size_hint_y: 2.5
@@ -176,10 +167,25 @@
                 title_name: "テラスタイプ"
                 size_hint_y: 2.5
                 height: 120
-            PokemonInfoPanel:
-                id:_opponentPokemonInfo
+            BoxLayout:
                 size_hint_y: 2.5
-                height: 120
+                orientation: "vertical"
+                BoxLayout:
+                    size_hint_y: 1
+                    height: 40
+                    Button:
+                        text: "1"
+                        on_release: root.select_opponent_chosen_pokemon(0)
+                    Button:
+                        text: "2"
+                        on_release: root.select_opponent_chosen_pokemon(1)
+                    Button:
+                        text: "3"
+                        on_release: root.select_opponent_chosen_pokemon(2)
+                PokemonInfoPanel:
+                    id:_opponentPokemonInfo
+                    size_hint_y: 4
+                    height: 120
             TrainerInfoPanel:
                 id: _playerInfo
                 size_hint_y: 2.5

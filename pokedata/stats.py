@@ -142,6 +142,21 @@ class Stats:
                     case "S":
                         self.__S = value
 
+    def set_values_from_int(self, type: str, value: int):
+        match type:
+            case "H":
+                self.__H = value
+            case "A":
+                self.__A = value
+            case "B":
+                self.__B = value
+            case "C":
+                self.__C = value
+            case "D":
+                self.__D = value
+            case "S":
+                self.__S = value
+
     def add_values_from_string(self, values_string: str):
         values_list = re.findall(pattern, values_string, re.S)
         for values in values_list:
