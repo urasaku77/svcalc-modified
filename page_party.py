@@ -12,6 +12,7 @@ class PagePartyWidget(BoxLayout):
     title=StringProperty("")
     num=StringProperty("")
     sub_num=StringProperty("")
+    memo=StringProperty("")
     using=StringProperty("")
     set_default = BooleanProperty(True)
 
@@ -28,6 +29,11 @@ class PagePartyWidget(BoxLayout):
         self.ids["num"].text = file.split("-")[0]
         self.ids["sub_num"].text = file.split("-")[1].split("_")[0]
         self.ids["title"].text = file.split("-")[1].split("_")[1].split(".")[0]
+        memo_file= "party\\" + file.replace("csv","txt")
+        with open(memo_file, 'r') as txt:
+            self.memo = txt.read()
+            txt.close()
+        self.ids["memo"].text = self.memo
         self.load_party(csv)
         self.set_chooser_popup.dismiss()
 
@@ -66,6 +72,11 @@ class PagePartyWidget(BoxLayout):
             for partyPokemonPanel in self.partyPokemonPanels:
                 row = partyPokemonPanel.set_csv_row()
                 writer.writerow(row)
+
+        self.memo = self.ids["memo"].text
+        with open("party\\"+self.num + "-" + self.sub_num + "_" + self.title + ".txt", 'w') as txt:
+            txt.write(self.memo)
+            txt.close()
 
         if self.set_default:
             self.change_csv(filepath,popup=False)

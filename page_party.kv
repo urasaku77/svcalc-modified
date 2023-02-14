@@ -48,61 +48,63 @@
                             height: 40
                             multiline: False
             BoxLayout:
+                orientation: "vertical"
                 size_hint_x: 4
-                AnchorLayout:
-                    size_hint_x: 1
-                    anchor_x:"center"
-                    anchor_y:"center"
-                    Label:
+                BoxLayout:
+                    ShortLabel:
                         text:"タイトル"
-                AnchorLayout:
-                    size_hint_x: 4
-                    anchor_x:"center"
-                    anchor_y:"center"
-                    TextInput:
-                        id: title
-                        size_hint_y: None
-                        text:root.title
-                        height: 40
-                        multiline: False
-                AnchorLayout:
-                    size_hint_x: 1
-                    anchor_x:"center"
-                    anchor_y:"center"
-                    Button:
-                        size_hint_y: None
-                        text: "保存"
-                        height: 40
-                        on_release: root.save_csv()
+                        size_hint_x: 1
+                    AnchorLayout:
+                        size_hint_x: 6
+                        anchor_x:"center"
+                        anchor_y:"center"
+                        TextInput:
+                            id: title
+                            size_hint_y: None
+                            text:root.title
+                            height: 40
+                            multiline: False
+                    AnchorLayout:
+                        size_hint_x: 1
+                        anchor_x:"center"
+                        anchor_y:"center"
+                        Button:
+                            size_hint_y: None
+                            text: "保存"
+                            height: 40
+                            on_release: root.save_csv()
+                BoxLayout:
+                    AnchorLayout:
+                        size_hint_x: 1
+                        anchor_x:"right"
+                        anchor_y:"center"
+                        CheckBox:
+                            active: root.set_default
+                            on_press: root.set_default = self.active
+                            size_hint_x: 1
+                    AnchorLayout:
+                        size_hint_x: 1
+                        anchor_x:"left"
+                        anchor_y:"center"
+                        ShortLabel:
+                            text: "使用するパーティに設定"
         BoxLayout:
             size_hint_y: 0.3
-            CheckBox:
-                active: root.set_default
-                on_press: root.set_default = self.active
+            ShortLabel:
+                text:"メモ"
                 size_hint_x: 1
-            AnchorLayout:
+            TextInput:
+                id: memo
+                text:""
+                size_hint_x: 5
+            BoxLayout:
+                orientation:"vertical"
                 size_hint_x: 2
-                anchor_x:"left"
-                anchor_y:"center"
-                ShortLabel:
-                    text: "使用するパーティに設定"
-            AnchorLayout:
-                size_hint_x: 2
-                anchor_x:"center"
-                anchor_y:"center"
                 Button:
                     text: "CSVを開く"
-                    size_hint_y: None
-                    height: 70
                     on_release: root.open_csv()
-            AnchorLayout:
-                size_hint_x: 2
-                anchor_x:"center"
-                anchor_y:"center"
                 Button:
                     text: "全クリア(確認ダイヤログなし)"
-                    size_hint_y: None
-                    height: 70
                     on_release: root.clear_party()
         BoxLayout:
             size_hint_y: 0.3
