@@ -36,7 +36,7 @@ class PageBattleWidget(BoxLayout):
 
     def __init__(self, **kwargs):
         super(PageBattleWidget, self).__init__(**kwargs)
-        self.cameraPreview = self.CameraPreview()
+        self.cameraPreview = self.CameraPreview(size=(1280,720))
         self.active_pokemons: list[Optional[Pokemon]] = [None, None]
         self.party_popup: PartyInputPopup = PartyInputPopup(title="パーティ入力")
         self.party_popup.bind(

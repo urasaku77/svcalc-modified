@@ -20,172 +20,165 @@
     timerLabel: _time
     BoxLayout:
         orientation: "vertical"
-        GridLayout:
-            cols: 3
-            padding: [5, 5]
-            spacing: [5, 5]
-            GridLayout:
-                cols:1
+        BoxLayout:
+            size_hint_y: 3.5
+            BoxLayout:
+                orientation:"vertical"
                 size_hint_x: 1
                 BoxLayout:
-                    size_hint_y: None
-                    height: 40
-                    PartyIconPanel:
-                        id: party1
-                        on_select: root.select_party_pokemon(0, self.selected_index)
+                    orientation:"vertical"
+                    size_hint_y: 4
                     BoxLayout:
-                        padding:[30,0,0,0]
-                        PlayerChosenPokemonPanel:
-                            id:_playerChosenPokemon
-                    SimpleButton:
-                        text: "PT"
-                        on_release: root.load_party()
-                ActivePokemonPanel:
-                    id: _playerActivePokemon
-                    player: 0
-                    size_hint_y: None
-                    height: 140
-                    on_click_icon: print(self.pokemon)
-                WazaListPanel:
-                    id: _playerWazaList
-            CameraPreview:
-                id: camera_preview
-                size: root.size
-                size_hint_x: 2
-            GridLayout:
-                cols:1
-                size_hint_x: 1
+                        size_hint_y: None
+                        height: 40
+                        PartyIconPanel:
+                            id: party1
+                            on_select: root.select_party_pokemon(0, self.selected_index)
+                        BoxLayout:
+                            padding:[30,0,0,0]
+                            PlayerChosenPokemonPanel:
+                                id:_playerChosenPokemon
+                        SimpleButton:
+                            text: "PT"
+                            on_release: root.load_party()
+                    ActivePokemonPanel:
+                        id: _playerActivePokemon
+                        player: 0
+                        size_hint_y: None
+                        height: 160
+                    WazaListPanel:
+                        id: _playerWazaList
                 BoxLayout:
-                    size_hint_y: None
-                    height: 40
-                    PartyIconPanel:
-                        id: party2
-                        on_select: root.select_party_pokemon(1, self.selected_index)
-                    SimpleButton:
-                        text: "読取"
-                        on_release: root.recognize_before_battle()
-                    SimpleButton:
-                        text: "編集"
-                        on_release: root.edit_party(1)
-                    SimpleButton:
-                        text: "クリア"
-                        on_release: root.clear_party(1)
-                ActivePokemonPanel:
-                    id: _opponentActivePokemon
-                    player: 1
-                    size_hint_y: None
-                    height: 140
-                GridLayout:
-                    cols:2
-                    padding: [0, 5]
+                    size_hint_y: 1.5
                     BoxLayout:
                         orientation: "vertical"
-                        size_hint_x: 0.1
-                        Button:
-                            height: 40
-                            text: root.wazaRateList[0]
-                            on_release: root.set_opponent_waza(0)
-                        Button:
-                            height: 40
-                            text: root.wazaRateList[1]
-                            on_release: root.set_opponent_waza(1)
-                        Button:
-                            height: 40
-                            text: root.wazaRateList[2]
-                            on_release: root.set_opponent_waza(2)
-                        Button:
-                            height: 40
-                            text: root.wazaRateList[3]
-                            on_release: root.set_opponent_waza(3)
-                        Button:
-                            height: 40
-                            text: root.wazaRateList[4]
-                            on_release: root.set_opponent_waza(4)
-                        Button:
-                            height: 40
-                            text: root.wazaRateList[5]
-                            on_release: root.set_opponent_waza(5)
-                        Button:
-                            height: 40
-                            text: root.wazaRateList[6]
-                            on_release: root.set_opponent_waza(6)
-                        Button:
-                            height: 40
-                            text: root.wazaRateList[7]
-                            on_release: root.set_opponent_waza(7)
-                        Button:
-                            height: 40
-                            text: root.wazaRateList[8]
-                            on_release: root.set_opponent_waza(8)
-                        Button:
-                            height: 40
-                            text: root.wazaRateList[9]
-                            on_release: root.set_opponent_waza(9)
-                    WazaListPanel:
                         size_hint_x: 1
-                        id: _opponentWazaList
+                        Button:
+                            text: "1"
+                            on_release: root.select_player_chosen_pokemon(0)
+                        Button:
+                            text: "2"
+                            on_release: root.select_player_chosen_pokemon(1)
+                        Button:
+                            text: "3"
+                            on_release: root.select_player_chosen_pokemon(2)
+                    PokemonInfoPanel:
+                        id:_playerPokemonInfo
+                        size_hint_x: 6
+            BoxLayout:
+                orientation:"vertical"
+                size_hint_x: 2
+                CameraPreview:
+                    id: camera_preview
+                    size_hint_y: 2
+                BoxLayout:
+                    size_hint_y: 1
+                    HomeInfoPanel:
+                        id: _tokusei
+                        title_name: "とくせい"
+                    HomeInfoPanel:
+                        id: _motimono
+                        title_name: "もちもの"
+                    HomeInfoPanel:
+                        id: _tarastype
+                        title_name: "テラスタイプ"
+            BoxLayout:
+                orientation:"vertical"
+                size_hint_x: 1
+                BoxLayout:
+                    orientation:"vertical"
+                    size_hint_y: 4
+                    BoxLayout:
+                        size_hint_y: None
+                        height: 40
+                        PartyIconPanel:
+                            id: party2
+                            on_select: root.select_party_pokemon(1, self.selected_index)
+                        SimpleButton:
+                            text: "読取"
+                            on_release: root.recognize_before_battle()
+                        SimpleButton:
+                            text: "編集"
+                            on_release: root.edit_party(1)
+                        SimpleButton:
+                            text: "クリア"
+                            on_release: root.clear_party(1)
+                    ActivePokemonPanel:
+                        id: _opponentActivePokemon
+                        player: 1
+                        size_hint_y: None
+                        height: 160
+                    GridLayout:
+                        cols:2
+                        padding: [0, 5]
+                        BoxLayout:
+                            orientation: "vertical"
+                            size_hint_x: 0.1
+                            Button:
+                                height: 40
+                                text: root.wazaRateList[0]
+                                on_release: root.set_opponent_waza(0)
+                            Button:
+                                height: 40
+                                text: root.wazaRateList[1]
+                                on_release: root.set_opponent_waza(1)
+                            Button:
+                                height: 40
+                                text: root.wazaRateList[2]
+                                on_release: root.set_opponent_waza(2)
+                            Button:
+                                height: 40
+                                text: root.wazaRateList[3]
+                                on_release: root.set_opponent_waza(3)
+                            Button:
+                                height: 40
+                                text: root.wazaRateList[4]
+                                on_release: root.set_opponent_waza(4)
+                            Button:
+                                height: 40
+                                text: root.wazaRateList[5]
+                                on_release: root.set_opponent_waza(5)
+                            Button:
+                                height: 40
+                                text: root.wazaRateList[6]
+                                on_release: root.set_opponent_waza(6)
+                            Button:
+                                height: 40
+                                text: root.wazaRateList[7]
+                                on_release: root.set_opponent_waza(7)
+                            Button:
+                                height: 40
+                                text: root.wazaRateList[8]
+                                on_release: root.set_opponent_waza(8)
+                            Button:
+                                height: 40
+                                text: root.wazaRateList[9]
+                                on_release: root.set_opponent_waza(9)
+                        WazaListPanel:
+                            size_hint_x: 1
+                            id: _opponentWazaList
+                BoxLayout:
+                    size_hint_y: 1.5
+                    PokemonInfoPanel:
+                        id:_opponentPokemonInfo
+                        size_hint_x: 6
+                    BoxLayout:
+                        orientation: "vertical"
+                        size_hint_x: 1
+                        Button:
+                            text: "1"
+                            on_release: root.select_opponent_chosen_pokemon(0)
+                        Button:
+                            text: "2"
+                            on_release: root.select_opponent_chosen_pokemon(1)
+                        Button:
+                            text: "3"
+                            on_release: root.select_opponent_chosen_pokemon(2)
         GridLayout:
             cols:6
-            rows:5
             padding: [5, 5]
             spacing: [5, 5]
-            BoxLayout:
-                size_hint_y: 2.5
-                orientation: "vertical"
-                BoxLayout:
-                    size_hint_y: 1
-                    height: 40
-                    Button:
-                        text: "1"
-                        on_release: root.select_player_chosen_pokemon(0)
-                    Button:
-                        text: "2"
-                        on_release: root.select_player_chosen_pokemon(1)
-                    Button:
-                        text: "3"
-                        on_release: root.select_player_chosen_pokemon(2)
-                PokemonInfoPanel:
-                    id:_playerPokemonInfo
-                    size_hint_y: 4
-                    height: 120
-            Label:
-                text: "工事中"
-                size_hint_y: 2.5
-                height: 120
-            HomeInfoPanel:
-                id: _tokusei
-                title_name: "とくせい"
-                size_hint_y: 2.5
-                height: 120
-            HomeInfoPanel:
-                id: _motimono
-                title_name: "もちもの"
-                size_hint_y: 2.5
-                height: 120
-            HomeInfoPanel:
-                id: _tarastype
-                title_name: "テラスタイプ"
-                size_hint_y: 2.5
-                height: 120
-            BoxLayout:
-                size_hint_y: 2.5
-                orientation: "vertical"
-                BoxLayout:
-                    size_hint_y: 1
-                    height: 40
-                    Button:
-                        text: "1"
-                        on_release: root.select_opponent_chosen_pokemon(0)
-                    Button:
-                        text: "2"
-                        on_release: root.select_opponent_chosen_pokemon(1)
-                    Button:
-                        text: "3"
-                        on_release: root.select_opponent_chosen_pokemon(2)
-                PokemonInfoPanel:
-                    id:_opponentPokemonInfo
-                    size_hint_y: 4
-                    height: 120
+            size_hint_y: 1
             TrainerInfoPanel:
                 id: _playerInfo
                 size_hint_y: 2.5
