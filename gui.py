@@ -180,7 +180,7 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
     teras_button = ObjectProperty()
     icon = ObjectProperty()
     formchange_icon = ObjectProperty()
-    ability_values = ListProperty(["無効","有効"])
+    ability_values = ListProperty([""])
     critical = BooleanProperty(False)
 
     def __init__(self, **kw):
@@ -203,16 +203,16 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
         self.teras_button.icon = pokemon.battle_terastype.icon
 
     def set_ability(self, ability: str,is_pokemon_change:bool=False):
-        self.ability_values = ["無効","有効"]
+        self.ability_values = [""]
+        self.pokemon.ability = ability
         for k, v in ABILITY_VALUES.items():
             if ability == k:
                 self.ability_values = v
                 break
-        if not is_pokemon_change:
-            self.pokemon.ability = ability
-            self.pokemon.ability_value = self.ability_values[0]
+        self.pokemon.ability_value = self.ability_values[0]
         self.ids["abilities_valid"].items = self.ability_values
         self.ids["abilities_valid"].text = self.pokemon.ability_value
+        self.ids["abilities_valid"].disabled = True if self.ability_values[0] == "" else False
 
     def on_click_icon(self, *args):
         pass

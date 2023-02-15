@@ -115,6 +115,8 @@ class PageBattleWidget(BoxLayout):
         self.refresh_party_icons()
 
     def set_active_pokemon(self, player_id: int, pokemon: Pokemon):
+        if self.activePokemonPanels[player_id].pokemon is not None and pokemon.name == self.activePokemonPanels[player_id].pokemon.name:
+            return
         pokemon.on_stage()
         if self.active_pokemons[player_id] is not None:
             self.active_pokemons[player_id].statechanged_handler = None

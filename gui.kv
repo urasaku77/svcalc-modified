@@ -34,6 +34,12 @@
                 size_hint_y: None
                 height: 30
                 on_release: root.form_change()
+            Button:
+                id: _hosei_icon
+                text: "補正"
+                size_hint_y: None
+                height: 30
+                on_release: root.form_change()
         BoxLayout:
             orientation:"vertical"
             GridLayout:
@@ -67,6 +73,7 @@
                     DropDownButton:
                         id: abilities_valid
                         size_hint_x: 1
+                        disabled: True
                         items: root.ability_values
                         text: root.pokemon.ability_value if root.pokemon is not None else ""
                         on_select_item: root.pokemon.ability_value = self.button_text
