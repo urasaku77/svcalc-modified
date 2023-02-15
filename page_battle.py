@@ -16,6 +16,7 @@ from PIL import Image as Picture
 import glob
 
 from pokedata.pokemon import Pokemon
+from pokedata.const import Weathers, Fields
 from battle.battle import Battle
 from battle.DB_battle import DB_battle
 from recog.image_recognition import ImageRecognition
@@ -33,6 +34,8 @@ class PageBattleWidget(BoxLayout):
     pokemonInfoPanels = ListProperty()
     homeInfoPanels = ListProperty()
     timerLabel = ObjectProperty()
+    weather=ObjectProperty(Weathers.なし)
+    field=ObjectProperty(Fields.なし)
 
     def __init__(self, **kwargs):
         super(PageBattleWidget, self).__init__(**kwargs)
@@ -127,6 +130,18 @@ class PageBattleWidget(BoxLayout):
                 self.wazaRateList[i] = str(pokemon.waza_rate_list[i])
         self.calc_damage()
 
+    def set_weather(self, value):
+        for weather in Weathers:
+            if weather.name == value:
+                self.weather = weather
+        self.calc_damage()
+
+    def set_field(self, value):
+        for field in Fields:
+            if field.name == value:
+                self.field = field
+        self.calc_damage()
+
     def calc_damage(self):
         pokemon1 = self.active_pokemons[0]
         pokemon2 = self.active_pokemons[1]
@@ -134,10 +149,10 @@ class PageBattleWidget(BoxLayout):
         if pokemon1 is not None and pokemon2 is not None:
             from pokedata.calc import DamageCalc
             # ダメージ計算１
-            results = DamageCalc.get_all_damages(pokemon1, pokemon2)
+            results = DamageCalc.get_all_damages(pokemon1, pokemon2, self.weather, self.field)
             self.wazaListPanels[0].set_damage_calc_results(results)
             # ダメージ計算２
-            results = DamageCalc.get_all_damages(pokemon2, pokemon1)
+            results = DamageCalc.get_all_damages(pokemon2, pokemon1, self.weather, self.field)
             self.wazaListPanels[1].set_damage_calc_results(results)
 
     def pokemon_state_changed(self):

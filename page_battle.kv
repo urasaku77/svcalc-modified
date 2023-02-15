@@ -73,9 +73,28 @@
                     size_hint_y: 2
                 BoxLayout:
                     size_hint_y: 1
-                    HomeInfoPanel:
-                        id: _tokusei
-                        title_name: "とくせい"
+                    BoxLayout:
+                        orientation:"vertical"
+                        GridLayout:
+                            cols:2
+                            padding: [0, 5]
+                            size_hint_y: 1
+                            ShortLabel:
+                                text: "天候"
+                            ShortLabel:
+                                text: "フィールド"
+                            DropDownButton:
+                                text: ""
+                                items: ["なし", "晴れ", "雨", "砂嵐", "雪"]
+                                on_select_item: root.set_weather(self.button_text)
+                            DropDownButton:
+                                text: ""
+                                items: ["なし","エレキ", "サイコ", "グラス", "ミスト"]
+                                on_select_item: root.set_field(self.button_text)
+                        HomeInfoPanel:
+                            id: _tokusei
+                            size_hint_y: 4
+                            title_name: "とくせい"
                     HomeInfoPanel:
                         id: _motimono
                         title_name: "もちもの"
