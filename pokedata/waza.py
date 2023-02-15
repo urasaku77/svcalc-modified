@@ -201,6 +201,8 @@ class WazaBase:
     __power_hosei_values = {
         "はたきおとす": (
             (1.0, 1.5), 1.5),
+        "たたりめ": (
+            (1.0, 2.0), 2.0),
     }
 
     __self_buff_values = {
