@@ -205,12 +205,21 @@
                             on_release: root.change_rank("S", False)
                             size_hint_x: 1
                 BoxLayout:
+                    orientation:'vertical'
                     size_hint_x: 2
-                    CheckBox:
-                        active: root.critical
-                        on_press: root.change_critical()
-                    ShortLabel:
-                        text: "急所"
+                    BoxLayout:
+                        CheckBox:
+                            active: root.critical
+                            on_press: root.change_critical()
+                        ShortLabel:
+                            text: "急所"
+                    BoxLayout:
+                        CheckBox:
+                            active: root.burn
+                            on_press: root.change_burn()
+                        ShortLabel:
+                            text: "やけど"
+
 
 
 <ShortLabel@Label>

@@ -32,6 +32,7 @@ class Pokemon:
         self.__abilities: list[str] = [""]
         self.__ability: str = self.__abilities[0]
         self.__ability_value: str = ""
+        self.__ailment: Ailments = Ailments.なし
         self.__waza_list: list[Optional[WazaBase]] = [None for _ in range(10)]
         self.__waza_rate_list: list[Optional[float]] = [0.0 for _ in range(10)]
         self.__weight: float = 0.0
@@ -162,6 +163,15 @@ class Pokemon:
     def ability(self, value) -> None:
         self.__ability = value
         self.set_default_ability_value()
+        self.statechanged()
+
+    @property
+    def ailment(self) -> str:
+        return self.__ailment
+
+    @ailment.setter
+    def ailment(self, value) -> None:
+        self.__ailment = value
         self.statechanged()
 
     @property

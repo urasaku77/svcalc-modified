@@ -677,7 +677,10 @@ class DamageCalc:
 
             match attacker.ability:
                 case "へんげんじざい":
-                    value = 8192 if teras_type_equal else 6144
+                    if attacker.ability_value == "有効":
+                        value = 8192 if teras_type_equal else 6144
+                    elif attacker.ability_value == "無効" and teras_type_equal:
+                        value = 6144
                 case "てきおうりょく":
                     # テラスタイプのみ一致判定がある。一致で2倍、元タイプとも一致した場合、2.25倍
                     if teras_type_equal:
@@ -697,6 +700,9 @@ class DamageCalc:
                 quantize(DECIMAI_ZERO, rounding=ROUND_FLOOR)
 
             # × やけど 2048 ÷ 4096 → 五捨五超入 TBD
+            if attacker.ailment == Ailments.やけど and waza.category == 物理:
+                rnd_damage = (rnd_damage * 2048 / 4096).quantize(
+                DECIMAI_ZERO, rounding=ROUND_HALF_DOWN)
 
             # × ダメージの補正値 ÷ 4096 → 五捨五超入
             rnd_damage = (rnd_damage * damage_hosei / 4096).quantize(

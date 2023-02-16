@@ -13,7 +13,7 @@ from kivy.uix.widget import Widget
 
 from typing import Optional, Union
 from data.db import DB
-from pokedata.const import Types, ABILITY_VALUES
+from pokedata.const import Types, Ailments, ABILITY_VALUES
 from pokedata.pokemon import Pokemon
 from pokedata.waza import WazaBase
 from pokedata.calc import DamageCalcResult
@@ -182,6 +182,7 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
     formchange_icon = ObjectProperty()
     ability_values = ListProperty([""])
     critical = BooleanProperty(False)
+    burn = BooleanProperty(False)
 
     def __init__(self, **kw):
         from kivy_gui.popup import TypeSelectPopupContent
@@ -240,6 +241,7 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
                 return
             self.pokemon.rank.set_values_from_int(type, last_value)
             self.pokemon.statechanged()
+
     def change_critical(self):
         self.critical = not self.critical
         if self.pokemon is None:
@@ -247,6 +249,16 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
         for waza in self.pokemon.waza_list:
             if waza is not None:
                 waza.critical = self.critical
+        self.pokemon.statechanged()
+
+    def change_burn(self):
+        self.burn = not self.burn
+        if self.pokemon is None:
+            return
+        if self.burn:
+            self.pokemon.ailment = Ailments.やけど
+        else:
+            self.pokemon.ailment = Ailments.なし
         self.pokemon.statechanged()
 
     def change_ranks(self):
