@@ -310,6 +310,8 @@ class DamageCalc:
                 if field == Fields.エレキ and not defender.is_flying:
                     hosei[key] = 8192
             case _:
+                if attacker.charging and waza.type == Types.でんき:
+                    hosei[key] = 8192
                 if waza.power_hosei == 2.0:
                     hosei[key] = 8192
                 if waza.power_hosei == 1.5:

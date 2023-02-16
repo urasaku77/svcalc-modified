@@ -183,6 +183,7 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
     ability_values = ListProperty([""])
     critical = BooleanProperty(False)
     burn = BooleanProperty(False)
+    charging = BooleanProperty(False)
 
     def __init__(self, **kw):
         from kivy_gui.popup import TypeSelectPopupContent
@@ -259,6 +260,13 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
             self.pokemon.ailment = Ailments.やけど
         else:
             self.pokemon.ailment = Ailments.なし
+        self.pokemon.statechanged()
+
+    def change_charging(self):
+        self.charging = not self.charging
+        if self.pokemon is None:
+            return
+        self.pokemon.charging = self.charging
         self.pokemon.statechanged()
 
     def change_ranks(self):
