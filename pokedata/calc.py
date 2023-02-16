@@ -391,6 +391,12 @@ class DamageCalc:
             case "スロースタート" | "よわき":
                 if attacker.ability_enable:
                     hosei[key] = 2048
+            case "フラワーギフト":
+                if weather == Weathers.晴れ and waza.category == 物理:
+                    hosei[key] = 6144
+            case "こんじょう":
+                if attacker.ailment != Ailments.なし and waza.category == 物理:
+                    hosei[key] = 6144
             case "しんりょく" | "もうか" | "もらいび" | "げきりゅう" | "むしのしらせ":
                 if attacker.ability_enable and waza.type == DamageCalc.__type_buff_abilities[attacker.ability]:
                     hosei[key] = 6144
@@ -511,10 +517,10 @@ class DamageCalc:
         key = "防御特性:" + defender.ability
         match defender.ability:
             case "フラワーギフト":
-                # 自分とすべての味方の『こうげき』『とくぼう』が1.5倍になる。
-                pass
+                if weather == Weathers.晴れ and df_key == StatsKey.D:
+                    hosei[key] = 6144
             case "ふしぎなうろこ":
-                if defender.ability_enable and df_key == StatsKey.D:
+                if defender.ability_enable and df_key == StatsKey.B:
                     hosei[key] = 6144
             case "くさのけがわ":
                 if field == Fields.グラス and df_key == StatsKey.B:
@@ -700,7 +706,7 @@ class DamageCalc:
                 quantize(DECIMAI_ZERO, rounding=ROUND_FLOOR)
 
             # × やけど 2048 ÷ 4096 → 五捨五超入 TBD
-            if attacker.ailment == Ailments.やけど and waza.category == 物理:
+            if attacker.ailment == Ailments.やけど and waza.category == 物理 and waza.name != "からげんき":
                 rnd_damage = (rnd_damage * 2048 / 4096).quantize(
                 DECIMAI_ZERO, rounding=ROUND_HALF_DOWN)
 
