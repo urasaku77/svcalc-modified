@@ -219,7 +219,7 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
     def on_click_icon(self, *args):
         pass
 
-    def change_rank(self, type:str, up:bool):
+    def change_rank(self, type:str="", up:bool=True):
         if self.pokemon is not None:
             value = 0
             last_value = 0
@@ -234,6 +234,10 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
                     value = self.pokemon.rank.D
                 case "S":
                     value = self.pokemon.rank.S
+                case _:
+                    self.pokemon.rank.init_values(0)
+                    self.pokemon.statechanged()
+                    return
             if up:
                 last_value = value + 1
             else:
