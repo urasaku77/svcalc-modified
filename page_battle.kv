@@ -62,9 +62,21 @@
                         Button:
                             text: "3"
                             on_release: root.select_player_chosen_pokemon(2)
-                    PokemonInfoPanel:
-                        id:_playerPokemonInfo
+                    BoxLayout:
+                        orientation: "vertical"
                         size_hint_x: 6
+                        BoxLayout:
+                            size_hint_y: 1
+                            ShortLabel:
+                                text: "壁"
+                            DropDownButton:
+                                text: "なし"
+                                items: ["なし", "リフレクター", "ひかりのかべ", "オーロラベール"]
+                                on_select_item: root.set_wall(0, self.button_text)
+                        PokemonInfoPanel:
+                            id:_playerPokemonInfo
+                            size_hint_x: 1
+                            size_hint_y: 5
             BoxLayout:
                 orientation:"vertical"
                 size_hint_x: 2
@@ -73,6 +85,9 @@
                     size_hint_y: 2
                 BoxLayout:
                     size_hint_y: 1
+                    HomeInfoPanel:
+                        id: _motimono
+                        title_name: "もちもの"
                     BoxLayout:
                         orientation:"vertical"
                         GridLayout:
@@ -95,9 +110,6 @@
                             id: _tokusei
                             size_hint_y: 4
                             title_name: "とくせい"
-                    HomeInfoPanel:
-                        id: _motimono
-                        title_name: "もちもの"
                     HomeInfoPanel:
                         id: _tarastype
                         title_name: "テラスタイプ"
@@ -178,9 +190,21 @@
                             id: _opponentWazaList
                 BoxLayout:
                     size_hint_y: 1.5
-                    PokemonInfoPanel:
-                        id:_opponentPokemonInfo
+                    BoxLayout:
+                        orientation: "vertical"
                         size_hint_x: 6
+                        BoxLayout:
+                            size_hint_y: 1
+                            ShortLabel:
+                                text: "壁"
+                            DropDownButton:
+                                text: "なし"
+                                items: ["なし", "リフレクター", "ひかりのかべ", "オーロラベール"]
+                                on_select_item: root.set_wall(1, self.button_text)
+                        PokemonInfoPanel:
+                            id:_opponentPokemonInfo
+                            size_hint_x: 1
+                            size_hint_y: 5
                     BoxLayout:
                         orientation: "vertical"
                         size_hint_x: 1

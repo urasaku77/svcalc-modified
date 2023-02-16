@@ -47,7 +47,6 @@ class Weathers(IntEnum):
     砂嵐 = 3
     雪 = 4
 
-
 # フィールド定義
 class Fields(IntEnum):
     なし = 0
@@ -65,6 +64,12 @@ class Ailments(IntEnum):
     どく = 4
     もうどく = 5
     ねむり =6
+
+class Walls(IntEnum):
+    なし = 0
+    リフレクター = 1
+    ひかりのかべ = 2
+    オーロラベール = 3
 
 DORYOKU_PRESET = {
     "ASようき": {"nature": "ようき", "stats": Stats(0).set_values(a=252, s=252)},

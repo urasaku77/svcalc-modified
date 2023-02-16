@@ -16,7 +16,7 @@ from PIL import Image as Picture
 import glob
 
 from pokedata.pokemon import Pokemon
-from pokedata.const import Weathers, Fields
+from pokedata.const import *
 from battle.battle import Battle
 from battle.DB_battle import DB_battle
 from recog.image_recognition import ImageRecognition
@@ -118,9 +118,12 @@ class PageBattleWidget(BoxLayout):
         if self.activePokemonPanels[player_id].pokemon is not None and pokemon.name == self.activePokemonPanels[player_id].pokemon.name:
             return
         pokemon.on_stage()
+        wall = Walls.なし
         if self.active_pokemons[player_id] is not None:
             self.active_pokemons[player_id].statechanged_handler = None
+            wall = self.active_pokemons[player_id].wall
         self.active_pokemons[player_id] = pokemon
+        self.active_pokemons[player_id].wall = wall
         self.active_pokemons[player_id].statechanged_handler = self.pokemon_state_changed
         self.activePokemonPanels[player_id].pokemon = pokemon
         self.wazaListPanels[player_id].set_pokemon(pokemon)
@@ -142,6 +145,14 @@ class PageBattleWidget(BoxLayout):
         for field in Fields:
             if field.name == value:
                 self.field = field
+        self.calc_damage()
+
+    def set_wall(self, player: int, value):
+        if self.active_pokemons[player] is None:
+            return
+        for wall in Walls:
+            if wall.name == value:
+                self.active_pokemons[player].wall = wall
         self.calc_damage()
 
     def calc_damage(self):

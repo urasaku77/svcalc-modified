@@ -34,6 +34,7 @@ class Pokemon:
         self.__ability_value: str = ""
         self.__ailment: Ailments = Ailments.なし
         self.__charging: bool = False
+        self.__wall: Walls = Walls.なし
         self.__waza_list: list[Optional[WazaBase]] = [None for _ in range(10)]
         self.__waza_rate_list: list[Optional[float]] = [0.0 for _ in range(10)]
         self.__weight: float = 0.0
@@ -167,21 +168,30 @@ class Pokemon:
         self.statechanged()
 
     @property
-    def ailment(self) -> str:
+    def ailment(self) -> Ailments:
         return self.__ailment
 
     @ailment.setter
-    def ailment(self, value) -> None:
+    def ailment(self, value: Ailments) -> None:
         self.__ailment = value
         self.statechanged()
 
     @property
-    def charging(self) -> str:
+    def charging(self) -> bool:
         return self.__charging
 
     @charging.setter
-    def charging(self, value) -> None:
+    def charging(self, value: bool) -> None:
         self.__charging = value
+        self.statechanged()
+
+    @property
+    def wall(self) -> Walls:
+        return self.__wall
+
+    @wall.setter
+    def wall(self, value: Walls) -> None:
+        self.__wall = value
         self.statechanged()
 
     @property

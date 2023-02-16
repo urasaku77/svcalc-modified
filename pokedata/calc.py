@@ -563,6 +563,12 @@ class DamageCalc:
         hosei: dict[str, int] = {}
         type_effective: float = defender.get_type_effective(waza)
 
+        # region 壁の補正
+        key = "壁:" + defender.wall.name
+        if ((defender.wall.name in ["リフレクター", "オーロラベール"] and waza.category == 物理 and not waza in ["かわらわり", "サイコファング"]) or (defender.wall.name in ["ひかりのかべ", "オーロラベール"] and waza.category == 特殊)) and not waza.critical and attacker.ability != "すりぬけ":
+            hosei[key] = 2048
+        # endregion
+
         # region 攻撃側の特性補正
         key = "攻撃特性:" + attacker.ability
         match attacker.ability:
