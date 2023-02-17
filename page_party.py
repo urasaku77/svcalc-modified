@@ -29,7 +29,7 @@ class PagePartyWidget(BoxLayout):
         self.ids["num"].text = file.split("-")[0]
         self.ids["sub_num"].text = file.split("-")[1].split("_")[0]
         self.ids["title"].text = file.split("-")[1].split("_")[1].split(".")[0]
-        memo_file= "party\\" + file.replace("csv","txt")
+        memo_file= "party\\txt\\" + file.replace("csv","txt")
         with open(memo_file, 'r') as txt:
             self.memo = txt.read()
             txt.close()
@@ -74,7 +74,7 @@ class PagePartyWidget(BoxLayout):
                 writer.writerow(row)
 
         self.memo = self.ids["memo"].text
-        with open("party\\"+self.num + "-" + self.sub_num + "_" + self.title + ".txt", 'w') as txt:
+        with open("party\\txt\\"+self.num + "-" + self.sub_num + "_" + self.title + ".txt", 'w') as txt:
             txt.write(self.memo)
             txt.close()
 
