@@ -87,6 +87,7 @@ class OpponentChosenPokemonPanel(BoxLayout, EventDispatcher):
         self.icon = pokemon.icon
         self.items = pd.read_csv("battle/item.csv",encoding="utf_8",sep=',',index_col=0).index.tolist()
         self.abilities = pokemon.abilities
+        self.ability = pokemon.ability
 
     def on_click_icon(self, *args):
         self.name = ""
