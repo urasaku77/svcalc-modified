@@ -181,6 +181,8 @@ class DamageCalc:
                     if defender.weight < values[0]:
                         power = values[1]
                         break
+            case "アシストパワー" | "つけあがる":
+                power = 20 + attacker.rank.sum_plus_num()*20
             case _:
                 if waza.add_power > -1:
                     power = int(waza.power * waza.add_power)

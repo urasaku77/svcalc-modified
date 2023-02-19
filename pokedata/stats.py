@@ -199,3 +199,17 @@ class Stats:
                 max_key = key
                 max_value = self[key]
         return max_key
+
+    def sum_plus_num(self) -> int:
+        sum = 0
+        if self.__A > 0:
+            sum += self.__A
+        if self.__B > 0:
+            sum += self.__B
+        if self.__C > 0:
+            sum += self.__C
+        if self.__D > 0:
+            sum += self.__D
+        if self.__S > 0:
+            sum += self.__S
+        return sum
