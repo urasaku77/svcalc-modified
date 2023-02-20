@@ -107,10 +107,10 @@ class WazaNameComboEdit(ComboEdit):
         if len(text) < 2:
             self.options = ()
             return
-        itemlist: list = list(filter(lambda x: text in x[1], self.namedict.items()))
+        itemlist: list = list(filter(lambda x: text in x[0], self.namedict.items()))
         itemlist = itemlist[:10] if len(itemlist) > 10 else itemlist
         self.options = tuple(
-            [Button(text=item[0], size_hint_y=None, height=30) for item in itemlist])
+            [Button(text=item[1], size_hint_y=None, height=30) for item in itemlist])
 
     def on_text_validate(self, *args):
         if len(self.options) == 1:
