@@ -6,6 +6,7 @@
 #:import * gui_party
 #:include gui_party.kv
 #:include kivy_gui/popup.kv
+#:import * textinput4ja
 
 <PagePartyWidget>
     partyPokemonPanels: [_first,_second,_third,_forth,_fifth,_sixth]
@@ -58,7 +59,7 @@
                         size_hint_x: 6
                         anchor_x:"center"
                         anchor_y:"center"
-                        TextInput:
+                        TextInput_JA:
                             id: title
                             size_hint_y: None
                             text:root.title
@@ -93,7 +94,7 @@
             ShortLabel:
                 text:"メモ"
                 size_hint_x: 1
-            TextInput:
+            TextInput_JA:
                 id: memo
                 text:""
                 size_hint_x: 5

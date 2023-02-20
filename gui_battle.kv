@@ -1,6 +1,7 @@
 #:kivy 2.1.0
 #:import * gui
 #:include gui.kv
+#:import * textinput4ja
 
 <OpponentChosenPokemonPanel>
     evs_combobox: _evs_combobox
@@ -79,7 +80,7 @@
             Label:
                 text: 'TN'
                 size_hint_x: 1
-            TextInput:
+            TextInput_JA:
                 id: name
                 text: ""
                 size_hint_x: 5
@@ -97,7 +98,7 @@
             Label:
                 text: 'メモ'
                 size_hint_x: 1
-            TextInput:
+            TextInput_JA:
                 id: memo
                 text: ""
                 size_hint_x: 5
