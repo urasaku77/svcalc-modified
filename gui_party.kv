@@ -112,26 +112,27 @@
     BoxLayout:
         size_hint_x: 2
         TextInput:
+            id :kotai
             size_hint_x: 1.5
-            text:root.kotai
+            text:"0"
             on_text: root.calc_status()
         BoxLayout:
             orientation: 'vertical'
             size_hint_x: 1
             Button:
                 text:"▲"
-                on_release: root.change_kotai(up=True)
+                on_release: root.change_kotai(True)
             Button:
                 text:"▼"
-                on_release: root.change_kotai(up=False)
+                on_release: root.change_kotai(False)
     Button:
         text:"0"
         size_hint_x: 1
-        on_release: root.change_kotai(num=0)
+        on_release: root.change_kotai_direct(0)
     Button:
         text:"31"
         size_hint_x: 1
-        on_release: root.change_kotai(num=31)
+        on_release: root.change_kotai_direct(31)
     Slider:
         id:slider
         size_hint_x: 5
@@ -139,20 +140,20 @@
         max: 252
         step: 4
         orientation: "horizontal"
-        on_touch_move: root.change_doryoku(slider=True)
+        on_touch_move: root.slide_doryoku(self.value)
     BoxLayout:
         size_hint_x: 2
         TextInput:
+            id :doryoku
             size_hint_x: 1.5
-            text:root.doryoku
-            on_text_validate: slider.value = int(self.text)
-            on_text: root.calc_status()
+            text:"0"
+            on_text: root.change_doryoku_direct(self.text)
         BoxLayout:
             orientation: 'vertical'
             size_hint_x: 1
             Button:
                 text:"▲"
-                on_release: root.change_doryoku(up=True)
+                on_release: root.change_doryoku(True)
             Button:
                 text:"▼"
-                on_release: root.change_doryoku(up=False)
+                on_release: root.change_doryoku(False)

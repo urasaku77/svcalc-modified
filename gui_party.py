@@ -20,7 +20,6 @@ class PartyPokemonPanel(BoxLayout):
     type2 = StringProperty("")
     type2_img = StringProperty(Types.なし.icon)
 
-
     name = StringProperty("")
     items = ListProperty([])
     item = StringProperty("")
@@ -226,13 +225,13 @@ class StatusListPanel(BoxLayout):
     def set_kotai(self,kotai:Stats):
         self.kotai_list = [kotai.H, kotai.A, kotai.B, kotai.C, kotai.D, kotai.S]
         for i in range(len(self.statusPanels)):
-            self.statusPanels[i].change_kotai(num=self.kotai_list[i])
+            self.statusPanels[i].change_kotai_direct(str(self.kotai_list[i]))
             self.statusPanels[i].calc_status()
 
     def set_doryoku(self,doryoku:Stats):
         self.doryoku_list = [doryoku.H, doryoku.A, doryoku.B, doryoku.C, doryoku.D, doryoku.S]
         for i in range(len(self.statusPanels)):
-            self.statusPanels[i].change_doryoku(num=self.doryoku_list[i])
+            self.statusPanels[i].change_doryoku_direct(str(self.doryoku_list[i]))
             self.statusPanels[i].calc_status()
 
     def change_character(self, value:str):
@@ -287,26 +286,56 @@ class StatusPanel(BoxLayout):
         else:
             self.ids["status"].text = str(int((self.syuzoku + float(self.kotai)/2+float(self.doryoku)/8+5)*self.hosei))
 
-    def change_kotai(self, num: int=1, up:bool=True):
+    def change_kotai(self, up):
         kotai=int(self.kotai)
-        if num !=1:
-            self.kotai=str(num)
-        elif up and kotai < 31:
+        if up and kotai < 31:
             self.kotai=str(int(kotai) + 1)
         elif not up and kotai > 0:
             self.kotai=str(int(kotai) - 1)
+        self.ids["kotai"].text = self.kotai
+        self.calc_status()
 
-    def change_doryoku(self, num: int=4, slider: bool=False, up:bool=True):
+    def change_kotai_direct(self, num):
+        try:
+            self.kotai=str(num)
+            self.ids["kotai"].text = self.kotai
+        except Exception as e:
+            self.kotai = "0"
+        finally:
+            self.calc_status()
+
+    def change_doryoku(self, up:bool):
         doryoku=int(self.doryoku)
-        if num !=4:
-            self.doryoku=str(num)
-            self.ids.slider.value = self.doryoku
-        elif slider:
-            self.doryoku=str(int(self.ids.slider.value))
-        elif up and doryoku < 252:
-            self.ids.slider.value = int(doryoku) + 4
-            self.doryoku=str(self.ids.slider.value)
-        elif not up and doryoku > 0:
-            self.ids.slider.value = int(doryoku) - 4
-            self.doryoku=str(self.ids.slider.value)
+        if up:
+            doryoku += 4
+            if doryoku > 252:
+                doryoku = 252
+        else:
+            doryoku -= 4
+            if doryoku < 0:
+                doryoku = 0
+        self.ids.slider.value = doryoku
+        self.doryoku=str(doryoku)
+        self.ids["doryoku"].text = self.doryoku
+
         self.func_for_doryoku(self.index, int(self.doryoku))
+        self.calc_status()
+
+    def change_doryoku_direct(self, num: str):
+        try:
+            doryoku = int(num)
+            self.doryoku=num
+            self.ids.slider.value = doryoku
+            self.ids["doryoku"].text = self.doryoku
+            self.func_for_doryoku(self.index, doryoku)
+        except Exception as e:
+            self.doryoku = "0"
+            self.ids.slider.value = 0
+        finally:
+            self.calc_status()
+
+    def slide_doryoku(self, num: float):
+        self.doryoku=str(int(num))
+        self.ids["doryoku"].text = self.doryoku
+        self.func_for_doryoku(self.index, int(self.doryoku))
+        self.calc_status()
