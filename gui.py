@@ -188,6 +188,7 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
     def __init__(self, **kw):
         from kivy_gui.popup import TypeSelectPopupContent
         super(ActivePokemonPanel, self).__init__(**kw)
+        self.func_for_click_icon = dummy
         self.popup = Popup(
             title="テラスタイプ選択",
             content=TypeSelectPopupContent(selected=self.on_select_terastype),
@@ -222,8 +223,11 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
         self.ids["abilities_valid"].text = self.pokemon.ability_value
         self.ids["abilities_valid"].disabled = True if self.ability_values[0] == "" else False
 
+    def set_func_for_click_icon(self,func):
+        self.func_for_click_icon = func
+
     def on_click_icon(self, *args):
-        pass
+        self.func_for_click_icon()
 
     def change_rank(self, type:str="", up:bool=True):
         if self.pokemon is not None:

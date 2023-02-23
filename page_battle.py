@@ -70,16 +70,20 @@ class PageBattleWidget(BoxLayout):
         if pokemon is not None:
             self.set_active_pokemon(player_id, pokemon)
 
-    def select_player_chosen_pokemon(self, chosen_num: int):
+    def select_player_chosen_pokemon(self):
         pokemon = self.active_pokemons[0]
         if pokemon is not None:
-            self.playerChosenPokemonPanel.set_pokemon(chosen_num,pokemon)
+            self.playerChosenPokemonPanel.set_pokemon(pokemon)
 
-    def select_opponent_chosen_pokemon(self, chosen_num: int):
+    def select_opponent_chosen_pokemon(self):
         pokemon = self.active_pokemons[1]
-        if pokemon is not None:
-            self.opponentChosenPokemonPanels[chosen_num].set_pokemon(pokemon)
-            self.opponentChosenPokemonPanels[chosen_num].set_func_for_terastype(self.change_opponent_chosen_terastype)
+        if pokemon is None or pokemon.name in [self.opponentChosenPokemonPanels[0].name, self.opponentChosenPokemonPanels[1].name, self.opponentChosenPokemonPanels[2].name]:
+            return
+        for chosen_num in range(3):
+            if self.opponentChosenPokemonPanels[chosen_num].name == "":
+                self.opponentChosenPokemonPanels[chosen_num].set_pokemon(pokemon)
+                self.opponentChosenPokemonPanels[chosen_num].set_func_for_terastype(self.change_opponent_chosen_terastype)
+                break
 
     def set_camera(self):
         self.cameraId = int(self.ids["camera_id"].text)
@@ -134,6 +138,10 @@ class PageBattleWidget(BoxLayout):
             for i in range(10):
                 self.wazaRateList[i] = str(pokemon.waza_rate_list[i])
         self.calc_damage()
+        if player_id == 0:
+            self.activePokemonPanels[player_id].set_func_for_click_icon(self.select_player_chosen_pokemon)
+        else:
+            self.activePokemonPanels[player_id].set_func_for_click_icon(self.select_opponent_chosen_pokemon)
 
     def set_weather(self, value):
         for weather in Weathers:

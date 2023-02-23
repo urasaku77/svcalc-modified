@@ -32,15 +32,20 @@ class PlayerChosenPokemonPanel(BoxLayout):
             self.__buttons.append(btn)
             self.add_widget(btn)
 
-    def set_pokemon(self, chosen_num: int, pokemon: Pokemon):
-        self.__buttons[chosen_num].icon = pokemon.icon
-        self.name[chosen_num] = pokemon.name
-        self.doryoku[chosen_num] = pokemon.doryoku.to_string
-        self.item[chosen_num] = pokemon.item
-        self.ability[chosen_num] = pokemon.ability
-        self.terastype[chosen_num] = pokemon.terastype
-        for i in range(4):
-            self.waza_list[chosen_num][i] = pokemon.waza_list[i].name if pokemon.waza_list[i] is not None else ""
+    def set_pokemon(self, pokemon: Pokemon):
+        if pokemon is None or pokemon.name in self.name:
+            return
+        for chosen_num in range(3):
+            if self.name[chosen_num] == "":
+                self.__buttons[chosen_num].icon = pokemon.icon
+                self.name[chosen_num] = pokemon.name
+                self.doryoku[chosen_num] = pokemon.doryoku.to_string
+                self.item[chosen_num] = pokemon.item
+                self.ability[chosen_num] = pokemon.ability
+                self.terastype[chosen_num] = pokemon.terastype
+                for i in range(4):
+                    self.waza_list[chosen_num][i] = pokemon.waza_list[i].name if pokemon.waza_list[i] is not None else ""
+                break
 
     def on_click_icon(self, chosen_num:int):
         self.__buttons[chosen_num].icon = "image/blank.png"
