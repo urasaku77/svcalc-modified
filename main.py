@@ -24,7 +24,7 @@ class RootWidget(BoxLayout):
         self.pagePartyWidget = PagePartyWidget()
 
 class MainApp(App):
-    pass
+    title = "ポケモンSVランクマツール"
 
 # 終了時処理
 def cleanup():

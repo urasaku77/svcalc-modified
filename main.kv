@@ -17,13 +17,17 @@ RootWidget:
     TabbedPanel:
         do_default_tab: False
         TabbedPanelItem:
-            text: "パーティ"
+            text: "構築"
             PagePartyWidget:
                 id: _pagePartyWidget
         TabbedPanelItem:
             text: "対戦"
             PageBattleWidget:
                 id: _pageBattleWidget
+        TabbedPanelItem:
+            text: "結果"
+            Label:
+                text: "工事中"
         TabbedPanelItem:
             text: "分析"
             Label:
