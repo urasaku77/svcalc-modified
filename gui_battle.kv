@@ -10,50 +10,55 @@
         orientation: "vertical"
         spacing:5
         BoxLayout:
-            size_hint_y: 1
+            size_hint_y: 2
+            spacing: 5
+            padding: [5,5]
             BoxLayout:
-                size_hint_x: None
-                width: 60
                 orientation: "vertical"
-                IconButton:
+                size_hint_x: 1
+                Label:
+                    text :root.num
+                    font_size: 0.3*self.width
+                    size_hint_y: 1.5
+                IconToggleButton:
                     icon: root.icon
-                    size_hint: None, None
-                    size: 60, 60
+                    size_hint_x: 1
+                    size_hint_y: 3.5
                     on_release: root.dispatch("on_click_icon")
                 IconButton:
-                    size_hint_y: None
-                    height: 30
+                    size_hint_y: 1.5
                     icon: root.terastype_icon
                     font_size: 14
                     on_release: root.select_terastype()
-            GridLayout:
-                cols: 2
-                rows: 4
-                spacing: 5
-                ShortLabel:
-                    text: "ステータス"
-                DropDownButton:
-                    id: _evs_combobox
-                    text: root.doryoku
-                    items: DORYOKU_PRESET.keys()
-                    font_size: dp(12)
-                    on_select_item: root.on_select_doryoku_preset(self.button_text)
-                ShortLabel:
-                    text: "持ち物"
-                DropDownButton:
-                    text: root.item if root.name != "" else ""
-                    image_enable: True
-                    items: root.items if root.name != "" else ""
-                    on_select_item: root.item = self.button_text
-                ShortLabel:
-                    text: "特性"
-                DropDownButton:
-                    text: root.ability if root.name != "" else ""
-                    items: root.abilities if root.name != "" else ""
-                    on_select_item: root.ability = self.button_text
-        ChosenWazaListPanel:
-            id: chosenWazaListPanel
-            size_hint_y: 2
+            ChosenWazaListPanel:
+                id: chosenWazaListPanel
+                size_hint_x: 4
+        GridLayout:
+            cols: 2
+            rows: 4
+            size_hint_y: 1
+            ShortLabel:
+                text: "能力"
+            DropDownButton:
+                id: _evs_combobox
+                text: root.doryoku
+                items: DORYOKU_PRESET.keys()
+                font_size: dp(12)
+                on_select_item: root.on_select_doryoku_preset(self.button_text)
+            ShortLabel:
+                text: "持物"
+            DropDownButton:
+                text: root.item if root.name != "" else ""
+                image_enable: True
+                items: root.items if root.name != "" else ""
+                on_select_item: root.item = self.button_text
+            ShortLabel:
+                text: "特性"
+            DropDownButton:
+                text: root.ability if root.name != "" else ""
+                items: root.abilities if root.name != "" else ""
+                on_select_item: root.ability = self.button_text
+
 
 <TimerLabel>:
     BoxLayout:
@@ -76,23 +81,20 @@
     BoxLayout:
         orientation: "vertical"
         BoxLayout:
-            size_hint_y: 1
             Label:
                 text: 'TN'
                 size_hint_x: 1
             TextInput_JA:
                 id: name
                 text: ""
-                size_hint_x: 5
-        BoxLayout:
-            size_hint_y: 1
+                size_hint_x: 4
             Label:
                 text: 'ランク'
                 size_hint_x: 1
             TextInput:
                 id: rank
                 text: ""
-                size_hint_x: 5
+                size_hint_x: 4
         BoxLayout:
             size_hint_y: 5
             Label:
@@ -101,22 +103,28 @@
             TextInput_JA:
                 id: memo
                 text: ""
-                size_hint_x: 5
+                size_hint_x: 9
 
 <PokemonInfoPanel>
     BoxLayout:
         orientation: "vertical"
         BoxLayout:
+            Label:
+                text:root.name
+                font_size: 0.5*self.height
+                size_hint_x: 5.5
             BoxLayout:
+                size_hint_x: 4.5
                 Image:
                     source: root.type1_img
                 Label:
                     text:root.type1
-            BoxLayout:
+                    font_size: 0.3*self.height
                 Image:
                     source: root.type2_img
                 Label:
                     text:root.type2
+                    font_size: 0.3*self.height
         BoxLayout:
             BoxLayout:
                 orientation: "vertical"
@@ -124,42 +132,42 @@
                     text:"HP"
                 Label:
                     text:root.h
-                    font_size: 0.5*self.width
+                    font_size: 0.3*self.width
             BoxLayout:
                 orientation: "vertical"
                 Label:
                     text:"攻撃"
                 Label:
                     text:root.a
-                    font_size: 0.5*self.width
+                    font_size: 0.3*self.width
             BoxLayout:
                 orientation: "vertical"
                 Label:
                     text:"防御"
                 Label:
                     text:root.b
-                    font_size: 0.5*self.width
+                    font_size: 0.3*self.width
             BoxLayout:
                 orientation: "vertical"
                 Label:
                     text:"特攻"
                 Label:
                     text:root.c
-                    font_size: 0.5*self.width
+                    font_size: 0.3*self.width
             BoxLayout:
                 orientation: "vertical"
                 Label:
                     text:"特防"
                 Label:
                     text:root.d
-                    font_size: 0.5*self.width
+                    font_size: 0.3*self.width
             BoxLayout:
                 orientation: "vertical"
                 Label:
                     text:"素早さ"
                 Label:
                     text:root.s
-                    font_size: 0.5*self.width
+                    font_size: 0.3*self.width
         BoxLayout:
             Label:
                 text:"重さ："+root.weight +"kg"

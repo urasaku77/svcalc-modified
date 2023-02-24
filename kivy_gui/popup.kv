@@ -6,14 +6,13 @@
     spacing: 5
     BoxLayout:
         size_hint_y: None
-        height: 40
+        spacing: 5
         PartyIconPanel:
             id: _party
+            size_hint_x: 6
             on_select: root.on_select_party(self.selected_index)
         Button:
-            size_hint_x: None
-            width: 40
-            font_size: 12
+            size_hint_x: 1
             text: "決定"
             on_release: root.dispatch("on_complete")
     PokeNameComboEdit:

@@ -115,6 +115,7 @@
             id :kotai
             size_hint_x: 1.5
             text:"0"
+            font_size: 0.4*self.height
             on_text: root.calc_status()
         BoxLayout:
             orientation: 'vertical'
@@ -147,6 +148,7 @@
             id :doryoku
             size_hint_x: 1.5
             text:"0"
+            font_size: 0.4*self.height
             on_text: root.change_doryoku_direct(self.text)
         BoxLayout:
             orientation: 'vertical'

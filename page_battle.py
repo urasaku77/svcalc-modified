@@ -155,14 +155,6 @@ class PageBattleWidget(BoxLayout):
                 self.field = field
         self.calc_damage()
 
-    def set_wall(self, player: int, value):
-        if self.active_pokemons[player] is None:
-            return
-        for wall in Walls:
-            if wall.name == value:
-                self.active_pokemons[player].wall = wall
-        self.calc_damage()
-
     def calc_damage(self):
         pokemon1 = self.active_pokemons[0]
         pokemon2 = self.active_pokemons[1]

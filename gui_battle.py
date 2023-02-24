@@ -24,10 +24,11 @@ class PlayerChosenPokemonPanel(BoxLayout):
     def __init__(self, **kw):
         super(PlayerChosenPokemonPanel, self).__init__(**kw)
         self.__buttons: list[IconToggleButton] = []
-        label = Label(text="選出",size_hint=(None, None), size=(40, 40))
+        label = Label(text="選出")
+        self.orientation = "vertical"
         self.add_widget(label)
         for i in range(3):
-            btn = IconToggleButton(no=i,size_hint=(None, None), size=(40, 40), group="party")
+            btn = IconToggleButton(no=i,size_hint=(1, 1), group="party")
             btn.bind(on_release=lambda x: self.on_click_icon(x.no))
             self.__buttons.append(btn)
             self.add_widget(btn)
@@ -62,7 +63,7 @@ class OpponentChosenPokemonPanel(BoxLayout, EventDispatcher):
     __events__ = ("on_click_icon", )
 
     chosenWazaListPanel = ObjectProperty()
-
+    num = StringProperty("")
     name = StringProperty("")
     doryoku = StringProperty("")
     items = ListProperty([])
@@ -73,7 +74,7 @@ class OpponentChosenPokemonPanel(BoxLayout, EventDispatcher):
     terastype_icon = ObjectProperty(Types.なし.icon)
 
     evs_combobox = ObjectProperty()
-    icon = StringProperty("")
+    icon = StringProperty("image/blank.png")
 
     def __init__(self, **kw):
         from kivy_gui.popup import TypeSelectPopupContent
@@ -96,7 +97,7 @@ class OpponentChosenPokemonPanel(BoxLayout, EventDispatcher):
 
     def on_click_icon(self, *args):
         self.name = ""
-        self.icon = ""
+        self.icon = "image/blank.png"
         self.items = []
         self.item = ""
         self.abilities = []
@@ -279,6 +280,7 @@ class TrainerInfoPanel(BoxLayout):
 
 #ポケモン基本情報表示パネル
 class PokemonInfoPanel(BoxLayout):
+    name = StringProperty("")
     type1 = StringProperty("")
     type1_img = StringProperty(Types.なし.icon)
     type2 = StringProperty("")
@@ -296,6 +298,7 @@ class PokemonInfoPanel(BoxLayout):
         super(PokemonInfoPanel, self).__init__(**kwargs)
 
     def set_pokemon(self, pokemon: Pokemon):
+        self.name = pokemon.name
         self.type1 = pokemon.type[0].name
         self.type1_img = pokemon.type[0].icon
         self.type2 = pokemon.type[1].name if len(pokemon.type) > 1 else ""

@@ -13,7 +13,7 @@ from kivy.uix.widget import Widget
 
 from typing import Optional, Union
 from data.db import DB
-from pokedata.const import Types, Ailments, ABILITY_VALUES
+from pokedata.const import *
 from pokedata.pokemon import Pokemon
 from pokedata.waza import WazaBase
 from pokedata.calc import DamageCalcResult
@@ -207,6 +207,10 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
         self.burn = False
         self.charging = False
         self.teras_button.icon = pokemon.battle_terastype.icon
+        self.ids["_evs_combobox"].disabled = False
+        self.ids["ability"].disabled = False
+        self.ids["item"].disabled = False
+        self.ids["wall"].disabled = False
 
     def set_ability(self, ability: str):
         self.ability_values = [""]
@@ -222,6 +226,12 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
         self.ids["abilities_valid"].items = self.ability_values
         self.ids["abilities_valid"].text = self.pokemon.ability_value
         self.ids["abilities_valid"].disabled = True if self.ability_values[0] == "" else False
+
+    def set_wall(self, value):
+        for wall in Walls:
+            if wall.name == value:
+                self.pokemon.wall = wall
+        self.pokemon.statechanged()
 
     def set_func_for_click_icon(self,func):
         self.func_for_click_icon = func
@@ -575,7 +585,7 @@ class PartyIconPanel(BoxLayout):
         self.__buttons: list[IconToggleButton] = []
         for i in range(6):
             btn = IconToggleButton(
-                no=i, size_hint=(None, None), size=(40, 40), group="party",
+                no=i, group="party",
                 on_release=lambda x: self.dispatch("on_select") if x.state == "down" else None)
             self.__buttons.append(btn)
             self.add_widget(btn)
@@ -657,5 +667,5 @@ class LabelButton(ButtonBehavior, ColorLabel):
     def __init__(self, **kw):
         super(LabelButton, self).__init__(**kw)
 
-def dummy(self):
+def dummy():
     pass
