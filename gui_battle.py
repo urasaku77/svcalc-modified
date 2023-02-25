@@ -77,20 +77,22 @@ class OpponentChosenPokemonPanel(BoxLayout, EventDispatcher):
     def __init__(self, **kw):
         from kivy_gui.popup import TypeSelectPopupContent
         super(OpponentChosenPokemonPanel, self).__init__(**kw)
-        self.func_for_terastype = dummy
+        self.func_for_change = [dummy, dummy, dummy]
         self.popup = Popup(
             title="テラスタイプ選択",
             content=TypeSelectPopupContent(selected=self.on_select_terastype),
             size_hint=(0.8, 0.6))
 
-    def set_func_for_terastype(self,func):
-        self.func_for_terastype = func
+    def set_func_for_change(self,func,index: int):
+        self.func_for_change[index] = func
 
     def set_pokemon(self, pokemon: Pokemon):
         self.name = pokemon.name
         self.icon = pokemon.icon
         self.items = pd.read_csv("battle/item.csv",encoding="utf_8",sep=',',index_col=0).index.tolist()
         self.abilities = pokemon.abilities
+        if len(pokemon.abilities) == 1:
+            self.ability = pokemon.abilities[0]
 
     def on_click_icon(self, *args):
         self.name = ""
@@ -112,8 +114,16 @@ class OpponentChosenPokemonPanel(BoxLayout, EventDispatcher):
             terastype = Types[value]
             self.terastype = terastype
             self.terastype_icon = terastype.icon
-            self.func_for_terastype(self.name, self.terastype)
+            self.func_for_change[0](self.name, self.terastype)
             self.popup.dismiss()
+
+    def set_item(self, value):
+        self.item = value
+        self.func_for_change[1](self.name, self.item)
+
+    def set_ability(self, value):
+        self.ability = value
+        self.func_for_change[2](self.name, self.ability)
 
     def register_chosen_waza(self, waza: str):
         self.chosenWazaListPanel.register_chosen_waza(waza)

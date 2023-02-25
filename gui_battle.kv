@@ -38,11 +38,11 @@
                 text: root.item if root.name != "" and root.item != "" else "もちもの"
                 image_enable: True
                 items: root.items if root.name != "" else ""
-                on_select_item: root.item = self.button_text
+                on_select_item: root.set_item(self.button_text)
             DropDownButton:
                 text: root.ability if root.name != "" and root.ability != "" else "とくせい"
                 items: root.abilities if root.name != "" else ""
-                on_select_item: root.ability = self.button_text
+                on_select_item: root.set_ability(self.button_text)
         BoxLayout:
             size_hint_y: 1
             ShortLabel:

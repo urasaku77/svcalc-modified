@@ -80,7 +80,9 @@ class PageBattleWidget(BoxLayout):
         for chosen_num in range(3):
             if self.opponentChosenPokemonPanels[chosen_num].name == "":
                 self.opponentChosenPokemonPanels[chosen_num].set_pokemon(pokemon)
-                self.opponentChosenPokemonPanels[chosen_num].set_func_for_terastype(self.change_opponent_chosen_terastype)
+                self.opponentChosenPokemonPanels[chosen_num].set_func_for_change(self.change_opponent_chosen_terastype, 0)
+                self.opponentChosenPokemonPanels[chosen_num].set_func_for_change(self.change_opponent_chosen_item, 1)
+                self.opponentChosenPokemonPanels[chosen_num].set_func_for_change(self.change_opponent_chosen_ability, 2)
                 break
 
     def set_camera(self):
@@ -184,6 +186,21 @@ class PageBattleWidget(BoxLayout):
                 self.party[1][i].battle_terastype = terastype
                 if self.active_pokemons[1] is not None and self.active_pokemons[1].name == name:
                     self.activePokemonPanels[1].on_select_terastype(terastype.name)
+
+    def change_opponent_chosen_item(self, name:str, item):
+        for i in range(6):
+            if self.party[1][i] is not None and self.party[1][i].name == name:
+                self.party[1][i].item = item
+                if self.active_pokemons[1] is not None and self.active_pokemons[1].name == name:
+                    self.activePokemonPanels[1].pokemon.item = item
+                    self.activePokemonPanels[1].ids["item"].text = item
+
+    def change_opponent_chosen_ability(self, name:str, ability):
+        for i in range(6):
+            if self.party[1][i] is not None and self.party[1][i].name == name:
+                self.party[1][i].ability = ability
+                if self.active_pokemons[1] is not None and self.active_pokemons[1].name == name:
+                    self.activePokemonPanels[1].set_ability(ability)
 
     def set_speed_check(self):
         if self.active_pokemons[0] is not None and self.active_pokemons[1] is not None:
