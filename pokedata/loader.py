@@ -1,7 +1,7 @@
 import csv
 import re
 
-with open('custom/default.csv', encoding='sjis') as csv_file:
+with open('party/default.csv', encoding='sjis') as csv_file:
     default_data = [x for x in csv.reader(csv_file)]
     del default_data[0]
 

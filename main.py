@@ -11,7 +11,7 @@ from page_battle import PageBattleWidget
 from page_party import PagePartyWidget
 
 Window.size = (2400, 1200)
-resource_add_path("font")
+resource_add_path("data/font")
 LabelBase.register(DEFAULT_FONT, "NotoSansJP-Medium.otf")
 
 class RootWidget(BoxLayout):
