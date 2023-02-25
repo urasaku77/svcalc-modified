@@ -75,6 +75,8 @@
                         TextInput:
                             id: camera_id
                             text: str(root.cameraId)
+                            input_type: 'number'
+                            input_filter: 'int'
                             multiline: False
                             font_size: self.height*0.5
                     TimerLabel:
@@ -99,9 +101,11 @@
                         Label:
                             text: 'ランク'
                             size_hint_x: 3
-                        TextInput_JA:
+                        TextInput:
                             id: rank
-                            text: ""
+                            input_type: 'number'
+                            input_filter: 'int'
+                            multiline: False
                             size_hint_x: 7
                     BoxLayout:
                         Button:
