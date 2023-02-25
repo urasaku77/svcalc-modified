@@ -30,7 +30,6 @@ class PageBattleWidget(BoxLayout):
     wazaRateList = ListProperty(["","","","","","","","","",""])
     playerChosenPokemonPanel = ObjectProperty
     opponentChosenPokemonPanels = ListProperty()
-    trainerInfoPanels = ListProperty()
     pokemonInfoPanels = ListProperty()
     homeInfoPanels = ListProperty()
     timerLabel = ObjectProperty()
@@ -48,7 +47,6 @@ class PageBattleWidget(BoxLayout):
             [None for _ in range(6)], [None for _ in range(6)]
         ]
         self.battle_status = False
-        self.result = 2
 
     def load_party(self):
         from pokedata.loader import get_party_data
@@ -187,12 +185,6 @@ class PageBattleWidget(BoxLayout):
                 if self.active_pokemons[1] is not None and self.active_pokemons[1].name == name:
                     self.activePokemonPanels[1].on_select_terastype(terastype.name)
 
-    def change_result(self, checkbox, result: int):
-        if checkbox.active is False:
-            self.result = 2
-        else:
-            self.result = result
-
     def set_speed_check(self):
         if self.active_pokemons[0] is not None and self.active_pokemons[1] is not None:
             self.speed_check: SpeedCheckPopup = SpeedCheckPopup(title="素早さ比較")
@@ -225,14 +217,14 @@ class PageBattleWidget(BoxLayout):
                 self.playerChosenPokemonPanel.set_pokemon(banme, self.party[0][banmeResult])
 
     def recognize_oppo_tn(self):
-        oppo_tn = self.cameraPreview.imgRecog.recognize_oppo_tn() or ""
-        self.trainerInfoPanels[1].set_name(oppo_tn)
+        self.ids["tn"].text = self.cameraPreview.imgRecog.recognize_oppo_tn() or ""
 
     def init_battle(self):
         self.battle_status = False
-        self.result = 2
-        self.trainerInfoPanels[0].clear(True)
-        self.trainerInfoPanels[1].clear(False)
+        self.ids["tn"].text = ""
+        self.ids["rank"].text = ""
+        self.ids["trainer_memo"].text = ""
+        self.ids["battle_memo"].text = ""
         self.party[1] = [None for _ in range(6)]
         self.refresh_party_icons()
         for chosen_num in range(len(self.opponentChosenPokemonPanels)):
@@ -240,12 +232,12 @@ class PageBattleWidget(BoxLayout):
         for chosen_num in range(3):
             self.playerChosenPokemonPanel.on_click_icon(chosen_num)
 
-    def record_battle(self):
+    def record_battle(self, result: int):
+        if self.party[0][0] is None or self.party[1][0] is None:
+            return
         time = 20*60 - ( int(self.timerLabel.minutes) + int(self.timerLabel.seconds)*60 )
-        self.trainerInfoPanels[0].update()
-        self.trainerInfoPanels[1].update()
 
-        battle = Battle.set_battle(self.trainerInfoPanels, self.party, self.playerChosenPokemonPanel, self.opponentChosenPokemonPanels, time, self.result)
+        battle = Battle.set_battle(self.ids["tn"].text, self.ids["rank"].text, self.ids["trainer_memo"].text, self.ids["battle_memo"].text, self.party, self.playerChosenPokemonPanel, self.opponentChosenPokemonPanels, time, result)
         battle_data = dataclasses.astuple(battle)
         DB_battle.register_battle(battle_data)
         self.timerLabel.reset()

@@ -14,9 +14,8 @@
     playerChosenPokemonPanel:_playerChosenPokemon
     opponentChosenPokemonPanels:[_opponentFirstChosenPokemon, _opponentSecondChosenPokemon, _opponentThirdChosenPokemon]
     wazaListPanels: [_playerWazaList, _opponentWazaList]
-    trainerInfoPanels: [_playerInfo, _opponentInfo]
     pokemonInfoPanels: [_playerPokemonInfo, _opponentPokemonInfo]
-    homeInfoPanels: [_motimono, _tarastype]
+    homeInfoPanels: [_motimono, _tarastype, _tokusei]
     timerLabel: _time
     BoxLayout:
         padding: [5, 5]
@@ -62,9 +61,61 @@
                 id:_playerPokemonInfo
                 size_hint_x: 1
                 size_hint_y: 1
-            TrainerInfoPanel:
-                id: _playerInfo
+            BoxLayout:
                 size_hint_y: 1.5
+                BoxLayout:
+                    orientation: "vertical"
+                    padding:[5,5,5,0]
+                    pacing: 5
+                    BoxLayout:
+                        size_hint_y: 0.6
+                        Button:
+                            text: "カメラ切替"
+                            on_release: root.set_camera()
+                        TextInput:
+                            id: camera_id
+                            text: str(root.cameraId)
+                            multiline: False
+                            font_size: self.height*0.5
+                    TimerLabel:
+                        id: _time
+                        size_hint_y: 3
+                BoxLayout:
+                    orientation: "vertical"
+                    padding:[5,5,5,0]
+                    pacing: 5
+                    Button:
+                        text: "素早さ比較"
+                        on_release: root.set_speed_check()
+                    BoxLayout:
+                        Label:
+                            text: 'TN'
+                            size_hint_x: 2
+                        TextInput_JA:
+                            id: tn
+                            text: ""
+                            size_hint_x: 8
+                    BoxLayout:
+                        Label:
+                            text: 'ランク'
+                            size_hint_x: 3
+                        TextInput_JA:
+                            id: rank
+                            text: ""
+                            size_hint_x: 7
+                    BoxLayout:
+                        Button:
+                            text: "勝ち"
+                            on_release: root.record_battle(1)
+                        Button:
+                            text: "負け"
+                            on_release: root.record_battle(0)
+                        Button:
+                            text: "分け"
+                            on_release: root.record_battle(2)
+                        Button:
+                            text: "クリア"
+                            on_release: root.init_battle()
         BoxLayout:
             orientation:"vertical"
             size_hint_x: 2
@@ -80,76 +131,27 @@
                 BoxLayout:
                     orientation:"vertical"
                     size_hint_x: 1.2
-                    GridLayout:
-                        cols:2
-                        padding: [0, 5]
-                        size_hint_y: 1
+                    BoxLayout:
+                        padding: [5, 5]
+                        pacing: 5
+                        size_hint_y: 0.3
                         ShortLabel:
                             text: "天候"
-                        ShortLabel:
-                            text: "フィールド"
+                            size_hint_x: 1
                         DropDownButton:
-                            text: ""
                             items: ["なし", "晴れ", "雨", "砂嵐", "雪"]
                             on_select_item: root.set_weather(self.button_text)
+                            size_hint_x: 1.5
+                        ShortLabel:
+                            text: "フィールド"
+                            size_hint_x: 1.5
                         DropDownButton:
-                            text: ""
                             items: ["なし","エレキ", "サイコ", "グラス", "ミスト"]
                             on_select_item: root.set_field(self.button_text)
-                    BoxLayout:
-                        size_hint_y: 2.5
-                        BoxLayout:
-                            orientation: "vertical"
-                            padding:[5,5,5,0]
-                            spacing:25
-                            size_hint_x: 0.4
-                            BoxLayout:
-                                size_hint_y: 1
-                                Label:
-                                    text: "カメラID"
-                                    size_hint_x: 0.6
-                                TextInput:
-                                    id: camera_id
-                                    size_hint_x: 0.4
-                                    text: str(root.cameraId)
-                                    multiline: False
-                                    font_size: self.height*0.5
-                            BoxLayout:
-                                size_hint_y: 0.5
-                                CheckBox:
-                                    group: 'radio'
-                                    on_press: root.change_result(self, 1)
-                                Label:
-                                    text: "勝ち"
-                                CheckBox:
-                                    group: 'radio'
-                                    on_press: root.change_result(self, 0)
-                                Label:
-                                    text: "負け"
-                            BoxLayout:
-                                height: 50
-                                size_hint_y: 1
-                                Button:
-                                    text: "登録"
-                                    on_release: root.record_battle()
-                                Button:
-                                    text: "クリア"
-                                    on_release: root.init_battle()
-                        BoxLayout:
-                            orientation: "vertical"
-                            size_hint_x: 0.6
-                            BoxLayout:
-                                size_hint_y: 1
-                                Button:
-                                    text: "開始/切替"
-                                    on_release: root.set_camera()
-                                Button:
-                                    text: "素早さ比較"
-                                    on_release: root.set_speed_check()
-                            TimerLabel:
-                                id: _time
-                                size_hint_y: 3
-                                height: 120
+                            size_hint_x: 2
+                    HomeInfoPanel:
+                        id: _tokusei
+                        title_name: "とくせい"
                 HomeInfoPanel:
                     id: _tarastype
                     title_name: "テラスタイプ"
@@ -246,9 +248,25 @@
                 id:_opponentPokemonInfo
                 size_hint_x: 1
                 size_hint_y: 1
-            TrainerInfoPanel:
-                id: _opponentInfo
+            BoxLayout:
+                orientation:"vertical"
                 size_hint_y: 1.5
+                BoxLayout:
+                    Label:
+                        text: '相手\nメモ'
+                        size_hint_x: 1
+                    TextInput_JA:
+                        id: trainer_memo
+                        text: ""
+                        size_hint_x: 9
+                BoxLayout:
+                    Label:
+                        text: '対戦\nメモ'
+                        size_hint_x: 1
+                    TextInput_JA:
+                        id: battle_memo
+                        text: ""
+                        size_hint_x: 9
 <SimpleButton@Button>
     size_hint_x: None
     width: 40

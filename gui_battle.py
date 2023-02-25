@@ -65,15 +65,13 @@ class OpponentChosenPokemonPanel(BoxLayout, EventDispatcher):
     chosenWazaListPanel = ObjectProperty()
     num = StringProperty("")
     name = StringProperty("")
-    doryoku = StringProperty("")
+    memo = StringProperty("")
     items = ListProperty([])
     item = StringProperty("")
     abilities = ListProperty([])
     ability = StringProperty("")
     terastype = ObjectProperty(Types.なし)
     terastype_icon = ObjectProperty(Types.なし.icon)
-
-    evs_combobox = ObjectProperty()
     icon = StringProperty("image/blank.png")
 
     def __init__(self, **kw):
@@ -102,14 +100,10 @@ class OpponentChosenPokemonPanel(BoxLayout, EventDispatcher):
         self.item = ""
         self.abilities = []
         self.ability = ""
-        self.doryoku = ""
+        self.ids["memo"].text = ""
         self.terastype = Types.なし
         self.terastype_icon = Types.なし.icon
         self.chosenWazaListPanel.clear_all_chosen_waza()
-
-    def on_select_doryoku_preset(self, value):
-        self.doryoku = value
-        self.evs_combobox.text = value
 
     def select_terastype(self, *_args):
         self.popup.open()
@@ -251,32 +245,6 @@ class TimerLabel(BoxLayout):
         self.stop()
         self.minutes = "20"
         self.seconds = "00"
-
-# 対戦情報入力パネル
-class TrainerInfoPanel(BoxLayout):
-    name = StringProperty("")
-    rank = StringProperty("")
-    memo = StringProperty("")
-
-    def __init__(self, **kwargs):
-        super(TrainerInfoPanel, self).__init__(**kwargs)
-
-    def set_name(self, value):
-        self.ids["name"].text = value
-
-    def update(self):
-        self.name = self.ids["name"].text
-        self.rank = self.ids["rank"].text
-        self.memo = self.ids["memo"].text
-
-    def clear(self, player: bool):
-        self.memo = ""
-        self.ids["memo"].text = ""
-        if player is False:
-            self.name = ""
-            self.rank = ""
-            self.ids["name"].text = ""
-            self.ids["rank"].text = ""
 
 #ポケモン基本情報表示パネル
 class PokemonInfoPanel(BoxLayout):

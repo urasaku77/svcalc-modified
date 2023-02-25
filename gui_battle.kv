@@ -4,7 +4,6 @@
 #:import * textinput4ja
 
 <OpponentChosenPokemonPanel>
-    evs_combobox: _evs_combobox
     chosenWazaListPanel: chosenWazaListPanel
     BoxLayout:
         orientation: "vertical"
@@ -34,31 +33,25 @@
                 id: chosenWazaListPanel
                 size_hint_x: 4
         GridLayout:
-            cols: 2
-            rows: 4
-            size_hint_y: 1
-            ShortLabel:
-                text: "能力"
+            cols: 4
+            size_hint_y: 0.5
             DropDownButton:
-                id: _evs_combobox
-                text: root.doryoku
-                items: DORYOKU_PRESET.keys()
-                font_size: dp(12)
-                on_select_item: root.on_select_doryoku_preset(self.button_text)
-            ShortLabel:
-                text: "持物"
-            DropDownButton:
-                text: root.item if root.name != "" else ""
+                text: root.item if root.name != "" and root.item != "" else "もちもの"
                 image_enable: True
                 items: root.items if root.name != "" else ""
                 on_select_item: root.item = self.button_text
-            ShortLabel:
-                text: "特性"
             DropDownButton:
-                text: root.ability if root.name != "" else ""
+                text: root.ability if root.name != "" and root.ability != "" else "とくせい"
                 items: root.abilities if root.name != "" else ""
                 on_select_item: root.ability = self.button_text
-
+        BoxLayout:
+            size_hint_y: 1
+            ShortLabel:
+                text: "メモ"
+            TextInput_JA:
+                id: memo
+                text: ""
+                on_text: root.memo = self.text
 
 <TimerLabel>:
     BoxLayout:
@@ -77,38 +70,11 @@
                 text: "リセット"
                 on_release: root.reset()
 
-<TrainerInfoPanel>
-    BoxLayout:
-        orientation: "vertical"
-        BoxLayout:
-            Label:
-                text: 'TN'
-                size_hint_x: 1
-            TextInput_JA:
-                id: name
-                text: ""
-                size_hint_x: 4
-            Label:
-                text: 'ランク'
-                size_hint_x: 1
-            TextInput:
-                id: rank
-                text: ""
-                size_hint_x: 4
-        BoxLayout:
-            size_hint_y: 5
-            Label:
-                text: 'メモ'
-                size_hint_x: 1
-            TextInput_JA:
-                id: memo
-                text: ""
-                size_hint_x: 9
-
 <PokemonInfoPanel>
     BoxLayout:
         orientation: "vertical"
         BoxLayout:
+            size_hint_y: 0.8
             Label:
                 text:root.name
                 font_size: 0.5*self.height
@@ -119,13 +85,14 @@
                     source: root.type1_img
                 Label:
                     text:root.type1
-                    font_size: 0.3*self.height
+                    font_size: 0.25*self.height
                 Image:
                     source: root.type2_img
                 Label:
                     text:root.type2
-                    font_size: 0.3*self.height
+                    font_size: 0.25*self.height
         BoxLayout:
+            size_hint_y: 1
             BoxLayout:
                 orientation: "vertical"
                 Label:
@@ -169,6 +136,7 @@
                     text:root.s
                     font_size: 0.3*self.width
         BoxLayout:
+            size_hint_y: 0.5
             Label:
                 text:"重さ："+root.weight +"kg"
             Label:

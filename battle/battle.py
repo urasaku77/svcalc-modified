@@ -8,12 +8,10 @@ class Battle:
     date: Optional[str]
     time: Optional[int]
     result: Optional[int]
-    player_tn: Optional[str]
     opponent_tn: Optional[str]
-    player_rank: Optional[int]
     opponent_rank: Optional[int]
-    player_memo: Optional[str]
     opponent_memo: Optional[str]
+    battle_memo: Optional[str]
     player_pokemon1: Optional[str]
     player_pokemon2: Optional[str]
     player_pokemon3: Optional[str]
@@ -54,7 +52,6 @@ class Battle:
     player_choice3_waza3: Optional[str]
     player_choice3_waza4: Optional[str]
     opponent_choice1: Optional[str]
-    opponent_choice1_character: Optional[str]
     opponent_choice1_item: Optional[str]
     opponent_choice1_ability: Optional[str]
     opponent_choice1_tesasu: Optional[str]
@@ -62,8 +59,8 @@ class Battle:
     opponent_choice1_waza2: Optional[str]
     opponent_choice1_waza3: Optional[str]
     opponent_choice1_waza4: Optional[str]
+    opponent_choice1_memo: Optional[str]
     opponent_choice2: Optional[str]
-    opponent_choice2_character: Optional[str]
     opponent_choice2_item: Optional[str]
     opponent_choice2_ability: Optional[str]
     opponent_choice2_tesasu: Optional[str]
@@ -71,8 +68,8 @@ class Battle:
     opponent_choice2_waza2: Optional[str]
     opponent_choice2_waza3: Optional[str]
     opponent_choice2_waza4: Optional[str]
+    opponent_choice2_memo: Optional[str]
     opponent_choice3: Optional[str]
-    opponent_choice3_character: Optional[str]
     opponent_choice3_item: Optional[str]
     opponent_choice3_ability: Optional[str]
     opponent_choice3_tesasu: Optional[str]
@@ -80,19 +77,18 @@ class Battle:
     opponent_choice3_waza2: Optional[str]
     opponent_choice3_waza3: Optional[str]
     opponent_choice3_waza4: Optional[str]
+    opponent_choice3_memo: Optional[str]
 
-    def set_battle(trainerInfoPanels, party, playerChosenPokemonPanels, opponentChosenPokemonPanels, time, result):
+    def set_battle(name, rank, opponent_memo, battle_memo, party, playerChosenPokemonPanels, opponentChosenPokemonPanels, time, result):
         return Battle(
             None,
             str(datetime.datetime.now()),
             time,
             result,
-            trainerInfoPanels[0].name,
-            trainerInfoPanels[1].name,
-            trainerInfoPanels[0].rank,
-            trainerInfoPanels[1].rank,
-            trainerInfoPanels[0].memo,
-            trainerInfoPanels[1].memo,
+            name,
+            rank,
+            opponent_memo,
+            battle_memo,
             party[0][0].name if party[0][0] is not None else "",
             party[0][1].name if party[0][1] is not None else "",
             party[0][2].name if party[0][2] is not None else "",
@@ -133,7 +129,6 @@ class Battle:
             playerChosenPokemonPanels.waza_list[2][2] if playerChosenPokemonPanels.name[2] != "" else "",
             playerChosenPokemonPanels.waza_list[2][3] if playerChosenPokemonPanels.name[2] != "" else "",
             opponentChosenPokemonPanels[0].name,
-            opponentChosenPokemonPanels[0].doryoku,
             opponentChosenPokemonPanels[0].item,
             opponentChosenPokemonPanels[0].ability,
             opponentChosenPokemonPanels[0].terastype.name,
@@ -141,8 +136,8 @@ class Battle:
             opponentChosenPokemonPanels[0].chosenWazaListPanel.wazapanel_list[1].waza if opponentChosenPokemonPanels[0].name != "" else "",
             opponentChosenPokemonPanels[0].chosenWazaListPanel.wazapanel_list[2].waza if opponentChosenPokemonPanels[0].name != "" else "",
             opponentChosenPokemonPanels[0].chosenWazaListPanel.wazapanel_list[3].waza if opponentChosenPokemonPanels[0].name != "" else "",
+            opponentChosenPokemonPanels[0].memo,
             opponentChosenPokemonPanels[1].name,
-            opponentChosenPokemonPanels[1].doryoku,
             opponentChosenPokemonPanels[1].item,
             opponentChosenPokemonPanels[1].ability,
             opponentChosenPokemonPanels[1].terastype.name,
@@ -150,13 +145,14 @@ class Battle:
             opponentChosenPokemonPanels[1].chosenWazaListPanel.wazapanel_list[1].waza if opponentChosenPokemonPanels[1].name != "" else "",
             opponentChosenPokemonPanels[1].chosenWazaListPanel.wazapanel_list[2].waza if opponentChosenPokemonPanels[1].name != "" else "",
             opponentChosenPokemonPanels[1].chosenWazaListPanel.wazapanel_list[3].waza if opponentChosenPokemonPanels[1].name != "" else "",
+            opponentChosenPokemonPanels[1].memo,
             opponentChosenPokemonPanels[2].name,
-            opponentChosenPokemonPanels[2].doryoku,
             opponentChosenPokemonPanels[2].item,
             opponentChosenPokemonPanels[2].ability,
             opponentChosenPokemonPanels[2].terastype.name,
             opponentChosenPokemonPanels[2].chosenWazaListPanel.wazapanel_list[0].waza if opponentChosenPokemonPanels[2].name != "" else "",
             opponentChosenPokemonPanels[2].chosenWazaListPanel.wazapanel_list[1].waza if opponentChosenPokemonPanels[2].name != "" else "",
             opponentChosenPokemonPanels[2].chosenWazaListPanel.wazapanel_list[2].waza if opponentChosenPokemonPanels[2].name != "" else "",
-            opponentChosenPokemonPanels[2].chosenWazaListPanel.wazapanel_list[3].waza if opponentChosenPokemonPanels[2].name != "" else ""
+            opponentChosenPokemonPanels[2].chosenWazaListPanel.wazapanel_list[3].waza if opponentChosenPokemonPanels[2].name != "" else "",
+            opponentChosenPokemonPanels[2].memo,
         )
