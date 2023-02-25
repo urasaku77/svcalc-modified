@@ -332,6 +332,8 @@ class Pokemon:
     def set_default_data(self):
         from pokedata.loader import get_default_data
         data = get_default_data(self.name)
+        if data == []:
+            self.set_ability_from_home()
         self.set_load_data(data, False)
         self.set_waza_from_home()
 
@@ -349,12 +351,23 @@ class Pokemon:
                     if i+7 < len(data):
                         self.__waza_list[i] = WazaBase(data[i+7])
 
+    # HOMEデータから技を10個読み取り
     def set_waza_from_home(self):
         from pokedata.loader import get_home_data
         waza_data = get_home_data(self.name, "./home/home_waza.csv")
         for i in range(len(waza_data)):
             self.__waza_list[i] = WazaBase(waza_data[i][0])
             self.__waza_rate_list[i] = waza_data[i][1]
+
+    # HOMEデータからとくせいを使用率順に並び替え
+    def set_ability_from_home(self):
+        abilities_data = []
+        from pokedata.loader import get_home_data
+        ability_data = get_home_data(self.name, "./home/home_tokusei.csv")
+        for i in range(len(ability_data)):
+            if ability_data[i][0] in self.__abilities:
+                abilities_data.append(ability_data[i][0])
+        self.__abilities = abilities_data
 
     # タイプ相性値
     # テラスタイプがある場合、そのタイプで算出
