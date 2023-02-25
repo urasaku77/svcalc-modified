@@ -214,7 +214,7 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
 
     def set_ability(self, ability: str):
         self.ability_values = [""]
-        if ability == "" and len([x for x in self.pokemon.abilities if x  != ""]) == 1:
+        if ability == "":
             self.pokemon.ability = [x for x in self.pokemon.abilities if x  != ""][0]
         else:
             self.pokemon.ability = ability
