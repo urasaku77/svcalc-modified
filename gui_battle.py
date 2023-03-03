@@ -313,12 +313,12 @@ class HomeInfoPanel(BoxLayout):
     def set_home_data(self,name:str):
         file_path = ""
         match self.title_name:
-            case "せいかく":
-                pass
             case "もちもの":
                 file_path = "./home/home_motimono.csv"
             case "とくせい":
                 file_path = "./home/home_tokusei.csv"
+            case "せいかく":
+                file_path = "./home/home_seikaku.csv"
             case "テラスタイプ":
                 file_path = "./home/home_terastal.csv"
 

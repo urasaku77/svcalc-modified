@@ -13,7 +13,7 @@
     opponentChosenPokemonPanels:[_opponentFirstChosenPokemon, _opponentSecondChosenPokemon, _opponentThirdChosenPokemon]
     wazaListPanels: [_playerWazaList, _opponentWazaList]
     pokemonInfoPanels: [_playerPokemonInfo, _opponentPokemonInfo]
-    homeInfoPanels: [_motimono, _tarastype, _tokusei]
+    homeInfoPanels: [_motimono, _tokusei, _seikaku, _tarastype]
     timerLabel: _time
     BoxLayout:
         padding: [5, 5]
@@ -133,31 +133,32 @@
                 BoxLayout:
                     orientation:"vertical"
                     size_hint_x: 1.2
-                    BoxLayout:
-                        padding: [5, 5]
-                        pacing: 5
+                    ShortLabel:
+                        text: "天候"
                         size_hint_y: 0.3
-                        ShortLabel:
-                            text: "天候"
-                            size_hint_x: 1
-                        DropDownButton:
-                            items: ["なし", "晴れ", "雨", "砂嵐", "雪"]
-                            on_select_item: root.set_weather(self.button_text)
-                            size_hint_x: 1.5
-                        ShortLabel:
-                            text: "フィールド"
-                            size_hint_x: 1.5
-                        DropDownButton:
-                            items: ["なし","エレキ", "サイコ", "グラス", "ミスト"]
-                            on_select_item: root.set_field(self.button_text)
-                            size_hint_x: 2
+                    DropDownButton:
+                        items: ["なし", "晴れ", "雨", "砂嵐", "雪"]
+                        on_select_item: root.set_weather(self.button_text)
+                        size_hint_y: 0.3
+                    ShortLabel:
+                        text: "フィールド"
+                        size_hint_y: 0.3
+                    DropDownButton:
+                        items: ["なし","エレキ", "サイコ", "グラス", "ミスト"]
+                        on_select_item: root.set_field(self.button_text)
+                        size_hint_y: 0.3
                     HomeInfoPanel:
                         id: _tokusei
                         title_name: "とくせい"
+                        size_hint_y: 1
+                HomeInfoPanel:
+                    id: _seikaku
+                    title_name: "せいかく"
+                    size_hint_x: 0.8
                 HomeInfoPanel:
                     id: _tarastype
                     title_name: "テラスタイプ"
-                    size_hint_x: 1
+                    size_hint_x: 0.8
             BoxLayout:
                 size_hint_y: 1
                 OpponentChosenPokemonPanel:

@@ -26,7 +26,11 @@ class home():
     req = urllib.request.Request(url, json.dumps(param).encode(), headers)
     with urllib.request.urlopen(req) as res:
         rankmatch_list = json.load(res)
-        cid = next(iter(rankmatch_list["list"][next(iter(rankmatch_list["list"]))]))
+        cid = 0
+        for item in rankmatch_list["list"][next(iter(rankmatch_list["list"]))]:
+            if rankmatch_list["list"][next(iter(rankmatch_list["list"]))][item]['rule'] == 0:
+                print(item)
+                cid = item
         rst = rankmatch_list["list"][next(iter(rankmatch_list["list"]))][cid]["rst"]
         ts2 = rankmatch_list["list"][next(iter(rankmatch_list["list"]))][cid]["ts2"]
 
@@ -48,6 +52,7 @@ class home():
 
     os.remove('./home_waza.csv')
     os.remove('./home_tokusei.csv')
+    os.remove('./home_seikaku.csv')
     os.remove('./home_motimono.csv')
     os.remove('./home_terastal.csv')
 
@@ -130,6 +135,11 @@ class home():
                 for tokusei in pdetail[pokenum][p_detail_id]['temoti']['tokusei']:
                         writer = csv.writer(tokusei_csv, lineterminator="\n")
                         writer.writerow([name, jaconv.z2h(pokedex['tokusei'][tokusei['id']],kana=False,digit=True, ascii=True),tokusei['val']])
+
+            with open('./home_seikaku.csv', 'a',encoding="utf-8") as seikaku_csv:
+                for seikaku in pdetail[pokenum][p_detail_id]['temoti']['seikaku']:
+                        writer = csv.writer(seikaku_csv, lineterminator="\n")
+                        writer.writerow([name, jaconv.z2h(pokedex['seikaku'][seikaku['id']],kana=False,digit=True, ascii=True),seikaku['val']])
 
             with open('./home_motimono.csv', 'a',encoding="utf-8") as motimono_csv:
                 for motimono in pdetail[pokenum][p_detail_id]['temoti']['motimono']:
