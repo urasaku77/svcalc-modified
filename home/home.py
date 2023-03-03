@@ -50,11 +50,16 @@ class home():
     with open('./bundle.json', 'r',encoding="utf-8") as json_open:
         pokedex = json.load(json_open)
 
-    os.remove('./home_waza.csv')
-    os.remove('./home_tokusei.csv')
-    os.remove('./home_seikaku.csv')
-    os.remove('./home_motimono.csv')
-    os.remove('./home_terastal.csv')
+    if os.path.isfile('./home_waza.csv') == True:
+        os.remove('./home_waza.csv')
+    if os.path.isfile('./home_tokusei.csv') == True:
+        os.remove('./home_tokusei.csv')
+    if os.path.isfile('./home_seikaku.csv') == True:
+        os.remove('./home_seikaku.csv')
+    if os.path.isfile('./home_motimono.csv') == True:
+        os.remove('./home_motimono.csv')
+    if os.path.isfile('./home_terastal.csv') == True:
+        os.remove('./home_terastal.csv')
 
     print("CSV更新")
     for pokenum in pdetail.keys():
