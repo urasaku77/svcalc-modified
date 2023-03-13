@@ -72,6 +72,7 @@ class PageBattleWidget(BoxLayout):
         pokemon = self.active_pokemons[0]
         if pokemon is not None:
             self.playerChosenPokemonPanel.set_pokemon(pokemon)
+            self.playerChosenPokemonPanel.set_func_for_click_icon(self.refresh_waza_check)
 
     def select_opponent_chosen_pokemon(self):
         pokemon = self.active_pokemons[1]
@@ -139,6 +140,7 @@ class PageBattleWidget(BoxLayout):
                 self.wazaRateList[i] = str(pokemon.waza_rate_list[i])
         self.calc_damage()
         if player_id == 0:
+            self.refresh_waza_check()
             self.activePokemonPanels[player_id].set_func_for_click_icon(self.select_player_chosen_pokemon)
         else:
             self.activePokemonPanels[player_id].set_func_for_click_icon(self.select_opponent_chosen_pokemon)
@@ -172,6 +174,23 @@ class PageBattleWidget(BoxLayout):
         self.calc_damage()
         if self.activePokemonPanels[0] is not None: self.activePokemonPanels[0].change_ranks()
         if self.activePokemonPanels[1] is not None: self.activePokemonPanels[1].change_ranks()
+
+    def refresh_waza_check(self):
+        if self.active_pokemons[0] is None:
+            return
+        waza_check_list = self.playerChosenPokemonPanel.get_waza_check(self.active_pokemons[0].name)
+        for waza_check in range(len(waza_check_list)):
+            id = "waza_check_" + str(waza_check)
+            if waza_check_list[waza_check] == 1:
+                self.ids[id].text = "使用"
+            else:
+                self.ids[id].text = ""
+
+    def set_player_waza(self, waza_index: int):
+        for pokemon_index in range(3):
+            if self.playerChosenPokemonPanel.name[pokemon_index] != "" and self.playerChosenPokemonPanel.name[pokemon_index] == self.active_pokemons[0].name:
+                self.playerChosenPokemonPanel.change_waza_check(pokemon_index, waza_index)
+                self.refresh_waza_check()
 
     def set_opponent_waza(self, waza_index: int):
         waza_name = self.wazaListPanels[1].wazapanel_list[waza_index].waza_button.text

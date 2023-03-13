@@ -12,6 +12,8 @@ class Battle:
     opponent_rank: Optional[int]
     opponent_memo: Optional[str]
     battle_memo: Optional[str]
+    player_party_num: Optional[int]
+    player_party_subnum: Optional[int]
     player_pokemon1: Optional[str]
     player_pokemon2: Optional[str]
     player_pokemon3: Optional[str]
@@ -33,6 +35,10 @@ class Battle:
     player_choice1_waza2: Optional[str]
     player_choice1_waza3: Optional[str]
     player_choice1_waza4: Optional[str]
+    player_choice1_waza1_check: Optional[int]
+    player_choice1_waza2_check: Optional[int]
+    player_choice1_waza3_check: Optional[int]
+    player_choice1_waza4_check: Optional[int]
     player_choice2: Optional[str]
     player_choice2_character: Optional[str]
     player_choice2_item: Optional[str]
@@ -42,6 +48,10 @@ class Battle:
     player_choice2_waza2: Optional[str]
     player_choice2_waza3: Optional[str]
     player_choice2_waza4: Optional[str]
+    player_choice2_waza1_check: Optional[int]
+    player_choice2_waza2_check: Optional[int]
+    player_choice2_waza3_check: Optional[int]
+    player_choice2_waza4_check: Optional[int]
     player_choice3: Optional[str]
     player_choice3_character: Optional[str]
     player_choice3_item: Optional[str]
@@ -51,6 +61,10 @@ class Battle:
     player_choice3_waza2: Optional[str]
     player_choice3_waza3: Optional[str]
     player_choice3_waza4: Optional[str]
+    player_choice3_waza1_check: Optional[int]
+    player_choice3_waza2_check: Optional[int]
+    player_choice3_waza3_check: Optional[int]
+    player_choice3_waza4_check: Optional[int]
     opponent_choice1: Optional[str]
     opponent_choice1_item: Optional[str]
     opponent_choice1_ability: Optional[str]
@@ -80,6 +94,9 @@ class Battle:
     opponent_choice3_memo: Optional[str]
 
     def set_battle(name, rank, opponent_memo, battle_memo, party, playerChosenPokemonPanels, opponentChosenPokemonPanels, time, result):
+        from pokedata.loader import get_party_csv
+        file = get_party_csv().split('party\\csv\\')[1]
+
         return Battle(
             None,
             str(datetime.datetime.now()),
@@ -89,6 +106,8 @@ class Battle:
             rank,
             opponent_memo,
             battle_memo,
+            file.split("-")[0],
+            file.split("-")[1].split("_")[0],
             party[0][0].name if party[0][0] is not None else "",
             party[0][1].name if party[0][1] is not None else "",
             party[0][2].name if party[0][2] is not None else "",
@@ -110,6 +129,10 @@ class Battle:
             playerChosenPokemonPanels.waza_list[0][1] if playerChosenPokemonPanels.name[0] != "" else "",
             playerChosenPokemonPanels.waza_list[0][2] if playerChosenPokemonPanels.name[0] != "" else "",
             playerChosenPokemonPanels.waza_list[0][3] if playerChosenPokemonPanels.name[0] != "" else "",
+            playerChosenPokemonPanels.waza_check_list[0][0] if playerChosenPokemonPanels.name[0] != "" else "",
+            playerChosenPokemonPanels.waza_check_list[0][1] if playerChosenPokemonPanels.name[0] != "" else "",
+            playerChosenPokemonPanels.waza_check_list[0][2] if playerChosenPokemonPanels.name[0] != "" else "",
+            playerChosenPokemonPanels.waza_check_list[0][3] if playerChosenPokemonPanels.name[0] != "" else "",
             playerChosenPokemonPanels.name[1],
             playerChosenPokemonPanels.doryoku[1],
             playerChosenPokemonPanels.item[1],
@@ -119,6 +142,10 @@ class Battle:
             playerChosenPokemonPanels.waza_list[1][1] if playerChosenPokemonPanels.name[1] != "" else "",
             playerChosenPokemonPanels.waza_list[1][2] if playerChosenPokemonPanels.name[1] != "" else "",
             playerChosenPokemonPanels.waza_list[1][3] if playerChosenPokemonPanels.name[1] != "" else "",
+            playerChosenPokemonPanels.waza_check_list[1][0] if playerChosenPokemonPanels.name[1] != "" else "",
+            playerChosenPokemonPanels.waza_check_list[1][1] if playerChosenPokemonPanels.name[1] != "" else "",
+            playerChosenPokemonPanels.waza_check_list[1][2] if playerChosenPokemonPanels.name[1] != "" else "",
+            playerChosenPokemonPanels.waza_check_list[1][3] if playerChosenPokemonPanels.name[1] != "" else "",
             playerChosenPokemonPanels.name[2],
             playerChosenPokemonPanels.doryoku[2],
             playerChosenPokemonPanels.item[2],
@@ -128,6 +155,10 @@ class Battle:
             playerChosenPokemonPanels.waza_list[2][1] if playerChosenPokemonPanels.name[2] != "" else "",
             playerChosenPokemonPanels.waza_list[2][2] if playerChosenPokemonPanels.name[2] != "" else "",
             playerChosenPokemonPanels.waza_list[2][3] if playerChosenPokemonPanels.name[2] != "" else "",
+            playerChosenPokemonPanels.waza_check_list[2][0] if playerChosenPokemonPanels.name[2] != "" else "",
+            playerChosenPokemonPanels.waza_check_list[2][1] if playerChosenPokemonPanels.name[2] != "" else "",
+            playerChosenPokemonPanels.waza_check_list[2][2] if playerChosenPokemonPanels.name[2] != "" else "",
+            playerChosenPokemonPanels.waza_check_list[2][3] if playerChosenPokemonPanels.name[2] != "" else "",
             opponentChosenPokemonPanels[0].name,
             opponentChosenPokemonPanels[0].item,
             opponentChosenPokemonPanels[0].ability,

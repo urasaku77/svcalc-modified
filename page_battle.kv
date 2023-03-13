@@ -48,11 +48,34 @@
                 GridLayout:
                     cols:2
                     padding: [0, 5]
-                    AnchorLayout:
-                        anchor_x:"center"
+                    BoxLayout:
+                        orientation:"vertical"
                         size_hint_x: 0.1
-                        PlayerChosenPokemonPanel:
-                            id:_playerChosenPokemon
+                        Button:
+                            id:waza_check_0
+                            height: 40
+                            size_hint_y: 0.1
+                            on_release: root.set_player_waza(0)
+                        Button:
+                            id:waza_check_1
+                            height: 40
+                            size_hint_y: 0.1
+                            on_release: root.set_player_waza(1)
+                        Button:
+                            id:waza_check_2
+                            height: 40
+                            size_hint_y: 0.1
+                            on_release: root.set_player_waza(2)
+                        Button:
+                            id:waza_check_3
+                            height: 40
+                            size_hint_y: 0.1
+                            on_release: root.set_player_waza(3)
+                        AnchorLayout:
+                            anchor_x:"center"
+                            size_hint_y: 0.6
+                            PlayerChosenPokemonPanel:
+                                id:_playerChosenPokemon
                     WazaListPanel:
                         id: _playerWazaList
             PokemonInfoPanel:

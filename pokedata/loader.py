@@ -10,13 +10,16 @@ def get_default_data(name: str) -> list[str]:
     lst = [x for x in default_data if x[0] == name]
     return lst[0] if len(lst) else []
 
+def get_party_csv() -> str:
+    with open('party/setting.txt', 'r') as txt:
+        file = txt.read()
+        txt.close()
+    return file
 
 def get_party_data(file_path: str = 'default') -> list[list[str]]:
     file = file_path
     if file_path == 'default':
-        with open('party/setting.txt', 'r') as txt:
-            file = txt.read()
-            txt.close()
+        file = get_party_csv()
     with open(file, encoding='sjis') as pt_csv:
         data = [x for x in csv.reader(pt_csv)]
         data = data[1:7]

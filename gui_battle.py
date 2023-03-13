@@ -20,9 +20,11 @@ class PlayerChosenPokemonPanel(BoxLayout):
     ability = ListProperty(["","",""])
     terastype = ObjectProperty([Types.なし,Types.なし,Types.なし])
     waza_list = ListProperty([["","","",""],["","","",""],["","","",""]])
+    waza_check_list = ListProperty([[0,0,0,0],[0,0,0,0],[0,0,0,0]])
 
     def __init__(self, **kw):
         super(PlayerChosenPokemonPanel, self).__init__(**kw)
+        self.func_for_click_icon = dummy
         self.__buttons: list[IconToggleButton] = []
         label = Label(text="選出")
         self.orientation = "vertical"
@@ -46,7 +48,11 @@ class PlayerChosenPokemonPanel(BoxLayout):
                 self.terastype[chosen_num] = pokemon.terastype
                 for i in range(4):
                     self.waza_list[chosen_num][i] = pokemon.waza_list[i].name if pokemon.waza_list[i] is not None else ""
+                self.waza_check_list[chosen_num] = [0,0,0,0]
                 break
+
+    def set_func_for_click_icon(self,func):
+        self.func_for_click_icon = func
 
     def on_click_icon(self, chosen_num:int):
         self.__buttons[chosen_num].icon = "image/blank.png"
@@ -56,6 +62,17 @@ class PlayerChosenPokemonPanel(BoxLayout):
         self.terastype[chosen_num] = Types.なし
         self.doryoku[chosen_num] = ""
         self.waza_list[chosen_num] = ["","","",""]
+        self.waza_check_list[chosen_num] = [0,0,0,0]
+        self.func_for_click_icon()
+
+    def change_waza_check(self, poke_index:int, waza_index:int):
+        self.waza_check_list[poke_index][waza_index] = 1 if self.waza_check_list[poke_index][waza_index] != 1 else 0
+
+    def get_waza_check(self, poke_name:str) -> list[int]:
+        for chosen_num in range(3):
+            if self.name[chosen_num] == poke_name:
+                return self.waza_check_list[chosen_num]
+        return [0,0,0,0]
 
 #選出された相手ポケモン表示パネル
 class OpponentChosenPokemonPanel(BoxLayout, EventDispatcher):
