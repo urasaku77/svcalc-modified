@@ -97,6 +97,7 @@ class PageBattleWidget(BoxLayout):
             Clock.unschedule(self.start_battle)
             return
         if not self.battle_status and self.cameraPreview.imgRecog.is_exist_image("recog/recogImg/situation/aitewomiru.jpg",0.8,"aitewomiru"):
+            self.timerLabel.stop()
             self.timerLabel.start()
             self.battle_status = True
 
