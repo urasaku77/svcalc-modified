@@ -52,11 +52,13 @@ class DB:
         return result[0]["pid"]
 
     @staticmethod
-    def get_pokemon_namelist() -> list[str]:
+    def get_pokemon_namelist(form:bool=False) -> list[str]:
         if len(DB.__pokemon_namelist) == 0:
             sql = "SELECT name FROM pokemon_data"
             for row in DB.__select(sql):
                 DB.__pokemon_namelist.append(row["name"])
+            if form:
+                DB.__pokemon_namelist.remove("イルカマン(マイティ)")
         return DB.__pokemon_namelist
 
     @staticmethod

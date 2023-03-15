@@ -71,7 +71,7 @@ class PokeNameComboEdit(ComboEdit):
 
     def __init__(self, **kw):
         super(PokeNameComboEdit, self).__init__(**kw)
-        self.namelist: list[str] = DB.get_pokemon_namelist()
+        self.namelist: list[str] = DB.get_pokemon_namelist(form=True)
         self.hint_text = "ポケモン名を入力"
 
     def on_text(self, _instance, value):
