@@ -80,6 +80,10 @@ class Pokemon:
             pokemon.set_default_data()
         return pokemon
 
+    @property
+    def no(self) -> int:
+        return self.__no
+
     # region プロパティ
     @property
     def pid(self) -> str:

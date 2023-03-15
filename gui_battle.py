@@ -7,6 +7,7 @@ from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 
 import pandas as pd
+import webbrowser
 
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
@@ -274,6 +275,7 @@ class TimerLabel(BoxLayout):
 
 #ポケモン基本情報表示パネル
 class PokemonInfoPanel(BoxLayout):
+    no =  StringProperty("0")
     name = StringProperty("")
     type1 = StringProperty("")
     type1_img = StringProperty(Types.なし.icon)
@@ -292,6 +294,7 @@ class PokemonInfoPanel(BoxLayout):
         super(PokemonInfoPanel, self).__init__(**kwargs)
 
     def set_pokemon(self, pokemon: Pokemon):
+        self.no = str(pokemon.no)
         self.name = pokemon.name
         self.type1 = pokemon.type[0].name
         self.type1_img = pokemon.type[0].icon
@@ -316,6 +319,11 @@ class PokemonInfoPanel(BoxLayout):
             self.ketaguri = str(100)
         else:
             self.ketaguri = str(120)
+
+    def open_poketetsu(self):
+        if self.no != "0":
+            url = "https://yakkun.com/sv/zukan/n" + self.no
+            webbrowser.open(url)
 
 class HomeInfoPanel(BoxLayout):
     title_name = StringProperty("")
