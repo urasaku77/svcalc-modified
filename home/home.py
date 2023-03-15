@@ -4,6 +4,8 @@ import csv
 import urllib.request
 import jaconv
 
+from pokedata.form import *
+
 class home():
     cid = ""
     rst = 0
@@ -65,69 +67,8 @@ class home():
     for pokenum in pdetail.keys():
         for p_detail_id in pdetail[pokenum].keys():
             name = ""
-            if pokenum == "128":
-                if p_detail_id == "1":
-                    name = "ケンタロス(パルデア単)"
-                elif p_detail_id == "2":
-                    name = "ケンタロス(パルデア炎)"
-                elif p_detail_id == "3":
-                    name = "ケンタロス(パルデア水)"
-            elif pokenum == "194":
-                if p_detail_id == "0":
-                    name = "ウパー"
-                elif p_detail_id == "1":
-                    name = "ウパー(パルデア)"
-            elif pokenum == "479":
-                if p_detail_id == "0":
-                    name = "ロトム"
-                elif p_detail_id == "1":
-                    name = "ヒートロトム"
-                elif p_detail_id == "2":
-                    name = "ウォッシュロトム"
-                elif p_detail_id == "3":
-                    name = "フロストロトム"
-                elif p_detail_id == "4":
-                    name = "スピンロトム"
-                elif p_detail_id == "5":
-                    name = "カットロトム"
-            elif pokenum == "550":
-                if p_detail_id == "0":
-                    name = "バスラオ(赤)"
-                elif p_detail_id == "1":
-                    name = "バスラオ(青)"
-                elif p_detail_id == "2":
-                    name = "バスラオ(白)"
-            elif pokenum == "741":
-                if p_detail_id == "0":
-                    name = "オドリドリ(めらめら)"
-                elif p_detail_id == "1":
-                    name = "オドリドリ(ぱちぱち)"
-                elif p_detail_id == "2":
-                    name = "オドリドリ(ふらふら)"
-                elif p_detail_id == "3":
-                    name = "オドリドリ(まいまい)"
-            elif pokenum == "745":
-                if p_detail_id == "0":
-                    name = "ルガルガン(まひる)"
-                elif p_detail_id == "1":
-                    name = "ルガルガン(まよなか)"
-                elif p_detail_id == "2":
-                    name = "ルガルガン(たそがれ)"
-            elif pokenum == "849":
-                if p_detail_id == "0":
-                    name = "ストリンダー(ハイ)"
-                elif p_detail_id == "1":
-                    name = "ストリンダー(ロー)"
-            elif pokenum == "876":
-                if p_detail_id == "0":
-                    name = "イエッサン♂"
-                else:
-                    name = "イエッサン♀"
-            elif pokenum == "916":
-                if p_detail_id == "0":
-                    name = "パフュートン♂"
-                else:
-                    name = "パフュートン♀"
+            if pokenum in exist_few_form_pokemon_no:
+                name = get_pokemon_name_for_home(pokenum, p_detail_id)
             else:
                 name = pokedex['poke'][int(pokenum) -1]
 
