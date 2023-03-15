@@ -107,9 +107,6 @@
                     orientation: "vertical"
                     padding:[5,5,5,0]
                     pacing: 5
-                    Button:
-                        text: "素早さ比較"
-                        on_release: root.set_speed_check()
                     BoxLayout:
                         Label:
                             text: 'TN'
@@ -156,24 +153,36 @@
                 BoxLayout:
                     orientation:"vertical"
                     size_hint_x: 1.2
-                    ShortLabel:
-                        text: "天候"
-                        size_hint_y: 0.3
-                    DropDownButton:
-                        items: ["なし", "晴れ", "雨", "砂嵐", "雪"]
-                        on_select_item: root.set_weather(self.button_text)
-                        size_hint_y: 0.3
-                    ShortLabel:
-                        text: "フィールド"
-                        size_hint_y: 0.3
-                    DropDownButton:
-                        items: ["なし","エレキ", "サイコ", "グラス", "ミスト"]
-                        on_select_item: root.set_field(self.button_text)
-                        size_hint_y: 0.3
+                    BoxLayout:
+                        orientation:"vertical"
+                        BoxLayout:
+                            padding: [0,10,0,0]
+                            BoxLayout:
+                                size_hint_x: 0.8
+                                ShortLabel:
+                                    text: "天候"
+                                    size_hint_x: 0.4
+                                DropDownButton:
+                                    items: ["なし", "晴れ", "雨", "砂嵐", "雪"]
+                                    on_select_item: root.set_weather(self.button_text)
+                            BoxLayout:
+                                size_hint_x: 1.2
+                                ShortLabel:
+                                    text: "フィールド"
+                                    size_hint_x: 0.6
+                                DropDownButton:
+                                    items: ["なし","エレキ", "サイコ", "グラス", "ミスト"]
+                                    on_select_item: root.set_field(self.button_text)
+                        BoxLayout:
+                            padding: [0,10,0,0]
+                            Button:
+                                text: "素早さ比較"
+                                on_release: root.set_speed_check()
+                            Button:
+                                text: "構築検索（仮）"
                     HomeInfoPanel:
                         id: _tokusei
                         title_name: "とくせい"
-                        size_hint_y: 1
                 HomeInfoPanel:
                     id: _seikaku
                     title_name: "せいかく"
