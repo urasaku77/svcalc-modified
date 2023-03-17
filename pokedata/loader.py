@@ -1,6 +1,8 @@
 import csv
 import re
 
+from pokedata.form import base_names
+
 with open('party/default.csv', encoding='sjis') as csv_file:
     default_data = [x for x in csv.reader(csv_file)]
     del default_data[0]
@@ -26,8 +28,9 @@ def get_party_data(file_path: str = 'default') -> list[list[str]]:
         return data
 
 def get_home_data(name:str, file_path: str):
-    if "イルカマン" in name:
-        name = "イルカマン"
+    for base_name in base_names:
+        if base_name in name:
+            name = base_name
     data_list:list[list[str]] = []
     with open(file_path, encoding="utf-8") as csv_file:
         data = [x for x in csv.reader(csv_file)]

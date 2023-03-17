@@ -4,7 +4,7 @@ import csv
 import urllib.request
 import jaconv
 
-from pokedata.form import *
+from pokedata.form import exist_few_form_pokemon_no, get_pokemon_name_for_home
 
 class home():
     cid = ""

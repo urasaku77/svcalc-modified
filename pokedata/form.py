@@ -1,4 +1,10 @@
+from typing import Optional
+
 exist_few_form_pokemon_no = ["128","194","479","550","741","745","849","876","916"]
+changeble_form_in_battle = ["934"]
+
+remove_pokemon_name_from_party = ["イルカマン(マイティ)"]
+base_names = ["イルカマン"]
 
 def get_pokemon_name_for_home(pokenum:str, p_detail_id:str) -> str:
     if pokenum == "128":
@@ -64,6 +70,8 @@ def get_pokemon_name_for_home(pokenum:str, p_detail_id:str) -> str:
             return "パフュートン♂"
         else:
             return "パフュートン♀"
+    else:
+        return ""
 
 def get_parameter_for_poketetsu(no:str, form:str) -> str:
     if no == "128":
@@ -104,12 +112,17 @@ def get_parameter_for_poketetsu(no:str, form:str) -> str:
             return "f"
         elif form == "2":
             return "d"
-    elif no == "849":
+    elif no in ["849", "876", "916", "934"]:
         if form == "1":
             return "f"
-    elif no == "876":
-        if form == "1":
-            return "f"
-    elif no == "916":
-        if form == "1":
-            return "f"
+    else:
+        return ""
+
+def get_next_form(pid) -> Optional[str]:
+    match pid:
+        case "934-0":
+            return "934-1"
+        case "934-1":
+            return "934-0"
+        case _:
+            return None

@@ -9,7 +9,7 @@ from pokedata.nature import get_seikaku_hosei
 from pokedata.stats import Stats, StatsKey
 from pokedata.waza import Waza, WazaBase
 from pokedata.const import ABILITY_VALUES
-
+from pokedata.form import base_names, get_next_form
 
 class Pokemon:
 
@@ -270,13 +270,8 @@ class Pokemon:
 
     @property
     def next_form_pid(self) -> Optional[str]:
-        match self.pid:
-            case "934-0":
-                return "934-1"
-            case "934-1":
-                return "934-0"
-            case _:
-                return None
+        if self.__base_name in base_names:
+            return get_next_form(self.pid)
 
     @property
     def next_form_icon(self) -> str:
@@ -476,6 +471,7 @@ class Pokemon:
         form_id = self.next_form_pid
         if form_id is not None:
             next_form = Pokemon.by_pid(form_id)
+            self.__name = next_form.name
             self.__form = next_form.__form
             self.__form_name = next_form.__form_name
             self.__syuzoku.set_values_from_stats(next_form.syuzoku)

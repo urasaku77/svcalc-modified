@@ -1,7 +1,7 @@
 import sqlite3
 from dataclasses import dataclass
 from pokedata.const import Types
-
+from pokedata.form import remove_pokemon_name_from_party
 
 @dataclass
 class TypeEffective:
@@ -58,7 +58,8 @@ class DB:
             for row in DB.__select(sql):
                 DB.__pokemon_namelist.append(row["name"])
             if form:
-                DB.__pokemon_namelist.remove("イルカマン(マイティ)")
+                for pokemon in remove_pokemon_name_from_party:
+                    DB.__pokemon_namelist.remove(pokemon)
         return DB.__pokemon_namelist
 
     @staticmethod

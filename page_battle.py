@@ -173,6 +173,8 @@ class PageBattleWidget(BoxLayout):
 
     def pokemon_state_changed(self):
         self.calc_damage()
+        if self.pokemonInfoPanels[0] is not None and self.active_pokemons[0] is not None: self.pokemonInfoPanels[0].set_pokemon(self.active_pokemons[0])
+        if self.pokemonInfoPanels[1] is not None and self.active_pokemons[1] is not None: self.pokemonInfoPanels[1].set_pokemon(self.active_pokemons[1])
         if self.activePokemonPanels[0] is not None: self.activePokemonPanels[0].change_ranks()
         if self.activePokemonPanels[1] is not None: self.activePokemonPanels[1].change_ranks()
 
