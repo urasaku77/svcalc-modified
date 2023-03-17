@@ -321,6 +321,22 @@ class PokemonInfoPanel(BoxLayout):
         else:
             self.ketaguri = str(120)
 
+    def init_pokemon(self):
+        self.pid = "0"
+        self.name = ""
+        self.type1 = ""
+        self.type1_img = Types.なし.icon
+        self.type2 = ""
+        self.type2_img = Types.なし.icon
+        self.h = ""
+        self.a = ""
+        self.b = ""
+        self.c = ""
+        self.d = ""
+        self.s = ""
+        self.weight = ""
+        self.ketaguri = ""
+
     def open_poketetsu(self):
         if self.pid != "0":
             parameter = ""
@@ -367,3 +383,7 @@ class HomeInfoPanel(BoxLayout):
             bl.add_widget(label_name)
             bl.add_widget(label_rate)
             self.add_widget(bl)
+
+    def init_data(self):
+        self.clear_widgets()
+        self.__init__()

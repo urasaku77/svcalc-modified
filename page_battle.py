@@ -260,11 +260,15 @@ class PageBattleWidget(BoxLayout):
         self.ids["tn"].text = self.cameraPreview.imgRecog.recognize_oppo_tn() or ""
 
     def init_active_pokemon(self):
-        self.activePokemonPanels[0].init_pokemon()
-        self.activePokemonPanels[1].init_pokemon()
-        self.wazaListPanels[0].initWazaPanels()
-        self.wazaListPanels[1].initWazaPanels()
+        for activePokemonPanel in self.activePokemonPanels:
+            activePokemonPanel.init_pokemon()
+        for wazaListPanel in self.wazaListPanels:
+            wazaListPanel.initWazaPanels()
         self.wazaRateList = ["","","","","","","","","",""]
+        for pokemonInfoPanel in self.pokemonInfoPanels:
+            pokemonInfoPanel.init_pokemon()
+        for homeInfoPanel in self.homeInfoPanels:
+            homeInfoPanel.init_data()
         self.active_pokemons: list[Optional[Pokemon]] = [None, None]
 
     def init_battle(self):

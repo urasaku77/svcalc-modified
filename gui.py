@@ -380,9 +380,7 @@ class WazaListPanel(BoxLayout):
             self.wazapanel_list[i].set_damage_calc_result(results[i])
 
     def initWazaPanels(self):
-        for i in range(10):
-            self.remove_widget(self.wazapanel_list[i])
-        self.wazapanel_list.clear()
+        self.clear_widgets()
         self.__init__()
 
 # 技リスト＋ダメージ計算結果表示パネル
