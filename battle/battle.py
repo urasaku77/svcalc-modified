@@ -8,6 +8,8 @@ class Battle:
     date: Optional[str]
     time: Optional[int]
     result: Optional[int]
+    evaluation: Optional[int]
+    favorite: Optional[int]
     opponent_tn: Optional[str]
     opponent_rank: Optional[int]
     opponent_memo: Optional[str]
@@ -93,7 +95,7 @@ class Battle:
     opponent_choice3_waza4: Optional[str]
     opponent_choice3_memo: Optional[str]
 
-    def set_battle(name, rank, opponent_memo, battle_memo, party, playerChosenPokemonPanels, opponentChosenPokemonPanels, time, result):
+    def set_battle(name, rank, opponent_memo, battle_memo, party, playerChosenPokemonPanels, opponentChosenPokemonPanels, time, result, evaluation, favorite):
         from pokedata.loader import get_party_csv
         file = get_party_csv().split('party\\csv\\')[1]
 
@@ -102,6 +104,8 @@ class Battle:
             str(datetime.datetime.now()),
             time,
             result,
+            evaluation,
+            favorite,
             name,
             rank,
             opponent_memo,

@@ -108,6 +108,20 @@
                     padding:[5,5,5,0]
                     pacing: 5
                     BoxLayout:
+                        padding:[10,10,10,10]
+                        pacing: 10
+                        CheckBox:
+                            id: favorite
+                            size_hint_x: 0.3
+                        Label:
+                            text: 'お気に入り'
+                        Label:
+                            text: '評価'
+                        Spinner:
+                            id: evaluation
+                            text: "なし"
+                            values: "なし", "1", "2", "3", "4", "5"
+                    BoxLayout:
                         Label:
                             text: 'TN'
                             size_hint_x: 2
@@ -163,6 +177,8 @@
                                     text: "天候"
                                     size_hint_x: 0.4
                                 DropDownButton:
+                                    id: weather
+                                    text: "なし"
                                     items: ["なし", "晴れ", "雨", "砂嵐", "雪"]
                                     on_select_item: root.set_weather(self.button_text)
                             BoxLayout:
@@ -171,6 +187,8 @@
                                     text: "フィールド"
                                     size_hint_x: 0.6
                                 DropDownButton:
+                                    id: field
+                                    text: "なし"
                                     items: ["なし","エレキ", "サイコ", "グラス", "ミスト"]
                                     on_select_item: root.set_field(self.button_text)
                         BoxLayout:

@@ -15,6 +15,7 @@ import dataclasses
 from PIL import Image as Picture
 import glob
 
+from gui import *
 from pokedata.pokemon import Pokemon
 from pokedata.const import *
 from battle.battle import Battle
@@ -258,25 +259,40 @@ class PageBattleWidget(BoxLayout):
     def recognize_oppo_tn(self):
         self.ids["tn"].text = self.cameraPreview.imgRecog.recognize_oppo_tn() or ""
 
+    def init_active_pokemon(self):
+        self.activePokemonPanels[0].init_pokemon()
+        self.activePokemonPanels[1].init_pokemon()
+        self.wazaListPanels[0].initWazaPanels()
+        self.wazaListPanels[1].initWazaPanels()
+        self.wazaRateList = ["","","","","","","","","",""]
+        self.active_pokemons: list[Optional[Pokemon]] = [None, None]
+
     def init_battle(self):
         self.battle_status = False
         self.ids["tn"].text = ""
         self.ids["rank"].text = ""
         self.ids["trainer_memo"].text = ""
         self.ids["battle_memo"].text = ""
+        self.ids["weather"].text = "なし"
+        self.ids["field"].text = "なし"
+        self.ids["evaluation"].text = "なし"
+        self.ids["favorite"].active = False
         self.party[1] = [None for _ in range(6)]
         self.refresh_party_icons()
         for chosen_num in range(len(self.opponentChosenPokemonPanels)):
             self.opponentChosenPokemonPanels[chosen_num].on_click_icon()
         for chosen_num in range(3):
             self.playerChosenPokemonPanel.on_click_icon(chosen_num)
+        self.init_active_pokemon()
 
     def record_battle(self, result: int):
         if self.party[0][0] is None or self.party[1][0] is None:
             return
         time = 20*60 - ( int(self.timerLabel.minutes) + int(self.timerLabel.seconds)*60 )
+        favorite = 1 if self.ids["favorite"].active is True else 0
+        evaluation = int(self.ids["evaluation"].text) if self.ids["evaluation"].text != "なし" else 0
 
-        battle = Battle.set_battle(self.ids["tn"].text, self.ids["rank"].text, self.ids["trainer_memo"].text, self.ids["battle_memo"].text, self.party, self.playerChosenPokemonPanel, self.opponentChosenPokemonPanels, time, result)
+        battle = Battle.set_battle(self.ids["tn"].text, self.ids["rank"].text, self.ids["trainer_memo"].text, self.ids["battle_memo"].text, self.party, self.playerChosenPokemonPanel, self.opponentChosenPokemonPanels, time, result, evaluation, favorite)
         battle_data = dataclasses.astuple(battle)
         DB_battle.register_battle(battle_data)
         self.timerLabel.reset()

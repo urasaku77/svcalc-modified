@@ -131,6 +131,7 @@ class PartyChooserPopupContent(BoxLayout):
     def on_submit(self, *args):
         pass
 
+# 素早さ比較ポップアップ
 class SpeedCheckPopup(Popup):
     players_pokemon = ObjectProperty()
     opponent_pokemon = ObjectProperty()
@@ -279,6 +280,7 @@ class SpeedCheckPopup(Popup):
         else:
             self.compare = "="
 
+# パーティ登録用ポップアップ
 class PartyRegisterPopup(Popup):
 
     def __init__(self, **kwargs) -> None:
@@ -310,6 +312,7 @@ class PartyRegisterPopupContent(BoxLayout):
         self.selected(None)
         self.pokename_input.text = ""
 
+# 編集パーティCSV選択用ポップアップ
 class CsvChooserPopup(InputPopup):
     selected = ObjectProperty(None)
 

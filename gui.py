@@ -174,7 +174,7 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
 
     __events__ = ("on_click_icon", )
 
-    pokemon = ObjectProperty(None)
+    pokemon = ObjectProperty(None, allownone=True)
     player = NumericProperty(-1)
     evs_combobox = ObjectProperty()
     teras_button = ObjectProperty()
@@ -200,17 +200,34 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
             return Types.なし.icon
         return self.pokemon.battle_terastype.icon
 
-    def on_pokemon(self, *args):
-        pokemon: Pokemon = self.pokemon
-        self.set_ability(pokemon.ability)
+    def init_pokemon(self):
+        self.pokemon = None
+        self.ids["_teras_button"].icon = Types.なし.icon
+        self.ids["_evs_combobox"].disabled = True
+        self.ids["item"].disabled = True
+        self.ids["ability"].disabled = True
+        self.ids["abilities_valid"].disabled = True
+        self.ability_values = [""]
+        self.ids["wall"].disabled = True
+        self.ids["wall"].text = "なし"
         self.critical = False
         self.burn = False
         self.charging = False
-        self.teras_button.icon = pokemon.battle_terastype.icon
-        self.ids["_evs_combobox"].disabled = False
-        self.ids["ability"].disabled = False
-        self.ids["item"].disabled = False
-        self.ids["wall"].disabled = False
+        self.change_rank()
+
+    def on_pokemon(self, *args):
+        if self.pokemon is not None:
+            pokemon: Pokemon = self.pokemon
+            self.set_ability(pokemon.ability)
+            self.critical = False
+            self.burn = False
+            self.charging = False
+            self.teras_button.icon = pokemon.battle_terastype.icon
+            self.ids["_evs_combobox"].disabled = False
+            self.ids["ability"].disabled = False
+            self.ids["item"].disabled = False
+            self.ids["wall"].disabled = False
+            self.change_rank()
 
     def set_ability(self, ability: str):
         self.ability_values = [""]
@@ -362,6 +379,11 @@ class WazaListPanel(BoxLayout):
         for i in range(len(results)):
             self.wazapanel_list[i].set_damage_calc_result(results[i])
 
+    def initWazaPanels(self):
+        for i in range(10):
+            self.remove_widget(self.wazapanel_list[i])
+        self.wazapanel_list.clear()
+        self.__init__()
 
 # 技リスト＋ダメージ計算結果表示パネル
 class WazaPanel(BoxLayout):
