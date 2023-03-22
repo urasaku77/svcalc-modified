@@ -167,6 +167,7 @@ class ChosenWazaListPanel(BoxLayout):
         if not waza in waza_list and "" in waza_list:
             self.wazapanel_list[waza_list.index("")].waza = waza
             self.wazapanel_list[waza_list.index("")].waza_button.text = waza
+            self.wazapanel_list[waza_list.index("")].click_plus_button()
 
     def clear_all_chosen_waza(self):
         for waza in self.wazapanel_list:
