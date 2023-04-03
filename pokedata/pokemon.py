@@ -9,7 +9,7 @@ from pokedata.nature import get_seikaku_hosei
 from pokedata.stats import Stats, StatsKey
 from pokedata.waza import Waza, WazaBase
 from pokedata.const import ABILITY_VALUES
-from pokedata.form import base_names, get_next_form
+from home.home import base_names, get_next_form
 
 class Pokemon:
 
