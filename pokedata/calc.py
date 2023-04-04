@@ -125,6 +125,7 @@ class DamageCalc:
             )
             # 防御力
             defence_power: int = DamageCalc.__get_defence_power(
+                attacker=attacker,
                 defender=defender,
                 waza=waza,
                 weather=weather,
@@ -443,10 +444,10 @@ class DamageCalc:
                     hosei[key] = 2048
             case "わざわいのおふだ":
                 # イカサマ、ボディプレスのダメージも下げる
-                if waza.category == 物理:
+                if waza.category == 物理 and attacker.ability != "わざわいのおふだ":
                     hosei[key] = 3072
             case "わざわいのうつわ":
-                if waza.category == 特殊:
+                if waza.category == 特殊 and attacker.ability != "わざわいのうつわ":
                     hosei[key] = 3072
         # endregion
 
@@ -483,6 +484,7 @@ class DamageCalc:
     # 防御力の算出
     @staticmethod
     def __get_defence_power(
+            attacker: 'Pokemon',
             defender: 'Pokemon',
             waza: Waza,
             weather: Weathers,
@@ -501,8 +503,8 @@ class DamageCalc:
             power = Decimal(defender.get_ranked_stats(df_key))
 
         # region SV準伝のわざわいシリーズ対応、防御力が25%減少。暫定実装
-        if df_key == StatsKey.B and defender.ability == "わざわいのつるぎ" or \
-                df_key == StatsKey.D and defender.ability == "わざわいのたま":
+        if (df_key == StatsKey.B and attacker.ability == "わざわいのつるぎ" and defender.ability != "わざわいのつるぎ") or \
+                (df_key == StatsKey.D and attacker.ability == "わざわいのたま" and defender.ability != "わざわいのたま"):
             power = (power * 3072 / 4096).quantize(
                 DECIMAI_ZERO, rounding=ROUND_FLOOR)
         # endregion
