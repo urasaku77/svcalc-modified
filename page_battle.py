@@ -254,7 +254,7 @@ class PageBattleWidget(BoxLayout):
         for banme in range(3):
             banmeResult =self.cameraPreview.imgRecog.recognize_chosen_num(banme)
             if banmeResult != -1 and self.party[0][banmeResult] is not None:
-                self.playerChosenPokemonPanel.set_pokemon(banme, self.party[0][banmeResult])
+                self.playerChosenPokemonPanel.set_pokemon(self.party[0][banmeResult])
 
     def recognize_oppo_tn(self):
         self.ids["tn"].text = self.cameraPreview.imgRecog.recognize_oppo_tn() or ""
