@@ -1,0 +1,6 @@
+jaconv
+kivy
+opencv-python
+pillow
+pyocr
+pandas
