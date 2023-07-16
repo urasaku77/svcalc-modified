@@ -255,7 +255,12 @@ class DamageCalc:
             case "そうだいしょう":
                 value = attacker.ability_value
                 if len(value) > 0:
-                    hosei[key] = DamageCalc.__overload_values[attacker.ability_value]
+                    hosei[key] = DamageCalc.__soudaisyou_values[attacker.ability_value]
+            case "とうそうしん":
+                value = attacker.ability_value
+                if len(value) > 0:
+                    hosei[key] = DamageCalc.__tousoushin_values[attacker.ability_value]
+
         # endregion
 
         # region 防御側の特性補正
@@ -901,8 +906,13 @@ class DamageCalc:
     }
 
     # そうだいしょう倍率
-    __overload_values = {
+    __soudaisyou_values = {
         "1.0": 4096, "1.1": 4506, "1.2": 4915, "1.3": 5325, "1.4": 5734, "1.5": 6144,
+    }
+    
+    #とうそうしん倍率
+    __tousoushin_values = {
+        "1.0": 4096, "1.25": 5120, "0.75": 3072,
     }
 
     __damages_at_weight = ((10, 20), (25, 40), (50, 60), (100, 80), (200, 100))
