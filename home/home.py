@@ -5,25 +5,129 @@ import urllib.request
 import jaconv
 from typing import Optional
 
-exist_few_form_pokemon_no = ["128","194","479","550","741","745","849","876","916"]
+exist_few_form_pokemon_no = ["26","50","51","52","53","58","59","79","80","88","89","101","128","144","145","146","157","194","211","215","479","483","484","487","503","549","550","628","641","642","645","648","705","706","713","720","724","741","745","849","876","888","889","892","898","902","905","916","952","960"]
 changeble_form_in_battle = ["934"]
 
 remove_pokemon_name_from_party = ["イルカマン(マイティ)"]
 base_names = ["イルカマン"]
 
 def get_pokemon_name_for_home(pokenum:str, p_detail_id:str) -> str:
-    if pokenum == "128":
-        if p_detail_id == "1":
+    if pokenum == "26":
+        if p_detail_id == "0":
+            return "ライチュウ"
+        elif p_detail_id == "1":
+            return "アローラライチュウ"
+    elif pokenum == "50":
+        if p_detail_id == "0":
+            return "ディグダ"
+        elif p_detail_id == "1":
+            return "アローラディグダ"
+    elif pokenum == "51":
+        if p_detail_id == "0":
+            return "ダグトリオ"
+        elif p_detail_id == "1":
+            return "アローラダグトリオ"
+    elif pokenum == "52":
+        if p_detail_id == "0":
+            return "ニャース"
+        elif p_detail_id == "1":
+            return "アローラニャース"
+        elif p_detail_id == "2":
+            return "ガラルニャース"
+    elif pokenum == "53":
+        if p_detail_id == "0":
+            return "ペルシアン"
+        elif p_detail_id == "1":
+            return "アローラペルシアン"
+    elif pokenum == "58":
+        if p_detail_id == "0":
+            return "ガーディ"
+        elif p_detail_id == "1":
+            return "ガーディ(ヒスイ)"
+    elif pokenum == "59":
+        if p_detail_id == "0":
+            return "ウインディ"
+        elif p_detail_id == "1":
+            return "ウインディ(ヒスイ)"
+    elif pokenum == "79":
+        if p_detail_id == "0":
+            return "ヤドン"
+        elif p_detail_id == "1":
+            return "ガラルヤドン"
+    elif pokenum == "80":
+        if p_detail_id == "0":
+            return "ヤドラン"
+        elif p_detail_id == "1":
+            return "ガラルヤドラン"
+    elif pokenum == "88":
+        if p_detail_id == "0":
+            return "ベトベター"
+        elif p_detail_id == "1":
+            return "アローラベトベター"
+    elif pokenum == "89":
+        if p_detail_id == "0":
+            return "ベトベトン"
+        elif p_detail_id == "1":
+            return "アローラベトベトン"
+    elif pokenum == "100":
+        if p_detail_id == "0":
+            return "ビリリダマ"
+        elif p_detail_id == "1":
+            return "ビリリダマ(ヒスイ)"
+    elif pokenum == "101":
+        if p_detail_id == "0":
+            return "マルマイン"
+        elif p_detail_id == "1":
+            return "マルマイン(ヒスイ)"
+    elif pokenum == "128":
+        if p_detail_id == "0":
+            return "ケンタロス"
+        elif p_detail_id == "1":
             return "ケンタロス(パルデア単)"
         elif p_detail_id == "2":
             return "ケンタロス(パルデア炎)"
         elif p_detail_id == "3":
             return "ケンタロス(パルデア水)"
+    elif pokenum == "144":
+        if p_detail_id == "0":
+            return "フリーザー"
+        elif p_detail_id == "1":
+            return "ガラルフリーザー"
+    elif pokenum == "145":
+        if p_detail_id == "0":
+            return "サンダー"
+        elif p_detail_id == "1":
+            return "ガラルサンダー"
+    elif pokenum == "146":
+        if p_detail_id == "0":
+            return "ファイヤー"
+        elif p_detail_id == "1":
+            return "ガラルファイヤー"
+    elif pokenum == "157":
+        if p_detail_id == "0":
+            return "バクフーン"
+        elif p_detail_id == "1":
+            return "バクフーン(ヒスイ)"
     elif pokenum == "194":
         if p_detail_id == "0":
             return "ウパー"
         elif p_detail_id == "1":
             return "ウパー(パルデア)"
+    elif pokenum == "199":
+        if p_detail_id == "0":
+            return "ヤドキング"
+        elif p_detail_id == "1":
+            return "ガラルヤドキング"
+    elif pokenum == "211":
+        if p_detail_id == "0":
+            return "ハリーセン"
+        elif p_detail_id == "1":
+            return "ハリーセン(ヒスイ)"
+    elif pokenum == "215":
+        if p_detail_id == "0":
+            return "ニューラ"
+        elif p_detail_id == "1":
+            return "ニューラ(ヒスイ)"
     elif pokenum == "479":
         if p_detail_id == "0":
             return "ロトム"
@@ -37,6 +141,31 @@ def get_pokemon_name_for_home(pokenum:str, p_detail_id:str) -> str:
             return "スピンロトム"
         elif p_detail_id == "5":
             return "カットロトム"
+    elif pokenum == "483":
+        if p_detail_id == "0":
+            return "ディアルガ"
+        elif p_detail_id == "1":
+            return "ディアルガ(オリジン)"
+    elif pokenum == "484":
+        if p_detail_id == "0":
+            return "パルキア"
+        elif p_detail_id == "1":
+            return "パルキア(オリジン)"
+    elif pokenum == "487":
+        if p_detail_id == "0":
+            return "ギラティナ(アナザー)"
+        elif p_detail_id == "1":
+            return "ギラティナ(オリジン)"
+    elif pokenum == "503":
+        if p_detail_id == "0":
+            return "ダイケンキ"
+        elif p_detail_id == "1":
+            return "ダイケンキ(ヒスイ)"
+    elif pokenum == "549":
+        if p_detail_id == "0":
+            return "ドレディア"
+        elif p_detail_id == "1":
+            return "ドレディア(ヒスイ)"
     elif pokenum == "550":
         if p_detail_id == "0":
             return "バスラオ(赤)"
@@ -44,6 +173,56 @@ def get_pokemon_name_for_home(pokenum:str, p_detail_id:str) -> str:
             return "バスラオ(青)"
         elif p_detail_id == "2":
             return "バスラオ(白)"
+    elif pokenum == "628":
+        if p_detail_id == "0":
+            return "ウォーグル"
+        elif p_detail_id == "1":
+            return "ウォーグル(ヒスイ)"
+    elif pokenum == "641":
+        if p_detail_id == "0":
+            return "トルネロス(化身)"
+        elif p_detail_id == "1":
+            return "トルネロス(霊獣)"
+    elif pokenum == "642":
+        if p_detail_id == "0":
+            return "ボルトロス(化身)"
+        elif p_detail_id == "1":
+            return "ボルトロス(霊獣)"
+    elif pokenum == "645":
+        if p_detail_id == "0":
+            return "ランドロス(化身)"
+        elif p_detail_id == "1":
+            return "ランドロス(霊獣)"
+    elif pokenum == "648":
+        if p_detail_id == "0":
+            return "メロエッタ(ボイス)"
+        elif p_detail_id == "1":
+            return "メロエッタ(ステップ)"
+    elif pokenum == "705":
+        if p_detail_id == "0":
+            return "ヌメイル"
+        elif p_detail_id == "1":
+            return "ヌメイル(ヒスイ)"
+    elif pokenum == "706":
+        if p_detail_id == "0":
+            return "ヌメルゴン"
+        elif p_detail_id == "1":
+            return "ヌメルゴン(ヒスイ)"
+    elif pokenum == "713":
+        if p_detail_id == "0":
+            return "クレベース"
+        elif p_detail_id == "1":
+            return "クレベース(ヒスイ)"
+    elif pokenum == "720":
+        if p_detail_id == "0":
+            return "フーパ(いましめ)"
+        elif p_detail_id == "1":
+            return "フーパ(ときはな)"
+    elif pokenum == "724":
+        if p_detail_id == "0":
+            return "ジュナイパー"
+        elif p_detail_id == "1":
+            return "ジュナイパー(ヒスイ)"
     elif pokenum == "741":
         if p_detail_id == "0":
             return "オドリドリ(めらめら)"
@@ -70,16 +249,81 @@ def get_pokemon_name_for_home(pokenum:str, p_detail_id:str) -> str:
             return "イエッサン♂"
         else:
             return "イエッサン♀"
+    elif pokenum == "888":
+        if p_detail_id == "0":
+            return "ザシアン"
+        elif p_detail_id == "1":
+            return "ザシアン(王)"
+    elif pokenum == "889":
+        if p_detail_id == "0":
+            return "ザマゼンタ"
+        elif p_detail_id == "1":
+            return "ザマゼンタ(王)"
+    elif pokenum == "892":
+        if p_detail_id == "0":
+            return "ウーラオス(いちげき)"
+        elif p_detail_id == "1":
+            return "ウーラオス(れんげき)"
+    elif pokenum == "898":
+        if p_detail_id == "0":
+            return "バドレックス"
+        elif p_detail_id == "1":
+            return "バドレックス(白馬)"
+        elif p_detail_id == "2":
+            return "バドレックス(黒馬)"
+    elif pokenum == "902":
+        if p_detail_id == "0":
+            return "イダイトウ♂"
+        else:
+            return "イダイトウ♀"
+    elif pokenum == "905":
+        if p_detail_id == "0":
+            return "ラブトロス(化身)"
+        elif p_detail_id == "1":
+            return "ラブトロス(霊獣)"
     elif pokenum == "916":
         if p_detail_id == "0":
             return "パフュートン♂"
         else:
             return "パフュートン♀"
+    elif pokenum == "952":
+        if p_detail_id == "0":
+            return "シャリタツ(そったすがた)"
+        elif p_detail_id == "1":
+            return "シャリタツ(たれたすがた)"
+        elif p_detail_id == "2":
+            return "シャリタツ(のびたすがた)"
+    elif pokenum == "960":
+        if p_detail_id == "0":
+            return "イキリンコ(緑)"
+        elif p_detail_id == "1":
+            return "イキリンコ(青)"
+        elif p_detail_id == "2":
+            return "イキリンコ(黄)"
+        elif p_detail_id == "3":
+            return "イキリンコ(白)"
     else:
         return ""
 
 def get_parameter_for_poketetsu(no:str, form:str) -> str:
-    if no == "128":
+    if no in ["26", "50", "51", "53", "88", "89", "641", "642", "645", "905"]:
+        if form == "1":
+            return "a"
+    elif no in ["79", "80", "144", "145", "146", "199"]:
+        if form == "1":
+            return "g"
+    elif no in ["58", "59", "100", "101", "157", "211", "215", "503", "549", "628", "705", "706", "713", "724"]:
+        if form == "1":
+            return "h"
+    elif no in ["483", "484", "487"]:
+        if form == "1":
+            return "o"
+    elif no == "52":
+        if form == "1":
+            return "a"
+        elif form == "2":
+            return "g"
+    elif no == "128":
         if form == "1":
             return "a"
         elif form == "2":
@@ -105,6 +349,9 @@ def get_parameter_for_poketetsu(no:str, form:str) -> str:
             return "f"
         elif form == "2":
             return "w"
+    elif no == "720":
+        if form == "1":
+            return "u"
     elif no == "741":
         if form == "1":
             return "p"
@@ -117,9 +364,17 @@ def get_parameter_for_poketetsu(no:str, form:str) -> str:
             return "f"
         elif form == "2":
             return "d"
-    elif no in ["849", "876", "916", "934"]:
+    elif no in ["648", "849", "876", "888", "889", "902", "916", "934"]:
         if form == "1":
             return "f"
+    elif no == "892":
+        if form == "1":
+            return "r"
+    elif no == "898":
+        if form == "1":
+            return "w"
+        elif form == "2":
+            return "b"
     else:
         return ""
 
