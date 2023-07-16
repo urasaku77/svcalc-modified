@@ -34,7 +34,7 @@
                 on_release: root.on_click_terasicon()
             IconButton:
                 id: _formchange_icon
-                icon: root.pokemon.next_form_icon if root.pokemon is not None else ""
+                icon: root.pokemon.changeable_icon if root.pokemon is not None else ""
                 size_hint_y: None
                 height: 30
                 on_release: root.form_change()

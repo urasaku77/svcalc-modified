@@ -325,7 +325,7 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
             pokemon.form_change()
             self.evs_combobox.text = pokemon.marked_status_text
             self.icon.icon = pokemon.icon
-            self.icon.formchange_icon = pokemon.next_form_icon
+            self.icon.formchange_icon = pokemon.changeable_icon
 
     def on_select_doryoku_preset(self, value):
         if self.pokemon is not None:
@@ -577,7 +577,7 @@ class IconToggleButton(ToggleButtonBehavior, BoxLayout, MyButton):
 
     # プロパティ
     no = NumericProperty(-1)
-    icon = StringProperty("image/blank.png")
+    icon = StringProperty("image/other/blank.png")
     pokemon_name = StringProperty("")
     button_text = StringProperty()
     back_color = ListProperty((0.3, 0.3, 0.3, 1))
@@ -590,7 +590,7 @@ class IconToggleButton(ToggleButtonBehavior, BoxLayout, MyButton):
             pid = DB.get_pokemon_pid_by_name(self.pokemon_name)
             self.icon = "image/pokeicon/" + pid + ".png"
         else:
-            self.icon = "image/blank.png"
+            self.icon = "image/other/blank.png"
 
 
 # パーティ表示アイコンパネル
@@ -640,7 +640,7 @@ class PartyIconPanel(BoxLayout):
         if icon_source is not None:
             self.__buttons[index].icon = icon_source
         else:
-            self.__buttons[index].icon = "image/blank.png"
+            self.__buttons[index].icon = "image/other/blank.png"
 
 # ドロップダウン付きアイコンボタン
 # options に、ドロップダウン用のウィジェットを追加して使用する
