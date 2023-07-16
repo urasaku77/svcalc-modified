@@ -77,7 +77,7 @@ class PageBattleWidget(BoxLayout):
 
     def select_opponent_chosen_pokemon(self):
         pokemon = self.active_pokemons[1]
-        if pokemon is None or pokemon.name in [self.opponentChosenPokemonPanels[0].name, self.opponentChosenPokemonPanels[1].name, self.opponentChosenPokemonPanels[2].name]:
+        if pokemon is None or str(pokemon.no) in [self.opponentChosenPokemonPanels[0].no, self.opponentChosenPokemonPanels[1].no, self.opponentChosenPokemonPanels[2].no]:
             return
         for chosen_num in range(3):
             if self.opponentChosenPokemonPanels[chosen_num].name == "":
@@ -246,6 +246,7 @@ class PageBattleWidget(BoxLayout):
             if oppo != "":
                 oppo_shaped = self.cameraPreview.imgRecog.shape_poke_num(oppo)
                 oppo_pokemon = Pokemon.by_pid(oppo_shaped, True)
+                #　ウーラオスのときはformが99の仮ポケモンを作って、パーティ選択時にどちらか選択する
                 self.set_party_pokemon(1, coord, oppo_pokemon)
 
     def recognize_player_banme(self):

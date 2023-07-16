@@ -57,7 +57,7 @@ class PlayerChosenPokemonPanel(BoxLayout):
         self.func_for_click_icon = func
 
     def on_click_icon(self, chosen_num:int):
-        self.__buttons[chosen_num].icon = "image/blank.png"
+        self.__buttons[chosen_num].icon = "image/other/blank.png"
         self.name[chosen_num] = ""
         self.item[chosen_num] = ""
         self.ability[chosen_num] = ""
@@ -83,6 +83,7 @@ class OpponentChosenPokemonPanel(BoxLayout, EventDispatcher):
 
     chosenWazaListPanel = ObjectProperty()
     num = StringProperty("")
+    no = StringProperty("")
     name = StringProperty("")
     memo = StringProperty("")
     items = ListProperty([])
@@ -91,7 +92,7 @@ class OpponentChosenPokemonPanel(BoxLayout, EventDispatcher):
     ability = StringProperty("")
     terastype = ObjectProperty(Types.なし)
     terastype_icon = ObjectProperty(Types.なし.icon)
-    icon = StringProperty("image/blank.png")
+    icon = StringProperty("image/other/blank.png")
 
     def __init__(self, **kw):
         from kivy_gui.popup import TypeSelectPopupContent
@@ -106,6 +107,7 @@ class OpponentChosenPokemonPanel(BoxLayout, EventDispatcher):
         self.func_for_change[index] = func
 
     def set_pokemon(self, pokemon: Pokemon):
+        self.no = str(pokemon.no)
         self.name = pokemon.name
         self.icon = pokemon.icon
         self.items = pd.read_csv("battle/item.csv",encoding="utf_8",sep=',',index_col=0).index.tolist()
@@ -114,8 +116,9 @@ class OpponentChosenPokemonPanel(BoxLayout, EventDispatcher):
             self.ability = pokemon.abilities[0]
 
     def on_click_icon(self, *args):
+        self.no = ""
         self.name = ""
-        self.icon = "image/blank.png"
+        self.icon = "image/other/blank.png"
         self.items = []
         self.item = ""
         self.abilities = []
