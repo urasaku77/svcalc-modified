@@ -77,7 +77,7 @@ class DamageCalc:
                 continue
             waza = Waza.ByWazaBase(wazabase)
 
-            if waza.name == "トリックフラワー":
+            if waza.name == "トリックフラワー" or waza.name == "あんこくきょうだ" or waza.name == "すいりゅうれんだ":
                 waza.critical = True
 
             # テラバーストによる種別、タイプ変化
@@ -113,7 +113,8 @@ class DamageCalc:
                 defender=defender,
                 waza=waza,
                 weather=weather,
-                field=field)
+                field=field
+            )
             if waza_power == -1:
                 return None
             # 攻撃力
@@ -122,6 +123,7 @@ class DamageCalc:
                 defender=defender,
                 waza=waza,
                 weather=weather,
+                field=field
             )
             # 防御力
             defence_power: int = DamageCalc.__get_defence_power(
@@ -208,23 +210,8 @@ class DamageCalc:
             case "すてみ":
                 if waza.name in DamageCalc.__recoil_moves:
                     hosei[key] = 4915
-            case "パンクロック":
-                if waza.name in DamageCalc.__sound_moves:
-                    hosei[key] = 4915
-            case "きれあじ":
-                if waza.name in DamageCalc.__slash_moves:
-                    hosei[key] = 6144
-            case "メガランチャー":
-                if waza.name in DamageCalc.__blast_moves:
-                    hosei[key] = 6144
-            case "がんじょうあご":
-                if waza.name in DamageCalc.__fung_moves:
-                    hosei[key] = 6144
             case "ちからずく":
                 if waza.has_effect:
-                    hosei[key] = 5325
-            case "かたいツメ":
-                if waza.is_touch:
                     hosei[key] = 5325
             case "すなのちから":
                 if waza.type in [Types.じめん, Types.いわ, Types.はがね] and weather == Weathers.砂嵐:
@@ -232,12 +219,21 @@ class DamageCalc:
             case "アナライズ":
                 if attacker.ability_enable:
                     hosei[key] = 5325
+            case "かたいツメ":
+                if waza.is_touch:
+                    hosei[key] = 5325
+            case "パンクロック":
+                if waza.name in DamageCalc.__sound_moves:
+                    hosei[key] = 4915
             case "フェアリーオーラ":
                 if waza.type == Types.フェアリー:
                     hosei[key] = 3072 if defender.ability == "オーラブレイク" else 5448
             case "ダークオーラ":
                 if waza.type == Types.あく:
                     hosei[key] = 3072 if defender.ability == "オーラブレイク" else 5448
+            case "きれあじ":
+                if waza.name in DamageCalc.__slash_moves:
+                    hosei[key] = 6144
             case "テクニシャン":
                 if waza.power <= 60:
                     hosei[key] = 6144
@@ -246,6 +242,12 @@ class DamageCalc:
                     hosei[key] = 6144
             case "どくぼうそう":
                 if waza.category == 物理 and attacker.ability_enable:
+                    hosei[key] = 6144
+            case "がんじょうあご":
+                if waza.name in DamageCalc.__fung_moves:
+                    hosei[key] = 6144
+            case "メガランチャー":
+                if waza.name in DamageCalc.__blast_moves:
                     hosei[key] = 6144
             case "はがねのせいしん":
                 if waza.type == Types.はがね:
@@ -357,7 +359,8 @@ class DamageCalc:
             attacker: 'Pokemon',
             defender: 'Pokemon',
             waza: Waza,
-            weather: Weathers) -> int:
+            weather: Weathers,
+            field: Fields) -> int:
         base_power: int
         hosei: dict[str, int] = {}
 
@@ -396,6 +399,20 @@ class DamageCalc:
             case "スロースタート" | "よわき":
                 if attacker.ability_enable:
                     hosei[key] = 2048
+            case "こだいかっせい" | "クォークチャージ":
+                if attacker.ability_value == "A" and waza.category == 物理:
+                    hosei[key] = 5325
+                elif attacker.ability_value == "C" and waza.category == 特殊:
+                    hosei[key] = 5325
+            case "トランジスタ":
+                if waza.type == DamageCalc.__type_buff_abilities[attacker.ability]:
+                    hosei[key] = 5325
+            case "ハイドロエンジン":
+                if waza.category == 特殊 and field == Fields.エレキ:
+                    hosei[key] = 5461
+            case "ひひいろのこどう":
+                if waza.category == 物理 and weather == Weathers.晴れ:
+                    hosei[key] = 5461
             case "フラワーギフト":
                 if weather == Weathers.晴れ and waza.category == 物理:
                     hosei[key] = 6144
@@ -408,11 +425,11 @@ class DamageCalc:
             case "サンパワー":
                 if weather == Weathers.晴れ and waza.category == 特殊:
                     hosei[key] = 6144
-            case "はがねつかい" | "トランジスタ" | "りゅうのあぎと":
-                if waza.type == DamageCalc.__type_buff_abilities[attacker.ability]:
-                    hosei[key] = 6144
             case "プラス" | "マイナス":
                 if attacker.ability_enable and waza.category == 特殊:
+                    hosei[key] = 6144
+            case "いわはこび" | "はがねつかい" | "りゅうのあぎと":
+                if waza.type == DamageCalc.__type_buff_abilities[attacker.ability]:
                     hosei[key] = 6144
             case "ごりむちゅう":
                 if waza.category == 物理:
@@ -423,16 +440,18 @@ class DamageCalc:
             case "すいほう":
                 if waza.type == Types.みず:
                     hosei[key] = 8192
-            case "こだいかっせい" | "クォークチャージ":
-                if attacker.ability_value == "A" and waza.category == 物理:
-                    hosei[key] = 5325
-                elif attacker.ability_value == "C" and waza.category == 特殊:
-                    hosei[key] = 5325
         # endregion
 
         # region 防御側の特性補正
         key = "防御特性:" + defender.ability
         match defender.ability:
+            case "わざわいのおふだ":
+                # イカサマ、ボディプレスのダメージも下げる
+                if waza.category == 物理 and attacker.ability != "わざわいのおふだ":
+                    hosei[key] = 3072
+            case "わざわいのうつわ":
+                if waza.category == 特殊 and attacker.ability != "わざわいのうつわ":
+                    hosei[key] = 3072
             case "あついしぼう":
                 if waza.type in [Types.ほのお, Types.こおり]:
                     hosei[key] = 2048
@@ -442,13 +461,6 @@ class DamageCalc:
             case "すいほう":
                 if waza.type == Types.ほのお:
                     hosei[key] = 2048
-            case "わざわいのおふだ":
-                # イカサマ、ボディプレスのダメージも下げる
-                if waza.category == 物理 and attacker.ability != "わざわいのおふだ":
-                    hosei[key] = 3072
-            case "わざわいのうつわ":
-                if waza.category == 特殊 and attacker.ability != "わざわいのうつわ":
-                    hosei[key] = 3072
         # endregion
 
         # region 攻撃側の持ち物補正
@@ -522,6 +534,11 @@ class DamageCalc:
         # region 防御側の特性補正
         key = "防御特性:" + defender.ability
         match defender.ability:
+            case "こだいかっせい" | "クォークチャージ":
+                if defender.ability_value == "B" and df_key == StatsKey.B:
+                    hosei[key] = 5325
+                elif defender.ability_value == "D" and df_key == StatsKey.D:
+                    hosei[key] = 5325
             case "フラワーギフト":
                 if weather == Weathers.晴れ and df_key == StatsKey.D:
                     hosei[key] = 6144
@@ -581,6 +598,8 @@ class DamageCalc:
             case "スナイパー":
                 if waza.critical and attacker.ability_enable:
                     hosei[key] = 6144
+            case "アクセルブレイク" | "イナズマドライブ":
+                pass # 弱点突いたら1.33倍
             case "いろめがね":
                 if type_effective < 1.0:
                     hosei[key] = 8192
@@ -694,7 +713,7 @@ class DamageCalc:
             teras_type_equal: bool = waza.type == attacker.battle_terastype
 
             match attacker.ability:
-                case "へんげんじざい":
+                case "へんげんじざい" | "リベロ":
                     if attacker.ability_value == "有効":
                         value = 8192 if teras_type_equal else 6144
                     elif attacker.ability_value == "無効" and teras_type_equal:
@@ -754,6 +773,7 @@ class DamageCalc:
         "もらいび": Types.ほのお,
         "げきりゅう": Types.みず,
         "むしのしらせ": Types.むし,
+        "いわはこび": Types.いわ,
         "はがねつかい": Types.はがね,
         "トランジスタ": Types.でんき,
         "りゅうのあぎと": Types.ドラゴン,
