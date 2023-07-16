@@ -350,7 +350,7 @@ class Pokemon:
     def set_waza_from_home(self):
         from pokedata.loader import get_home_data
         waza_data = get_home_data(self.name, "./home/home_waza.csv")
-        for i in range(len(waza_data)):
+        for i in range(len(waza_data) if len(waza_data) <= 10 else 10):
             self.__waza_list[i] = WazaBase(waza_data[i][0])
             self.__waza_rate_list[i] = waza_data[i][1]
 
@@ -362,7 +362,8 @@ class Pokemon:
         for i in range(len(ability_data)):
             if ability_data[i][0] in self.__abilities:
                 abilities_data.append(ability_data[i][0])
-        self.__abilities = abilities_data
+        if len(abilities_data) != 0:
+            self.__abilities = abilities_data
 
     # タイプ相性値
     # テラスタイプがある場合、そのタイプで算出
