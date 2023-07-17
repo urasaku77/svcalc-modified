@@ -269,6 +269,7 @@ class PageBattleWidget(BoxLayout):
                 if oppo_pokemon.base_name in unrecognizable_pokemon:
                     tentative_oppo_pokemon = Pokemon()
                     tentative_oppo_pokemon.no = oppo_pokemon.no
+                    tentative_oppo_pokemon.name = oppo_pokemon.base_name
                     oppo_pokemon = tentative_oppo_pokemon
                 self.set_party_pokemon(1, coord, oppo_pokemon)
 
