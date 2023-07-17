@@ -25,6 +25,16 @@ class DB:
         return result[0]
 
     @staticmethod
+    def get_pokemons_name_by_no(no: str):
+        sql = "SELECT name FROM pokemon_data where no = '{0}'".format(no)
+        result = DB.__select(sql)
+
+        names = []
+        for row in result:
+            names.append(row["name"])
+        return names
+
+    @staticmethod
     def get_pokemon_data_by_pid(pid: str):
         no = pid.split("-")[0]
         form = pid.split("-")[1]

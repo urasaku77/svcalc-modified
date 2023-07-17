@@ -4,7 +4,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.graphics.texture import Texture
 from kivy.clock import Clock
 from kivy.uix.image import Image
-from kivy_gui.popup import PartyInputPopup, SpeedCheckPopup
+from kivy_gui.popup import PartyInputPopup, SpeedCheckPopup, FormSelectPopupContent
 
 from typing import Optional
 import atexit
@@ -21,6 +21,7 @@ from pokedata.const import *
 from battle.battle import Battle
 from battle.DB_battle import DB_battle
 from recog.image_recognition import ImageRecognition
+from home.home import unrecognizable_pokemon
 
 class PageBattleWidget(BoxLayout):
     cameraPreview = ObjectProperty()
@@ -48,6 +49,11 @@ class PageBattleWidget(BoxLayout):
             [None for _ in range(6)], [None for _ in range(6)]
         ]
         self.battle_status = False
+        self.formSelect = Popup(
+            title="フォーム選択",
+            content=FormSelectPopupContent(selected=self.set_opponent_pokemon_form),
+            size_hint=(0.8, 0.6))
+
 
     def load_party(self):
         from pokedata.loader import get_party_data
@@ -124,6 +130,10 @@ class PageBattleWidget(BoxLayout):
     def set_active_pokemon(self, player_id: int, pokemon: Pokemon):
         if self.activePokemonPanels[player_id].pokemon is not None and pokemon.name == self.activePokemonPanels[player_id].pokemon.name:
             return
+        if player_id == 1 and pokemon.form == -1:
+            self.formSelect.content.set_pokemons(pokemon.no)
+            self.formSelect.open()
+            return
         pokemon.on_stage()
         wall = Walls.なし
         if self.active_pokemons[player_id] is not None:
@@ -146,6 +156,16 @@ class PageBattleWidget(BoxLayout):
             self.activePokemonPanels[player_id].set_func_for_click_icon(self.select_player_chosen_pokemon)
         else:
             self.activePokemonPanels[player_id].set_func_for_click_icon(self.select_opponent_chosen_pokemon)
+
+    def set_opponent_pokemon_form(self, name: str):
+        pokemon = Pokemon(DB.get_pokemon_data_by_name(name))
+        pokemon.set_default_data()
+        for i in range(len(self.party)):
+            if self.party[1][i].no == pokemon.no:
+                self.set_party_pokemon(1, i, pokemon)
+                break
+        self.set_active_pokemon(1, pokemon)
+        self.formSelect.dismiss()
 
     def set_weather(self, value):
         for weather in Weathers:
@@ -246,7 +266,10 @@ class PageBattleWidget(BoxLayout):
             if oppo != "":
                 oppo_shaped = self.cameraPreview.imgRecog.shape_poke_num(oppo)
                 oppo_pokemon = Pokemon.by_pid(oppo_shaped, True)
-                #　ウーラオスのときはformが99の仮ポケモンを作って、パーティ選択時にどちらか選択する
+                if oppo_pokemon.base_name in unrecognizable_pokemon:
+                    tentative_oppo_pokemon = Pokemon()
+                    tentative_oppo_pokemon.no = oppo_pokemon.no
+                    oppo_pokemon = tentative_oppo_pokemon
                 self.set_party_pokemon(1, coord, oppo_pokemon)
 
     def recognize_player_banme(self):

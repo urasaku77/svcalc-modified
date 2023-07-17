@@ -9,7 +9,7 @@ from pokedata.nature import get_seikaku_hosei
 from pokedata.stats import Stats, StatsKey
 from pokedata.waza import Waza, WazaBase
 from pokedata.const import ABILITY_VALUES
-from home.home import base_names, get_next_form
+from home.home import changeble_form_in_battle, get_next_form
 
 class Pokemon:
 
@@ -82,16 +82,32 @@ class Pokemon:
 
     # region プロパティ
     @property
+    def no(self) -> int:
+        return self.__no
+
+    @no.setter
+    def no(self, value: int):
+        self.__no = value
+
+    @property
+    def form(self) -> int:
+        return self.__form
+
+    @property
     def pid(self) -> str:
         return str(self.__no) + "-" + str(self.__form)
 
     @property
     def icon(self) -> str:
-        return "image/pokeicon/" + self.pid + ".png"
+        return "image/pokeicon/" + self.pid + ".png" if self.__form != -1 else "image/pokeicon/" + str(self.__no) + "-0.png"
 
     @property
     def name(self) -> str:
         return self.__name
+
+    @property
+    def base_name(self) -> str:
+        return self.__base_name
 
     @property
     def type(self) -> list[Types]:
@@ -270,13 +286,17 @@ class Pokemon:
 
     @property
     def next_form_pid(self) -> Optional[str]:
-        if self.__base_name in base_names:
+        if str(self.__no) in changeble_form_in_battle:
             return get_next_form(self.pid)
 
     @property
     def next_form_icon(self) -> str:
         form_pid = self.next_form_pid
         return "image/pokeicon/" + form_pid + ".png" if form_pid is not None else ""
+
+    @property
+    def changeable_icon(self) -> str:
+        return "image/other/change.png" if str(self.__no) in changeble_form_in_battle else ""
 
     @statechanged_handler.setter
     def statechanged_handler(self, handler: Optional[callable]):

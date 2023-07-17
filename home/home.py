@@ -5,11 +5,18 @@ import urllib.request
 import jaconv
 from typing import Optional
 
+# フォルム違いが存在するポケモンの番号リスト
 exist_few_form_pokemon_no = ["26","50","51","52","53","58","59","79","80","88","89","101","128","144","145","146","157","194","211","215","479","483","484","487","503","549","550","628","641","642","645","648","705","706","713","720","724","741","745","849","876","888","889","892","898","902","905","916","952","960"]
-changeble_form_in_battle = ["934"]
 
+# フォルムチェンジ可能なポケモンの番号リスト
+changeble_form_in_battle = ["934"]
+# パーティ選択時に表示させたくないポケモンリスト
 remove_pokemon_name_from_party = ["イルカマン(マイティ)"]
+# フォルムの違いはあるが、HOME上では区別されていないポケモンリスト
 base_names = ["イルカマン"]
+
+# 選出画面で判別付かないポケモンリスト
+unrecognizable_pokemon = ["ウーラオス"]
 
 def get_pokemon_name_for_home(pokenum:str, p_detail_id:str) -> str:
     if pokenum == "26":

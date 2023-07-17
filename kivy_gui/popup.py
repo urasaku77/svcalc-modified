@@ -8,7 +8,7 @@ from kivy.uix.filechooser import FileChooserListView
 from gui import PokeNameComboEdit, PartyIconPanel, IconButton
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
-
+from data.db import DB
 
 class InputPopup(Popup):
     pass
@@ -321,3 +321,26 @@ class CsvChooserPopup(InputPopup):
 
     def select(self, csv:str):
         self.selected(csv)
+
+# フォルム選択用ポップアップ
+class FormSelectPopupContent(GridLayout):
+    no = StringProperty("")
+    selected = ObjectProperty(None)
+
+    def __init__(self, **kw):
+        super(FormSelectPopupContent, self).__init__(**kw)
+
+    def set_pokemons(self, num):
+        self.clear_widgets()
+        self.no = str(num)
+        self.pokemon_names = DB.get_pokemons_name_by_no(self.no)
+        self.cols = 1
+        self.spacing = [5]
+        for i in range(len(self.pokemon_names)):
+            print(self.pokemon_names[i])
+            btn = IconButton(
+                icon="image/pokeicon/" + self.no + "-" + str(i) + ".png",
+                size_hint_y=None, height=60,
+                button_text=str(self.pokemon_names[i]))
+            btn.bind(on_press=lambda btn: self.selected(btn.text))
+            self.add_widget(btn)
