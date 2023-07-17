@@ -233,12 +233,10 @@ class SpeedCheckPopup(Popup):
 
     def set_wind(self, player: int):
         self.winds[player] = 1.0 if self.winds[player] != 1.0 else 2.0
-        print(self.winds[player])
         self.calc_speed()
 
     def set_bind(self, player: int):
         self.binds[player] = 1.0 if self.binds[player] != 1.0 else 0.5
-        print(self.binds[player])
         self.calc_speed()
 
     def calc_speed(self):
@@ -337,7 +335,6 @@ class FormSelectPopupContent(GridLayout):
         self.cols = 1
         self.spacing = [5]
         for i in range(len(self.pokemon_names)):
-            print(self.pokemon_names[i])
             btn = IconButton(
                 icon="image/pokeicon/" + self.no + "-" + str(i) + ".png",
                 size_hint_y=None, height=60,
