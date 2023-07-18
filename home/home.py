@@ -6,7 +6,7 @@ import jaconv
 from typing import Optional
 
 # フォルム違いが存在するポケモンの番号リスト
-exist_few_form_pokemon_no = ["26","50","51","52","53","58","59","79","80","88","89","101","128","144","145","146","157","194","211","215","479","483","484","487","503","549","550","628","641","642","645","648","705","706","713","720","724","741","745","849","876","888","889","892","898","902","905","916","952","960"]
+exist_few_form_pokemon_no = ["26","50","51","52","53","58","59","79","80","88","89","100","101","128","144","145","146","157","194","199","211","215","479","483","484","487","503","549","550","570","571","628","641","642","645","648","705","706","713","720","724","741","745","849","876","888","889","892","898","902","905","916","952","960"]
 
 # フォルムチェンジ可能なポケモンの番号リスト
 changeble_form_in_battle = ["934"]
@@ -64,7 +64,7 @@ def get_pokemon_name_for_home(pokenum:str, p_detail_id:str) -> str:
     elif pokenum == "80":
         if p_detail_id == "0":
             return "ヤドラン"
-        elif p_detail_id == "1":
+        elif p_detail_id == "2":
             return "ガラルヤドラン"
     elif pokenum == "88":
         if p_detail_id == "0":
@@ -180,6 +180,16 @@ def get_pokemon_name_for_home(pokenum:str, p_detail_id:str) -> str:
             return "バスラオ(青)"
         elif p_detail_id == "2":
             return "バスラオ(白)"
+    elif pokenum == "570":
+        if p_detail_id == "0":
+            return "ゾロア"
+        elif p_detail_id == "1":
+            return "ゾロア(ヒスイ)"
+    elif pokenum == "571":
+        if p_detail_id == "0":
+            return "ゾロアーク"
+        elif p_detail_id == "1":
+            return "ゾロアーク(ヒスイ)"
     elif pokenum == "628":
         if p_detail_id == "0":
             return "ウォーグル"
@@ -319,7 +329,7 @@ def get_parameter_for_poketetsu(no:str, form:str) -> str:
     elif no in ["79", "80", "144", "145", "146", "199"]:
         if form == "1":
             return "g"
-    elif no in ["58", "59", "100", "101", "157", "211", "215", "503", "549", "628", "705", "706", "713", "724"]:
+    elif no in ["58", "59", "100", "101", "157", "211", "215", "503", "549", "570", "571", "628", "705", "706", "713", "724"]:
         if form == "1":
             return "h"
     elif no in ["483", "484", "487"]:
@@ -329,6 +339,9 @@ def get_parameter_for_poketetsu(no:str, form:str) -> str:
         if form == "1":
             return "a"
         elif form == "2":
+            return "g"
+    elif no == "80":
+        if form == "2":
             return "g"
     elif no == "128":
         if form == "1":
