@@ -12,27 +12,22 @@ import webbrowser
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
 from home.home import exist_few_form_pokemon_no, changeble_form_in_battle, get_parameter_for_poketetsu
-from gui import WazaButton, IconToggleButton,dummy
+from gui import WazaButton, IconButton,dummy
 
 #選出された自分ポケモン表示パネル
 class PlayerChosenPokemonPanel(BoxLayout):
     name = ListProperty(["","",""])
-    doryoku = ListProperty(["","",""])
-    item = ListProperty(["","",""])
-    ability = ListProperty(["","",""])
-    terastype = ObjectProperty([Types.なし,Types.なし,Types.なし])
     waza_list = ListProperty([["","","",""],["","","",""],["","","",""]])
     waza_check_list = ListProperty([[0,0,0,0],[0,0,0,0],[0,0,0,0]])
 
     def __init__(self, **kw):
         super(PlayerChosenPokemonPanel, self).__init__(**kw)
         self.func_for_click_icon = dummy
-        self.__buttons: list[IconToggleButton] = []
-        label = Label(text="選出")
-        self.orientation = "vertical"
+        self.__buttons: list[IconButton] = []
+        label = Label(text="自分の選出")
         self.add_widget(label)
         for i in range(3):
-            btn = IconToggleButton(no=i,size_hint=(1, 1), group="party")
+            btn = IconButton(no=i,size_hint=(1, 1))
             btn.bind(on_release=lambda x: self.on_click_icon(x.no))
             self.__buttons.append(btn)
             self.add_widget(btn)
@@ -43,11 +38,8 @@ class PlayerChosenPokemonPanel(BoxLayout):
         for chosen_num in range(3):
             if self.name[chosen_num] == "":
                 self.__buttons[chosen_num].icon = pokemon.icon
+                self.__buttons[chosen_num].text = pokemon.name
                 self.name[chosen_num] = pokemon.name
-                self.doryoku[chosen_num] = pokemon.doryoku.to_string
-                self.item[chosen_num] = pokemon.item
-                self.ability[chosen_num] = pokemon.ability
-                self.terastype[chosen_num] = pokemon.terastype
                 for i in range(4):
                     self.waza_list[chosen_num][i] = pokemon.waza_list[i].name if pokemon.waza_list[i] is not None else ""
                 self.waza_check_list[chosen_num] = [0,0,0,0]
@@ -57,12 +49,9 @@ class PlayerChosenPokemonPanel(BoxLayout):
         self.func_for_click_icon = func
 
     def on_click_icon(self, chosen_num:int):
-        self.__buttons[chosen_num].icon = "image/other/blank.png"
         self.name[chosen_num] = ""
-        self.item[chosen_num] = ""
-        self.ability[chosen_num] = ""
-        self.terastype[chosen_num] = Types.なし
-        self.doryoku[chosen_num] = ""
+        self.__buttons[chosen_num].icon = "image/other/blank.png"
+        self.__buttons[chosen_num].text = ""
         self.waza_list[chosen_num] = ["","","",""]
         self.waza_check_list[chosen_num] = [0,0,0,0]
         self.func_for_click_icon()
@@ -77,161 +66,79 @@ class PlayerChosenPokemonPanel(BoxLayout):
         return [0,0,0,0]
 
 #選出された相手ポケモン表示パネル
-class OpponentChosenPokemonPanel(BoxLayout, EventDispatcher):
+class OpponentChosenPokemonPanel(BoxLayout):
 
-    __events__ = ("on_click_icon", )
-
-    chosenWazaListPanel = ObjectProperty()
-    num = StringProperty("")
-    no = StringProperty("")
-    name = StringProperty("")
-    memo = StringProperty("")
-    items = ListProperty([])
-    item = StringProperty("")
-    abilities = ListProperty([])
-    ability = StringProperty("")
-    terastype = ObjectProperty(Types.なし)
-    terastype_icon = ObjectProperty(Types.なし.icon)
-    icon = StringProperty("image/other/blank.png")
+    no = ListProperty(["","",""])
+    name = ListProperty(["","",""])
+    icon = ListProperty(["image/other/blank.png","image/other/blank.png","image/other/blank.png"])
 
     def __init__(self, **kw):
-        from kivy_gui.popup import TypeSelectPopupContent
         super(OpponentChosenPokemonPanel, self).__init__(**kw)
-        self.func_for_change = [dummy, dummy, dummy]
-        self.popup = Popup(
-            title="テラスタイプ選択",
-            content=TypeSelectPopupContent(selected=self.on_select_terastype),
-            size_hint=(0.8, 0.6))
-
-    def set_func_for_change(self,func,index: int):
-        self.func_for_change[index] = func
+        self.func_for_change = dummy
+        self.__buttons: list[IconButton] = []
+        for i in range(3):
+            btn = IconButton(no=i,size_hint=(1, 1))
+            btn.bind(on_release=lambda x: self.on_click_icon(x.no))
+            self.__buttons.append(btn)
+            self.add_widget(btn)
+        label = Label(text="相手の選出")
+        self.add_widget(label)
 
     def set_pokemon(self, pokemon: Pokemon):
-        self.no = str(pokemon.no)
-        self.name = pokemon.name
-        self.icon = pokemon.icon
-        self.items = pd.read_csv("battle/item.csv",encoding="utf_8",sep=',',index_col=0).index.tolist()
-        self.abilities = pokemon.abilities
-        if len(pokemon.abilities) == 1:
-            self.ability = pokemon.abilities[0]
+        if pokemon is None or pokemon.no in self.no:
+            return
+        for chosen_num in range(3):
+            if self.name[chosen_num] == "":
+                self.no[chosen_num] = pokemon.no
+                self.name[chosen_num] = pokemon.name
+                self.__buttons[chosen_num].icon = pokemon.icon
+                self.__buttons[chosen_num].text = pokemon.name
+                break
 
-    def on_click_icon(self, *args):
-        self.no = ""
-        self.name = ""
-        self.icon = "image/other/blank.png"
-        self.items = []
-        self.item = ""
-        self.abilities = []
-        self.ability = ""
-        self.ids["memo"].text = ""
-        self.terastype = Types.なし
-        self.terastype_icon = Types.なし.icon
-        self.chosenWazaListPanel.clear_all_chosen_waza()
+    def set_func_for_click_icon(self,func):
+        self.func_for_click_icon = func
 
-    def select_terastype(self, *_args):
-        self.popup.open()
+    def on_click_icon(self, chosen_num:int):
+        self.no[chosen_num] = ""
+        self.name[chosen_num] = ""
+        self.__buttons[chosen_num].icon = "image/other/blank.png"
+        self.__buttons[chosen_num].text = ""
 
-    def on_select_terastype(self, value):
-        if self.name != "":
-            terastype = Types[value]
-            self.terastype = terastype
-            self.terastype_icon = terastype.icon
-            self.func_for_change[0](self.name, self.terastype)
-            self.popup.dismiss()
-
-    def set_item(self, value):
-        self.item = value
-        self.func_for_change[1](self.name, self.item)
-
-    def set_ability(self, value):
-        self.ability = value
-        self.func_for_change[2](self.name, self.ability)
-
-    def register_chosen_waza(self, waza: str):
-        self.chosenWazaListPanel.register_chosen_waza(waza)
-
-# 技パネル一式
-class ChosenWazaListPanel(BoxLayout):
+# カウンターパネル
+class CounterPanel(BoxLayout):
 
     def __init__(self, **kw):
-        super(ChosenWazaListPanel, self).__init__(**kw)
-        self.orientation = "vertical"
-        self.wazapanel_list: list[ChosenWazaPanel] = []
+        super(CounterPanel, self).__init__(**kw)
+        self.count: int = 0
 
-        for i in range(4):
-            wazapanel = ChosenWazaPanel(index=i)
-            self.add_widget(wazapanel)
-            self.wazapanel_list.append(wazapanel)
-
-    def register_chosen_waza(self, waza: str):
-        waza_list: list[str] = []
-        for index in range(len(self.wazapanel_list)):
-            waza_list.append(self.wazapanel_list[index].waza)
-        if not waza in waza_list and "" in waza_list:
-            self.wazapanel_list[waza_list.index("")].waza = waza
-            self.wazapanel_list[waza_list.index("")].waza_button.text = waza
-            self.wazapanel_list[waza_list.index("")].click_plus_button()
-
-    def clear_all_chosen_waza(self):
-        for waza in self.wazapanel_list:
-            waza.waza = ""
-            waza.waza_button.text = ""
-            waza.pp = 0
-            waza.pp_text.text = str(0)
-
-# 技＋クリアボタン＋PP周り
-class ChosenWazaPanel(BoxLayout):
-
-    index = NumericProperty(-1)
-
-    def __init__(self, **kw):
-        super(ChosenWazaPanel, self).__init__(**kw)
-        self.waza: str = ""
-        self.pp: int = 0
-
-        # クリアボタン
-        self.center_button = Button(size_hint_x=None, width=30, on_press=self.click_center_button)
-        # 技名ボタン
-        self.waza_button: WazaButton = WazaButton()
-        self.waza_button.bind(on_confirm=lambda x: self.on_select_waza(x.text))
         # マイナスボタン
-        self.minus_button = Button(text="-", size_hint_x=None, width=20, on_press=self.click_minus_button)
+        self.minus_button = Button(text="-", on_press=self.click_minus_button)
         # PP
-        self.pp_text = Label(text=str(self.pp), size_hint_x=None, width=10)
+        self.count_text = Label(text=str(self.count))
         # プラスボタン
-        self.plus_button = Button(text="+", size_hint_x=None, width=20, on_press=self.click_plus_button)
+        self.plus_button = Button(text="+", on_press=self.click_plus_button)
 
-        self.add_widget(self.center_button)
-        self.add_widget(self.waza_button)
         self.add_widget(self.minus_button)
-        self.add_widget(self.pp_text)
+        self.add_widget(self.count_text)
         self.add_widget(self.plus_button)
         self.spacing = 5
 
-    # 技名コンボボックスが決定された時
-    def on_select_waza(self, value: str) -> None:
-        if value is not None:
-            self.waza = value
-            self.waza_button.text = self.waza
-
     # クリアボタンが押された時
-    def click_center_button(self, *args):
-        self.waza = ""
-        self.waza_button.text = ""
-        self.pp = 0
-        self.pp_text.text = str(self.pp)
+    def clear(self, *args):
+        self.count = 0
+        self.count_text.text = str(self.count)
 
     # マイナスボタンが押された時
     def click_minus_button(self, *args):
-        if self.pp > 0:
-            self.pp = self.pp - 1
-            self.pp_text.text = str(self.pp)
+        if self.count > 0:
+            self.count = self.count - 1
+            self.count_text.text = str(self.count)
 
     # プラスボタンが押された時
     def click_plus_button(self, *args):
-        if self.pp < 64:
-            self.pp = self.pp + 1
-            self.pp_text.text = str(self.pp)
+        if self.count < 64:
+            self.count = self.count + 1
+            self.count_text.text = str(self.count)
 
 # 20分タイマー部品一式
 class TimerLabel(BoxLayout):
@@ -351,6 +258,7 @@ class PokemonInfoPanel(BoxLayout):
             url = "https://yakkun.com/sv/zukan/n" + no + parameter
             webbrowser.open(url)
 
+# ポケモンHOME情報表示パネル
 class HomeInfoPanel(BoxLayout):
     title_name = StringProperty("")
     data_list = ListProperty([])

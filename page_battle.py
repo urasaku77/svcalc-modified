@@ -4,6 +4,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.graphics.texture import Texture
 from kivy.clock import Clock
 from kivy.uix.image import Image
+from kivy.clock import Clock
 from kivy_gui.popup import PartyInputPopup, SpeedCheckPopup, FormSelectPopupContent
 
 from typing import Optional
@@ -31,16 +32,17 @@ class PageBattleWidget(BoxLayout):
     wazaListPanels = ListProperty()
     wazaRateList = ListProperty(["","","","","","","","","",""])
     playerChosenPokemonPanel = ObjectProperty
-    opponentChosenPokemonPanels = ListProperty()
+    opponentChosenPokemonPanels = ObjectProperty
     pokemonInfoPanels = ListProperty()
     homeInfoPanels = ListProperty()
     timerLabel = ObjectProperty()
+    counterPanel = ObjectProperty()
     weather=ObjectProperty(Weathers.なし)
     field=ObjectProperty(Fields.なし)
 
     def __init__(self, **kwargs):
         super(PageBattleWidget, self).__init__(**kwargs)
-        self.cameraPreview = self.CameraPreview(size=(1280,720))
+        self.cameraPreview = self.CameraPreview(size=(1600,900))
         self.active_pokemons: list[Optional[Pokemon]] = [None, None]
         self.party_popup: PartyInputPopup = PartyInputPopup(title="パーティ入力")
         self.party_popup.bind(
@@ -48,12 +50,16 @@ class PageBattleWidget(BoxLayout):
         self.party: list[list[Optional[Pokemon]]] = [
             [None for _ in range(6)], [None for _ in range(6)]
         ]
+        Clock.schedule_once(self.set_player_of_party)
         self.battle_status = False
         self.formSelect = Popup(
             title="フォーム選択",
             content=FormSelectPopupContent(selected=self.set_opponent_pokemon_form),
             size_hint=(0.8, 0.6))
 
+    def set_player_of_party(self, dt):
+        self.ids.party1.player = 1
+        self.ids.party2.player = 2
 
     def load_party(self):
         from pokedata.loader import get_party_data
@@ -83,15 +89,8 @@ class PageBattleWidget(BoxLayout):
 
     def select_opponent_chosen_pokemon(self):
         pokemon = self.active_pokemons[1]
-        if pokemon is None or str(pokemon.no) in [self.opponentChosenPokemonPanels[0].no, self.opponentChosenPokemonPanels[1].no, self.opponentChosenPokemonPanels[2].no]:
-            return
-        for chosen_num in range(3):
-            if self.opponentChosenPokemonPanels[chosen_num].name == "":
-                self.opponentChosenPokemonPanels[chosen_num].set_pokemon(pokemon)
-                self.opponentChosenPokemonPanels[chosen_num].set_func_for_change(self.change_opponent_chosen_terastype, 0)
-                self.opponentChosenPokemonPanels[chosen_num].set_func_for_change(self.change_opponent_chosen_item, 1)
-                self.opponentChosenPokemonPanels[chosen_num].set_func_for_change(self.change_opponent_chosen_ability, 2)
-                break
+        if pokemon is not None:
+            self.opponentChosenPokemonPanels.set_pokemon(pokemon)
 
     def set_camera(self):
         self.cameraId = int(self.ids["camera_id"].text)
@@ -216,35 +215,6 @@ class PageBattleWidget(BoxLayout):
                 self.playerChosenPokemonPanel.change_waza_check(pokemon_index, waza_index)
                 self.refresh_waza_check()
 
-    def set_opponent_waza(self, waza_index: int):
-        waza_name = self.wazaListPanels[1].wazapanel_list[waza_index].waza_button.text
-        for pokemon_index in range(len(self.opponentChosenPokemonPanels)):
-            if self.opponentChosenPokemonPanels[pokemon_index].name != "" and self.opponentChosenPokemonPanels[pokemon_index].name == self.active_pokemons[1].name:
-                self.opponentChosenPokemonPanels[pokemon_index].register_chosen_waza(waza_name)
-
-    def change_opponent_chosen_terastype(self, name:str, terastype):
-        for i in range(6):
-            if self.party[1][i] is not None and self.party[1][i].name == name:
-                self.party[1][i].terastype = terastype
-                self.party[1][i].battle_terastype = terastype
-                if self.active_pokemons[1] is not None and self.active_pokemons[1].name == name:
-                    self.activePokemonPanels[1].on_select_terastype(terastype.name)
-
-    def change_opponent_chosen_item(self, name:str, item):
-        for i in range(6):
-            if self.party[1][i] is not None and self.party[1][i].name == name:
-                self.party[1][i].item = item
-                if self.active_pokemons[1] is not None and self.active_pokemons[1].name == name:
-                    self.activePokemonPanels[1].pokemon.item = item
-                    self.activePokemonPanels[1].ids["item"].text = item
-
-    def change_opponent_chosen_ability(self, name:str, ability):
-        for i in range(6):
-            if self.party[1][i] is not None and self.party[1][i].name == name:
-                self.party[1][i].ability = ability
-                if self.active_pokemons[1] is not None and self.active_pokemons[1].name == name:
-                    self.activePokemonPanels[1].set_ability(ability)
-
     def set_speed_check(self):
         if self.active_pokemons[0] is not None and self.active_pokemons[1] is not None:
             self.speed_check: SpeedCheckPopup = SpeedCheckPopup(title="素早さ比較")
@@ -300,7 +270,6 @@ class PageBattleWidget(BoxLayout):
         self.battle_status = False
         self.ids["tn"].text = ""
         self.ids["rank"].text = ""
-        self.ids["trainer_memo"].text = ""
         self.ids["battle_memo"].text = ""
         self.ids["weather"].text = "なし"
         self.ids["field"].text = "なし"
@@ -308,11 +277,11 @@ class PageBattleWidget(BoxLayout):
         self.ids["favorite"].active = False
         self.party[1] = [None for _ in range(6)]
         self.refresh_party_icons()
-        for chosen_num in range(len(self.opponentChosenPokemonPanels)):
-            self.opponentChosenPokemonPanels[chosen_num].on_click_icon()
         for chosen_num in range(3):
             self.playerChosenPokemonPanel.on_click_icon(chosen_num)
+            self.opponentChosenPokemonPanels.on_click_icon(chosen_num)
         self.init_active_pokemon()
+        self.counterPanel.clear()
 
     def record_battle(self, result: int):
         if self.party[0][0] is None or self.party[1][0] is None:
@@ -321,7 +290,7 @@ class PageBattleWidget(BoxLayout):
         favorite = 1 if self.ids["favorite"].active is True else 0
         evaluation = int(self.ids["evaluation"].text) if self.ids["evaluation"].text != "なし" else 0
 
-        battle = Battle.set_battle(self.ids["tn"].text, self.ids["rank"].text, self.ids["trainer_memo"].text, self.ids["battle_memo"].text, self.party, self.playerChosenPokemonPanel, self.opponentChosenPokemonPanels, time, result, evaluation, favorite)
+        battle = Battle.set_battle(self.ids["tn"].text, self.ids["rank"].text, self.ids["battle_memo"].text, self.party, self.playerChosenPokemonPanel, self.opponentChosenPokemonPanels, time, result, evaluation, favorite)
         battle_data = dataclasses.astuple(battle)
         DB_battle.register_battle(battle_data)
         self.timerLabel.reset()
@@ -336,8 +305,8 @@ class PageBattleWidget(BoxLayout):
 
         def start(self, camera_id: int):
             self.capture = cv2.VideoCapture(camera_id, cv2.CAP_DSHOW)
-            self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-            self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+            self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1900)
+            self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 1200)
             self.capture.set(cv2.CAP_PROP_FPS, 60)
 
         # インターバルで実行する描画メソッド

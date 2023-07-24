@@ -2,56 +2,6 @@
 #:import * gui
 #:import * textinput4ja
 
-<OpponentChosenPokemonPanel>
-    chosenWazaListPanel: chosenWazaListPanel
-    BoxLayout:
-        orientation: "vertical"
-        spacing:5
-        BoxLayout:
-            size_hint_y: 2
-            spacing: 5
-            padding: [5,5]
-            BoxLayout:
-                orientation: "vertical"
-                size_hint_x: 1
-                Label:
-                    text :root.num
-                    font_size: 0.3*self.width
-                    size_hint_y: 1.5
-                IconToggleButton:
-                    icon: root.icon
-                    size_hint_x: 1
-                    size_hint_y: 3.5
-                    on_release: root.dispatch("on_click_icon")
-                IconButton:
-                    size_hint_y: 1.5
-                    icon: root.terastype_icon
-                    font_size: 14
-                    on_release: root.select_terastype()
-            ChosenWazaListPanel:
-                id: chosenWazaListPanel
-                size_hint_x: 4
-        GridLayout:
-            cols: 4
-            size_hint_y: 0.5
-            DropDownButton:
-                text: root.item if root.name != "" and root.item != "" else "もちもの"
-                image_enable: True
-                items: root.items if root.name != "" else ""
-                on_select_item: root.set_item(self.button_text)
-            DropDownButton:
-                text: root.ability if root.name != "" and root.ability != "" else "とくせい"
-                items: root.abilities if root.name != "" else ""
-                on_select_item: root.set_ability(self.button_text)
-        BoxLayout:
-            size_hint_y: 1
-            ShortLabel:
-                text: "メモ"
-            TextInput_JA:
-                id: memo
-                text: ""
-                on_text: root.memo = self.text
-
 <TimerLabel>:
     BoxLayout:
         orientation: "vertical"
@@ -76,20 +26,24 @@
             size_hint_y: 0.8
             Label:
                 text:root.name
-                font_size: 0.5*self.height
-                size_hint_x: 5.5
+                font_size: 0.4*self.height
+                size_hint_x: 3
             BoxLayout:
-                size_hint_x: 4.5
-                Image:
-                    source: root.type1_img
-                Label:
-                    text:root.type1
-                    font_size: 0.25*self.height
-                Image:
-                    source: root.type2_img
-                Label:
-                    text:root.type2
-                    font_size: 0.25*self.height
+                size_hint_x: 5
+                BoxLayout:
+                    Image:
+                        source: root.type1_img
+                        size_hint_x: 0.2
+                    Label:
+                        text:root.type1
+                        font_size: 0.4*self.height
+                BoxLayout:
+                    Image:
+                        source: root.type2_img
+                        size_hint_x: 0.2
+                    Label:
+                        text:root.type2
+                        font_size: 0.4*self.height
         BoxLayout:
             size_hint_y: 1
             BoxLayout:
@@ -138,8 +92,11 @@
             size_hint_y: 0.5
             Label:
                 text:"重さ："+root.weight +"kg"
+                size_hint_x: 0.5
             Label:
                 text:"けたぐりの威力："+root.ketaguri
+                size_hint_x: 1
             Button:
                 text:"ポケ徹"
+                size_hint_x: 0.5
                 on_release: root.open_poketetsu()

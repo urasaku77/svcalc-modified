@@ -17,6 +17,7 @@ from pokedata.const import *
 from pokedata.pokemon import Pokemon
 from pokedata.waza import WazaBase
 from pokedata.calc import DamageCalcResult
+import datetime
 
 
 # ドロップダウン付きウィジェット
@@ -203,6 +204,7 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
     def init_pokemon(self):
         self.pokemon = None
         self.ids["_teras_button"].icon = Types.なし.icon
+        self.ids["_teras_button"].text = Types.なし.name
         self.ids["_evs_combobox"].disabled = True
         self.ids["item"].disabled = True
         self.ids["ability"].disabled = True
@@ -223,6 +225,7 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
             self.burn = False
             self.charging = False
             self.teras_button.icon = pokemon.battle_terastype.icon
+            self.teras_button.text = pokemon.battle_terastype.name
             self.ids["_evs_combobox"].disabled = False
             self.ids["ability"].disabled = False
             self.ids["item"].disabled = False
@@ -324,8 +327,8 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
         if pokemon is not None:
             pokemon.form_change()
             self.evs_combobox.text = pokemon.marked_status_text
-            self.icon.icon = pokemon.icon
-            self.icon.formchange_icon = pokemon.changeable_icon
+            self.icon = pokemon.icon
+            self.formchange_icon = pokemon.changeable_icon
 
     def on_select_doryoku_preset(self, value):
         if self.pokemon is not None:
@@ -353,24 +356,31 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
             terastype = Types[value]
             self.pokemon.battle_terastype = terastype
             self.teras_button.icon = terastype.icon
+            self.teras_button.text = terastype.name
             self.popup.dismiss()
 
 
 # 技＋ダメージ計算結果表示パネルのリスト
 class WazaListPanel(BoxLayout):
 
+    num = NumericProperty(10)
+    built_flag = NumericProperty(0)
+
     def __init__(self, **kw):
         super(WazaListPanel, self).__init__(**kw)
         self.pokemon: Optional[Pokemon] = None
         self.orientation = "vertical"
         self.wazapanel_list: list[WazaPanel] = []
-
         for i in range(10):
             wazapanel = WazaPanel(index=i)
-            self.add_widget(wazapanel)
             self.wazapanel_list.append(wazapanel)
 
     def set_pokemon(self, pokemon: Pokemon):
+        if self.built_flag == 0:
+            for i in range(self.num):
+                self.add_widget(self.wazapanel_list[i])
+            self.built_flag = 1
+
         self.pokemon = pokemon
         for i, wazabase in enumerate(self.pokemon.waza_list):
             self.wazapanel_list[i].set_pokemon(self.pokemon)
@@ -381,6 +391,7 @@ class WazaListPanel(BoxLayout):
 
     def initWazaPanels(self):
         self.clear_widgets()
+        self.built_flag=0
         self.__init__()
 
 # 技リスト＋ダメージ計算結果表示パネル
@@ -557,6 +568,7 @@ class MyButton(Widget):
 class IconButton(ButtonBehavior, BoxLayout, MyButton):
 
     # プロパティ
+    no = NumericProperty(-1)
     icon = StringProperty("")
     button_text = StringProperty()
     back_color = ListProperty((0.3, 0.3, 0.3, 1))
@@ -604,12 +616,18 @@ class PartyIconPanel(BoxLayout):
     def __init__(self, **kw):
         super(PartyIconPanel, self).__init__(**kw)
         self.__buttons: list[IconToggleButton] = []
+        prefix = str(datetime.datetime.now())
         for i in range(6):
             btn = IconToggleButton(
-                no=i, group="party",
+                no=i, group=f"party{prefix}",
                 on_release=lambda x: self.dispatch("on_select") if x.state == "down" else None)
+            btn.bind(on_release=lambda x: self.keep(x))
             self.__buttons.append(btn)
             self.add_widget(btn)
+
+    def keep(self,instance):
+        if instance.state != "down":
+            instance.state = "down"
 
     @property
     def selected_index(self) -> int:
