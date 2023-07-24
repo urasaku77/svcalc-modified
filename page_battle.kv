@@ -90,12 +90,8 @@
                         num: 5
                 BoxLayout:
                     orientation: "vertical"
-                    padding:[10,10]
-                    pacing: 10
                     size_hint_y: 1
                     BoxLayout:
-                        padding:[10,10]
-                        pacing: 10
                         size_hint_y: 1
                         TimerLabel:
                             id: _time
@@ -119,27 +115,16 @@
                                     id: _counter
                     BoxLayout:
                         orientation: "vertical"
-                        padding:[5,5]
-                        pacing: 5
                         size_hint_y: 1
                         BoxLayout:
+                            size_hint_x: 1
                             Label:
-                                text: 'TN'
-                                size_hint_x: 2
+                                text: '対戦\nメモ'
+                                size_hint_x: 1
                             TextInput_JA:
-                                id: tn
+                                id: battle_memo
                                 text: ""
-                                size_hint_x: 8
-                        BoxLayout:
-                            Label:
-                                text: 'ランク'
-                                size_hint_x: 3
-                            TextInput:
-                                id: rank
-                                input_type: 'number'
-                                input_filter: 'int'
-                                multiline: False
-                                size_hint_x: 7
+                                size_hint_x: 9
         BoxLayout:
             orientation:"vertical"
             size_hint_x: 3
@@ -155,7 +140,9 @@
                 id: camera_preview
                 size_hint_y: 5
             BoxLayout:
-                size_hint_y: 1.5
+                size_hint_y: 1.7
+                padding: [5, 5]
+                pacing: 5
                 HomeInfoPanel:
                     id: _motimono
                     title_name: "もちもの"
@@ -182,7 +169,7 @@
                             size_hint_x: 2
                             on_release: root.set_speed_check()
                     BoxLayout:
-                        size_hint_y: 0.3
+                        size_hint_y: 0.2
                         padding: [0,10,0,0]
                         BoxLayout:
                             size_hint_x: 0.8
@@ -207,7 +194,7 @@
                     HomeInfoPanel:
                         id: _tokusei
                         title_name: "とくせい"
-                        size_hint_y: 0.5
+                        size_hint_y: 0.6
                 HomeInfoPanel:
                     id: _seikaku
                     title_name: "せいかく"
@@ -217,19 +204,29 @@
                     title_name: "テラスタイプ"
                     size_hint_x: 0.8
             BoxLayout:
-                padding: [5, 5]
-                pacing: 5
-                size_hint_y: 0.5
+                size_hint_y: 0.3
                 BoxLayout:
-                    size_hint_x: 2
+                    size_hint_x: 1.5
                     Label:
-                        text: '対戦\nメモ'
-                        size_hint_x: 1
+                        text: 'TN'
+                        size_hint_x: 2
                     TextInput_JA:
-                        id: battle_memo
+                        id: tn
                         text: ""
-                        size_hint_x: 9
+                        size_hint_x: 8
                 BoxLayout:
+                    size_hint_x: 1
+                    Label:
+                        text: 'ランク'
+                        size_hint_x: 3
+                    TextInput:
+                        id: rank
+                        input_type: 'number'
+                        input_filter: 'int'
+                        multiline: False
+                        size_hint_x: 7
+                BoxLayout:
+                    size_hint_x: 0.5
                     orientation: "vertical"
                     size_hint_x: 0.4
                     Label:
@@ -239,6 +236,7 @@
                         text: "なし"
                         values: "なし", "1", "2", "3", "4", "5"
                 BoxLayout:
+                    size_hint_x: 1
                     padding:[5,5]
                     pacing: 5
                     size_hint_x: 0.6
@@ -248,22 +246,19 @@
                     Label:
                         text: 'お気に入り'
                 BoxLayout:
-                    orientation: "vertical"
-                    size_hint_x: 1
-                    BoxLayout:
-                        Button:
-                            text: "勝ち"
-                            on_release: root.record_battle(1)
-                        Button:
-                            text: "負け"
-                            on_release: root.record_battle(0)
-                    BoxLayout:
-                        Button:
-                            text: "分け"
-                            on_release: root.record_battle(2)
-                        Button:
-                            text: "クリア"
-                            on_release: root.init_battle()
+                    size_hint_x: 2
+                    Button:
+                        text: "勝ち"
+                        on_release: root.record_battle(1)
+                    Button:
+                        text: "負け"
+                        on_release: root.record_battle(0)
+                    Button:
+                        text: "分け"
+                        on_release: root.record_battle(2)
+                    Button:
+                        text: "クリア"
+                        on_release: root.init_battle()
         BoxLayout:
             orientation:"vertical"
             size_hint_x: 1
