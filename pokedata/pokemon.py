@@ -9,7 +9,7 @@ from pokedata.nature import get_seikaku_hosei
 from pokedata.stats import Stats, StatsKey
 from pokedata.waza import Waza, WazaBase
 from pokedata.const import ABILITY_VALUES
-from home.home import changeble_form_in_battle, get_next_form
+from pokedata.exception import changeble_form_in_battle, get_next_form
 
 class Pokemon:
 
@@ -508,3 +508,4 @@ class Pokemon:
         for k, v in ABILITY_VALUES.items():
             if self.__ability == k:
                 self.__ability_value = v[0]
+

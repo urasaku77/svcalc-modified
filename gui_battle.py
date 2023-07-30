@@ -11,7 +11,7 @@ import webbrowser
 
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
-from home.home import exist_few_form_pokemon_no, changeble_form_in_battle, get_parameter_for_poketetsu
+from pokedata.exception import exist_few_form_pokemon_no, changeble_form_in_battle, get_parameter_for_poketetsu
 from gui import WazaButton, IconButton,dummy
 
 #選出された自分ポケモン表示パネル

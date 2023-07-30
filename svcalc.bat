@@ -1,2 +1,2 @@
-py -3.10 -m home
+python home/home.py
 py -3.10 -m main

@@ -1,7 +1,7 @@
 import sqlite3
 from dataclasses import dataclass
 from pokedata.const import Types
-from home.home import remove_pokemon_name_from_party
+from pokedata.exception import remove_pokemon_name_from_party
 
 @dataclass
 class TypeEffective:

@@ -22,7 +22,7 @@ from pokedata.const import *
 from battle.battle import Battle
 from battle.DB_battle import DB_battle
 from recog.image_recognition import ImageRecognition
-from home.home import unrecognizable_pokemon
+from pokedata.exception import unrecognizable_pokemon
 
 class PageBattleWidget(BoxLayout):
     cameraPreview = ObjectProperty()

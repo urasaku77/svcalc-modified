@@ -1,7 +1,7 @@
 import csv
 import re
 
-from home.home import base_names
+from pokedata.exception import base_names
 
 with open('party/default.csv', encoding='sjis') as csv_file:
     default_data = [x for x in csv.reader(csv_file)]
