@@ -6,7 +6,6 @@ from typing import Optional
 class Battle:
     id: Optional[int]
     date: Optional[str]
-    time: Optional[int]
     result: Optional[int]
     evaluation: Optional[int]
     favorite: Optional[int]
@@ -58,14 +57,13 @@ class Battle:
     opponent_choice2: Optional[str]
     opponent_choice3: Optional[str]
 
-    def set_battle(name, rank, battle_memo, party, playerChosenPokemonPanels, opponentChosenPokemonPanels, time, result, evaluation, favorite):
+    def set_battle(name, rank, battle_memo, party, playerChosenPokemonPanels, opponentChosenPokemonPanels, result, evaluation, favorite):
         from pokedata.loader import get_party_csv
         file = get_party_csv().split('party\\csv\\')[1]
 
         return Battle(
             None,
             str(datetime.datetime.now()),
-            time,
             result,
             evaluation,
             favorite,

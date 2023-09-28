@@ -165,6 +165,10 @@ class TimerLabel(BoxLayout):
             self.state = "開始"
             Clock.unschedule(self.update)
 
+    def restart(self):
+        self.reset()
+        self.start()
+
     def update(self, *kwargs):
         if int(self.minutes) == 0 and int(self.seconds) == 0:
             self.stop()

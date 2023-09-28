@@ -1,5 +1,5 @@
 from kivy.app import App
-from kivy.properties import ListProperty, ObjectProperty, NumericProperty
+from kivy.properties import ListProperty, ObjectProperty, NumericProperty, BooleanProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.graphics.texture import Texture
 from kivy.clock import Clock
@@ -10,6 +10,7 @@ from kivy_gui.popup import PartyInputPopup, SpeedCheckPopup, FormSelectPopupCont
 from typing import Optional
 import atexit
 import os
+import time
 os.environ["OPENCV_VIDEOIO_MSMF_ENABLE_HW_TRANSFORMS"] = "0"
 import cv2
 import dataclasses
@@ -39,6 +40,7 @@ class PageBattleWidget(BoxLayout):
     counterPanel = ObjectProperty()
     weather=ObjectProperty(Weathers.なし)
     field=ObjectProperty(Fields.なし)
+    recog_status=ListProperty([True,True,True])
 
     def __init__(self, **kwargs):
         super(PageBattleWidget, self).__init__(**kwargs)
@@ -51,7 +53,7 @@ class PageBattleWidget(BoxLayout):
             [None for _ in range(6)], [None for _ in range(6)]
         ]
         Clock.schedule_once(self.set_player_of_party)
-        self.battle_status = False
+        self.recog_status = [True,True,True]
         self.formSelect = Popup(
             title="フォーム選択",
             content=FormSelectPopupContent(selected=self.set_opponent_pokemon_form),
@@ -91,21 +93,6 @@ class PageBattleWidget(BoxLayout):
         pokemon = self.active_pokemons[1]
         if pokemon is not None:
             self.opponentChosenPokemonPanels.set_pokemon(pokemon)
-
-    def set_camera(self):
-        self.cameraId = int(self.ids["camera_id"].text)
-        self.cameraPreview.start(self.cameraId)
-        Clock.schedule_interval(self.cameraPreview.update, 1.0 / 60)
-        Clock.schedule_interval(self.start_battle, 1.0 / 60)
-
-    def start_battle(self, dt):
-        if not self.cameraPreview.imgRecog.img_flag:
-            Clock.unschedule(self.start_battle)
-            return
-        if not self.battle_status and self.cameraPreview.imgRecog.is_exist_image("recog/recogImg/situation/aitewomiru.jpg",0.8,"aitewomiru"):
-            self.timerLabel.stop()
-            self.timerLabel.start()
-            self.battle_status = True
 
     # パーティパネルのアイコンを再表示する
     def refresh_party_icons(self):
@@ -221,11 +208,23 @@ class PageBattleWidget(BoxLayout):
             self.speed_check.set_pokemon(self.active_pokemons)
             self.speed_check.open()
 
-    def recognize_before_battle(self):
-        if self.cameraPreview.imgRecog.is_exist_image("recog/recogImg/situation/sensyutu.jpg",0.8,"sensyutu") or self.cameraPreview.imgRecog.is_exist_image("recog/recogImg/situation/sensyutu2.jpg",0.8,"sensyutu"):
-            self.recognize_oppo_party()
-            self.recognize_player_banme()
-            self.recognize_oppo_tn()
+    def set_camera(self):
+        self.cameraId = int(self.ids["camera_id"].text)
+        self.cameraPreview.start(self.cameraId)
+        Clock.schedule_interval(self.cameraPreview.update, 1.0 / 60)
+
+    def observe_battle(self):
+        if not self.cameraPreview.imgRecog.img_flag:
+            return
+        if self.recog_status[2]:
+            self.init_battle()
+            self.recog_status=[False,False,False]
+            Clock.schedule_interval(self.recognize_player_banme, 1.0 / 60)
+            Clock.schedule_interval(self.start_battle, 1.0 / 60)
+        else:
+            Clock.unschedule(self.start_battle)
+            Clock.unschedule(self.recognize_player_banme)
+            self.recog_status=[True,True,True]
 
     def recognize_oppo_party(self):
         pokemonImages = glob.glob("recog/recogImg/pokemon/**/*")
@@ -243,16 +242,33 @@ class PageBattleWidget(BoxLayout):
                     oppo_pokemon = tentative_oppo_pokemon
                 self.set_party_pokemon(1, coord, oppo_pokemon)
 
-    def recognize_player_banme(self):
+    def recognize_oppo_tn(self):
+        self.ids["tn"].text = self.cameraPreview.imgRecog.recognize_oppo_tn() or ""
+
+    def recognize_player_banme(self, dt):
+        if not self.cameraPreview.imgRecog.img_flag or self.recog_status[1]:
+            Clock.unschedule(self.recognize_player_banme)
+            return
         if self.cameraPreview.imgRecog.is_banme():
             return
         for banme in range(3):
             banmeResult =self.cameraPreview.imgRecog.recognize_chosen_num(banme)
             if banmeResult != -1 and self.party[0][banmeResult] is not None:
                 self.playerChosenPokemonPanel.set_pokemon(self.party[0][banmeResult])
+                if banme==0 and not self.recog_status[0]:
+                    self.recognize_oppo_party()
+                    self.recognize_oppo_tn()
+                    self.recog_status=[True,False,False]
+                if banme==2:
+                    self.recog_status=[True,True,False]
 
-    def recognize_oppo_tn(self):
-        self.ids["tn"].text = self.cameraPreview.imgRecog.recognize_oppo_tn() or ""
+    def start_battle(self, dt):
+        if not self.cameraPreview.imgRecog.img_flag or self.recog_status[2]:
+            Clock.unschedule(self.start_battle)
+            return
+        if self.cameraPreview.imgRecog.is_exist_image("recog/recogImg/situation/aitewomiru.jpg",0.8,"aitewomiru"):
+            self.timerLabel.restart()
+            self.recog_status=[True,True,True]
 
     def init_active_pokemon(self):
         for activePokemonPanel in self.activePokemonPanels:
@@ -267,7 +283,7 @@ class PageBattleWidget(BoxLayout):
         self.active_pokemons: list[Optional[Pokemon]] = [None, None]
 
     def init_battle(self):
-        self.battle_status = False
+        self.recog_status=[True,True,True]
         self.ids["tn"].text = ""
         self.ids["rank"].text = ""
         self.ids["battle_memo"].text = ""
@@ -277,6 +293,7 @@ class PageBattleWidget(BoxLayout):
         self.ids["favorite"].active = False
         self.party[1] = [None for _ in range(6)]
         self.refresh_party_icons()
+        self.timerLabel.reset()
         for chosen_num in range(3):
             self.playerChosenPokemonPanel.on_click_icon(chosen_num)
             self.opponentChosenPokemonPanels.on_click_icon(chosen_num)
@@ -286,14 +303,12 @@ class PageBattleWidget(BoxLayout):
     def record_battle(self, result: int):
         if self.party[0][0] is None or self.party[1][0] is None:
             return
-        time = 20*60 - ( int(self.timerLabel.minutes) + int(self.timerLabel.seconds)*60 )
         favorite = 1 if self.ids["favorite"].active is True else 0
         evaluation = int(self.ids["evaluation"].text) if self.ids["evaluation"].text != "なし" else 0
 
-        battle = Battle.set_battle(self.ids["tn"].text, self.ids["rank"].text, self.ids["battle_memo"].text, self.party, self.playerChosenPokemonPanel, self.opponentChosenPokemonPanels, time, result, evaluation, favorite)
+        battle = Battle.set_battle(self.ids["tn"].text, self.ids["rank"].text, self.ids["battle_memo"].text, self.party, self.playerChosenPokemonPanel, self.opponentChosenPokemonPanels, result, evaluation, favorite)
         battle_data = dataclasses.astuple(battle)
         DB_battle.register_battle(battle_data)
-        self.timerLabel.reset()
         self.init_battle()
 
     # カメラに接続
@@ -305,8 +320,8 @@ class PageBattleWidget(BoxLayout):
 
         def start(self, camera_id: int):
             self.capture = cv2.VideoCapture(camera_id, cv2.CAP_DSHOW)
-            self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1900)
-            self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 1200)
+            self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+            self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
             self.capture.set(cv2.CAP_PROP_FPS, 60)
 
         # インターバルで実行する描画メソッド
@@ -319,7 +334,7 @@ class PageBattleWidget(BoxLayout):
                 texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
                 # インスタンスのtextureを変更
                 self.texture = texture
-                self.imgRecog.set_image(cv2.resize(self.frame, None, None, 1.5, 1.5))
+                self.imgRecog.set_image(self.frame)
             else:
                 Clock.unschedule(self.update)
                 self.display_dummy_image()
