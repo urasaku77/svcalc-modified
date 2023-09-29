@@ -301,10 +301,11 @@ class DamageCalc:
             case "ノーマルジュエル":
                 if waza.type == Types.ノーマル:
                     hosei[key] = 5325
-        # タイプ強化アイテム系
-        t = DamageCalc.__type_buff_items.get(attacker.item)
-        if t is not None and t == waza.type:
-            hosei[attacker.item] = 4915
+        if attacker.item in DamageCalc.__type_buff_items.keys():
+            # タイプ強化アイテム系
+            t = DamageCalc.__type_buff_items.get(attacker.item)
+            if t is not None and t == waza.type:
+                hosei[attacker.item] = 4915
         # endregion
 
         # region 技による補正
@@ -684,21 +685,22 @@ class DamageCalc:
 
         # × 天気弱化 2048 ÷ 4096 → 五捨五超入
         # × 天気強化 6144 ÷ 4096 → 五捨五超入
-        match weather:
-            case Weathers.晴れ:
-                if waza.type == Types.ほのお:
-                    damage = (damage * 6144 / 4096).quantize(
-                        DECIMAI_ZERO, rounding=ROUND_HALF_DOWN)
-                elif waza.type == Types.みず:
-                    damage = (damage * 2048 / 4096).quantize(
-                        DECIMAI_ZERO, rounding=ROUND_HALF_DOWN)
-            case Weathers.雨:
-                if waza.type == Types.みず:
-                    damage = (damage * 6144 / 4096).quantize(
-                        DECIMAI_ZERO, rounding=ROUND_HALF_DOWN)
-                elif waza.type == Types.ほのお:
-                    damage = (damage * 2048 / 4096).quantize(
-                        DECIMAI_ZERO, rounding=ROUND_HALF_DOWN)
+        if attacker.item != "ばんのうがさ" and defender.item != "ばんのうがさ":
+            match weather:
+                case Weathers.晴れ:
+                    if waza.type == Types.ほのお:
+                        damage = (damage * 6144 / 4096).quantize(
+                            DECIMAI_ZERO, rounding=ROUND_HALF_DOWN)
+                    elif waza.type == Types.みず:
+                        damage = (damage * 2048 / 4096).quantize(
+                            DECIMAI_ZERO, rounding=ROUND_HALF_DOWN)
+                case Weathers.雨:
+                    if waza.type == Types.みず:
+                        damage = (damage * 6144 / 4096).quantize(
+                            DECIMAI_ZERO, rounding=ROUND_HALF_DOWN)
+                    elif waza.type == Types.ほのお:
+                        damage = (damage * 2048 / 4096).quantize(
+                            DECIMAI_ZERO, rounding=ROUND_HALF_DOWN)
 
         # × 急所 6144 ÷ 4096 → 五捨五超入
         if waza.critical:
@@ -903,13 +905,14 @@ class DamageCalc:
         "おはなのおこう": Types.くさ,
         "がんせきおこう": Types.いわ,
         "あやしいおこう": Types.エスパー,
+        "ようせいのハネ": Types.フェアリー,
     }
 
     # そうだいしょう倍率
     __soudaisyou_values = {
         "1.0": 4096, "1.1": 4506, "1.2": 4915, "1.3": 5325, "1.4": 5734, "1.5": 6144,
     }
-    
+
     #とうそうしん倍率
     __tousoushin_values = {
         "1.0": 4096, "1.25": 5120, "0.75": 3072,

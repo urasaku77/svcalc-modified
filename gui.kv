@@ -81,7 +81,7 @@
                         id: item
                         text: root.pokemon.item if root.pokemon is not None else ""
                         disabled: True
-                        items: ["なし", "こだわりハチマキ", "こだわりメガネ", "いのちのたま", "たつじんのおび", "とつげきチョッキ", "しんかのきせき", "ブーストエナジー"]
+                        items: root.items
                         on_select_item: root.pokemon.item = self.button_text
                         size_hint_x: 5
                 BoxLayout:

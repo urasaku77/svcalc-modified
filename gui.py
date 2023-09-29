@@ -3,6 +3,8 @@ from kivy.properties import ListProperty, ObjectProperty, StringProperty, Numeri
 from kivy.uix.behaviors import ButtonBehavior, ToggleButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
 
+import pandas as pd
+
 from kivy.uix.button import Button
 from kivy.uix.dropdown import DropDown
 from kivy.uix.label import Label
@@ -182,6 +184,7 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
     icon = ObjectProperty()
     formchange_icon = ObjectProperty()
     ability_values = ListProperty([""])
+    items = ListProperty([""])
     critical = BooleanProperty(False)
     burn = BooleanProperty(False)
     charging = BooleanProperty(False)
@@ -190,6 +193,7 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
         from kivy_gui.popup import TypeSelectPopupContent
         super(ActivePokemonPanel, self).__init__(**kw)
         self.func_for_click_icon = dummy
+        self.items = pd.read_csv("battle/item_calc.csv",encoding="utf_8",sep=',',index_col=0).index.tolist()
         self.popup = Popup(
             title="テラスタイプ選択",
             content=TypeSelectPopupContent(selected=self.on_select_terastype),
