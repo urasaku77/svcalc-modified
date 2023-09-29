@@ -1,18 +1,14 @@
-from kivy.event import EventDispatcher
-from kivy.properties import ListProperty, ObjectProperty, StringProperty, NumericProperty, BooleanProperty
+from kivy.properties import ListProperty, StringProperty, BooleanProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.clock import Clock
 from kivy.uix.button import Button
 from kivy.uix.label import Label
-from kivy.uix.popup import Popup
 
-import pandas as pd
 import webbrowser
 
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
-from pokedata.exception import exist_few_form_pokemon_no, changeble_form_in_battle, get_parameter_for_poketetsu
-from gui import WazaButton, IconButton,dummy
+from gui import IconButton,dummy
 
 #選出された自分ポケモン表示パネル
 class PlayerChosenPokemonPanel(BoxLayout):
@@ -254,12 +250,8 @@ class PokemonInfoPanel(BoxLayout):
 
     def open_poketetsu(self):
         if self.pid != "0":
-            parameter = ""
             no = self.pid.split("-")[0]
-            form = self.pid.split("-")[1]
-            if no in exist_few_form_pokemon_no or changeble_form_in_battle:
-                parameter = get_parameter_for_poketetsu(no,form)
-            url = "https://yakkun.com/sv/zukan/n" + no + parameter
+            url = "https://yakkun.com/sv/zukan/?national_no=" + no
             webbrowser.open(url)
 
 # ポケモンHOME情報表示パネル

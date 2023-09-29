@@ -290,14 +290,7 @@ def get_pokemon_name_for_home(pokenum:str, p_detail_id:str) -> str:
             return "パフュートン♂"
         else:
             return "パフュートン♀"
-    elif pokenum == "952":
-        if p_detail_id == "0":
-            return "シャリタツ(そったすがた)"
-        elif p_detail_id == "1":
-            return "シャリタツ(たれたすがた)"
-        elif p_detail_id == "2":
-            return "シャリタツ(のびたすがた)"
-    elif pokenum == "960":
+    elif pokenum == "931":
         if p_detail_id == "0":
             return "イキリンコ(緑)"
         elif p_detail_id == "1":
@@ -306,6 +299,13 @@ def get_pokemon_name_for_home(pokenum:str, p_detail_id:str) -> str:
             return "イキリンコ(黄)"
         elif p_detail_id == "3":
             return "イキリンコ(白)"
+    elif pokenum == "978":
+        if p_detail_id == "0":
+            return "シャリタツ(そったすがた)"
+        elif p_detail_id == "1":
+            return "シャリタツ(たれたすがた)"
+        elif p_detail_id == "2":
+            return "シャリタツ(のびたすがた)"
     else:
         return ""
 
