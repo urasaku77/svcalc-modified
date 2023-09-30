@@ -244,6 +244,10 @@ class DamageCalc:
                     elif field == Fields.サイコ:
                         waza.type = Types.エスパー
                         power = 100
+            case "サイコブレイド":
+                power = 80
+                if field == Fields.サイコ:
+                    power = 120
             case _:
                 if waza.add_power > -1:
                     power = int(waza.power * waza.add_power)
@@ -756,7 +760,7 @@ class DamageCalc:
         if attacker.item != "ばんのうがさ" and defender.item != "ばんのうがさ":
             match weather:
                 case Weathers.晴れ:
-                    if waza.type == Types.ほのお:
+                    if waza.type == Types.ほのお or waza.name == "ハイドロスチーム":
                         damage = (damage * 6144 / 4096).quantize(
                             DECIMAI_ZERO, rounding=ROUND_HALF_DOWN)
                     elif waza.type == Types.みず:
