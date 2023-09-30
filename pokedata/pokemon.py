@@ -57,6 +57,8 @@ class Pokemon:
                     self.__abilities.append(db_data[key])
             self.__ability: str = self.__abilities[0]
             self.__weight: float = db_data['weight']
+            self.__item: str = self.fixed_item(self.__name)
+            self.__terastype: Types = self.fixed_terastype(self.__name)
 
     def __getitem__(self, key: StatsKey) -> int:
         match key:
@@ -79,6 +81,30 @@ class Pokemon:
         if default:
             pokemon.set_default_data()
         return pokemon
+
+    @staticmethod
+    def fixed_item(name: str) -> str:
+        if name == "オーガポン(水)":
+            return "いどのめん"
+        elif name == "オーガポン(炎)":
+            return "かまどのめん"
+        elif name == "オーガポン(岩)":
+            return "いしずえのめん"
+        else:
+            return "なし"
+
+    @staticmethod
+    def fixed_terastype(name: str) -> Types:
+        if name == "オーガポン":
+            return Types.くさ
+        elif name == "オーガポン(水)":
+            return Types.みず
+        elif name == "オーガポン(炎)":
+            return Types.ほのお
+        elif name == "オーガポン(岩)":
+            return Types.いわ
+        else:
+            return Types.なし
 
     # region プロパティ
     @property

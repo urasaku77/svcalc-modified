@@ -351,7 +351,10 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
             self.on_select_terastype("なし")
 
     def select_terastype(self, *_args):
-        self.popup.open()
+        if self.pokemon is not None and self.pokemon.terastype != Types.なし:
+            self.set_terastype()
+        else:
+            self.popup.open()
 
     def on_select_terastype(self, value):
         if self.pokemon is not None:

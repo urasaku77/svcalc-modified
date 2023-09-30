@@ -5,7 +5,7 @@ changeble_form_in_battle = ["934"]
 # パーティ選択時に表示させたくないポケモンリスト
 remove_pokemon_name_from_party = ["イルカマン(マイティ)"]
 # フォルムの違いはあるが、HOME上では区別されていないポケモンリスト
-base_names = ["イルカマン"]
+base_names = ["イルカマン", "オーガポン"]
 
 # 選出画面で判別付かないポケモンリスト
 unrecognizable_pokemon = ["ウーラオス"]
