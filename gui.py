@@ -244,12 +244,10 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
             if ability == k:
                 self.ability_values = v
                 break
-        if ability != self.ids["ability"].text:
-            self.pokemon.ability = ability
-            self.pokemon.ability_value = self.ability_values[0]
-            self.ids["ability"].text = self.pokemon.ability
-            self.ids["abilities_valid"].items = self.ability_values
-            self.ids["abilities_valid"].text = self.pokemon.ability_value
+        self.pokemon.ability = ability
+        self.pokemon.ability_value = self.ability_values[0]
+        self.ids["abilities_valid"].items = self.ability_values
+        self.ids["abilities_valid"].text = self.pokemon.ability_value
         self.ids["abilities_valid"].disabled = True if self.ability_values[0] == "" else False
 
     def set_wall(self, value):
