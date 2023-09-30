@@ -85,6 +85,23 @@ class DamageCalc:
                 waza.category = 物理 if attacker.rankedA >= attacker.rankedC else 特殊
                 waza.type = attacker.battle_terastype
 
+            if waza.name == "ツタこんぼう":
+                if attacker.name == "オーガポン(水)":
+                    waza.type = Types.みず
+                elif attacker.name == "オーガポン(炎)":
+                    waza.type = Types.ほのお
+                elif attacker.name == "オーガポン(岩)":
+                    waza.type = Types.いわ
+            if waza.name == "めざめるダンス":
+                waza.type = attacker.type[0]
+            if waza.name == "レイジングブル":
+                if attacker.name == "ケンタロス(パルデア単)":
+                    waza.type = Types.かくとう
+                elif attacker.name == "ケンタロス(パルデア炎)":
+                    waza.type = Types.ほのお
+                elif attacker.name == "ケンタロス(パルデア水)":
+                    waza.type = Types.みず
+
             damages = DamageCalc.__get_damage(
                 attacker=attacker, defender=defender, waza=waza,
                 weather=weather, field=field)
@@ -198,6 +215,35 @@ class DamageCalc:
                         break
             case "アシストパワー" | "つけあがる":
                 power = 20 + attacker.rank.sum_plus_num()*20
+            case "ウェザーボール":
+                power = 50
+                if weather == Weathers.晴れ:
+                    waza.type = Types.ほのお
+                    power = 100
+                elif weather == Weathers.雨:
+                    waza.type = Types.みず
+                    power = 100
+                elif weather == Weathers.雪:
+                    waza.type = Types.こおり
+                    power = 100
+                elif weather == Weathers.砂嵐:
+                    waza.type = Types.いわ
+                    power = 100
+            case "だいちのはどう":
+                power = 50
+                if attacker.type != Types.ひこう and attacker.ability != "ふゆう" and field != Fields.なし:
+                    if field == Fields.グラス:
+                        waza.type = Types.くさ
+                        power = 100
+                    elif field == Fields.ミスト:
+                        waza.type = Types.フェアリー
+                        power = 100
+                    elif field == Fields.エレキ:
+                        waza.type = Types.でんき
+                        power = 100
+                    elif field == Fields.サイコ:
+                        waza.type = Types.エスパー
+                        power = 100
             case _:
                 if waza.add_power > -1:
                     power = int(waza.power * waza.add_power)
@@ -313,6 +359,16 @@ class DamageCalc:
             case "ノーマルジュエル":
                 if waza.type == Types.ノーマル:
                     hosei[key] = 5325
+            case "いどのめん":
+                if attacker.name == "オーガポン(水)":
+                    hosei[key] = 4915
+            case "かまどのめん":
+                if attacker.name == "オーガポン(炎)":
+                    hosei[key] = 4915
+            case "いしずえのめん":
+                if attacker.name == "オーガポン(岩)":
+                    hosei[key] = 4915
+
         if attacker.item in DamageCalc.__type_buff_items.keys():
             # タイプ強化アイテム系
             t = DamageCalc.__type_buff_items.get(attacker.item)
