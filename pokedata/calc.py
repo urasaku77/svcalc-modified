@@ -172,6 +172,18 @@ class DamageCalc:
                 power = min(int(Decimal(25 * defender.rankedS / attacker.rankedS).quantize(
                     DECIMAI_ZERO, rounding=ROUND_FLOOR
                 ) + 1), 150)
+            case "エレキボール":
+                rate = int(Decimal(25 * attacker.rankedS / defender.rankedS))
+                if rate < 1:
+                    power = 40
+                elif rate < 2:
+                    power = 60
+                elif rate < 3:
+                    power = 80
+                elif rate < 4:
+                    power = 120
+                else:
+                    power = 150
             case "ヒートスタンプ" | "ヘビーボンバー":
                 power = 40
                 for ratio in reversed(range(2, 6)):
