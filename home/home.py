@@ -11,6 +11,26 @@ def get_pokemon_name_for_home(pokenum:str, p_detail_id:str) -> str:
             return "ライチュウ"
         elif p_detail_id == "1":
             return "アローラライチュウ"
+    elif pokenum == "27":
+        if p_detail_id == "0":
+            return "サンド"
+        elif p_detail_id == "1":
+            return "アローラサンド"
+    elif pokenum == "28":
+        if p_detail_id == "0":
+            return "サンドパン"
+        elif p_detail_id == "1":
+            return "アローラサンドパン"
+    elif pokenum == "37":
+        if p_detail_id == "0":
+            return "ロコン"
+        elif p_detail_id == "1":
+            return "アローラロコン"
+    elif pokenum == "38":
+        if p_detail_id == "0":
+            return "キュウコン"
+        elif p_detail_id == "1":
+            return "アローラキュウコン"
     elif pokenum == "50":
         if p_detail_id == "0":
             return "ディグダ"
@@ -43,6 +63,21 @@ def get_pokemon_name_for_home(pokenum:str, p_detail_id:str) -> str:
             return "ウインディ"
         elif p_detail_id == "1":
             return "ウインディ(ヒスイ)"
+    elif pokenum == "74":
+        if p_detail_id == "0":
+            return "イシツブテ"
+        elif p_detail_id == "1":
+            return "アローライシツブテ"
+    elif pokenum == "75":
+        if p_detail_id == "0":
+            return "ゴローン"
+        elif p_detail_id == "1":
+            return "アローラゴローン"
+    elif pokenum == "76":
+        if p_detail_id == "0":
+            return "ゴローニャ"
+        elif p_detail_id == "1":
+            return "アローラゴローニャ"
     elif pokenum == "79":
         if p_detail_id == "0":
             return "ヤドン"
@@ -73,6 +108,11 @@ def get_pokemon_name_for_home(pokenum:str, p_detail_id:str) -> str:
             return "マルマイン"
         elif p_detail_id == "1":
             return "マルマイン(ヒスイ)"
+    elif pokenum == "110":
+        if p_detail_id == "0":
+            return "マタドガス"
+        elif p_detail_id == "1":
+            return "ガラルマタドガス"
     elif pokenum == "128":
         if p_detail_id == "0":
             return "ケンタロス"
@@ -275,6 +315,11 @@ def get_pokemon_name_for_home(pokenum:str, p_detail_id:str) -> str:
             return "バドレックス(白馬)"
         elif p_detail_id == "2":
             return "バドレックス(黒馬)"
+    elif pokenum == "901":
+        if p_detail_id == "0":
+            return "ガチグマ"
+        elif p_detail_id == "1":
+            return "ガチグマ(アカツキ)"
     elif pokenum == "902":
         if p_detail_id == "0":
             return "イダイトウ♂"
