@@ -660,7 +660,7 @@ class DamageCalc:
     @staticmethod
     def __get_damage_hosei(attacker: 'Pokemon', defender: 'Pokemon', waza: Waza, count: int) -> int:
         hosei: dict[str, int] = {}
-        type_effective: float = defender.get_type_effective(waza)
+        type_effective: float = defender.get_type_effective(waza, attacker.ability)
 
         # region 壁の補正
         key = "壁:" + defender.wall.name
@@ -812,7 +812,7 @@ class DamageCalc:
                     DECIMAI_ZERO, rounding=ROUND_HALF_DOWN)
 
             # × タイプ相性 → 切り捨て
-            rnd_damage = (rnd_damage * Decimal(defender.get_type_effective(waza))).\
+            rnd_damage = (rnd_damage * Decimal(defender.get_type_effective(waza, attacker.ability))).\
                 quantize(DECIMAI_ZERO, rounding=ROUND_FLOOR)
 
             # × やけど 2048 ÷ 4096 → 五捨五超入 TBD

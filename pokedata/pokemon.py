@@ -413,23 +413,18 @@ class Pokemon:
 
     # タイプ相性値
     # テラスタイプがある場合、そのタイプで算出
-    def get_type_effective(self, waza: Waza) -> float:
+    def get_type_effective(self, waza: Waza, ability: str) -> float:
         value = Decimal(1.0)
         types: list[Types] = self.type if self.battle_terastype == Types.なし else [self.battle_terastype]
         for type_effective in DB.get_type_effective(waza.type, types):
-            match waza.name:
-                case "フリーズドライ":
-                    if type_effective.df_type == Types.みず:
-                        value = value * Decimal(2.0)
-                    else:
-                        value = value * Decimal(type_effective.value)
-                case "サウザンアロー":
-                    if type_effective.df_type == Types.じめん:
-                        value = value * Decimal(2.0)
-                    else:
-                        value = value * Decimal(type_effective.value)
-                case _:
-                    value = value * Decimal(type_effective.value)
+            if waza.name == "フリーズドライ" and type_effective.df_type == Types.みず:
+                value = value * Decimal(2.0)
+            elif waza.name == "サウザンアロー" and type_effective.df_type == Types.じめん:
+                    value = value * Decimal(2.0)
+            elif (ability == "しんがん" or ability == "きもったま") and (waza.type == Types.ノーマル or waza.type == Types.かくとう) and type_effective.df_type == Types.ゴースト:
+                    value = value * Decimal(1.0)
+            else:
+                value = value * Decimal(type_effective.value)
         return float(value)
 
     # 技の編集
