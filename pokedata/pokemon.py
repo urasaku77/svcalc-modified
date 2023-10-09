@@ -141,7 +141,16 @@ class Pokemon:
 
     @property
     def terastype(self) -> Types:
-        return self.__terastype
+        if self.__name == "オーガポン":
+            return Types.くさ
+        elif self.__name == "オーガポン(水)":
+            return Types.みず
+        elif self.__name == "オーガポン(炎)":
+            return Types.ほのお
+        elif self.__name == "オーガポン(岩)":
+            return Types.いわ
+        else:
+            return self.__terastype
 
     @terastype.setter
     def terastype(self, value: Types):

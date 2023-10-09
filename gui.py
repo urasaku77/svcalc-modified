@@ -339,10 +339,10 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
 
     def on_click_terasicon(self):
         if self.pokemon is not None:
-            if self.player == 0 and self.pokemon.terastype != Types.なし:
+            if (self.player == 0 and self.pokemon.terastype != Types.なし and self.pokemon.ability != "へんげんじざい") or "オーガポン" in self.pokemon.name:
                 self.set_terastype()
             else:
-                self.select_terastype()
+                self.popup.open()
 
     def set_terastype(self):
         if self.pokemon.battle_terastype == Types.なし:
@@ -350,20 +350,27 @@ class ActivePokemonPanel(BoxLayout, EventDispatcher):
         else:
             self.on_select_terastype("なし")
 
-    def select_terastype(self, *_args):
-        if self.pokemon is not None and self.pokemon.terastype != Types.なし:
-            self.set_terastype()
-        else:
-            self.popup.open()
-
     def on_select_terastype(self, value):
         if self.pokemon is not None:
             terastype = Types[value]
             self.pokemon.battle_terastype = terastype
             self.teras_button.icon = terastype.icon
             self.teras_button.text = terastype.name
+            if terastype == Types.なし:
+                self.chenge_abilities_for_tarastype(False)
+            else:
+                self.chenge_abilities_for_tarastype(True)
             self.popup.dismiss()
 
+    def chenge_abilities_for_tarastype(self, isTerastal: bool):
+        if isTerastal:
+            if "オーガポン" in self.pokemon.name:
+                self.ids["ability"].text = "おもかげやどし"
+                self.set_ability("おもかげやどし")
+        else:
+            if "オーガポン" in self.pokemon.name:
+                self.set_ability(self.pokemon.abilities[0])
+                self.ids["ability"].text = self.pokemon.abilities[0]
 
 # 技＋ダメージ計算結果表示パネルのリスト
 class WazaListPanel(BoxLayout):
