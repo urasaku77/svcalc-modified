@@ -12,6 +12,7 @@ from gui import IconButton,dummy
 
 #選出された自分ポケモン表示パネル
 class PlayerChosenPokemonPanel(BoxLayout):
+    no = ListProperty(["","",""])
     name = ListProperty(["","",""])
     waza_list = ListProperty([["","","",""],["","","",""],["","","",""]])
     waza_check_list = ListProperty([[0,0,0,0],[0,0,0,0],[0,0,0,0]])
@@ -35,6 +36,7 @@ class PlayerChosenPokemonPanel(BoxLayout):
             if self.name[chosen_num] == "":
                 self.__buttons[chosen_num].icon = pokemon.icon
                 self.__buttons[chosen_num].text = pokemon.name
+                self.no[chosen_num] = pokemon.no
                 self.name[chosen_num] = pokemon.name
                 for i in range(4):
                     self.waza_list[chosen_num][i] = pokemon.waza_list[i].name if pokemon.waza_list[i] is not None else ""
@@ -46,6 +48,7 @@ class PlayerChosenPokemonPanel(BoxLayout):
 
     def on_click_icon(self, chosen_num:int):
         self.name[chosen_num] = ""
+        self.no[chosen_num] = ""
         self.__buttons[chosen_num].icon = "image/other/blank.png"
         self.__buttons[chosen_num].text = ""
         self.waza_list[chosen_num] = ["","","",""]
