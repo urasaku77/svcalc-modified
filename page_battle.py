@@ -214,7 +214,6 @@ class PageBattleWidget(BoxLayout):
         Clock.schedule_interval(self.cameraPreview.update, 1.0 / 60)
 
     def observe_battle(self):
-        
         if not self.cameraPreview.imgRecog.img_flag:
             return
         if self.recog_status[2]:
