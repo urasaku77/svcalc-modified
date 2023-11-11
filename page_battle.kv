@@ -6,7 +6,7 @@
 #:include gui_battle.kv
 
 <PageBattleWidget>
-    cameraPreview: camera_preview
+    screenArea: screen_area
     partyPanels: [party1, party2]
     activePokemonPanels: [_playerActivePokemon, _opponentActivePokemon]
     playerChosenPokemonPanel:_playerChosenPokemon
@@ -92,10 +92,17 @@
                     BoxLayout:
                         BoxLayout:
                             orientation: "vertical"
-                            Button:
-                                text: "パーティ画面監視停止中" if root.recog_status[2] else "パーティ画面監視中"
+                            BoxLayout:
                                 size_hint_y: 1
-                                on_release: root.observe_battle()
+                                Button:
+                                    text: "パーティ画面監視停止中" if root.recog_status[2] else "パーティ画面監視中"
+                                    size_hint_x: 0.7
+                                    on_release: root.observe_battle()
+                                Button:
+                                    text: "素早さ比較"
+                                    size_hint_x: 0.3
+                                    on_release: root.set_speed_check()
+
                             TimerLabel:
                                 id: _time
                                 size_hint_y: 2
@@ -137,9 +144,18 @@
                     id:_playerChosenPokemon
                 OpponentChosenPokemonPanel:
                     id: _opponentChosenPokemon
-            CameraPreview:
-                id: camera_preview
+            BoxLayout:
                 size_hint_y: 5
+                canvas.before:
+                    Color:
+                        rgba: 1, 1, 1, 1
+                    Line:
+                        width: 1.5
+                        rectangle: self.x, self.y, self.width, self.height
+                orientation: "vertical"
+                spacing:5
+                ScreenArea:
+                    id: screen_area
             BoxLayout:
                 size_hint_y: 1.7
                 padding: [5, 5]
@@ -153,22 +169,26 @@
                     size_hint_x: 1
                     BoxLayout:
                         size_hint_y: 0.2
-                        Button:
-                            text: "カメラ切替"
-                            size_hint_x: 1
-                            on_release: root.set_camera()
+                        Label:
+                            text: 'ポート'
+                            size_hint_x: 0.2
                         TextInput:
-                            id: camera_id
-                            text: str(root.cameraId)
-                            size_hint_x: 1
+                            id: port
+                            text: str(root.port)
+                            size_hint_x: 0.5
                             input_type: 'number'
                             input_filter: 'int'
                             multiline: False
                             font_size: self.height*0.5
-                        Button:
-                            text: "素早さ比較"
-                            size_hint_x: 2
-                            on_release: root.set_speed_check()
+                        Label:
+                            text: 'パス'
+                            size_hint_x: 0.2
+                        TextInput:
+                            id: password
+                            text: root.password
+                            size_hint_x: 0.5
+                            multiline: False
+                            font_size: self.height*0.5
                     BoxLayout:
                         size_hint_y: 0.2
                         padding: [0,10,0,0]

@@ -16,6 +16,7 @@ class Pokemon:
     def __init__(self, db_data=None):
         self.__no: int = -1
         self.__form: int = -1
+        self.__form_selected: bool = True
         self.__name: str = ""
         self.__lv: int = 50
         self.__base_name: str = ""
@@ -111,13 +112,17 @@ class Pokemon:
     def no(self) -> int:
         return self.__no
 
-    @no.setter
-    def no(self, value: int):
-        self.__no = value
-
     @property
     def form(self) -> int:
         return self.__form
+    
+    @property
+    def form_selected(self) -> int:
+        return self.__form_selected
+
+    @form_selected.setter
+    def form_selected(self, value: int):
+        self.__form_selected = value
 
     @property
     def pid(self) -> str:

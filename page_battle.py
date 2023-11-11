@@ -1,8 +1,8 @@
 from kivy.app import App
-from kivy.properties import ListProperty, ObjectProperty, NumericProperty, BooleanProperty
+from kivy.properties import ListProperty, ObjectProperty, NumericProperty, StringProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.graphics.texture import Texture
-from kivy.clock import Clock
+from kivy.clock import Clock, mainthread
 from kivy.uix.image import Image
 from kivy.clock import Clock
 from kivy_gui.popup import PartyInputPopup, SpeedCheckPopup, FormSelectPopupContent
@@ -10,7 +10,13 @@ from kivy_gui.popup import PartyInputPopup, SpeedCheckPopup, FormSelectPopupCont
 from typing import Optional
 import atexit
 import os
+import base64
+import numpy as np
+import threading
 import time
+import asyncio
+
+from recog.obs import Obs
 os.environ["OPENCV_VIDEOIO_MSMF_ENABLE_HW_TRANSFORMS"] = "0"
 import cv2
 import dataclasses
@@ -26,8 +32,9 @@ from recog.image_recognition import ImageRecognition
 from pokedata.exception import unrecognizable_pokemon
 
 class PageBattleWidget(BoxLayout):
-    cameraPreview = ObjectProperty()
-    cameraId = NumericProperty(1)
+    screenArea = ObjectProperty()
+    port = NumericProperty(4455)
+    password = StringProperty("panipani")
     partyPanels = ListProperty()
     activePokemonPanels = ListProperty()
     wazaListPanels = ListProperty()
@@ -44,7 +51,8 @@ class PageBattleWidget(BoxLayout):
 
     def __init__(self, **kwargs):
         super(PageBattleWidget, self).__init__(**kwargs)
-        self.cameraPreview = self.CameraPreview(size=(1600,900))
+        self.screenArea = self.ScreenArea(size=(1920,1080))
+        self.websocket = False
         self.active_pokemons: list[Optional[Pokemon]] = [None, None]
         self.party_popup: PartyInputPopup = PartyInputPopup(title="パーティ入力")
         self.party_popup.bind(
@@ -58,6 +66,7 @@ class PageBattleWidget(BoxLayout):
             title="フォーム選択",
             content=FormSelectPopupContent(selected=self.set_opponent_pokemon_form),
             size_hint=(0.8, 0.6))
+        self.imgRecog=ImageRecognition()
 
     def set_player_of_party(self, dt):
         self.ids.party1.player = 1
@@ -108,6 +117,7 @@ class PageBattleWidget(BoxLayout):
             self.party[player_id][i] = None
             self.refresh_party_icons()
 
+    @mainthread
     def set_party_pokemon(self, player_id: int, index: int, pokemon: Optional[Pokemon]):
         party = self.party[player_id]
         party[index] = pokemon
@@ -116,7 +126,7 @@ class PageBattleWidget(BoxLayout):
     def set_active_pokemon(self, player_id: int, pokemon: Pokemon):
         if self.activePokemonPanels[player_id].pokemon is not None and pokemon.name == self.activePokemonPanels[player_id].pokemon.name:
             return
-        if player_id == 1 and pokemon.form == -1:
+        if not pokemon.form_selected:
             self.formSelect.content.set_pokemons(pokemon.no)
             self.formSelect.open()
             return
@@ -208,23 +218,23 @@ class PageBattleWidget(BoxLayout):
             self.speed_check.set_pokemon(self.active_pokemons)
             self.speed_check.open()
 
-    def set_camera(self):
-        self.cameraId = int(self.ids["camera_id"].text)
-        self.cameraPreview.start(self.cameraId)
-        Clock.schedule_interval(self.cameraPreview.update, 1.0 / 60)
+    def connect_websocket(self):
+        if not self.websocket:
+            self.loop = asyncio.get_event_loop()
+            self.obs=Obs(self.loop, self.ids["port"].text, self.ids["password"].text)
+            self.websocket = True
+        else:
+            self.websocket = False
 
     def observe_battle(self):
-        if not self.cameraPreview.imgRecog.img_flag:
-            return
-        if self.recog_status[2]:
+        self.connect_websocket()
+        if self.websocket and self.recog_status[2]:
             self.load_party()
             self.init_battle()
             self.recog_status=[False,False,False]
-            Clock.schedule_interval(self.recognize_player_banme, 1.0 / 60)
-            Clock.schedule_interval(self.start_battle, 1.0 / 60)
+            thread = threading.Thread(target=lambda:self.startRecognition())
+            thread.start()
         else:
-            Clock.unschedule(self.start_battle)
-            Clock.unschedule(self.recognize_player_banme)
             self.recog_status=[True,True,True]
 
     def recognize_oppo_party(self):
@@ -232,42 +242,38 @@ class PageBattleWidget(BoxLayout):
         coordsList = ["opoPoke1", "opoPoke2", "opoPoke3", "opoPoke4", "opoPoke5", "opoPoke6"]
 
         for coord in range(len(coordsList)):
-            oppo = self.cameraPreview.imgRecog.is_exist_image_max(pokemonImages, 0.7, coordsList[coord])
+            oppo = self.imgRecog.is_exist_image_max(pokemonImages, 0.7, coordsList[coord])
             if oppo != "":
-                oppo_shaped = self.cameraPreview.imgRecog.shape_poke_num(oppo)
+                oppo_shaped = self.imgRecog.shape_poke_num(oppo)
                 oppo_pokemon = Pokemon.by_pid(oppo_shaped, True)
                 if oppo_pokemon.base_name in unrecognizable_pokemon:
-                    tentative_oppo_pokemon = Pokemon()
-                    tentative_oppo_pokemon.no = oppo_pokemon.no
-                    tentative_oppo_pokemon.name = oppo_pokemon.base_name
-                    oppo_pokemon = tentative_oppo_pokemon
+                    oppo_pokemon.form_selected = False
                 self.set_party_pokemon(1, coord, oppo_pokemon)
 
+    @mainthread
     def recognize_oppo_tn(self):
-        self.ids["tn"].text = self.cameraPreview.imgRecog.recognize_oppo_tn() or ""
+        self.ids["tn"].text = self.imgRecog.recognize_oppo_tn() or ""
 
-    def recognize_player_banme(self, dt):
-        if not self.cameraPreview.imgRecog.img_flag or self.recog_status[1]:
-            Clock.unschedule(self.recognize_player_banme)
+    def recognize_player_banme(self):
+        if not self.imgRecog.img_flag or self.recog_status[1]:
             return
-        if self.cameraPreview.imgRecog.is_banme():
+        if not self.recog_status[0]:
+            self.recognize_oppo_party()
+            self.recognize_oppo_tn()
+            self.recog_status=[True,False,False]
+        if self.imgRecog.is_banme():
             return
         for banme in range(3):
-            banmeResult =self.cameraPreview.imgRecog.recognize_chosen_num(banme)
+            banmeResult =self.imgRecog.recognize_chosen_num(banme)
             if banmeResult != -1 and self.party[0][banmeResult] is not None:
                 self.playerChosenPokemonPanel.set_pokemon(self.party[0][banmeResult])
-                if banme==0 and not self.recog_status[0]:
-                    self.recognize_oppo_party()
-                    self.recognize_oppo_tn()
-                    self.recog_status=[True,False,False]
                 if banme==2:
                     self.recog_status=[True,True,False]
 
-    def start_battle(self, dt):
-        if not self.cameraPreview.imgRecog.img_flag or self.recog_status[2]:
-            Clock.unschedule(self.start_battle)
+    def start_battle(self):
+        if not self.imgRecog.img_flag or self.recog_status[2]:
             return
-        if self.cameraPreview.imgRecog.is_exist_image("recog/recogImg/situation/aitewomiru.jpg",0.8,"aitewomiru"):
+        if self.imgRecog.is_exist_image("recog/recogImg/situation/aitewomiru.jpg",0.8,"aitewomiru"):
             self.timerLabel.restart()
             self.recog_status=[True,True,True]
 
@@ -312,35 +318,36 @@ class PageBattleWidget(BoxLayout):
         DB_battle.register_battle(battle_data)
         self.init_battle()
 
-    # カメラに接続
-    class CameraPreview(Image):
+    def getScreenshot(self):
+        responseData=self.loop.run_until_complete(self.obs.getScreenshot("capture1"))
+        screenshotBase64=responseData.responseData['imageData'].split(',')[1]
+        img_binary = base64.b64decode(screenshotBase64)
+        jpg=np.frombuffer(img_binary,dtype=np.uint8)
+        img = cv2.imdecode(jpg, cv2.IMREAD_COLOR)
+        self.imgRecog.set_image(img)
+        
+    def startRecognition(self):
+        try:
+            while self.websocket:
+                self.getScreenshot()
+                self.recognize_player_banme()
+                self.start_battle()
+
+                time.sleep(0.05)
+            
+            self.disconnectOBS()
+        except Exception as e:
+            print(e)
+            return
+
+    def disconnectOBS(self):
+        self.loop.run_until_complete(self.obs.breakRequest())
+
+    class ScreenArea(Image):
         def __init__(self, **kwargs):
             super().__init__(**kwargs)
             self.display_dummy_image()
-            self.imgRecog=ImageRecognition()
-
-        def start(self, camera_id: int):
-            self.capture = cv2.VideoCapture(camera_id, cv2.CAP_DSHOW)
-            self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-            self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
-            self.capture.set(cv2.CAP_PROP_FPS, 60)
-
-        # インターバルで実行する描画メソッド
-        def update(self, dt):
-            ret, self.frame = self.capture.read()
-            if self.frame is not None:
-                # Kivy Textureに変換
-                buf = cv2.flip(self.frame, 0).tobytes()
-                texture = Texture.create(size=(self.frame.shape[1], self.frame.shape[0]), colorfmt='bgr')
-                texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
-                # インスタンスのtextureを変更
-                self.texture = texture
-                self.imgRecog.set_image(self.frame)
-            else:
-                Clock.unschedule(self.update)
-                self.display_dummy_image()
-                self.imgRecog.img_flag=False
-
+        
         def display_dummy_image(self):
             image = Picture.open("image/top.jpg")
             texture = Texture.create(size=image.size)

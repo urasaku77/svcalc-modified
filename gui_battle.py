@@ -1,6 +1,6 @@
 from kivy.properties import ListProperty, StringProperty, BooleanProperty
 from kivy.uix.boxlayout import BoxLayout
-from kivy.clock import Clock
+from kivy.clock import Clock, mainthread
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 
@@ -29,6 +29,7 @@ class PlayerChosenPokemonPanel(BoxLayout):
             self.__buttons.append(btn)
             self.add_widget(btn)
 
+    @mainthread
     def set_pokemon(self, pokemon: Pokemon):
         if pokemon is None or pokemon.name in self.name:
             return
