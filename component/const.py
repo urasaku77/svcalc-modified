@@ -20,3 +20,10 @@ DORYOKU_COMBOBOX_VALUES = [
     "しんちょう HD252",
     "おだやか HD252",
 ]
+
+Wall_COMBOBOX_VALUES = [
+    "なし",
+    "リフレクター",
+    "ひかりのかべ",
+    "オーロラベール"
+]

@@ -1,6 +1,6 @@
 from component.app import MainApp
 from pokedata.calc import DamageCalc
-from pokedata.const import Weathers, Fields, Types
+from pokedata.const import Walls, Weathers, Fields, Types
 from pokedata.pokemon import Pokemon
 from pokedata.stats import Stats
 
@@ -55,6 +55,7 @@ class Stage:
             item: str = None,
             ability: str = None,
             ability_value: str = None,
+            wall: Walls = None,
             terastype: Types = None,
             waza: tuple[int, str] = None,
             waza_effect: int = None):
@@ -71,6 +72,8 @@ class Stage:
             pokemon.ability = ability
         if ability_value is not None:
             pokemon.ability_value = ability_value
+        if wall is not None:
+            pokemon.wall = wall
         if terastype is not None:
             pokemon.battle_terastype = terastype
         if waza is not None:

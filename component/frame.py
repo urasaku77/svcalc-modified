@@ -9,7 +9,7 @@ from component.combobox import MyCombobox, WazaNameCombobox
 from component.const import *
 from component.label import MyLabel
 from pokedata.calc import DamageCalcResult
-from pokedata.const import Types, ABILITY_VALUES
+from pokedata.const import Types, ABILITY_VALUES, Walls
 from pokedata.pokemon import Pokemon
 from pokedata.waza import WazaBase
 
@@ -47,11 +47,13 @@ class ActivePokemonFrame(ttk.LabelFrame):
         for i, text in enumerate(["ステータス", "持ち物", "特性", "ランク"]):
             label = MyLabel(self, text=text)
             label.grid(column=1, row=i, padx=5, pady=5)
+        label = MyLabel(self, text="壁")
+        label.grid(column=3, row=0, padx=5, pady=5)
 
         self._status_combobox = MyCombobox(
             self, values=DORYOKU_COMBOBOX_VALUES, width=24)
         self._status_combobox.bind("<<ComboboxSelected>>", self.on_select_doryoku)
-        self._status_combobox.grid(column=2, row=0, columnspan=2, sticky=W+E)
+        self._status_combobox.grid(column=2, row=0, columnspan=2, sticky=W)
 
         self._item_combobox = MyCombobox(self, values=ITEM_COMBOBOX_VALUES)
         self._item_combobox.bind("<<ComboboxSelected>>", self.on_select_item)
@@ -66,6 +68,10 @@ class ActivePokemonFrame(ttk.LabelFrame):
         self._ability_value_combobox.bind(
             "<<ComboboxSelected>>", self.on_select_ability_value)
         self._ability_value_combobox.grid(column=3, row=2)
+        
+        self._wall_combobox = MyCombobox(self, width=16, values=Wall_COMBOBOX_VALUES)
+        self._wall_combobox.bind("<<ComboboxSelected>>", self.on_select_wall)
+        self._wall_combobox.grid(column=4, row=0, sticky=W)
 
         self._rank_label = MyLabel(self, anchor=tkinter.W)
         self._rank_label.grid(column=2, row=3, sticky=W+E)
@@ -142,6 +148,14 @@ class ActivePokemonFrame(ttk.LabelFrame):
             player=self._player,
             ability_value=self._ability_value_combobox.get()
         )
+    
+    def on_select_wall(self, *_args):
+        for wall in Walls:
+            if wall.name == self._wall_combobox.get():
+                self._stage.set_value_to_active_pokemon(
+                    player=self._player,
+                    wall=wall
+                )
 
     def on_push_pokemon_button(self):
         self._stage.set_chosen(self._player)
