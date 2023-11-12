@@ -35,7 +35,7 @@ class MainApp(ThemedTk):
                 width=350,
                 height=60,
                 text=side + "パーティ")
-            chosen_frame.grid(row=1, column=i, sticky=N+E+W+S)
+            chosen_frame.grid(row=1, column=i*2, sticky=N+E+W+S)
             chosen_frame.grid_propagate(False)
             self._party_frames.append(chosen_frame)
             
@@ -43,10 +43,10 @@ class MainApp(ThemedTk):
             chosen_frame = ChosenFrame(
                 master=main_frame,
                 player=i,
-                width=350,
+                width=180,
                 height=60,
                 text=side + "選出")
-            chosen_frame.grid(row=2, column=i, sticky=N+E+W+S)
+            chosen_frame.grid(row=1, column=i*2+1, sticky=N+E+W+S)
             chosen_frame.grid_propagate(False)
             self._chosen_frames.append(chosen_frame)
 
@@ -57,7 +57,7 @@ class MainApp(ThemedTk):
                 width=350,
                 height=150,
                 text=side + "ポケモン")
-            poke_frame.grid(row=3, column=i, sticky=N+E+W+S)
+            poke_frame.grid(row=2, column=i*2, columnspan=2, sticky=N+E+W+S)
             poke_frame.grid_propagate(False)
             self._active_poke_frames.append(poke_frame)
 
@@ -68,7 +68,7 @@ class MainApp(ThemedTk):
                 width=350,
                 height=300,
                 text=side + "わざ情報")
-            waza_frame.grid(row=4, column=i, sticky=N+E+W+S)
+            waza_frame.grid(row=3, column=i*2, columnspan=2, sticky=N+E+W+S)
             waza_frame.grid_propagate(False)
             self._waza_damage_frames.append(waza_frame)
 
