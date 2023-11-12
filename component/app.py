@@ -1,7 +1,7 @@
 from tkinter import ttk, N, E, W, S
 from ttkthemes.themed_tk import ThemedTk
 from component.dialog import TypeSelectDialog, PartyInputDialog, RankSelectDialog
-from component.frame import ActivePokemonFrame, WazaDamageListFrame, PartyFrame
+from component.frame import ActivePokemonFrame, ChosenFrame, WazaDamageListFrame, PartyFrame
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
 from pokedata.stats import Stats
@@ -14,6 +14,7 @@ class MainApp(ThemedTk):
         self.title('SV Tool')
 
         self._party_frames: list[PartyFrame] = []
+        self._chosen_frames: list[ChosenFrame] = []
         self._active_poke_frames: list[ActivePokemonFrame] = []
         self._waza_damage_frames: list[WazaDamageListFrame] = []
 
@@ -28,15 +29,26 @@ class MainApp(ThemedTk):
 
         for i, side in enumerate(["自分側", "相手側"]):
             # パーティ表示フレーム
-            party_frame = PartyFrame(
+            chosen_frame = PartyFrame(
                 master=main_frame,
                 player=i,
                 width=350,
                 height=60,
                 text=side + "パーティ")
-            party_frame.grid(row=1, column=i, sticky=N+E+W+S)
-            party_frame.grid_propagate(False)
-            self._party_frames.append(party_frame)
+            chosen_frame.grid(row=1, column=i, sticky=N+E+W+S)
+            chosen_frame.grid_propagate(False)
+            self._party_frames.append(chosen_frame)
+            
+            # 選出表示フレーム
+            chosen_frame = ChosenFrame(
+                master=main_frame,
+                player=i,
+                width=350,
+                height=60,
+                text=side + "選出")
+            chosen_frame.grid(row=2, column=i, sticky=N+E+W+S)
+            chosen_frame.grid_propagate(False)
+            self._chosen_frames.append(chosen_frame)
 
             # 選択ポケモン表示フレーム
             poke_frame = ActivePokemonFrame(
@@ -45,7 +57,7 @@ class MainApp(ThemedTk):
                 width=350,
                 height=150,
                 text=side + "ポケモン")
-            poke_frame.grid(row=2, column=i, sticky=N+E+W+S)
+            poke_frame.grid(row=3, column=i, sticky=N+E+W+S)
             poke_frame.grid_propagate(False)
             self._active_poke_frames.append(poke_frame)
 
@@ -56,7 +68,7 @@ class MainApp(ThemedTk):
                 width=350,
                 height=300,
                 text=side + "わざ情報")
-            waza_frame.grid(row=3, column=i, sticky=N+E+W+S)
+            waza_frame.grid(row=4, column=i, sticky=N+E+W+S)
             waza_frame.grid_propagate(False)
             self._waza_damage_frames.append(waza_frame)
 
@@ -73,11 +85,15 @@ class MainApp(ThemedTk):
         self._stage = stage
         for i in range(2):
             self._party_frames[i].set_stage(stage)
+            self._chosen_frames[i].set_stage(stage)
             self._active_poke_frames[i].set_stage(stage)
             self._waza_damage_frames[i].set_stage(stage)
 
     def set_party(self, player: int, party: list[Pokemon]):
         self._party_frames[player].set_party(party)
+    
+    def set_chosen(self, player: int, pokemon: Pokemon, index: int):
+        self._chosen_frames[player].set_chosen(pokemon, index)
 
     def set_active_pokemon(self, player: int, pokemon):
         self._active_poke_frames[player].set_pokemon(pokemon)

@@ -12,6 +12,10 @@ class Stage:
             [Pokemon()] * 6,
             [Pokemon()] * 6
         ]
+        self._chosen: list[list[Pokemon], list[Pokemon]] = [
+            [Pokemon()] * 3,
+            [Pokemon()] * 3
+        ]
         self._active_pokemon: list[Pokemon] = [Pokemon()] * 2
         self._weather: Weathers = Weathers.なし
         self._field: Fields = Fields.なし
@@ -149,6 +153,23 @@ class Stage:
         party = [Pokemon()] * 6
         self._party[player] = party
         self._app.set_party(player=player, party=party)
+    
+    # 選出の登録
+    def set_chosen(self, player: int):
+        index_list = [ i for i, p in enumerate(self._chosen[player]) if p.no == -1]
+        if len(index_list) != 0:
+            self._app.set_chosen(player, self._active_pokemon[player], index_list[0])
+            self._chosen[player][index_list[0]] = self._active_pokemon[player]
+    
+    # 選出の削除
+    def delete_chosen(self, player: int, index: int):
+        self._chosen[player][index] = Pokemon()
+        self._app.set_chosen(player, Pokemon, index)
+    
+    # 選出のクリア
+    def clear_chosen(self, player: int):
+        for i in range(3):
+            self.delete_chosen(player, i)
 
     @property
     def weather(self) -> Weathers:

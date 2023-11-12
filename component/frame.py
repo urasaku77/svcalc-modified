@@ -32,7 +32,7 @@ class ActivePokemonFrame(ttk.LabelFrame):
         left_frame = ttk.Frame(self)
         left_frame.grid(column=0, row=0, rowspan=4)
 
-        self._pokemon_icon = MyButton(left_frame, size=(60, 60), padding=0)
+        self._pokemon_icon = MyButton(left_frame, size=(60, 60), padding=0, command=self.on_push_pokemon_button)
         self._pokemon_icon.grid(column=0, row=0)
 
         teras_frame = ttk.LabelFrame(left_frame, text="テラス", labelanchor="n")
@@ -142,6 +142,9 @@ class ActivePokemonFrame(ttk.LabelFrame):
             player=self._player,
             ability_value=self._ability_value_combobox.get()
         )
+
+    def on_push_pokemon_button(self):
+        self._stage.set_chosen(self._player)
 
     def on_push_terasbutton(self, *_args):
         self._stage.select_terastype(self._player)
@@ -352,3 +355,44 @@ class PartyFrame(ttk.LabelFrame):
 
     def on_push_clear_button(self):
         self._stage.clear_party(self._player)
+
+# 選出表示フレーム
+class ChosenFrame(ttk.LabelFrame):
+
+    def __init__(self, master, player: int, **kwargs):
+        super().__init__(master, **kwargs)
+        self._player: int = player
+        self._stage: Stage | None = None
+        self._button_list: list[MyButton] = []
+
+        # ポケモン表示ボタン
+        for i in range(3):
+            btn = MyButton(
+                self, size=(30, 30),
+                padding=0,
+                command=lambda idx=i: self.on_push_pokemon_button(idx)
+            )
+            btn.grid(column=i, row=0, sticky=W)
+            self._button_list.append(btn)
+
+        # 選出クリアボタン
+        load_btn = MyButton(
+            master=self, image=images.get_menu_icon("trush"), padding=0,
+            command=lambda: self.on_push_clear_button()
+        )
+        load_btn.grid(column=7, row=0, sticky=E)
+
+    def set_stage(self, stage: Stage):
+        self._stage = stage
+
+    def set_chosen(self, pokemon: Pokemon, index: int):
+        if pokemon.is_empty is False:
+            self._button_list[index].set_pokemon_icon(pokemon.pid, size=(30, 30))
+        else:
+            self._button_list[index].set_image(images.get_blank_image(size=(30, 30)))
+
+    def on_push_pokemon_button(self, index: int):
+        self._stage.delete_chosen(self._player, index)
+
+    def on_push_clear_button(self):
+        self._stage.clear_chosen(self._player)
