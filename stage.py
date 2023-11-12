@@ -1,6 +1,6 @@
 from component.app import MainApp
 from pokedata.calc import DamageCalc
-from pokedata.const import Walls, Weathers, Fields, Types
+from pokedata.const import Ailments, Walls, Weathers, Fields, Types
 from pokedata.pokemon import Pokemon
 from pokedata.stats import Stats
 
@@ -58,7 +58,11 @@ class Stage:
             wall: Walls = None,
             terastype: Types = None,
             waza: tuple[int, str] = None,
-            waza_effect: int = None):
+            waza_effect: int = None,
+            critical: bool = False,
+            ailment: Ailments = Ailments.なし,
+            charging: bool = False,
+            ):
         pokemon = self._active_pokemon[player]
         if seikaku is not None:
             pokemon.seikaku = seikaku
@@ -82,6 +86,17 @@ class Stage:
         if waza_effect is not None:
             pokemon.use_waza_effect(waza_effect)
             self._app.set_active_pokemon(player, pokemon)
+        if ailment is not None:
+            pokemon.ailment = ailment
+            self._app.set_active_pokemon(player, pokemon)
+        if critical is not None:
+            for w in pokemon.waza_list:
+                if w is not None:
+                    w.critical = critical
+        if charging is not None:
+            pokemon.charging = charging
+            self._app.set_active_pokemon(player, pokemon)
+
         self.calc_damage()
 
     # ランク編集

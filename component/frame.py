@@ -53,16 +53,16 @@ class ActivePokemonFrame(ttk.LabelFrame):
         self._status_combobox = MyCombobox(
             self, values=DORYOKU_COMBOBOX_VALUES, width=24)
         self._status_combobox.bind("<<ComboboxSelected>>", self.on_select_doryoku)
-        self._status_combobox.grid(column=2, row=0, columnspan=2, sticky=W)
+        self._status_combobox.grid(column=2, row=0, sticky=W+E)
 
         self._item_combobox = MyCombobox(self, values=ITEM_COMBOBOX_VALUES)
         self._item_combobox.bind("<<ComboboxSelected>>", self.on_select_item)
         self._item_combobox.bind("<Return>", self.on_select_item)
-        self._item_combobox.grid(column=2, row=1, columnspan=2, sticky=W+E)
+        self._item_combobox.grid(column=2, row=1, sticky=W+E)
 
         self._ability_combobox = MyCombobox(self, width=16)
         self._ability_combobox.bind("<<ComboboxSelected>>", self.on_select_ability)
-        self._ability_combobox.grid(column=2, row=2, sticky=W)
+        self._ability_combobox.grid(column=2, row=2, sticky=W+E)
 
         self._ability_value_combobox = MyCombobox(self, width=4, state="disable")
         self._ability_value_combobox.bind(
@@ -72,6 +72,21 @@ class ActivePokemonFrame(ttk.LabelFrame):
         self._wall_combobox = MyCombobox(self, width=16, values=Wall_COMBOBOX_VALUES)
         self._wall_combobox.bind("<<ComboboxSelected>>", self.on_select_wall)
         self._wall_combobox.grid(column=4, row=0, sticky=W)
+
+        self.burned = tkinter.BooleanVar()
+        self.burned_check = tkinter.Checkbutton(self, text='やけど', variable=self.burned, command=self.change_burned)
+        self.burned.set(False)
+        self.burned_check.grid(column=3, row=1, sticky=W)
+        
+        self.critical = tkinter.BooleanVar()
+        self.critical_check = tkinter.Checkbutton(self, text='きゅうしょ', variable=self.critical, command=self.change_critical)
+        self.critical.set(False)
+        self.critical_check.grid(column=4, row=1, sticky=W)
+        
+        self.charging = tkinter.BooleanVar()
+        self.charging_check = tkinter.Checkbutton(self, text='じゅうでん', variable=self.charging, command=self.change_charging)
+        self.charging.set(False)
+        self.charging_check.grid(column=4, row=2, sticky=W)
 
         self._rank_label = MyLabel(self, anchor=tkinter.W)
         self._rank_label.grid(column=2, row=3, sticky=W+E)
@@ -119,6 +134,15 @@ class ActivePokemonFrame(ttk.LabelFrame):
                     return
         self._ability_value_combobox["state"] = "disable"
         self._ability_value_combobox.set("")
+
+    def change_burned(self):
+        self._stage.set_value_to_active_pokemon(player=self._player,ailment=self.burned.get())
+
+    def change_critical(self):
+        self._stage.set_value_to_active_pokemon(player=self._player,critical=self.critical.get())
+        
+    def change_charging(self):
+        self._stage.set_value_to_active_pokemon(player=self._player,charging=self.charging.get())
 
     def on_select_doryoku(self, *_args):
         values = self._status_combobox.get().split(" ")
