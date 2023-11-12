@@ -69,7 +69,7 @@ class ActivePokemonFrame(ttk.LabelFrame):
             "<<ComboboxSelected>>", self.on_select_ability_value)
         self._ability_value_combobox.grid(column=3, row=2)
         
-        self._wall_combobox = MyCombobox(self, width=16, values=Wall_COMBOBOX_VALUES)
+        self._wall_combobox = MyCombobox(self, width=16, values=WALL_COMBOBOX_VALUES)
         self._wall_combobox.bind("<<ComboboxSelected>>", self.on_select_wall)
         self._wall_combobox.grid(column=4, row=0, sticky=W)
 

@@ -459,7 +459,7 @@ class Pokemon:
 
     # 対象のタイプを持っているか（テラスタイプの場合含む）
     def has_type(self, _type: Types) -> bool:
-        if self.battle_terastype is not None:
+        if self.battle_terastype is not None and self.battle_terastype != Types.なし:
             return _type == self.__battle_terastype
         else:
             return _type in self.__type

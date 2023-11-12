@@ -99,6 +99,20 @@ class Stage:
 
         self.calc_damage()
 
+    # 天気の変更
+    def change_weather(self, weather: str):
+        for w in Weathers:
+            if w.name == weather:
+                self._weather = w
+        self.calc_damage()
+
+    # フィールドの変更
+    def change_field(self, field: str):
+        for f in Fields:
+            if f.name == field:
+                self._field = f
+        self.calc_damage()
+
     # ランク編集
     def edit_rank(self, player: int):
         pokemon = self._active_pokemon[player]
@@ -143,10 +157,10 @@ class Stage:
         pokemon2 = self._active_pokemon[1]
         if pokemon1.is_empty or pokemon2.is_empty:
             return
-        calc_result = DamageCalc.get_all_damages(pokemon1, pokemon2)
+        calc_result = DamageCalc.get_all_damages(pokemon1, pokemon2, self._weather, self._field)
         self._app.set_calc_results(0, calc_result)
 
-        calc_result = DamageCalc.get_all_damages(pokemon2, pokemon1)
+        calc_result = DamageCalc.get_all_damages(pokemon2, pokemon1, self._weather, self._field)
         self._app.set_calc_results(1, calc_result)
 
     # パーティ編集

@@ -1,5 +1,7 @@
 from tkinter import ttk, N, E, W, S
 from ttkthemes.themed_tk import ThemedTk
+from component.combobox import MyCombobox
+from component.const import FIELD_COMBOBOX_VALUES, WEATHER_COMBOBOX_VALUES
 from component.dialog import TypeSelectDialog, PartyInputDialog, RankSelectDialog
 from component.frame import ActivePokemonFrame, ChosenFrame, WazaDamageListFrame, PartyFrame
 from pokedata.const import Types
@@ -29,15 +31,15 @@ class MainApp(ThemedTk):
 
         for i, side in enumerate(["自分側", "相手側"]):
             # パーティ表示フレーム
-            chosen_frame = PartyFrame(
+            party_frame = PartyFrame(
                 master=main_frame,
                 player=i,
                 width=350,
                 height=60,
                 text=side + "パーティ")
-            chosen_frame.grid(row=1, column=i*2, sticky=N+E+W+S)
-            chosen_frame.grid_propagate(False)
-            self._party_frames.append(chosen_frame)
+            party_frame.grid(row=1, column=i*2, sticky=N+E+W+S)
+            party_frame.grid_propagate(False)
+            self._party_frames.append(party_frame)
             
             # 選出表示フレーム
             chosen_frame = ChosenFrame(
@@ -72,6 +74,20 @@ class MainApp(ThemedTk):
             waza_frame.grid_propagate(False)
             self._waza_damage_frames.append(waza_frame)
 
+        # 天候フレーム
+        self.weather_frame = ttk.LabelFrame(main_frame, text="天候", padding=5)
+        self._weather_combobox = MyCombobox(self.weather_frame, width=16, values=WEATHER_COMBOBOX_VALUES)
+        self._weather_combobox.bind("<<ComboboxSelected>>", self.change_weather)
+        self._weather_combobox.pack()
+        self.weather_frame.grid(row=4, column=0, sticky=W)
+
+        # フィールドフレーム
+        self.field_frame = ttk.LabelFrame(main_frame, text="フィールド", padding=5)
+        self._field_combobox = MyCombobox(self.field_frame, width=16, values=FIELD_COMBOBOX_VALUES)
+        self._field_combobox.bind("<<ComboboxSelected>>", self.change_field)
+        self._field_combobox.pack()
+        self.field_frame.grid(row=4, column=1, sticky=W)
+
         # グリッド間ウェイト
         main_frame.columnconfigure(0, weight=1)
         main_frame.columnconfigure(1, weight=1)
@@ -104,6 +120,14 @@ class MainApp(ThemedTk):
 
     def test(self, *_args):
         self.edit_rank(0, Stats(2))
+    
+    # 天気変更
+    def change_weather(self, *args):
+        self._stage.change_weather(self._weather_combobox.get())
+
+    # フィールド変更
+    def change_field(self, *args):
+        self._stage.change_field(self._field_combobox.get())
 
     # ランク変更
     def edit_rank(self, player: int, rank: Stats) -> Stats:
