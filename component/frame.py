@@ -2,6 +2,7 @@ from __future__ import annotations
 import tkinter
 from tkinter import ttk, N, E, W, S
 from typing import TYPE_CHECKING
+import webbrowser
 
 from component import const, images
 from component.button import MyButton, TypeIconButton
@@ -384,6 +385,7 @@ class PartyFrame(ttk.LabelFrame):
 
     def on_push_pokemon_button(self, index: int):
         self._stage.set_active_pokemon_from_index(player=self._player, index=index)
+        self._stage.set_info(self._player)
 
     def on_push_edit_button(self):
         self._stage.edit_party(self._player)
@@ -434,3 +436,117 @@ class ChosenFrame(ttk.LabelFrame):
 
     def on_push_clear_button(self):
         self._stage.clear_chosen(self._player)
+
+class InfoFrame(ttk.LabelFrame):
+
+    def __init__(self, master, player: int, **kwargs):
+        super().__init__(master, **kwargs)
+        self._player: int = player
+        self._no: int = 0
+        global img
+        img = [[ tkinter.PhotoImage(file=Types.なし.icon).subsample(3,3) ]*2, [ tkinter.PhotoImage(file=Types.なし.icon).subsample(3,3) ]*2]
+
+        self.name = tkinter.StringVar()
+        self.name.set("")
+        self.name_text = ttk.Label(self, textvariable=self.name, font=(const.FONT_FAMILY, 12, "italic"),)
+        self.name_text.grid(column=0, row=0, columnspan=4)
+        
+        self.type1_img = img[self._player][0]
+        self.type1_icon = ttk.Label(self, image=self.type1_img)
+        self.type1_icon.grid(column=5, row=0, columnspan=3)
+        
+        self.type2_img = img[self._player][1]
+        self.type2_icon = ttk.Label(self, image=self.type2_img)
+        self.type2_icon.grid(column=8, row=0, columnspan=3)
+
+        self.h_label = ttk.Label(self, text=" H ", font=(const.FONT_FAMILY, 15))
+        self.h_label.grid(column=0, row=1)
+        self.h = tkinter.StringVar()
+        self.h.set("")
+        self.h_text = ttk.Label(self, textvariable=self.h, font=(const.FONT_FAMILY, 15, "bold"))
+        self.h_text.grid(column=1, row=1)
+
+        self.a_label = ttk.Label(self, text=" A ", font=(const.FONT_FAMILY, 15))
+        self.a_label.grid(column=2, row=1)
+        self.a = tkinter.StringVar()
+        self.a.set("")
+        self.a_text = ttk.Label(self, textvariable=self.a, font=(const.FONT_FAMILY, 15, "bold"))
+        self.a_text.grid(column=3, row=1)
+
+        self.b_label = ttk.Label(self, text=" B ", font=(const.FONT_FAMILY, 15))
+        self.b_label.grid(column=4, row=1)
+        self.b = tkinter.StringVar()
+        self.b.set("")
+        self.b_text = ttk.Label(self, textvariable=self.b, font=(const.FONT_FAMILY, 15, "bold"))
+        self.b_text.grid(column=5, row=1)
+
+        self.c_label = ttk.Label(self, text=" C ", font=(const.FONT_FAMILY, 15))
+        self.c_label.grid(column=6, row=1)
+        self.c = tkinter.StringVar()
+        self.c.set("")
+        self.c_text = ttk.Label(self, textvariable=self.c, font=(const.FONT_FAMILY, 15, "bold"))
+        self.c_text.grid(column=7, row=1)
+
+        self.d_label = ttk.Label(self, text=" D ", font=(const.FONT_FAMILY, 15))
+        self.d_label.grid(column=8, row=1)
+        self.d = tkinter.StringVar()
+        self.d.set("")
+        self.d_text = ttk.Label(self, textvariable=self.d, font=(const.FONT_FAMILY, 15, "bold"))
+        self.d_text.grid(column=9, row=1)
+
+        self.s_label = ttk.Label(self, text=" S ", font=(const.FONT_FAMILY, 15))
+        self.s_label.grid(column=10, row=1)
+        self.s = tkinter.StringVar()
+        self.s.set("")
+        self.s_text = ttk.Label(self, textvariable=self.s, font=(const.FONT_FAMILY, 15, "bold"))
+        self.s_text.grid(column=11, row=1)
+        
+        self.weight_label = ttk.Label(self, text=" 重さ ", font=(const.FONT_FAMILY, 11))
+        self.weight_label.grid(column=0, row=2, columnspan=3)
+        self.weight = tkinter.StringVar()
+        self.weight.set("")
+        self.weight_text = ttk.Label(self, textvariable=self.weight, font=(const.FONT_FAMILY, 11, "bold"))
+        self.weight_text.grid(column=3, row=2, columnspan=4)
+
+        self.ketaguri_label = ttk.Label(self, text=" けたぐりの威力 ", font=(const.FONT_FAMILY, 11))
+        self.ketaguri_label.grid(column=11, row=2, columnspan=12)
+        self.ketaguri = tkinter.StringVar()
+        self.ketaguri.set("")
+        self.ketaguri_text = ttk.Label(self, textvariable=self.ketaguri, font=(const.FONT_FAMILY, 11, "bold"))
+        self.ketaguri_text.grid(column=24, row=2, columnspan=4)
+        
+        self.poketetsu_button = tkinter.Button(self, text="ポケ徹", command=self.open_poketetsu)
+        self.poketetsu_button.grid(column=11, row=0, columnspan=5)
+
+    def set_info(self, pokemon: Pokemon):
+        if pokemon.is_empty is False:
+            self._no=pokemon.no
+            self.name.set(pokemon.name)
+            img[self._player][0]=tkinter.PhotoImage(file=pokemon.type[0].icon).subsample(3,3)
+            self.type1_icon.configure(image=img[self._player][0], text=pokemon.type[0].name, compound='left')
+            img[self._player][1]=tkinter.PhotoImage(file=pokemon.type[1].icon if len(pokemon.type) > 1 else Types.なし.icon).subsample(3,3)
+            self.type2_icon.configure(image=img[self._player][1], text=pokemon.type[1].name if len(pokemon.type) > 1 else "", compound='left')
+            self.h.set(pokemon.syuzoku.H)
+            self.a.set(pokemon.syuzoku.A)
+            self.b.set(pokemon.syuzoku.B)
+            self.c.set(pokemon.syuzoku.C)
+            self.d.set(pokemon.syuzoku.D)
+            self.s.set(pokemon.syuzoku.S)
+            self.weight.set(str(pokemon.weight) + " kg ")
+            if pokemon.weight < 10:
+                self.ketaguri.set(20)
+            elif pokemon.weight < 25:
+                self.ketaguri.set(40)
+            elif pokemon.weight < 50:
+                self.ketaguri.set(60)
+            elif pokemon.weight < 100:
+                self.ketaguri.set(80)
+            elif pokemon.weight < 200:
+                self.ketaguri.set(100)
+            else:
+                self.ketaguri.set(120)
+
+    def open_poketetsu(self):
+        if self._no != 0:
+            url = "https://yakkun.com/sv/zukan/?national_no=" + str(self._no)
+            webbrowser.open(url)

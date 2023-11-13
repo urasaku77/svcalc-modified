@@ -203,6 +203,11 @@ class Stage:
         for i in range(3):
             self.delete_chosen(player, i)
 
+
+    # 選出の基本情報表示            
+    def set_info(self, player: int):
+        self._app.set_info(player, self._active_pokemon[player])
+
     @property
     def weather(self) -> Weathers:
         return self._weather

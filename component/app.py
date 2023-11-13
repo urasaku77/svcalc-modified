@@ -3,7 +3,7 @@ from ttkthemes.themed_tk import ThemedTk
 from component.combobox import MyCombobox
 from component.const import FIELD_COMBOBOX_VALUES, WEATHER_COMBOBOX_VALUES
 from component.dialog import TypeSelectDialog, PartyInputDialog, RankSelectDialog
-from component.frame import ActivePokemonFrame, ChosenFrame, WazaDamageListFrame, PartyFrame
+from component.frame import ActivePokemonFrame, ChosenFrame, InfoFrame, WazaDamageListFrame, PartyFrame
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
 from pokedata.stats import Stats
@@ -17,6 +17,7 @@ class MainApp(ThemedTk):
 
         self._party_frames: list[PartyFrame] = []
         self._chosen_frames: list[ChosenFrame] = []
+        self._info_frames: list[InfoFrame] = []
         self._active_poke_frames: list[ActivePokemonFrame] = []
         self._waza_damage_frames: list[WazaDamageListFrame] = []
 
@@ -51,6 +52,17 @@ class MainApp(ThemedTk):
             chosen_frame.grid(row=1, column=i*2+1, sticky=N+E+W+S)
             chosen_frame.grid_propagate(False)
             self._chosen_frames.append(chosen_frame)
+            
+            # 選択ポケモン基本情報表示フレーム
+            info_frame = InfoFrame(
+                master=main_frame,
+                player=i,
+                width=350,
+                height=100,
+                text=side + "基本情報")
+            info_frame.grid(row=2, column=i*2, columnspan=2, sticky=N+E+W+S)
+            info_frame.grid_propagate(False)
+            self._info_frames.append(info_frame)
 
             # 選択ポケモン表示フレーム
             poke_frame = ActivePokemonFrame(
@@ -59,7 +71,7 @@ class MainApp(ThemedTk):
                 width=350,
                 height=150,
                 text=side + "ポケモン")
-            poke_frame.grid(row=2, column=i*2, columnspan=2, sticky=N+E+W+S)
+            poke_frame.grid(row=3, column=i*2, columnspan=2, sticky=N+E+W+S)
             poke_frame.grid_propagate(False)
             self._active_poke_frames.append(poke_frame)
 
@@ -70,7 +82,7 @@ class MainApp(ThemedTk):
                 width=350,
                 height=300,
                 text=side + "わざ情報")
-            waza_frame.grid(row=3, column=i*2, columnspan=2, sticky=N+E+W+S)
+            waza_frame.grid(row=4, column=i*2, columnspan=2, sticky=N+E+W+S)
             waza_frame.grid_propagate(False)
             self._waza_damage_frames.append(waza_frame)
 
@@ -79,14 +91,14 @@ class MainApp(ThemedTk):
         self._weather_combobox = MyCombobox(self.weather_frame, width=16, values=WEATHER_COMBOBOX_VALUES)
         self._weather_combobox.bind("<<ComboboxSelected>>", self.change_weather)
         self._weather_combobox.pack()
-        self.weather_frame.grid(row=4, column=0, sticky=W)
+        self.weather_frame.grid(row=5, column=1, sticky=E)
 
         # フィールドフレーム
         self.field_frame = ttk.LabelFrame(main_frame, text="フィールド", padding=5)
         self._field_combobox = MyCombobox(self.field_frame, width=16, values=FIELD_COMBOBOX_VALUES)
         self._field_combobox.bind("<<ComboboxSelected>>", self.change_field)
         self._field_combobox.pack()
-        self.field_frame.grid(row=4, column=1, sticky=W)
+        self.field_frame.grid(row=5, column=2, sticky=W)
 
         # グリッド間ウェイト
         main_frame.columnconfigure(0, weight=1)
@@ -97,6 +109,7 @@ class MainApp(ThemedTk):
 
         self._stage = None
 
+    # 各フレームにStageクラスを配置
     def set_stage(self, stage):
         self._stage = stage
         for i in range(2):
@@ -105,16 +118,24 @@ class MainApp(ThemedTk):
             self._active_poke_frames[i].set_stage(stage)
             self._waza_damage_frames[i].set_stage(stage)
 
+    # パーティセット
     def set_party(self, player: int, party: list[Pokemon]):
         self._party_frames[player].set_party(party)
     
+    # 選出登録
     def set_chosen(self, player: int, pokemon: Pokemon, index: int):
         self._chosen_frames[player].set_chosen(pokemon, index)
 
+    # 選出基本情報表示
+    def set_info(self, player: int, pokemon: Pokemon):
+        self._info_frames[player].set_info(pokemon)
+
+    # ポケモン選択
     def set_active_pokemon(self, player: int, pokemon):
         self._active_poke_frames[player].set_pokemon(pokemon)
         self._waza_damage_frames[player].set_waza_info(pokemon.waza_list)
 
+    # ダメージ計算
     def set_calc_results(self, player: int, results):
         self._waza_damage_frames[player].set_damages(results)
 
