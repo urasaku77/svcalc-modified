@@ -189,7 +189,7 @@ class Stage:
     # 選出の登録
     def set_chosen(self, player: int):
         index_list = [ i for i, p in enumerate(self._chosen[player]) if p.no == -1]
-        if len(index_list) != 0:
+        if len(index_list) != 0 and len(list(filter(lambda p: p.name == self._active_pokemon[player].name, self._chosen[player]))) == 0:
             self._app.set_chosen(player, self._active_pokemon[player], index_list[0])
             self._chosen[player][index_list[0]] = self._active_pokemon[player]
     
