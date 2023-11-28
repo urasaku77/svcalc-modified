@@ -1,4 +1,6 @@
 from __future__ import annotations
+import math
+import time
 import tkinter
 from tkinter import ttk, N, E, W, S
 from typing import TYPE_CHECKING
@@ -604,3 +606,145 @@ class HomeFrame(ttk.LabelFrame):
                 self._stage.set_value_to_active_pokemon(player=1, ability=value[1])
             case 3:
                 self._stage.set_value_to_active_pokemon(player=1, terastype=Types.get(value[1]))
+    
+# タイマーフレーム
+class TimerFrame(ttk.LabelFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        
+        self.timer_on = False # タイマーの状態
+        self.start_time = 0 # 開始時間
+        self.set_time = 1200 # セット時間
+        self.elapsed_time = 0 # 経過時間
+        self.left_time = 0 # 残り時間
+        self.left_min = 20 # 残り時間（分）
+        self.left_sec = 0 # 残り時間（秒）
+        self.after_id = 0 # after_id変数を定義
+        self.button_text = tkinter.StringVar()
+        self.button_text.set("スタート")
+ 
+        self.canvas_time = tkinter.Canvas(self, width=140, height=70, bg="lightgreen")
+        self.canvas_time.grid(column=0, row=0, columnspan=2)
+ 
+        start_button = tkinter.Button(self, width=9, height=1, textvariable=self.button_text, command=self.start_button_clicked)
+        start_button.grid(column=0, row=1)
+
+        self.reset_button = tkinter.Button(self, width=9, height=1, text="リセット", command=self.reset_button_clicked)
+        self.reset_button.grid(column=1, row=1)
+        
+        self.update_min_text()
+        self.update_sec_text()
+
+    # resetボタンを押した時
+    def reset_button_clicked(self):
+        self.set_time = 1200
+        self.left_min = 20
+        self.left_sec = 0
+ 
+        self.update_min_text()
+        self.update_sec_text()
+ 
+    #startボタンを押した時
+    def start_button_clicked(self):
+ 
+        if self.set_time >= 1:
+ 
+            if self.timer_on == False:
+                self.timer_on = True
+                self.reset_button["state"] = tkinter.DISABLED
+ 
+                self.start_time =time.time() # 開始時間を代入
+                self.update_time() # updateTime関数を実行
+                self.button_text.set("ストップ")
+ 
+            elif self.timer_on == True:
+                self.timer_on = False
+ 
+                self.reset_button["state"] = tkinter.NORMAL
+ 
+                self.set_time = self.left_time
+                self.after_cancel(self.after_id)
+                self.button_text.set("スタート")
+  
+    # 時間更新処理
+    def update_time(self):
+        self.elapsed_time = time.time() - self.start_time  # 経過時間を計算
+        self.left_time = self.set_time - self.elapsed_time # 残り時間を計算
+        self.left_min = math.floor(self.left_time // 60) # 残り時間（分）を計算
+        self.left_sec = math.floor(self.left_time % 60) # 残り時間（秒）を計算
+ 
+        self.update_min_text()
+        self.update_sec_text()
+ 
+        if self.left_time > 0.1:
+            self.after_id = self.after(10, self.update_time)
+        else:
+            self.timer_on = False
+            self.reset_button["state"] = tkinter.NORMAL
+ 
+            self.set_time = self.left_time
+            self.after_cancel(self.after_id)
+    
+    # 分の表示更新
+    def update_min_text(self):
+        self.canvas_time.delete("min_text") # 表示時間（分）を消去
+        self.canvas_time.create_text(80,38, text=str(self.left_min).zfill(2) + ":", font=("MSゴシック体", "36", "bold"), tag="min_text", anchor="e") # 分を表示
+ 
+    # 秒の表示更新
+    def update_sec_text(self):
+        self.canvas_time.delete("sec_text") # 表示時間（秒）を消去
+        self.canvas_time.create_text(80,38,text=str(self.left_sec).zfill(2), font=("MSゴシック体", "36", "bold"), tag="sec_text", anchor="w") # 秒を表示
+
+# カウンターフレーム(2個)
+class CountersFrame(ttk.LabelFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        
+        self.counter_1 = CounterFrame(self)
+        self.counter_1.grid(column=0, row=0)
+        
+        separator = ttk.Separator(self, orient="vertical")
+        separator.grid(column=1, row=0, rowspan=3, sticky="ns", padx=5)
+
+        self.counter_2 = CounterFrame(self)
+        self.counter_2.grid(column=2, row=0)
+
+# カウンターフレーム(単体)
+class CounterFrame(tkinter.Canvas):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        
+        self.name_label = tkinter.Entry(self, width=15)
+        self.name_label.grid(column=0, row=0, columnspan=3)
+        self.count_num = tkinter.IntVar()
+        self.count_num.set(0)
+        self.label_count = tkinter.Label(self, textvariable=self.count_num, anchor="center", font=(const.FONT_FAMILY, 24, "bold"))
+        self.label_count.grid(column=0, row=1, columnspan=3)
+
+        self.btn_count_down = tkinter.Button(self, text="  -  ", command=self.CountDown)
+        self.btn_count_down.grid(column=0, row=2)
+
+        self.btn_count_reset = tkinter.Button(self, text="リセット", command=self.CountReset)
+        self.btn_count_reset.grid(column=1, row=2)
+
+        self.btn_count_reset = tkinter.Button(self, text="  ＋  ", command=self.CountUp)
+        self.btn_count_reset.grid(column=2, row=2)
+
+    def CountDown(self):
+        decrease_num = self.count_num.get()
+        if decrease_num > 0:
+            decrease_num = decrease_num - 1
+            self.count_num.set(decrease_num)
+            self.label_count["text"] = self.count_num.get()
+
+    def CountReset(self):
+        reset_num = 0
+        self.count_num.set(reset_num)
+        self.label_count["text"] = self.count_num.get()
+
+    def CountUp(self):
+        increase_num = self.count_num.get()
+        if increase_num < 99:
+            increase_num = increase_num + 1
+            self.count_num.set(increase_num)
+            self.label_count["text"] = self.count_num.get()
