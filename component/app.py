@@ -3,7 +3,7 @@ from ttkthemes.themed_tk import ThemedTk
 from component.combobox import MyCombobox
 from component.const import FIELD_COMBOBOX_VALUES, WEATHER_COMBOBOX_VALUES
 from component.dialog import TypeSelectDialog, PartyInputDialog, RankSelectDialog
-from component.frame import ActivePokemonFrame, ChosenFrame, InfoFrame, WazaDamageListFrame, PartyFrame
+from component.frame import ActivePokemonFrame, ChosenFrame, HomeFrame, InfoFrame, WazaDamageListFrame, PartyFrame
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
 from pokedata.stats import Stats
@@ -80,11 +80,20 @@ class MainApp(ThemedTk):
                 master=main_frame,
                 index=i,
                 width=350,
-                height=300,
+                height=330,
                 text=side + "わざ情報")
             waza_frame.grid(row=4, column=i*2, columnspan=2, sticky=N+E+W+S)
             waza_frame.grid_propagate(False)
             self._waza_damage_frames.append(waza_frame)
+        
+        # HOME情報フレーム
+        self.home_frame = HomeFrame(
+            master=main_frame,
+            width=350,
+            height=220,
+            text="HOME情報")
+        self.home_frame.grid(row=5, column=2, columnspan=2, sticky=N+E+W+S)
+        self.home_frame.grid_propagate(False)
 
         # 天候フレーム
         self.weather_frame = ttk.LabelFrame(main_frame, text="天候", padding=5)
@@ -98,7 +107,7 @@ class MainApp(ThemedTk):
         self._field_combobox = MyCombobox(self.field_frame, width=16, values=FIELD_COMBOBOX_VALUES)
         self._field_combobox.bind("<<ComboboxSelected>>", self.change_field)
         self._field_combobox.pack()
-        self.field_frame.grid(row=5, column=2, sticky=W)
+        self.field_frame.grid(row=5, column=0, sticky=W)
 
         # グリッド間ウェイト
         main_frame.columnconfigure(0, weight=1)
@@ -112,6 +121,7 @@ class MainApp(ThemedTk):
     # 各フレームにStageクラスを配置
     def set_stage(self, stage):
         self._stage = stage
+        self.home_frame.set_stage(stage)
         for i in range(2):
             self._party_frames[i].set_stage(stage)
             self._chosen_frames[i].set_stage(stage)
@@ -131,9 +141,10 @@ class MainApp(ThemedTk):
         self._info_frames[player].set_info(pokemon)
 
     # ポケモン選択
-    def set_active_pokemon(self, player: int, pokemon):
+    def set_active_pokemon(self, player: int, pokemon: Pokemon):
         self._active_poke_frames[player].set_pokemon(pokemon)
         self._waza_damage_frames[player].set_waza_info(pokemon.waza_list)
+        self.home_frame.set_home_data(pokemon.name)
 
     # ダメージ計算
     def set_calc_results(self, player: int, results):

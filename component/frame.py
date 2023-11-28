@@ -208,7 +208,7 @@ class WazaDamageListFrame(ttk.LabelFrame):
         self._btn_list: list[MyButton] = []
         self._dmgframe_list = []
 
-        for i in range(8):
+        for i in range(10):
             cbx = WazaNameCombobox(self, width=16)
             cbx.grid(column=0, row=i)
             cbx.bind("<<submit>>", lambda _, idx=i: self.on_submit_waza(idx))
@@ -234,7 +234,7 @@ class WazaDamageListFrame(ttk.LabelFrame):
         self._stage.set_value_to_active_pokemon(self._index, waza_effect=index)
 
     def set_waza_info(self, lst: list[WazaBase]):
-        for i in range(8):
+        for i in range(10):
             wazabase = lst[i]
             if wazabase is not None:
                 self._cbx_list[i].set(wazabase.name)
@@ -250,7 +250,7 @@ class WazaDamageListFrame(ttk.LabelFrame):
                 self._btn_list[i].text = ""
 
     def set_damages(self, lst: list[DamageCalcResult]):
-        for i in range(min(len(lst), 8)):
+        for i in range(min(len(lst), 10)):
             result = lst[i]
             self._dmgframe_list[i].set_calc_result(result)
 
@@ -437,6 +437,7 @@ class ChosenFrame(ttk.LabelFrame):
     def on_push_clear_button(self):
         self._stage.clear_chosen(self._player)
 
+# 基本情報フレーム
 class InfoFrame(ttk.LabelFrame):
 
     def __init__(self, master, player: int, **kwargs):
@@ -501,19 +502,17 @@ class InfoFrame(ttk.LabelFrame):
         self.s_text = ttk.Label(self, textvariable=self.s, font=(const.FONT_FAMILY, 15, "bold"))
         self.s_text.grid(column=11, row=1)
         
-        self.weight_label = ttk.Label(self, text=" 重さ ", font=(const.FONT_FAMILY, 11))
-        self.weight_label.grid(column=0, row=2, columnspan=3)
-        self.weight = tkinter.StringVar()
-        self.weight.set("")
-        self.weight_text = ttk.Label(self, textvariable=self.weight, font=(const.FONT_FAMILY, 11, "bold"))
-        self.weight_text.grid(column=3, row=2, columnspan=4)
-
-        self.ketaguri_label = ttk.Label(self, text=" けたぐりの威力 ", font=(const.FONT_FAMILY, 11))
-        self.ketaguri_label.grid(column=11, row=2, columnspan=12)
+        self.ketaguri_label = ttk.Label(self, text=" けたぐりの威力： ", font=(const.FONT_FAMILY, 11))
+        self.ketaguri_label.grid(column=0, row=2, columnspan=7, sticky=E)
         self.ketaguri = tkinter.StringVar()
         self.ketaguri.set("")
         self.ketaguri_text = ttk.Label(self, textvariable=self.ketaguri, font=(const.FONT_FAMILY, 11, "bold"))
-        self.ketaguri_text.grid(column=24, row=2, columnspan=4)
+        self.ketaguri_text.grid(column=7, row=2, columnspan=1, sticky=W)
+
+        self.weight = tkinter.StringVar()
+        self.weight.set("")
+        self.weight_text = ttk.Label(self, textvariable=self.weight, font=(const.FONT_FAMILY, 11))
+        self.weight_text.grid(column=8, row=2, columnspan=8, sticky=W)
         
         self.poketetsu_button = tkinter.Button(self, text="ポケ徹", command=self.open_poketetsu)
         self.poketetsu_button.grid(column=11, row=0, columnspan=5)
@@ -532,21 +531,76 @@ class InfoFrame(ttk.LabelFrame):
             self.c.set(pokemon.syuzoku.C)
             self.d.set(pokemon.syuzoku.D)
             self.s.set(pokemon.syuzoku.S)
-            self.weight.set(str(pokemon.weight) + " kg ")
+            self.weight.set( "(重さ：" + str(pokemon.weight) + " kg )")
             if pokemon.weight < 10:
-                self.ketaguri.set(20)
+                self.ketaguri.set("20")
             elif pokemon.weight < 25:
-                self.ketaguri.set(40)
+                self.ketaguri.set("40")
             elif pokemon.weight < 50:
-                self.ketaguri.set(60)
+                self.ketaguri.set("60")
             elif pokemon.weight < 100:
-                self.ketaguri.set(80)
+                self.ketaguri.set("80")
             elif pokemon.weight < 200:
-                self.ketaguri.set(100)
+                self.ketaguri.set("100")
             else:
-                self.ketaguri.set(120)
+                self.ketaguri.set("120")
 
     def open_poketetsu(self):
         if self._no != 0:
             url = "https://yakkun.com/sv/zukan/?national_no=" + str(self._no)
             webbrowser.open(url)
+
+# HOME情報フレーム
+class HomeFrame(ttk.LabelFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self._stage: Stage | None = None
+        self._tree_list: list[ttk.Treeview] = []
+        self._type = [["もちもの", "./home/home_motimono.csv"], ["とくせい", "./home/home_tokusei.csv"], ["せいかく", "./home/home_seikaku.csv"], ["テラスタイプ", "./home/home_terastal.csv"]]
+        for i in range(len(self._type)):
+            # 列の識別名を指定
+            column = ('No', self._type[i][0], '%')
+            # Treeviewの生成
+            tree = ttk.Treeview(self, columns=column)
+            tree['show'] = 'headings'
+            # 列の設定
+            tree.column('No', width=10)
+            tree.column(self._type[i][0], width=70)
+            tree.column('%', width=25)
+            # 列の見出し設定
+            tree.heading('No', text='No')
+            tree.heading(self._type[i][0], text=self._type[i][0])
+            tree.heading('%',text='%')
+            # ウィジェットの配置
+            tree.pack(side=tkinter.LEFT)
+            self._tree_list.append(tree)
+    
+    def set_stage(self, stage: Stage):
+        self._stage = stage
+
+    def set_home_data(self, name: str):
+        for i in range(len(self._type)):
+            from pokedata.loader import get_home_data
+            data_list = get_home_data(name, self._type[i][1])
+        
+            # レコードの追加
+            self._tree_list[i].delete(*self._tree_list[i].get_children())
+            for j in range(len(data_list)):
+                self._tree_list[i].insert(parent='', index='end', iid=self._type[i][0] + str(j) ,values=(j+1, data_list[j][0], data_list[j][1]))
+        self._tree_list[0].bind("<<TreeviewSelect>>", lambda e: self.select_record(0))
+        self._tree_list[1].bind("<<TreeviewSelect>>", lambda e: self.select_record(1))
+        self._tree_list[3].bind("<<TreeviewSelect>>", lambda e: self.select_record(3))
+
+    def select_record(self, index: int):
+        # 選択行の判別
+        record_id = self._tree_list[index].focus()
+        # 選択行のレコードを取得
+        value = self._tree_list[index].item(record_id, 'values')
+        print(len(value))
+        match index:
+            case 0:
+                self._stage.set_value_to_active_pokemon(player=1, item=value[1])
+            case 1:
+                self._stage.set_value_to_active_pokemon(player=1, ability=value[1])
+            case 3:
+                self._stage.set_value_to_active_pokemon(player=1, terastype=Types.get(value[1]))
