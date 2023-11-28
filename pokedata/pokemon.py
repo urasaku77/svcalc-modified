@@ -163,6 +163,26 @@ class Pokemon:
     @battle_terastype.setter
     def battle_terastype(self, value: Types):
         self.__battle_terastype = value
+        if "オーガポン" in self.__name:
+            stats: Stats = Stats(0)
+            key = StatsKey(5)
+            if "水" in self.__name:
+                key = StatsKey(4)
+            elif "炎" in self.__name:
+                key = StatsKey(1)
+            elif "岩" in self.__name:
+                key = StatsKey(2)
+            if value == Types.なし:
+                self.ability = self.__abilities[0]
+                self.rank = stats
+            else:
+                self.ability = "おもかげやどし"
+                for k in StatsKey:
+                    if k == key:
+                        stats[k] = 1
+                    else:
+                        stats[k] = 0
+                self.rank = stats
         self.statechanged()
 
     @property
@@ -189,6 +209,11 @@ class Pokemon:
     @property
     def rank(self) -> Stats:
         return self.__rank
+
+    @rank.setter
+    def rank(self, value: Stats) -> None:
+        self.__rank = value
+        self.statechanged()
 
     @property
     def seikaku(self) -> str:
