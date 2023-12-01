@@ -4,6 +4,7 @@ import time
 import tkinter
 from tkinter import ttk, N, E, W, S
 from typing import TYPE_CHECKING
+from tkinter.scrolledtext import ScrolledText
 import webbrowser
 
 from component import const, images
@@ -196,7 +197,6 @@ class ActivePokemonFrame(ttk.LabelFrame):
     def on_push_rankclear_button(self):
         self._stage.clear_rank(self._player)
 
-
 # 技・ダメージ表示リストフレーム
 class WazaDamageListFrame(ttk.LabelFrame):
 
@@ -204,25 +204,33 @@ class WazaDamageListFrame(ttk.LabelFrame):
         super().__init__(master, **kwargs, padding=5)
         self._index = index
         self._stage: Stage | None = None
-        self.columnconfigure(2, weight=1)
+        self.columnconfigure(3, weight=1)
 
         self._cbx_list: list[WazaNameCombobox] = []
+        self._reg_btn_list: list[MyButton] = []
+        self._lbl_list: list[MyLabel] = []
         self._btn_list: list[MyButton] = []
         self._dmgframe_list = []
 
-        for i in range(10):
+        num = 6 if self._index == 0 else 10
+        for i in range(num):
+            if self._index == 1:
+                lbl = MyLabel(self, text = u'', width=4)
+                lbl.grid(column=0, row=i)
+                self._lbl_list.append(lbl)
+            
             cbx = WazaNameCombobox(self, width=16)
-            cbx.grid(column=0, row=i)
+            cbx.grid(column=1, row=i)
             cbx.bind("<<submit>>", lambda _, idx=i: self.on_submit_waza(idx))
             self._cbx_list.append(cbx)
 
             btn = MyButton(
                 self, width=4, command=lambda idx=i: self.on_push_waza_button(idx))
-            btn.grid(column=1, row=i)
+            btn.grid(column=2, row=i, sticky=W)
             self._btn_list.append(btn)
 
             dmgframe = DamageDispFrame(self)
-            dmgframe.grid(column=2, row=i, sticky=W+E)
+            dmgframe.grid(column=3, row=i, sticky=W+E)
             self._dmgframe_list.append(dmgframe)
 
     def set_stage(self, stage: Stage):
@@ -236,7 +244,7 @@ class WazaDamageListFrame(ttk.LabelFrame):
         self._stage.set_value_to_active_pokemon(self._index, waza_effect=index)
 
     def set_waza_info(self, lst: list[WazaBase]):
-        for i in range(10):
+        for i in range(len(self._cbx_list)):
             wazabase = lst[i]
             if wazabase is not None:
                 self._cbx_list[i].set(wazabase.name)
@@ -250,9 +258,17 @@ class WazaDamageListFrame(ttk.LabelFrame):
             else:
                 self._cbx_list[i].set("")
                 self._btn_list[i].text = ""
+    
+    def set_waza_rate(self, lst: list[float]):
+        for i in range(len(self._lbl_list)):
+            rate = lst[i]
+            if rate is not None:
+                self._lbl_list[i]["text"] = str(rate)
+            else:
+                self._lbl_list[i]["text"] = ""
 
     def set_damages(self, lst: list[DamageCalcResult]):
-        for i in range(min(len(lst), 10)):
+        for i in range(len(self._dmgframe_list)):
             result = lst[i]
             self._dmgframe_list[i].set_calc_result(result)
 
@@ -563,7 +579,7 @@ class HomeFrame(ttk.LabelFrame):
             # 列の識別名を指定
             column = ('No', self._type[i][0], '%')
             # Treeviewの生成
-            tree = ttk.Treeview(self, columns=column)
+            tree = ttk.Treeview(self, columns=column, height=9)
             tree['show'] = 'headings'
             # 列の設定
             tree.column('No', width=10)
@@ -623,13 +639,14 @@ class TimerFrame(ttk.LabelFrame):
         self.button_text = tkinter.StringVar()
         self.button_text.set("スタート")
  
+        self.bg=tkinter.StringVar()
         self.canvas_time = tkinter.Canvas(self, width=140, height=70, bg="lightgreen")
         self.canvas_time.grid(column=0, row=0, columnspan=2)
  
-        start_button = tkinter.Button(self, width=9, height=1, textvariable=self.button_text, command=self.start_button_clicked)
+        start_button = tkinter.Button(self, width=9, height=2, textvariable=self.button_text, command=self.start_button_clicked)
         start_button.grid(column=0, row=1)
 
-        self.reset_button = tkinter.Button(self, width=9, height=1, text="リセット", command=self.reset_button_clicked)
+        self.reset_button = tkinter.Button(self, width=9, height=2, text="リセット", command=self.reset_button_clicked)
         self.reset_button.grid(column=1, row=1)
         
         self.update_min_text()
@@ -643,6 +660,8 @@ class TimerFrame(ttk.LabelFrame):
  
         self.update_min_text()
         self.update_sec_text()
+        
+        self.canvas_time["bg"] = "lightgreen"
  
     #startボタンを押した時
     def start_button_clicked(self):
@@ -684,6 +703,13 @@ class TimerFrame(ttk.LabelFrame):
  
             self.set_time = self.left_time
             self.after_cancel(self.after_id)
+        
+        if self.left_time < 180:
+            self.canvas_time["bg"] = "red"
+        elif self.left_time < 300:
+            self.canvas_time["bg"] = "yellow"
+        elif self.left_time < 600:
+            self.canvas_time["bg"] = "blue"
     
     # 分の表示更新
     def update_min_text(self):
@@ -721,13 +747,13 @@ class CounterFrame(tkinter.Canvas):
         self.label_count = tkinter.Label(self, textvariable=self.count_num, anchor="center", font=(const.FONT_FAMILY, 24, "bold"))
         self.label_count.grid(column=0, row=1, columnspan=3)
 
-        self.btn_count_down = tkinter.Button(self, text="  -  ", command=self.CountDown)
+        self.btn_count_down = tkinter.Button(self, text="  -  ", command=self.CountDown, height=2)
         self.btn_count_down.grid(column=0, row=2)
 
-        self.btn_count_reset = tkinter.Button(self, text="リセット", command=self.CountReset)
+        self.btn_count_reset = tkinter.Button(self, text="リセット", command=self.CountReset, height=2)
         self.btn_count_reset.grid(column=1, row=2)
 
-        self.btn_count_reset = tkinter.Button(self, text="  ＋  ", command=self.CountUp)
+        self.btn_count_reset = tkinter.Button(self, text="  ＋  ", command=self.CountUp, height=2)
         self.btn_count_reset.grid(column=2, row=2)
 
     def CountDown(self):
@@ -748,3 +774,35 @@ class CounterFrame(tkinter.Canvas):
             increase_num = increase_num + 1
             self.count_num.set(increase_num)
             self.label_count["text"] = self.count_num.get()
+
+# 対戦記録フレーム
+class RecordFrame(ttk.LabelFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        
+        self.tn_lbl = MyLabel(self, text="TN")
+        self.tn_lbl.grid(column=0, row=0)
+        self.tn = tkinter.Entry(self)
+        self.tn.grid(column=1, row=0, sticky=N+E+W+S)
+
+        self.rank_lbl = MyLabel(self, text="ランク")
+        self.rank_lbl.grid(column=0, row=1)
+        self.rank = tkinter.Entry(self)
+        self.rank.grid(column=1, row=1, sticky=N+E+W+S)
+        
+        self.memo_lbl = MyLabel(self, text="メモ")
+        self.memo_lbl.grid(column=0, row=2)
+        self.memo = ScrolledText(self, font=("", 15), height=7, width=45)
+        self.memo.grid(column=1, row=2, columnspan=4, sticky=N+E+W+S)
+        
+        favo = tkinter.BooleanVar()
+        favo.set(False)
+        favo_checkbox = tkinter.Checkbutton(self, variable=favo, text='お気に入り')
+        favo_checkbox.grid(column=2, row=0, columnspan=2)
+        
+        win_btn = MyButton(self, width=4, text="勝ち")
+        win_btn.grid(column=2, row=1, sticky=N+E+W+S)
+        lose_btn = MyButton(self, width=4, text="負け")
+        lose_btn.grid(column=3, row=1, sticky=N+E+W+S)
+        lose_btn = MyButton(self, width=4, text="引き分け")
+        lose_btn.grid(column=4, row=1, sticky=N+E+W+S)

@@ -1,9 +1,10 @@
 from tkinter import ttk, N, E, W, S, LEFT
 from ttkthemes.themed_tk import ThemedTk
+from component.button import MyButton
 from component.combobox import MyCombobox
 from component.const import FIELD_COMBOBOX_VALUES, WEATHER_COMBOBOX_VALUES
 from component.dialog import TypeSelectDialog, PartyInputDialog, RankSelectDialog
-from component.frame import ActivePokemonFrame, ChosenFrame, CountersFrame, HomeFrame, InfoFrame, TimerFrame, WazaDamageListFrame, PartyFrame
+from component.frame import ActivePokemonFrame, ChosenFrame, CountersFrame, HomeFrame, InfoFrame, RecordFrame, TimerFrame, WazaDamageListFrame, PartyFrame
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
 from pokedata.stats import Stats
@@ -75,64 +76,82 @@ class MainApp(ThemedTk):
             poke_frame.grid_propagate(False)
             self._active_poke_frames.append(poke_frame)
 
-            # 技・ダメージ表示フレーム
-            waza_frame = WazaDamageListFrame(
-                master=main_frame,
-                index=i,
-                width=530,
-                height=330,
-                text=side + "わざ情報")
-            waza_frame.grid(row=4, column=i*3, columnspan=3, sticky=N+E+W+S)
-            waza_frame.grid_propagate(False)
-            self._waza_damage_frames.append(waza_frame)
-        
+        # 技・ダメージ表示フレーム
+        waza_frame_my = WazaDamageListFrame(
+            master=main_frame,
+            index=0,
+            width=530,
+            height=100,
+            text="自分わざ情報")
+        waza_frame_my.grid(row=4, column=0, columnspan=3, sticky=N+E+W+S)
+        waza_frame_my.grid_propagate(False)
+        self._waza_damage_frames.append(waza_frame_my)
+
+        # 技・ダメージ表示フレーム
+        waza_frame_your = WazaDamageListFrame(
+            master=main_frame,
+            index=1,
+            width=530,
+            height=320,
+            text="相手わざ情報")
+        waza_frame_your.grid(row=4, column=3, rowspan=2, columnspan=3, sticky=N+E+W+S)
+        waza_frame_your.grid_propagate(False)
+        self._waza_damage_frames.append(waza_frame_your)
+
         # HOME情報フレーム
         self.home_frame = HomeFrame(
             master=main_frame,
             width=530,
-            height=220,
             text="HOME情報")
-        self.home_frame.grid(row=5, column=3, rowspan=4, columnspan=3, sticky=N+E+W+S)
+        self.home_frame.grid(row=6, column=3, rowspan=4, columnspan=3, sticky=N+E+W+S)
         self.home_frame.grid_propagate(False)
 
         # ツールフレーム（タイマー・カウンター・共通）
         tool_frame = ttk.Frame(main_frame)
-        tool_frame.grid(row=5, column=0, rowspan=3, columnspan=3, sticky=N+W+E)
+        tool_frame.grid(row=5, column=0, rowspan=3, columnspan=3, sticky=N+E+W)
         
         # タイマーフレーム
         self.timer_frame = TimerFrame(
             master=tool_frame,
-            height=120,
             text="タイマー")
-        self.timer_frame.pack(fill = 'x', expand=0, side='left')
+        self.timer_frame.pack(fill = 'both', expand=0, side='left')
 
         # カウンターフレーム
         self.counter_frame = CountersFrame(
             master=tool_frame,
-            height=120,
             text="カウンター")
-        self.counter_frame.pack(fill = 'x', expand=0, side='left')
+        self.counter_frame.pack(fill = 'both', expand=0, side='left')
 
         # 共通フレーム（天気・フィールド）
         common_frame = ttk.Frame(tool_frame)
-        common_frame.pack(fill = 'x', expand=0, side='left')
+        common_frame.pack(fill = 'both', expand=0, side='left')
         
         # 天候フレーム
-        self.weather_frame = ttk.LabelFrame(common_frame, text="天候", width=130, height=55, padding=6)
-        self._weather_combobox = MyCombobox(self.weather_frame, width=10, height=30, values=WEATHER_COMBOBOX_VALUES)
+        self.weather_frame = ttk.LabelFrame(common_frame, text="天候", width=150, height=55, padding=6)
+        self._weather_combobox = MyCombobox(self.weather_frame, width=17, height=30, values=WEATHER_COMBOBOX_VALUES)
         self._weather_combobox.bind("<<ComboboxSelected>>", self.change_weather)
         self._weather_combobox.pack()
         self.weather_frame.pack(fill = 'x', expand=0)
 
         # フィールドフレーム
-        self.field_frame = ttk.LabelFrame(common_frame, text="フィールド", width=130, height=55, padding=6)
-        self._field_combobox = MyCombobox(self.field_frame, width=10, height=30, values=FIELD_COMBOBOX_VALUES)
+        self.field_frame = ttk.LabelFrame(common_frame, text="フィールド", width=150, height=55, padding=6)
+        self._field_combobox = MyCombobox(self.field_frame, width=17, height=30, values=FIELD_COMBOBOX_VALUES)
         self._field_combobox.bind("<<ComboboxSelected>>", self.change_field)
         self._field_combobox.pack()
         self.field_frame.pack(fill = 'x', expand=0)
         
-        self.poketetsu_button = ttk.Button(tool_frame, text="素早さ", width=6)
-        self.poketetsu_button.pack(fill = 'y', expand=0, side='left')
+        self.speed_button = MyButton(common_frame, text="素早さ比較", width=6)
+        self.speed_button.pack(fill = 'both', expand=0)
+
+        # 対戦記録フレーム
+        self.record_frame = RecordFrame(
+            master=main_frame,
+            width=530,
+            height=220,
+            text="対戦記録"
+        )
+        self.record_frame.grid(row=8, column=0, rowspan=2, columnspan=3, sticky=N+E+W+S)
+        self.record_frame.grid_propagate(False)
 
         # グリッド間ウェイト
         main_frame.columnconfigure(0, weight=1)
@@ -174,6 +193,7 @@ class MainApp(ThemedTk):
         self._active_poke_frames[player].set_pokemon(pokemon)
         self._waza_damage_frames[player].set_waza_info(pokemon.waza_list)
         if player == 1:
+            self._waza_damage_frames[player].set_waza_rate(pokemon.waza_rate_list)
             self.home_frame.set_home_data(pokemon.name)
 
     # ダメージ計算
