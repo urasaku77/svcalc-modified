@@ -1,4 +1,4 @@
-from tkinter import ttk, N, E, W, S
+from tkinter import ttk, N, E, W, S, LEFT
 from ttkthemes.themed_tk import ThemedTk
 from component.combobox import MyCombobox
 from component.const import FIELD_COMBOBOX_VALUES, WEATHER_COMBOBOX_VALUES
@@ -57,7 +57,7 @@ class MainApp(ThemedTk):
             info_frame = InfoFrame(
                 master=main_frame,
                 player=i,
-                width=350,
+                width=530,
                 height=100,
                 text=side + "基本情報")
             info_frame.grid(row=2, column=i*3, columnspan=3, sticky=N+E+W+S)
@@ -68,7 +68,7 @@ class MainApp(ThemedTk):
             poke_frame = ActivePokemonFrame(
                 master=main_frame,
                 player=i,
-                width=350,
+                width=530,
                 height=150,
                 text=side + "ポケモン")
             poke_frame.grid(row=3, column=i*3, columnspan=3, sticky=N+E+W+S)
@@ -79,7 +79,7 @@ class MainApp(ThemedTk):
             waza_frame = WazaDamageListFrame(
                 master=main_frame,
                 index=i,
-                width=350,
+                width=530,
                 height=330,
                 text=side + "わざ情報")
             waza_frame.grid(row=4, column=i*3, columnspan=3, sticky=N+E+W+S)
@@ -89,47 +89,58 @@ class MainApp(ThemedTk):
         # HOME情報フレーム
         self.home_frame = HomeFrame(
             master=main_frame,
-            width=350,
+            width=530,
             height=220,
             text="HOME情報")
         self.home_frame.grid(row=5, column=3, rowspan=4, columnspan=3, sticky=N+E+W+S)
         self.home_frame.grid_propagate(False)
 
+        # ツールフレーム（タイマー・カウンター・共通）
+        tool_frame = ttk.Frame(main_frame)
+        tool_frame.grid(row=5, column=0, rowspan=3, columnspan=3, sticky=N+W+E)
+        
         # タイマーフレーム
         self.timer_frame = TimerFrame(
-            master=main_frame,
-            width=150,
+            master=tool_frame,
             height=120,
             text="タイマー")
-        self.timer_frame.grid(row=5, column=0, rowspan=2, sticky=N+E+W)
-        self.timer_frame.grid_propagate(False)
+        self.timer_frame.pack(fill = 'x', expand=0, side='left')
 
         # カウンターフレーム
         self.counter_frame = CountersFrame(
-            master=main_frame,
-            width=232,
+            master=tool_frame,
             height=120,
             text="カウンター")
-        self.counter_frame.grid(row=5, column=1, rowspan=2, sticky=N+E+W)
-        self.counter_frame.grid_propagate(False)
+        self.counter_frame.pack(fill = 'x', expand=0, side='left')
 
+        # 共通フレーム（天気・フィールド）
+        common_frame = ttk.Frame(tool_frame)
+        common_frame.pack(fill = 'x', expand=0, side='left')
+        
         # 天候フレーム
-        self.weather_frame = ttk.LabelFrame(main_frame, text="天候", height=60, padding=6)
-        self._weather_combobox = MyCombobox(self.weather_frame, width=16, values=WEATHER_COMBOBOX_VALUES)
+        self.weather_frame = ttk.LabelFrame(common_frame, text="天候", width=130, height=55, padding=6)
+        self._weather_combobox = MyCombobox(self.weather_frame, width=10, height=30, values=WEATHER_COMBOBOX_VALUES)
         self._weather_combobox.bind("<<ComboboxSelected>>", self.change_weather)
         self._weather_combobox.pack()
-        self.weather_frame.grid(row=5, column=2, sticky=N+E+W)
+        self.weather_frame.pack(fill = 'x', expand=0)
 
         # フィールドフレーム
-        self.field_frame = ttk.LabelFrame(main_frame, text="フィールド", height=60, padding=6)
-        self._field_combobox = MyCombobox(self.field_frame, width=16, values=FIELD_COMBOBOX_VALUES)
+        self.field_frame = ttk.LabelFrame(common_frame, text="フィールド", width=130, height=55, padding=6)
+        self._field_combobox = MyCombobox(self.field_frame, width=10, height=30, values=FIELD_COMBOBOX_VALUES)
         self._field_combobox.bind("<<ComboboxSelected>>", self.change_field)
         self._field_combobox.pack()
-        self.field_frame.grid(row=5, column=2, sticky=S+E+W)
+        self.field_frame.pack(fill = 'x', expand=0)
+        
+        self.poketetsu_button = ttk.Button(tool_frame, text="素早さ", width=6)
+        self.poketetsu_button.pack(fill = 'y', expand=0, side='left')
 
         # グリッド間ウェイト
         main_frame.columnconfigure(0, weight=1)
         main_frame.columnconfigure(1, weight=1)
+        main_frame.columnconfigure(2, weight=1)
+        main_frame.columnconfigure(3, weight=1)
+        main_frame.columnconfigure(4, weight=1)
+        main_frame.columnconfigure(5, weight=1)
 
         self.columnconfigure(0, weight=True)
         self.rowconfigure(0, weight=True)
