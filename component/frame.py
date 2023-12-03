@@ -358,6 +358,7 @@ class PartyFrame(ttk.LabelFrame):
         self._player: int = player
         self._stage: Stage | None = None
         self._button_list: list[MyButton] = []
+        self._pokemon_list: list[str] = ["-1", "-1", "-1", "-1", "-1", "-1"]
 
         # ポケモン表示ボタン
         for i in range(6):
@@ -398,8 +399,10 @@ class PartyFrame(ttk.LabelFrame):
         for i, pokemon in enumerate(party):
             if pokemon.is_empty is False:
                 self._button_list[i].set_pokemon_icon(pokemon.pid, size=(30, 30))
+                self._pokemon_list[i] = pokemon.pid
             else:
                 self._button_list[i].set_image(images.get_blank_image(size=(30, 30)))
+                self._pokemon_list[i] = "-1"
 
     def on_push_pokemon_button(self, index: int):
         self._stage.set_active_pokemon_from_index(player=self._player, index=index)
@@ -422,6 +425,7 @@ class ChosenFrame(ttk.LabelFrame):
         self._player: int = player
         self._stage: Stage | None = None
         self._button_list: list[MyButton] = []
+        self._pokemon_list: list[str] = ["-1", "-1", "-1"]
 
         # ポケモン表示ボタン
         for i in range(3):
@@ -446,8 +450,10 @@ class ChosenFrame(ttk.LabelFrame):
     def set_chosen(self, pokemon: Pokemon, index: int):
         if pokemon.is_empty is False:
             self._button_list[index].set_pokemon_icon(pokemon.pid, size=(30, 30))
+            self._pokemon_list[index] = pokemon.pid
         else:
             self._button_list[index].set_image(images.get_blank_image(size=(30, 30)))
+            self._pokemon_list[index] = "-1"
 
     def on_push_pokemon_button(self, index: int):
         self._stage.delete_chosen(self._player, index)
@@ -654,6 +660,12 @@ class TimerFrame(ttk.LabelFrame):
 
     # resetボタンを押した時
     def reset_button_clicked(self):
+        if self.timer_on == True:
+            self.timer_on = False
+            self.reset_button["state"] = tkinter.NORMAL
+            self.after_cancel(self.after_id)
+            self.button_text.set("スタート")
+
         self.set_time = 1200
         self.left_min = 20
         self.left_sec = 0
@@ -734,6 +746,10 @@ class CountersFrame(ttk.LabelFrame):
 
         self.counter_2 = CounterFrame(self)
         self.counter_2.grid(column=2, row=0)
+        
+    def clear_all_counters(self):
+        self.counter_1.CountReset()
+        self.counter_2.CountReset()
 
 # カウンターフレーム(単体)
 class CounterFrame(tkinter.Canvas):
@@ -779,6 +795,8 @@ class CounterFrame(tkinter.Canvas):
 class RecordFrame(ttk.LabelFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
+        self._stage: Stage | None = None
+        self.result = -1
         
         self.tn_lbl = MyLabel(self, text="TN")
         self.tn_lbl.grid(column=0, row=0)
@@ -795,14 +813,31 @@ class RecordFrame(ttk.LabelFrame):
         self.memo = ScrolledText(self, font=("", 15), height=7, width=45)
         self.memo.grid(column=1, row=2, columnspan=4, sticky=N+E+W+S)
         
-        favo = tkinter.BooleanVar()
-        favo.set(False)
-        favo_checkbox = tkinter.Checkbutton(self, variable=favo, text='お気に入り')
-        favo_checkbox.grid(column=2, row=0, columnspan=2)
+        self.favo = tkinter.BooleanVar()
+        self.favo.set(False)
+        self.favo_checkbox = tkinter.Checkbutton(self, variable=self.favo, text='お気に入り')
+        self.favo_checkbox.grid(column=2, row=0, columnspan=2)
         
-        win_btn = MyButton(self, width=4, text="勝ち")
+        win_btn = MyButton(self, width=4, text="勝ち", command=lambda: self.register(1))
         win_btn.grid(column=2, row=1, sticky=N+E+W+S)
-        lose_btn = MyButton(self, width=4, text="負け")
+        lose_btn = MyButton(self, width=4, text="負け", command=lambda: self.register(0))
         lose_btn.grid(column=3, row=1, sticky=N+E+W+S)
-        lose_btn = MyButton(self, width=4, text="引き分け")
-        lose_btn.grid(column=4, row=1, sticky=N+E+W+S)
+        draw_btn = MyButton(self, width=4, text="引き分け", command=lambda: self.register(-1))
+        draw_btn.grid(column=4, row=0, sticky=N+E+W+S)
+        clear_btn = MyButton(self, width=4, text="クリア", command=self.clear)
+        clear_btn.grid(column=4, row=1, sticky=N+E+W+S)
+
+    def set_stage(self, stage: Stage):
+        self._stage = stage
+        
+    def register(self, result: int):
+        self.result = result
+        self._stage.record_battle()
+    
+    def clear(self):
+        self._stage.clear_battle()
+        self.tn.delete(0, tkinter.END)
+        self.rank.delete(0, tkinter.END)
+        self.memo.delete("1.0", "end")
+        self.favo.set(False)
+    

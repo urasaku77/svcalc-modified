@@ -203,6 +203,13 @@ class Stage:
         for i in range(3):
             self.delete_chosen(player, i)
 
+    # バトルの記録
+    def record_battle(self):
+        self._app.record_battle()
+        
+    # バトルのクリア
+    def clear_battle(self):
+        self._app.clear_battle()
 
     # 選出の基本情報表示            
     def set_info(self, player: int):

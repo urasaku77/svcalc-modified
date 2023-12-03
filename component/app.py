@@ -1,5 +1,8 @@
+import dataclasses
 from tkinter import ttk, N, E, W, S, LEFT
 from ttkthemes.themed_tk import ThemedTk
+from battle.DB_battle import DB_battle
+from battle.battle import Battle
 from component.button import MyButton
 from component.combobox import MyCombobox
 from component.const import FIELD_COMBOBOX_VALUES, WEATHER_COMBOBOX_VALUES
@@ -107,7 +110,7 @@ class MainApp(ThemedTk):
         self.home_frame.grid_propagate(False)
 
         # ツールフレーム（タイマー・カウンター・共通）
-        tool_frame = ttk.Frame(main_frame)
+        tool_frame = ttk.Frame(main_frame, padding=5)
         tool_frame.grid(row=5, column=0, rowspan=3, columnspan=3, sticky=N+E+W)
         
         # タイマーフレーム
@@ -140,7 +143,8 @@ class MainApp(ThemedTk):
         self._field_combobox.pack()
         self.field_frame.pack(fill = 'x', expand=0)
         
-        self.speed_button = MyButton(common_frame, text="素早さ比較", width=6)
+        # 素早さ比較ボタン
+        self.speed_button = MyButton(common_frame, text="素早さ比較", width=6, padding=5)
         self.speed_button.pack(fill = 'both', expand=0)
 
         # 対戦記録フレーム
@@ -175,6 +179,7 @@ class MainApp(ThemedTk):
             self._chosen_frames[i].set_stage(stage)
             self._active_poke_frames[i].set_stage(stage)
             self._waza_damage_frames[i].set_stage(stage)
+            self.record_frame.set_stage(stage)
 
     # パーティセット
     def set_party(self, player: int, party: list[Pokemon]):
@@ -235,3 +240,17 @@ class MainApp(ThemedTk):
         dialog.open(location=(self.winfo_x(), self.winfo_y()))
         self.wait_window(dialog)
         return dialog.party
+    
+    # 対戦登録
+    def record_battle(self):
+        battle = Battle.set_battle(self.record_frame, self._party_frames, self._chosen_frames)
+        battle_data = dataclasses.astuple(battle)
+        DB_battle.register_battle(battle_data)
+
+    # 対戦記録情報クリア
+    def clear_battle(self):
+        self._party_frames[1].on_push_clear_button()
+        self._chosen_frames[0].on_push_clear_button()
+        self._chosen_frames[1].on_push_clear_button()
+        self.timer_frame.reset_button_clicked()
+        self.counter_frame.clear_all_counters()
