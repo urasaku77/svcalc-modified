@@ -1,3 +1,4 @@
+import json
 from tkinter import N, E, W, S
 from tkinter import ttk
 import tkinter
@@ -182,5 +183,84 @@ class RankSelectDialog(tkinter.Toplevel):
     def on_push_spin(self, key: StatsKey):
         self.set_rank_value(key, int(self._spinbox_dict[key].get()))
 
+    def on_push_button(self):
+        self.destroy()
+
+class CaputureSetting(tkinter.Toplevel):
+    def __init__(self, title: str = "キャプチャ設定", width: int = 400, height: int = 300):
+        super().__init__()
+        self.title(title)
+        self.path = "recog/config.json"
+        
+        # JSONファイルから初期値を読み取り
+        try:
+            with open(self.path, "r") as json_file:
+                self.initial_data = json.load(json_file)
+        except FileNotFoundError:
+            self.initial_data = {"source_name": "", "host_name": "", "port": "", "password": "","use_capture": False}
+
+        # ラベルとエントリーの作成
+        self.source_label = tkinter.Label(self, text="ソース名:")
+        self.source_label.grid(row=0, column=0, padx=10, pady=5, sticky="e")
+        self.source_entry = tkinter.Entry(self)
+        self.source_entry.insert(0, self.initial_data["source_name"])
+        self.source_entry.grid(row=0, column=1, padx=10, pady=5)
+
+        self.host_label = tkinter.Label(self, text="ホスト名:")
+        self.host_label.grid(row=1, column=0, padx=10, pady=5, sticky="e")
+        self.host_entry = tkinter.Entry(self)
+        self.host_entry.insert(0, self.initial_data["host_name"])
+        self.host_entry.grid(row=1, column=1, padx=10, pady=5)
+
+        self.port_label = tkinter.Label(self, text="ポート:")
+        self.port_label.grid(row=2, column=0, padx=10, pady=5, sticky="e")
+        self.port_entry = tkinter.Entry(self)
+        self.port_entry.insert(0, self.initial_data["port"])
+        self.port_entry.grid(row=2, column=1, padx=10, pady=5)
+
+        self.password_label = tkinter.Label(self, text="パスワード:")
+        self.password_label.grid(row=3, column=0, padx=10, pady=5, sticky="e")
+        self.password_entry = tkinter.Entry(self)
+        self.password_entry.insert(0, self.initial_data["password"])
+        self.password_entry.grid(row=3, column=1, padx=10, pady=5)
+        
+        # チェックボックス
+        self.capture_var = tkinter.BooleanVar()
+        self.capture_var.set(self.initial_data["use_capture"])
+        self.capture_checkbox = tkinter.Checkbutton(self, text="キャプチャを利用する", variable=self.capture_var)
+        self.capture_checkbox.grid(row=4, column=0, columnspan=2, pady=5)
+
+        self.submit_button = MyButton(self, text="保存", command=self.submit_form)
+        self.submit_button.grid(row=5, column=0, pady=10)
+        self.cancel_button = MyButton(self, text="キャンセル", command=self.on_push_button)
+        self.cancel_button.grid(row=5, column=1, pady=10)
+        
+    def open(self, location=tuple[int, int]):
+        self.grab_set()
+        self.focus_set()
+        self.geometry("+{0}+{1}".format(location[0], location[1]))
+
+    def submit_form(self):
+        # 入力された値を取得
+        self.source_name = self.source_entry.get()
+        self.host_name = self.host_entry.get()
+        self.port = self.port_entry.get()
+        self.password = self.password_entry.get()
+        self.use_capture = self.capture_var.get()
+
+        # 入力された値をJSONファイルに保存
+        data = {
+            "source_name": self.source_name,
+            "host_name": self.host_name,
+            "port": self.port,
+            "password": self.password,
+            "use_capture": self.use_capture
+        }
+
+        with open(self.path, "w") as json_file:
+            json.dump(data, json_file, indent=2)
+            
+        self.destroy()
+        
     def on_push_button(self):
         self.destroy()

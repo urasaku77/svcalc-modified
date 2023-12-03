@@ -1,0 +1,7 @@
+{
+  "source_name": "capture1",
+  "host_name": "lovalhost",
+  "port": "4455",
+  "password": "panipani",
+  "use_capture": true
+}

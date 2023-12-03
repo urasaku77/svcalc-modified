@@ -1,12 +1,13 @@
 import dataclasses
-from tkinter import ttk, N, E, W, S, LEFT
+import tkinter
+from tkinter import ttk, N, E, W, S, LEFT, Menu
 from ttkthemes.themed_tk import ThemedTk
 from battle.DB_battle import DB_battle
 from battle.battle import Battle
 from component.button import MyButton
 from component.combobox import MyCombobox
 from component.const import FIELD_COMBOBOX_VALUES, WEATHER_COMBOBOX_VALUES
-from component.dialog import TypeSelectDialog, PartyInputDialog, RankSelectDialog
+from component.dialog import CaputureSetting, TypeSelectDialog, PartyInputDialog, RankSelectDialog
 from component.frame import ActivePokemonFrame, ChosenFrame, CountersFrame, HomeFrame, InfoFrame, RecordFrame, TimerFrame, WazaDamageListFrame, PartyFrame
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
@@ -33,6 +34,11 @@ class MainApp(ThemedTk):
         # button = MyButton(
         #     main_frame, size=(60, 10), text="TEST", command=self.test)
         # button.grid(row=0, column=0, columnspan=2)
+
+        menu = tkinter.Menu(self) 
+        self.config(menu=menu) 
+        menu.add_cascade(label='キャプチャ設定', command=self.capture_setting) 
+        menu.add_cascade(label='モード切替') 
 
         for i, side in enumerate(["自分側", "相手側"]):
             # パーティ表示フレーム
@@ -254,3 +260,8 @@ class MainApp(ThemedTk):
         self._chosen_frames[1].on_push_clear_button()
         self.timer_frame.reset_button_clicked()
         self.counter_frame.clear_all_counters()
+
+    def capture_setting(self):
+        dialog = CaputureSetting()
+        dialog.open(location=(self.winfo_x(), self.winfo_y()))
+        self.wait_window(dialog)
