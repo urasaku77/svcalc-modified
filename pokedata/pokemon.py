@@ -346,7 +346,7 @@ class Pokemon:
 
     @property
     def next_form_pid(self) -> Optional[str]:
-        if str(self.__no) in changeble_form_in_battle:
+        if self.__no in changeble_form_in_battle:
             return get_next_form(self.pid)
 
     @property
@@ -551,8 +551,8 @@ class Pokemon:
             self.__form = next_form.__form
             self.__form_name = next_form.__form_name
             self.__syuzoku.set_values_from_stats(next_form.syuzoku)
-            self.__ability = next_form.ability
-            self.__type = list(next_form.type)
+            # self.__ability = next_form.ability
+            # self.__type = list(next_form.type)
             self.statechanged()
 
     def on_stage(self):

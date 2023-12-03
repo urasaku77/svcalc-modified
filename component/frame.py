@@ -16,6 +16,7 @@ from pokedata.calc import DamageCalcResult
 from pokedata.const import Types, ABILITY_VALUES, Walls
 from pokedata.pokemon import Pokemon
 from pokedata.waza import WazaBase
+from pokedata.exception import changeble_form_in_battle
 
 if TYPE_CHECKING:
     from stage import Stage
@@ -29,6 +30,7 @@ class ActivePokemonFrame(ttk.LabelFrame):
                          padding=5,
                          **kwargs)
         self._player: int = player
+        self._pokemon: Pokemon = Pokemon()
         self._stage: Stage | None = None
         self.columnconfigure(2, weight=1)
 
@@ -97,6 +99,11 @@ class ActivePokemonFrame(ttk.LabelFrame):
 
         _rank_menu_frame = ttk.Frame(self)
         _rank_menu_frame.grid(column=3, row=3)
+        
+        self._form_button_state = tkinter.BooleanVar()
+        self._form_button_state.set(False)
+        self._form_button = MyButton(self, text='フォーム', state=tkinter.DISABLED, command=self.change_form)
+        self._form_button.grid(column=4, row=3, sticky=W)
 
         # ランク編集ボタン
         edit_btn = MyButton(
@@ -115,6 +122,7 @@ class ActivePokemonFrame(ttk.LabelFrame):
         clear_btn.grid(column=1, row=0)
 
     def set_pokemon(self, poke: Pokemon):
+        self._pokemon = poke
         self._pokemon_icon.set_pokemon_icon(pid=poke.pid, size=(60, 60))
         self._status_combobox.set(poke.status_text)
         self._item_combobox.set(poke.item)
@@ -124,6 +132,10 @@ class ActivePokemonFrame(ttk.LabelFrame):
         self._ability_value_combobox.set(poke.ability_value)
         self._teras_button.set_type(poke.battle_terastype)
         self._rank_label["text"] = poke.rank.rank_text
+        if poke.no in changeble_form_in_battle:
+            self._form_button["state"] = tkinter.NORMAL 
+        else:
+            self._form_button["state"] = tkinter.DISABLED 
 
     def set_stage(self, stage: Stage):
         self._stage = stage
@@ -196,6 +208,13 @@ class ActivePokemonFrame(ttk.LabelFrame):
 
     def on_push_rankclear_button(self):
         self._stage.clear_rank(self._player)
+    
+    def change_form(self):
+        self._pokemon.form_change()
+        self._pokemon_icon.set_pokemon_icon(pid=self._pokemon.pid, size=(60, 60))
+        self._status_combobox.set(self._pokemon.status_text)
+        self._stage.set_info(self._player)
+        self._stage.calc_damage()
 
 # 技・ダメージ表示リストフレーム
 class WazaDamageListFrame(ttk.LabelFrame):
