@@ -203,6 +203,10 @@ class Stage:
         for i in range(3):
             self.delete_chosen(player, i)
 
+    # 素早さ比較
+    def get_active_pokemons(self):
+        return self._active_pokemon
+
     # バトルの記録
     def record_battle(self):
         self._app.record_battle()

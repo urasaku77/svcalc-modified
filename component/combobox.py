@@ -72,3 +72,22 @@ class WazaNameCombobox(AutoCompleteCombobox):
             self.event_generate(MyCombobox.EVENT_SUBMIT)
         else:
             super().on_enter(*args)
+
+# 入力変更監視フォーム
+class ModifiedEntry(tk.Entry):
+
+    def __init__(self, *args, **kwargs):
+        # Entry自体の初期化は元のクラスと同様。
+        tk.Entry.__init__(self, *args, **kwargs)
+        self.sv = tk.StringVar()
+        # traceメソッドでStringVarの中身を監視。変更があったらvar_changedをコールバック
+        self.sv.trace('w',self.var_changed)
+        # EntryとStringVarを紐づけ。
+        self.configure(textvariable = self.sv)
+
+    # argsにはtrace発生元のVarの_nameが入っている
+    # argsのnameと内包StringVarの_nameが一致したらイベントを発生させる。
+    def var_changed(self, *args):
+        if args[0] == self.sv._name:
+            s = self.sv.get()
+            self.event_generate("<<TextModified>>")

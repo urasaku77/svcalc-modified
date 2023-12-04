@@ -7,7 +7,7 @@ from battle.battle import Battle
 from component.button import MyButton
 from component.combobox import MyCombobox
 from component.const import FIELD_COMBOBOX_VALUES, WEATHER_COMBOBOX_VALUES
-from component.dialog import CaputureSetting, TypeSelectDialog, PartyInputDialog, RankSelectDialog
+from component.dialog import CaputureSetting, SpeedComparing, TypeSelectDialog, PartyInputDialog, RankSelectDialog
 from component.frame import ActivePokemonFrame, ChosenFrame, CountersFrame, HomeFrame, InfoFrame, RecordFrame, TimerFrame, WazaDamageListFrame, PartyFrame
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
@@ -150,7 +150,7 @@ class MainApp(ThemedTk):
         self.field_frame.pack(fill = 'x', expand=0)
         
         # 素早さ比較ボタン
-        self.speed_button = MyButton(common_frame, text="素早さ比較", width=6, padding=5)
+        self.speed_button = MyButton(common_frame, text="素早さ比較", width=6, padding=5, command=self.speed_comparing)
         self.speed_button.pack(fill = 'both', expand=0)
 
         # 対戦記録フレーム
@@ -247,6 +247,15 @@ class MainApp(ThemedTk):
         self.wait_window(dialog)
         return dialog.party
     
+    # 素早さ比較画面
+    def speed_comparing(self):
+        pokemons: list[Pokemon] = self._stage.get_active_pokemons()
+        if pokemons[0].no != -1 and pokemons[1].no != -1:
+            dialog = SpeedComparing()
+            dialog.set_pokemon(pokemons)
+            dialog.open(location=(self.winfo_x(), self.winfo_y()))
+            self.wait_window(dialog)
+
     # 対戦登録
     def record_battle(self):
         battle = Battle.set_battle(self.record_frame, self._party_frames, self._chosen_frames)
@@ -261,6 +270,7 @@ class MainApp(ThemedTk):
         self.timer_frame.reset_button_clicked()
         self.counter_frame.clear_all_counters()
 
+    # キャプチャ設定画面
     def capture_setting(self):
         dialog = CaputureSetting()
         dialog.open(location=(self.winfo_x(), self.winfo_y()))
