@@ -19,6 +19,7 @@ class MainApp(ThemedTk):
     def __init__(self, *args, **kwargs):
         super().__init__(theme="arc", *args, **kwargs)
         self.title('SV Tool')
+        self.iconbitmap(default='image/favicon.ico')
 
         self._party_frames: list[PartyFrame] = []
         self._chosen_frames: list[ChosenFrame] = []
