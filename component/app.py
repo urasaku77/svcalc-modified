@@ -4,11 +4,8 @@ from tkinter import ttk, N, E, W, S, LEFT, Menu
 from ttkthemes.themed_tk import ThemedTk
 from battle.DB_battle import DB_battle
 from battle.battle import Battle
-from component.button import MyButton
-from component.combobox import MyCombobox
-from component.const import FIELD_COMBOBOX_VALUES, WEATHER_COMBOBOX_VALUES
 from component.dialog import CaputureSetting, SpeedComparing, TypeSelectDialog, PartyInputDialog, RankSelectDialog
-from component.frame import ActivePokemonFrame, ChosenFrame, CountersFrame, HomeFrame, InfoFrame, RecordFrame, TimerFrame, WazaDamageListFrame, PartyFrame
+from component.frame import ActivePokemonFrame, ChosenFrame, CountersFrame, FieldFrame, HomeFrame, InfoFrame, RecordFrame, SpeedButton, TimerFrame, WazaDamageListFrame, PartyFrame, WeatherFrame
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
 from pokedata.stats import Stats
@@ -135,23 +132,32 @@ class MainApp(ThemedTk):
         # 共通フレーム（天気・フィールド）
         common_frame = ttk.Frame(tool_frame)
         common_frame.pack(fill = 'both', expand=0, side='left')
-        
+
         # 天候フレーム
-        self.weather_frame = ttk.LabelFrame(common_frame, text="天候", width=150, height=55, padding=6)
-        self._weather_combobox = MyCombobox(self.weather_frame, width=17, height=30, values=WEATHER_COMBOBOX_VALUES)
-        self._weather_combobox.bind("<<ComboboxSelected>>", self.change_weather)
-        self._weather_combobox.pack()
+        self.weather_frame = WeatherFrame(
+            master=common_frame,
+            text="天候",
+            width=150,
+            height=55,
+            padding=6)
         self.weather_frame.pack(fill = 'x', expand=0)
 
         # フィールドフレーム
-        self.field_frame = ttk.LabelFrame(common_frame, text="フィールド", width=150, height=55, padding=6)
-        self._field_combobox = MyCombobox(self.field_frame, width=17, height=30, values=FIELD_COMBOBOX_VALUES)
-        self._field_combobox.bind("<<ComboboxSelected>>", self.change_field)
-        self._field_combobox.pack()
+        self.field_frame = FieldFrame(
+            master=common_frame,
+            text="フィールド",
+            width=150,
+            height=55,
+            padding=6)
         self.field_frame.pack(fill = 'x', expand=0)
         
         # 素早さ比較ボタン
-        self.speed_button = MyButton(common_frame, text="素早さ比較", width=6, padding=5, command=self.speed_comparing)
+        self.speed_button = SpeedButton(
+            master=common_frame,
+            text="素早さ比較",
+            width=6,
+            padding=5,
+            command=self.speed_comparing)
         self.speed_button.pack(fill = 'both', expand=0)
 
         # 対戦記録フレーム
@@ -186,6 +192,9 @@ class MainApp(ThemedTk):
             self._chosen_frames[i].set_stage(stage)
             self._active_poke_frames[i].set_stage(stage)
             self._waza_damage_frames[i].set_stage(stage)
+            self.weather_frame.set_stage(stage)
+            self.field_frame.set_stage(stage)
+            self.speed_button.set_stage(stage)
             self.record_frame.set_stage(stage)
 
     # パーティセット
@@ -215,14 +224,6 @@ class MainApp(ThemedTk):
     def test(self, *_args):
         self.edit_rank(0, Stats(2))
     
-    # 天気変更
-    def change_weather(self, *args):
-        self._stage.change_weather(self._weather_combobox.get())
-
-    # フィールド変更
-    def change_field(self, *args):
-        self._stage.change_field(self._field_combobox.get())
-
     # ランク変更
     def edit_rank(self, player: int, rank: Stats) -> Stats:
         loc_x = self.winfo_x() + self._waza_damage_frames[player].winfo_x()
@@ -247,10 +248,10 @@ class MainApp(ThemedTk):
         dialog.open(location=(self.winfo_x(), self.winfo_y()))
         self.wait_window(dialog)
         return dialog.party
-    
-    # 素早さ比較画面
+
+    # 素早さ比較
     def speed_comparing(self):
-        pokemons: list[Pokemon] = self._stage.get_active_pokemons()
+        pokemons = self.speed_button.get_active_pokemons()
         if pokemons[0].no != -1 and pokemons[1].no != -1:
             dialog = SpeedComparing()
             dialog.set_pokemon(pokemons)

@@ -27,8 +27,8 @@ class Stage:
     def set_party(self, index: int, party: list[Pokemon]):
         self._party[index] = party
 
-    def get_active_pokemon(self, index: int) -> Pokemon:
-        return self._active_pokemon[index]
+    def get_active_pokemons(self):
+        return self._active_pokemon
 
     def set_active_pokemon_from_index(self, player: int, index: int):
         pokemon = self._party[player][index]
@@ -202,10 +202,6 @@ class Stage:
     def clear_chosen(self, player: int):
         for i in range(3):
             self.delete_chosen(player, i)
-
-    # 素早さ比較
-    def get_active_pokemons(self):
-        return self._active_pokemon
 
     # バトルの記録
     def record_battle(self):

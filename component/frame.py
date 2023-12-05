@@ -593,6 +593,49 @@ class InfoFrame(ttk.LabelFrame):
             url = "https://yakkun.com/sv/zukan/?national_no=" + str(self._no)
             webbrowser.open(url)
 
+# 天気フレーム
+class WeatherFrame(ttk.LabelFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        
+        self._stage: Stage | None = None
+        self._weather_combobox = MyCombobox(self, width=17, height=30, values=WEATHER_COMBOBOX_VALUES)
+        self._weather_combobox.bind("<<ComboboxSelected>>", self.change_weather)
+        self._weather_combobox.pack()
+
+    def set_stage(self, stage: Stage):
+        self._stage = stage
+
+    def change_weather(self, *args):
+        self._stage.change_weather(self._weather_combobox.get())
+
+# フィールドフレーム
+class FieldFrame(ttk.LabelFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        
+        self._stage: Stage | None = None
+        self._field_combobox = MyCombobox(self, width=17, height=30, values=FIELD_COMBOBOX_VALUES)
+        self._field_combobox.bind("<<ComboboxSelected>>", self.change_field)
+        self._field_combobox.pack()
+
+    def set_stage(self, stage: Stage):
+        self._stage = stage
+
+    def change_field(self, *args):
+        self._stage.change_field(self._field_combobox.get())
+
+# 素早さ比較ボタン
+class SpeedButton(MyButton):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+
+    def set_stage(self, stage: Stage):
+        self._stage = stage
+
+    def get_active_pokemons(self):
+        return self._stage.get_active_pokemons()
+
 # HOME情報フレーム
 class HomeFrame(ttk.LabelFrame):
     def __init__(self, master, **kwargs):
@@ -663,17 +706,17 @@ class TimerFrame(ttk.LabelFrame):
         self.after_id = 0 # after_id変数を定義
         self.button_text = tkinter.StringVar()
         self.button_text.set("スタート")
- 
+
         self.bg=tkinter.StringVar()
         self.canvas_time = tkinter.Canvas(self, width=140, height=70, bg="lightgreen")
         self.canvas_time.grid(column=0, row=0, columnspan=2)
- 
+
         start_button = tkinter.Button(self, width=9, height=2, textvariable=self.button_text, command=self.start_button_clicked)
         start_button.grid(column=0, row=1)
 
         self.reset_button = tkinter.Button(self, width=9, height=2, text="リセット", command=self.reset_button_clicked)
         self.reset_button.grid(column=1, row=1)
-        
+
         self.update_min_text()
         self.update_sec_text()
 
