@@ -1,3 +1,4 @@
+import json
 from component.app import MainApp
 from pokedata.calc import DamageCalc
 from pokedata.const import Ailments, Walls, Weathers, Fields, Types
@@ -42,6 +43,16 @@ class Stage:
         self._active_pokemon[player] = pokemon
         # self._active_pokemon[player].statechanged_handler = self.on_activepokemon_statechanged
         self._app.set_active_pokemon(player=player, pokemon=pokemon)
+        
+        # JSONファイルから設定値を読み取り
+        try:
+            with open("recog/setting.json", "r") as json_file:
+                self.setting_data = json.load(json_file)
+        except FileNotFoundError:
+            self.setting_data = {"active_chosen_auto": True}
+
+        if self.setting_data["active_chosen_auto"] and player == 1:
+            self.set_chosen(1)
 
     def on_activepokemon_statechanged(self):
         pass

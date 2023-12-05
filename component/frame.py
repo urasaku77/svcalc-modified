@@ -557,7 +557,7 @@ class InfoFrame(ttk.LabelFrame):
         self.weight_text = ttk.Label(self, textvariable=self.weight, font=(const.FONT_FAMILY, 11))
         self.weight_text.grid(column=8, row=2, columnspan=8, sticky=W)
         
-        self.poketetsu_button = tkinter.Button(self, text="ポケ徹", command=self.open_poketetsu)
+        self.poketetsu_button = MyButton(self, text="ポケ徹", command=self.open_poketetsu)
         self.poketetsu_button.grid(column=11, row=0, columnspan=5)
 
     def set_info(self, pokemon: Pokemon):

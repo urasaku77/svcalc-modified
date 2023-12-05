@@ -4,7 +4,7 @@ from tkinter import ttk, N, E, W, S, LEFT, Menu
 from ttkthemes.themed_tk import ThemedTk
 from battle.DB_battle import DB_battle
 from battle.battle import Battle
-from component.dialog import CaputureSetting, SpeedComparing, TypeSelectDialog, PartyInputDialog, RankSelectDialog
+from component.dialog import CaputureSetting, ModeSetting, SpeedComparing, TypeSelectDialog, PartyInputDialog, RankSelectDialog
 from component.frame import ActivePokemonFrame, ChosenFrame, CountersFrame, FieldFrame, HomeFrame, InfoFrame, RecordFrame, SpeedButton, TimerFrame, WazaDamageListFrame, PartyFrame, WeatherFrame
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
@@ -15,7 +15,7 @@ class MainApp(ThemedTk):
 
     def __init__(self, *args, **kwargs):
         super().__init__(theme="arc", *args, **kwargs)
-        self.title('SV Tool')
+        self.title('SV Auto Damage Calculator')
         self.iconbitmap(default='image/favicon.ico')
 
         self._party_frames: list[PartyFrame] = []
@@ -36,7 +36,7 @@ class MainApp(ThemedTk):
         menu = tkinter.Menu(self) 
         self.config(menu=menu) 
         menu.add_cascade(label='キャプチャ設定', command=self.capture_setting) 
-        menu.add_cascade(label='モード切替') 
+        menu.add_cascade(label='モード切替', command=self.mode_setting) 
 
         for i, side in enumerate(["自分側", "相手側"]):
             # パーティ表示フレーム
@@ -275,5 +275,11 @@ class MainApp(ThemedTk):
     # キャプチャ設定画面
     def capture_setting(self):
         dialog = CaputureSetting()
+        dialog.open(location=(self.winfo_x(), self.winfo_y()))
+        self.wait_window(dialog)
+
+    # モード切替画面
+    def mode_setting(self):
+        dialog=ModeSetting()
         dialog.open(location=(self.winfo_x(), self.winfo_y()))
         self.wait_window(dialog)
