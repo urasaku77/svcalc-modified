@@ -673,23 +673,23 @@ class HomeFrame(ttk.LabelFrame):
             self._tree_list[i].delete(*self._tree_list[i].get_children())
             for j in range(len(data_list)):
                 self._tree_list[i].insert(parent='', index='end', iid=self._type[i][0] + str(j) ,values=(j+1, data_list[j][0], data_list[j][1]))
-        self._tree_list[0].bind("<<TreeviewSelect>>", lambda e: self.select_record(0))
-        self._tree_list[1].bind("<<TreeviewSelect>>", lambda e: self.select_record(1))
-        self._tree_list[3].bind("<<TreeviewSelect>>", lambda e: self.select_record(3))
+                self._tree_list[i].bind("<<TreeviewSelect>>", lambda e, index=i: self.select_record(index))             
 
     def select_record(self, index: int):
-        # 選択行の判別
-        record_id = self._tree_list[index].focus()
-        # 選択行のレコードを取得
-        value = self._tree_list[index].item(record_id, 'values')
-        print(len(value))
-        match index:
-            case 0:
-                self._stage.set_value_to_active_pokemon(player=1, item=value[1])
-            case 1:
-                self._stage.set_value_to_active_pokemon(player=1, ability=value[1])
-            case 3:
-                self._stage.set_value_to_active_pokemon(player=1, terastype=Types.get(value[1]))
+        if self._tree_list[index].selection():
+            # 選択行の判別
+            record_id = self._tree_list[index].focus()
+            # 選択行のレコードを取得
+            value = self._tree_list[index].item(record_id, 'values')
+            match index:
+                case 0:
+                    self._stage.set_value_to_active_pokemon(player=1, item=value[1], is_same=True)
+                case 1:
+                    self._stage.set_value_to_active_pokemon(player=1, ability=value[1], is_same=True)
+                case 2:
+                    self._tree_list[index].selection_remove(self._tree_list[index].selection())
+                case 3:
+                    self._stage.set_value_to_active_pokemon(player=1, terastype=Types.get(value[1]), is_same=True)
     
 # タイマーフレーム
 class TimerFrame(ttk.LabelFrame):

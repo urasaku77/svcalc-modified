@@ -73,6 +73,7 @@ class Stage:
             critical: bool = False,
             ailment: Ailments = Ailments.なし,
             charging: bool = False,
+            is_same: bool = False,
             ):
         pokemon = self._active_pokemon[player]
         if seikaku is not None:
@@ -82,15 +83,24 @@ class Stage:
             pokemon.doryoku.set_values_from_string(doryoku_text)
             self._app.set_active_pokemon(player, pokemon)
         if item is not None:
-            pokemon.item = item
+            if is_same and pokemon.item == item:
+                pokemon.item = ""
+            else:
+                pokemon.item = item
         if ability is not None:
-            pokemon.ability = ability
+            if is_same and pokemon.ability == ability:
+                pokemon.ability = ""
+            else:
+                pokemon.ability = ability
         if ability_value is not None:
             pokemon.ability_value = ability_value
         if wall is not None:
             pokemon.wall = wall
         if terastype is not None:
-            pokemon.battle_terastype = terastype
+            if is_same and pokemon.battle_terastype == terastype:
+                pokemon.battle_terastype = Types.なし
+            else:
+                pokemon.battle_terastype = terastype
         if waza is not None:
             pokemon.set_waza(waza_name=waza[1], index=waza[0])
             self._app.set_active_pokemon(player, pokemon)
