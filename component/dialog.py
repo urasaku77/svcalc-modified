@@ -430,7 +430,7 @@ class SpeedComparing(tkinter.Toplevel):
         self.geometry("+{0}+{1}".format(location[0], location[1]))
 
 # キャプチャ設定画面
-class CaputureSetting(tkinter.Toplevel):
+class CaptureSetting(tkinter.Toplevel):
     def __init__(self, title: str = "キャプチャ設定", width: int = 400, height: int = 300):
         super().__init__()
         self.title(title)

@@ -4,11 +4,12 @@ from tkinter import ttk, N, E, W, S, LEFT, Menu
 from ttkthemes.themed_tk import ThemedTk
 from battle.DB_battle import DB_battle
 from battle.battle import Battle
-from component.dialog import CaputureSetting, ModeSetting, SpeedComparing, TypeSelectDialog, PartyInputDialog, RankSelectDialog
+from component.dialog import CaptureSetting, ModeSetting, SpeedComparing, TypeSelectDialog, PartyInputDialog, RankSelectDialog
 from component.frame import ActivePokemonFrame, ChosenFrame, CountersFrame, FieldFrame, HomeFrame, InfoFrame, RecordFrame, SpeedButton, TimerFrame, WazaDamageListFrame, PartyFrame, WeatherFrame
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
 from pokedata.stats import Stats
+from recog.capture import Capture
 
 
 class MainApp(ThemedTk):
@@ -17,6 +18,7 @@ class MainApp(ThemedTk):
         super().__init__(theme="arc", *args, **kwargs)
         self.title('SV Auto Damage Calculator')
         self.iconbitmap(default='image/favicon.ico')
+        self.capture = Capture()
 
         self._party_frames: list[PartyFrame] = []
         self._chosen_frames: list[ChosenFrame] = []
@@ -29,9 +31,9 @@ class MainApp(ThemedTk):
         main_frame.grid(row=0, column=0, sticky=N+E+W+S)
 
         # テスト用ボタン
-        # button = MyButton(
-        #     main_frame, size=(60, 10), text="TEST", command=self.test)
-        # button.grid(row=0, column=0, columnspan=2)
+        button = tkinter.Button(
+            main_frame, text="TEST", command=self.image_recognize)
+        button.grid(row=0, column=0, columnspan=2)
 
         menu = tkinter.Menu(self) 
         self.config(menu=menu) 
@@ -150,7 +152,7 @@ class MainApp(ThemedTk):
             height=55,
             padding=6)
         self.field_frame.pack(fill = 'x', expand=0)
-        
+
         # 素早さ比較ボタン
         self.speed_button = SpeedButton(
             master=common_frame,
@@ -182,6 +184,8 @@ class MainApp(ThemedTk):
         self.rowconfigure(0, weight=True)
 
         self._stage = None
+        
+        self.capture.connect_websocket()
 
     # 各フレームにStageクラスを配置
     def set_stage(self, stage):
@@ -274,7 +278,7 @@ class MainApp(ThemedTk):
 
     # キャプチャ設定画面
     def capture_setting(self):
-        dialog = CaputureSetting()
+        dialog = CaptureSetting()
         dialog.open(location=(self.winfo_x(), self.winfo_y()))
         self.wait_window(dialog)
 
@@ -283,3 +287,18 @@ class MainApp(ThemedTk):
         dialog=ModeSetting()
         dialog.open(location=(self.winfo_x(), self.winfo_y()))
         self.wait_window(dialog)
+
+    # 画像認識処理
+    def image_recognize(self):
+        result = self.capture.image_recognize()
+        print(type(result))
+        match result:
+            case list():
+                self._party_frames[1].set_party_from_capture(result)
+            case tuple():
+                self._chosen_frames[0].set_chosen_from_capture(list(result))
+            case bool():
+                if result:
+                    self.timer_frame.start_button_clicked()
+            case int():
+                pass

@@ -191,13 +191,13 @@ class Stage:
         self._app.set_party(player=player, party=party)
 
     # パーティの読み込み
-    def load_party(self, player: int):
+    def load_party(self, player: int, party:list[Pokemon]=[]):
         from pokedata.loader import get_party_data
-        party = []
-        for i, data in enumerate(get_party_data()):
-            pokemon: Pokemon = Pokemon.by_name(data[0])
-            pokemon.set_load_data(data, True)
-            party.append(pokemon)
+        if len(party) ==0:
+            for i, data in enumerate(get_party_data()):
+                pokemon: Pokemon = Pokemon.by_name(data[0])
+                pokemon.set_load_data(data, True)
+                party.append(pokemon)
         self._party[player] = party
         self._app.set_party(player=player, party=party)
 
@@ -206,13 +206,19 @@ class Stage:
         party = [Pokemon()] * 6
         self._party[player] = party
         self._app.set_party(player=player, party=party)
-    
+
     # 選出の登録
-    def set_chosen(self, player: int):
-        index_list = [ i for i, p in enumerate(self._chosen[player]) if p.no == -1]
-        if len(index_list) != 0 and len(list(filter(lambda p: p.name == self._active_pokemon[player].name, self._chosen[player]))) == 0:
-            self._app.set_chosen(player, self._active_pokemon[player], index_list[0])
-            self._chosen[player][index_list[0]] = self._active_pokemon[player]
+    def set_chosen(self, player: int, index: list[int]=[]):
+        if len(index) == 0:
+            index_list = [ i for i, p in enumerate(self._chosen[player]) if p.is_empty]
+            if len(index_list) != 0 and len(list(filter(lambda p: p.name == self._active_pokemon[player].name, self._chosen[player]))) == 0:
+                self._app.set_chosen(player, self._active_pokemon[player], index_list[0])
+                self._chosen[player][index_list[0]] = self._active_pokemon[player]
+        else:
+            for i in range(len(index)):
+                pokemon = self._party[player][index[i]] if index[i] != -1 else Pokemon()
+                self._app.set_chosen(player, pokemon, i)
+                self._chosen[player][i] = pokemon
     
     # 選出の削除
     def delete_chosen(self, player: int, index: int):

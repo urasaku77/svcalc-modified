@@ -422,6 +422,10 @@ class PartyFrame(ttk.LabelFrame):
             else:
                 self._button_list[i].set_image(images.get_blank_image(size=(30, 30)))
                 self._pokemon_list[i] = "-1"
+    
+    def set_party_from_capture(self, party: list[Pokemon]):
+        self._stage.load_party(1, party)
+        self.set_party(party)
 
     def on_push_pokemon_button(self, index: int):
         self._stage.set_active_pokemon_from_index(player=self._player, index=index)
@@ -473,6 +477,9 @@ class ChosenFrame(ttk.LabelFrame):
         else:
             self._button_list[index].set_image(images.get_blank_image(size=(30, 30)))
             self._pokemon_list[index] = "-1"
+
+    def set_chosen_from_capture(self, index:list[int]):
+        self._stage.set_chosen(0, index)
 
     def on_push_pokemon_button(self, index: int):
         self._stage.delete_chosen(self._player, index)
