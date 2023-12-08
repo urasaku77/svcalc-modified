@@ -4,7 +4,7 @@ from tkinter import ttk, N, E, W, S, LEFT, Menu
 from ttkthemes.themed_tk import ThemedTk
 from battle.DB_battle import DB_battle
 from battle.battle import Battle
-from component.dialog import CaptureSetting, ModeSetting, SpeedComparing, TypeSelectDialog, PartyInputDialog, RankSelectDialog
+from component.dialog import CaptureSetting, FormSelect, ModeSetting, SpeedComparing, TypeSelectDialog, PartyInputDialog, RankSelectDialog
 from component.frame import ActivePokemonFrame, ChosenFrame, CountersFrame, FieldFrame, HomeFrame, InfoFrame, RecordFrame, SpeedButton, TimerFrame, WazaDamageListFrame, PartyFrame, WeatherFrame
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
@@ -291,7 +291,6 @@ class MainApp(ThemedTk):
     # 画像認識処理
     def image_recognize(self):
         result = self.capture.image_recognize()
-        print(type(result))
         match result:
             case list():
                 self._party_frames[1].set_party_from_capture(result)
@@ -302,3 +301,11 @@ class MainApp(ThemedTk):
                     self.timer_frame.start_button_clicked()
             case int():
                 pass
+
+    # フォーム選択画面
+    def form_select(self, no: int):
+        dialog=FormSelect()
+        dialog.set_pokemon(no)
+        dialog.open(location=(self.winfo_x(), self.winfo_y()))
+        self.wait_window(dialog)
+        return dialog.form_num

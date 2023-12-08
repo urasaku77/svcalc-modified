@@ -8,6 +8,7 @@ from component import images
 from component.button import TypeButton, MyButton
 from component.combobox import AutoCompleteCombobox, ModifiedEntry
 from component.label import MyLabel
+from data.db import DB
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
 from pokedata.stats import Stats, StatsKey
@@ -554,4 +555,28 @@ class ModeSetting(tkinter.Toplevel):
         self.destroy()
         
     def on_push_button(self):
+        self.destroy()
+
+# フォーム選択画面
+class FormSelect(tkinter.Toplevel):
+    def __init__(self, title: str = "フォーム選択", width: int = 400, height: int = 300):
+        super().__init__()
+        self.title(title)
+        self.form_num = -1
+        
+    def set_pokemon(self, num: int):
+        self.no = str(num)
+        self.pokemon_names = DB.get_pokemons_name_by_no(self.no)
+
+        for i in range(len(self.pokemon_names)):
+            self.form_button = MyButton(self, text=self.pokemon_names[i], command=lambda index=i: self.on_push_button(index))
+            self.form_button.grid(row=1, column=i, pady=10)
+
+    def open(self, location=tuple[int, int]):
+        self.grab_set()
+        self.focus_set()
+        self.geometry("+{0}+{1}".format(location[0], location[1]))
+
+    def on_push_button(self, index):
+        self.form_num = index
         self.destroy()

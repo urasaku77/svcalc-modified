@@ -1,5 +1,7 @@
 import json
 from component.app import MainApp
+from component.dialog import FormSelect
+from data.db import DB
 from pokedata.calc import DamageCalc
 from pokedata.const import Ailments, Walls, Weathers, Fields, Types
 from pokedata.pokemon import Pokemon
@@ -32,11 +34,17 @@ class Stage:
         return self._active_pokemon
 
     def set_active_pokemon_from_index(self, player: int, index: int):
-        pokemon = self._party[player][index]
-        pokemon.on_stage()
-        if pokemon.is_empty is False:
-            self.set_active_pokemon(player, self._party[player][index])
-            self.calc_damage()
+        if not self._party[player][index].form_selected:
+            form = self._app.form_select(self._party[player][index].no)
+            if form != -1:
+                self._party[player][index] = Pokemon.by_pid(str(self._party[player][index].no) + "-" + str(form), True)
+
+        if self._party[player][index].form_selected:
+            self.pokemon = self._party[player][index]
+            self.pokemon.on_stage()
+            if self.pokemon.is_empty is False:
+                self.set_active_pokemon(player, self.pokemon)
+                self.calc_damage()
 
     def set_active_pokemon(self, player: int, pokemon: Pokemon):
         # self._active_pokemon[player].statechanged_handler = None
@@ -240,7 +248,8 @@ class Stage:
 
     # 選出の基本情報表示            
     def set_info(self, player: int):
-        self._app.set_info(player, self._active_pokemon[player])
+        if self._active_pokemon[player].form != -1:
+            self._app.set_info(player, self._active_pokemon[player])
 
     @property
     def weather(self) -> Weathers:
