@@ -147,7 +147,6 @@ class Stage:
         pokemon = self._active_pokemon[player]
         if pokemon.is_empty is False:
             pokemon.rank.set_values_from_stats(rank)
-            self._app.set_active_pokemon(player, pokemon)
             self.calc_damage()
 
     # ランクのクリア

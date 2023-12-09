@@ -122,6 +122,7 @@ class ActivePokemonFrame(ttk.LabelFrame):
         self._ability_combobox["values"] = poke.abilities
         self._ability_combobox.set(poke.ability)
         self.set_ability_values(poke.ability)
+        self._rank_label.change_all_box(Stats(init_value=0))
         self._ability_value_combobox.set(poke.ability_value)
         self._teras_button.set_type(poke.battle_terastype)
         if poke.no in changeble_form_in_battle:
@@ -238,10 +239,16 @@ class RankFrame(ttk.Frame):
         return self._rank
 
     def set_rank(self, rank: Stats):
-        for key in [x for x in StatsKey if x != StatsKey.H]:
-            self.set_rank_value(key, rank[key])
+        self.change_all_box(rank)
+        if self._stage is not None:
+            self._stage.edit_rank(self._player, self._rank)
 
     def set_rank_value(self, key: StatsKey, value: int):
+        self.change_box(key, value)
+        if self._stage is not None:
+            self._stage.edit_rank(self._player, self._rank)
+    
+    def change_box(self, key: StatsKey, value: int):
         self._rank[key] = value
         self._spinbox_dict[key].select_clear()
         if value > 0:
@@ -250,8 +257,10 @@ class RankFrame(ttk.Frame):
         else:
             self._spinbox_dict[key].set(value)
             self._spinbox_dict[key]["foreground"] = "steel blue" if value < 0 else ""
-        if self._stage is not None:
-            self._stage.edit_rank(self._player, self._rank)
+    
+    def change_all_box(self, rank: Stats):
+        for key in [x for x in StatsKey if x != StatsKey.H]:
+            self.change_box(key, rank[key])
 
     def on_push_spin(self, key: StatsKey):
         self.set_rank_value(key, int(self._spinbox_dict[key].get()))
