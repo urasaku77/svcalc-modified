@@ -15,6 +15,7 @@ from component.label import MyLabel
 from pokedata.calc import DamageCalcResult
 from pokedata.const import Types, ABILITY_VALUES, Walls
 from pokedata.pokemon import Pokemon
+from pokedata.stats import Stats, StatsKey
 from pokedata.waza import WazaBase
 from pokedata.exception import changeble_form_in_battle
 
@@ -94,32 +95,24 @@ class ActivePokemonFrame(ttk.LabelFrame):
         self.charging.set(False)
         self.charging_check.grid(column=4, row=2, sticky=W)
 
-        self._rank_label = MyLabel(self, anchor=tkinter.W)
-        self._rank_label.grid(column=2, row=3, sticky=W+E)
+        self._rank_label = RankFrame(self, player)
+        self._rank_label.grid(column=2, row=3, columnspan=2, sticky=W+E)
 
-        _rank_menu_frame = ttk.Frame(self)
-        _rank_menu_frame.grid(column=3, row=3)
+        # ランククリアボタンととフォーム変更ボタン
+        other_button_frame = ttk.Frame(self)
+        other_button_frame.grid(column=4, row=3)
         
         self._form_button_state = tkinter.BooleanVar()
         self._form_button_state.set(False)
-        self._form_button = MyButton(self, text='フォーム', state=tkinter.DISABLED, command=self.change_form)
-        self._form_button.grid(column=4, row=3, sticky=W)
+        self._form_button = MyButton(other_button_frame, text='フォーム', state=tkinter.DISABLED, command=self.change_form)
+        self._form_button.grid(column=1, row=0, sticky=W)
 
-        # ランク編集ボタン
-        edit_btn = MyButton(
-            master=_rank_menu_frame,
-            image=images.get_menu_icon("edit"), padding=0,
-            command=lambda: self.on_push_rankedit_button()
-        )
-        edit_btn.grid(column=0, row=0)
-
-        # ランククリアボタン
         clear_btn = MyButton(
-            master=_rank_menu_frame,
+            master=other_button_frame,
             image=images.get_menu_icon("trush"), padding=0,
             command=lambda: self.on_push_rankclear_button()
         )
-        clear_btn.grid(column=1, row=0)
+        clear_btn.grid(column=0, row=0)
 
     def set_pokemon(self, poke: Pokemon):
         self._pokemon = poke
@@ -131,7 +124,6 @@ class ActivePokemonFrame(ttk.LabelFrame):
         self.set_ability_values(poke.ability)
         self._ability_value_combobox.set(poke.ability_value)
         self._teras_button.set_type(poke.battle_terastype)
-        self._rank_label["text"] = poke.rank.rank_text
         if poke.no in changeble_form_in_battle:
             self._form_button["state"] = tkinter.NORMAL 
         else:
@@ -203,9 +195,6 @@ class ActivePokemonFrame(ttk.LabelFrame):
     def on_push_terasbutton(self, *_args):
         self._stage.select_terastype(self._player)
 
-    def on_push_rankedit_button(self):
-        self._stage.edit_rank(self._player)
-
     def on_push_rankclear_button(self):
         self._stage.clear_rank(self._player)
     
@@ -215,6 +204,58 @@ class ActivePokemonFrame(ttk.LabelFrame):
         self._status_combobox.set(self._pokemon.status_text)
         self._stage.set_info(self._player)
         self._stage.calc_damage()
+
+# ランクフレーム
+class RankFrame(ttk.Frame):
+    def __init__(self, master, player: int, **kwargs):
+        super().__init__(master, **kwargs)
+        self._rank: Stats = Stats(0)
+        self._spinbox_dict = {}
+        self._player = player
+        self._stage: Stage | None = None
+
+        for i, statskey in enumerate([x for x in StatsKey if x != StatsKey.H]):
+            label = MyLabel(self, text=statskey.name, anchor=tkinter.CENTER)
+            label.grid(column=i, row=0, padx=2, sticky=W+E)
+
+            spin = ttk.Spinbox(self,
+                               from_=-6,
+                               to=6,
+                               increment=1,
+                               state="readonly",
+                               width=3,
+                               command=lambda key=statskey: self.on_push_spin(key))
+            spin.grid(column=i, row=1, padx=2)
+            self._spinbox_dict[statskey] = spin
+
+        self.set_rank(self._rank)        
+
+    def set_stage(self, stage: Stage):
+        self._stage = stage
+
+    @property
+    def rank(self) -> Stats:
+        return self._rank
+
+    def set_rank(self, rank: Stats):
+        for key in [x for x in StatsKey if x != StatsKey.H]:
+            self.set_rank_value(key, rank[key])
+
+    def set_rank_value(self, key: StatsKey, value: int):
+        self._rank[key] = value
+        self._spinbox_dict[key].select_clear()
+        if value > 0:
+            self._spinbox_dict[key].set("+" + str(value))
+            self._spinbox_dict[key]["foreground"] = "coral"
+        else:
+            self._spinbox_dict[key].set(value)
+            self._spinbox_dict[key]["foreground"] = "steel blue" if value < 0 else ""
+        if self._stage is not None:
+            self._stage.edit_rank(self._player, self._rank)
+
+    def on_push_spin(self, key: StatsKey):
+        self.set_rank_value(key, int(self._spinbox_dict[key].get()))
+
 
 # 技・ダメージ表示リストフレーム
 class WazaDamageListFrame(ttk.LabelFrame):

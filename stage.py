@@ -143,21 +143,16 @@ class Stage:
         self.calc_damage()
 
     # ランク編集
-    def edit_rank(self, player: int):
+    def edit_rank(self, player: int, rank: Stats):
         pokemon = self._active_pokemon[player]
         if pokemon.is_empty is False:
-            rank: Stats = self._app.edit_rank(player, pokemon.rank)
             pokemon.rank.set_values_from_stats(rank)
             self._app.set_active_pokemon(player, pokemon)
             self.calc_damage()
 
     # ランクのクリア
     def clear_rank(self, player: int):
-        pokemon = self._active_pokemon[player]
-        if pokemon.is_empty is False:
-            pokemon.rank.init_values(0)
-            self._app.set_active_pokemon(player, pokemon)
-            self.calc_damage()
+        self._app.clear_rank(player)
 
     # 戦闘時テラスタイプ変更
     def select_terastype(self, player: int):

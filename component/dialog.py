@@ -130,64 +130,6 @@ class TypeSelectDialog(tkinter.Toplevel):
         self.destroy()
 
 
-# ランク編集ダイアログ
-class RankSelectDialog(tkinter.Toplevel):
-    def __init__(self, title: str = "ランク変更", width: int = 400, height: int = 300):
-        super().__init__()
-        self.title(title)
-        self._rank: Stats = Stats(0)
-        self._spinbox_dict = {}
-
-        for i, statskey in enumerate([x for x in StatsKey if x != StatsKey.H]):
-            label = MyLabel(self, text=statskey.name, anchor=tkinter.CENTER)
-            label.grid(column=i, row=0, padx=2, sticky=W+E)
-
-            spin = ttk.Spinbox(self,
-                               from_=-6,
-                               to=6,
-                               increment=1,
-                               state="readonly",
-                               width=3,
-                               command=lambda key=statskey: self.on_push_spin(key))
-            spin.grid(column=i, row=1, padx=2)
-            self._spinbox_dict[statskey] = spin
-
-        self.set_rank(self._rank)
-
-        btn = MyButton(
-            self, text="決定", width=4,
-            command=lambda: self.on_push_button())
-        btn.grid(column=6, row=1, padx=2)
-
-    @property
-    def rank(self) -> Stats:
-        return self._rank
-
-    def set_rank(self, rank: Stats):
-        for key in [x for x in StatsKey if x != StatsKey.H]:
-            self.set_rank_value(key, rank[key])
-
-    def set_rank_value(self, key: StatsKey, value: int):
-        self._rank[key] = value
-        self._spinbox_dict[key].select_clear()
-        if value > 0:
-            self._spinbox_dict[key].set("+" + str(value))
-            self._spinbox_dict[key]["foreground"] = "coral"
-        else:
-            self._spinbox_dict[key].set(value)
-            self._spinbox_dict[key]["foreground"] = "steel blue" if value < 0 else ""
-
-    def open(self, location=tuple[int, int]):
-        self.grab_set()
-        self.focus_set()
-        self.geometry("+{0}+{1}".format(location[0], location[1]))
-
-    def on_push_spin(self, key: StatsKey):
-        self.set_rank_value(key, int(self._spinbox_dict[key].get()))
-
-    def on_push_button(self):
-        self.destroy()
-
 # 素早さ比較画面
 class SpeedComparing(tkinter.Toplevel):
     def on_validate_2(self, P, V):

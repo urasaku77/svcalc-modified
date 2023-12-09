@@ -5,7 +5,7 @@ from ttkthemes.themed_tk import ThemedTk
 from battle.DB_battle import DB_battle
 from battle.battle import Battle
 from component.button import MyButton
-from component.dialog import CaptureSetting, FormSelect, ModeSetting, SpeedComparing, TypeSelectDialog, PartyInputDialog, RankSelectDialog
+from component.dialog import CaptureSetting, FormSelect, ModeSetting, SpeedComparing, TypeSelectDialog, PartyInputDialog
 from component.frame import ActivePokemonFrame, ChosenFrame, CountersFrame, FieldFrame, HomeFrame, InfoFrame, RecordFrame, SpeedButton, TimerFrame, WazaDamageListFrame, PartyFrame, WeatherFrame
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
@@ -77,7 +77,7 @@ class MainApp(ThemedTk):
                 master=main_frame,
                 player=i,
                 width=530,
-                height=150,
+                height=170,
                 text=side + "ポケモン")
             poke_frame.grid(row=3, column=i*3, columnspan=3, sticky=N+E+W+S)
             poke_frame.grid_propagate(False)
@@ -213,6 +213,7 @@ class MainApp(ThemedTk):
             self._party_frames[i].set_stage(stage)
             self._chosen_frames[i].set_stage(stage)
             self._active_poke_frames[i].set_stage(stage)
+            self._active_poke_frames[i]._rank_label.set_stage(stage)
             self._waza_damage_frames[i].set_stage(stage)
             self.weather_frame.set_stage(stage)
             self.field_frame.set_stage(stage)
@@ -243,15 +244,9 @@ class MainApp(ThemedTk):
     def set_calc_results(self, player: int, results):
         self._waza_damage_frames[player].set_damages(results)
 
-    # ランク変更
-    def edit_rank(self, player: int, rank: Stats) -> Stats:
-        loc_x = self.winfo_x() + self._waza_damage_frames[player].winfo_x()
-        loc_y = self.winfo_y() + self._waza_damage_frames[player].winfo_y()
-        dialog = RankSelectDialog()
-        dialog.set_rank(rank)
-        dialog.open(location=(loc_x, loc_y))
-        self.wait_window(dialog)
-        return dialog.rank
+    # ランクのクリア
+    def clear_rank(self, player: int):
+        self._active_poke_frames[player]._rank_label.set_rank(Stats(init_value=0))
 
     # タイプ選択
     def select_type(self, player: int) -> Types:
