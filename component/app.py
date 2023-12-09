@@ -4,6 +4,7 @@ from tkinter import ttk, N, E, W, S, LEFT, Menu
 from ttkthemes.themed_tk import ThemedTk
 from battle.DB_battle import DB_battle
 from battle.battle import Battle
+from component.button import MyButton
 from component.dialog import CaptureSetting, FormSelect, ModeSetting, SpeedComparing, TypeSelectDialog, PartyInputDialog, RankSelectDialog
 from component.frame import ActivePokemonFrame, ChosenFrame, CountersFrame, FieldFrame, HomeFrame, InfoFrame, RecordFrame, SpeedButton, TimerFrame, WazaDamageListFrame, PartyFrame, WeatherFrame
 from pokedata.const import Types
@@ -19,6 +20,8 @@ class MainApp(ThemedTk):
         self.title('SV Auto Damage Calculator')
         self.iconbitmap(default='image/favicon.ico')
         self.capture = Capture()
+        self.websocket = False
+        self.monitor = False
 
         self._party_frames: list[PartyFrame] = []
         self._chosen_frames: list[ChosenFrame] = []
@@ -29,11 +32,6 @@ class MainApp(ThemedTk):
         # メインフレーム
         main_frame = ttk.Frame(self, padding=10)
         main_frame.grid(row=0, column=0, sticky=N+E+W+S)
-
-        # テスト用ボタン
-        button = tkinter.Button(
-            main_frame, text="TEST", command=self.image_recognize)
-        button.grid(row=0, column=0, columnspan=2)
 
         menu = tkinter.Menu(self) 
         self.config(menu=menu) 
@@ -51,7 +49,7 @@ class MainApp(ThemedTk):
             party_frame.grid(row=1, column=i*3, columnspan=2, sticky=N+E+W+S)
             party_frame.grid_propagate(False)
             self._party_frames.append(party_frame)
-            
+
             # 選出表示フレーム
             chosen_frame = ChosenFrame(
                 master=main_frame,
@@ -62,13 +60,13 @@ class MainApp(ThemedTk):
             chosen_frame.grid(row=1, column=i*3+2, sticky=N+E+W+S)
             chosen_frame.grid_propagate(False)
             self._chosen_frames.append(chosen_frame)
-            
+
             # 選択ポケモン基本情報表示フレーム
             info_frame = InfoFrame(
                 master=main_frame,
                 player=i,
                 width=530,
-                height=100,
+                height=105,
                 text=side + "基本情報")
             info_frame.grid(row=2, column=i*3, columnspan=3, sticky=N+E+W+S)
             info_frame.grid_propagate(False)
@@ -85,18 +83,18 @@ class MainApp(ThemedTk):
             poke_frame.grid_propagate(False)
             self._active_poke_frames.append(poke_frame)
 
-        # 技・ダメージ表示フレーム
+        # 技・ダメージ表示フレーム(自分)
         waza_frame_my = WazaDamageListFrame(
             master=main_frame,
             index=0,
             width=530,
-            height=100,
+            height=60,
             text="自分わざ情報")
         waza_frame_my.grid(row=4, column=0, columnspan=3, sticky=N+E+W+S)
         waza_frame_my.grid_propagate(False)
         self._waza_damage_frames.append(waza_frame_my)
 
-        # 技・ダメージ表示フレーム
+        # 技・ダメージ表示フレーム(相手)
         waza_frame_your = WazaDamageListFrame(
             master=main_frame,
             index=1,
@@ -116,9 +114,9 @@ class MainApp(ThemedTk):
         self.home_frame.grid_propagate(False)
 
         # ツールフレーム（タイマー・カウンター・共通）
-        tool_frame = ttk.Frame(main_frame, padding=5)
+        tool_frame = ttk.Frame(main_frame)
         tool_frame.grid(row=5, column=0, rowspan=3, columnspan=3, sticky=N+E+W)
-        
+
         # タイマーフレーム
         self.timer_frame = TimerFrame(
             master=tool_frame,
@@ -142,6 +140,7 @@ class MainApp(ThemedTk):
             width=150,
             height=55,
             padding=6)
+
         self.weather_frame.pack(fill = 'x', expand=0)
 
         # フィールドフレーム
@@ -169,8 +168,29 @@ class MainApp(ThemedTk):
             height=220,
             text="対戦記録"
         )
-        self.record_frame.grid(row=8, column=0, rowspan=2, columnspan=3, sticky=N+E+W+S)
+        self.record_frame.grid(row=8, column=0, columnspan=3, sticky=N+E+W+S)
         self.record_frame.grid_propagate(False)
+
+        # 制御フレーム
+        control_frame = ttk.LabelFrame(master=main_frame, text="制御")
+        control_frame.grid(row=9, column=0, sticky=N+E+W+S)
+        
+        # Websocket接続ボタン
+        self.websocket_var = tkinter.StringVar()
+        self.websocket_var.set("Websocket接続")
+
+        self.websocket_button = MyButton(control_frame, textvariable=self.websocket_var, command=self.connect_websocket)
+        self.websocket_button.pack(fill = 'both', expand=0, side='left')
+
+        # キャプチャ監視ボタン
+        self.monitor_var = tkinter.StringVar()
+        self.monitor_var.set("キャプチャ監視開始")
+        self.monitor_button = MyButton(control_frame, textvariable=self.monitor_var, command=self.image_recognize, state=tkinter.DISABLED)
+        self.monitor_button.pack(fill = 'both', expand=0, side='left')
+
+        # 手動キャプチャボタン
+        self.shot_button = MyButton(control_frame, text="選出画面キャプチャ", command=self.manual_capture, state=tkinter.DISABLED)
+        self.shot_button.pack(fill = 'both', expand=0, side='left')
 
         # グリッド間ウェイト
         main_frame.columnconfigure(0, weight=1)
@@ -184,8 +204,6 @@ class MainApp(ThemedTk):
         self.rowconfigure(0, weight=True)
 
         self._stage = None
-        
-        self.capture.connect_websocket()
 
     # 各フレームにStageクラスを配置
     def set_stage(self, stage):
@@ -204,7 +222,7 @@ class MainApp(ThemedTk):
     # パーティセット
     def set_party(self, player: int, party: list[Pokemon]):
         self._party_frames[player].set_party(party)
-    
+
     # 選出登録
     def set_chosen(self, player: int, pokemon: Pokemon, index: int):
         self._chosen_frames[player].set_chosen(pokemon, index)
@@ -225,9 +243,6 @@ class MainApp(ThemedTk):
     def set_calc_results(self, player: int, results):
         self._waza_damage_frames[player].set_damages(results)
 
-    def test(self, *_args):
-        self.edit_rank(0, Stats(2))
-    
     # ランク変更
     def edit_rank(self, player: int, rank: Stats) -> Stats:
         loc_x = self.winfo_x() + self._waza_damage_frames[player].winfo_x()
@@ -288,8 +303,33 @@ class MainApp(ThemedTk):
         dialog.open(location=(self.winfo_x(), self.winfo_y()))
         self.wait_window(dialog)
 
+    # Websocket処理
+    def connect_websocket(self):
+        if not self.websocket:
+            value = self.capture.connect_websocket()
+            if value:
+                self.websocket_var.set("Websocket切断")
+                self.monitor_button["state"] = tkinter.NORMAL
+                self.shot_button["state"] = tkinter.NORMAL
+                self.websocket = True
+        else:
+            value = self.capture.disconnect_websocket()
+            if value:
+                self.websocket_var.set("Websocket接続")
+                self.monitor_button["state"] = tkinter.DISABLED
+                self.shot_button["state"] = tkinter.DISABLED
+                self.websocket = False
+
     # 画像認識処理
     def image_recognize(self):
+        if self.monitor:
+            self.stop_image_recognize()
+        else:
+            self.after(2000, self.loop_image_recognize)
+
+    # 画像認識ループ開始
+    def loop_image_recognize(self):
+        global after_id
         result = self.capture.image_recognize()
         match result:
             case list():
@@ -299,8 +339,30 @@ class MainApp(ThemedTk):
             case bool():
                 if result:
                     self.timer_frame.start_button_clicked()
+                    self.stop_image_recognize()
+                    return
             case int():
                 pass
+        after_id = self.after(1000, self.loop_image_recognize)
+        self.monitor=True
+        self.monitor_var.set("キャプチャ監視停止")
+        self.websocket_button["state"] = tkinter.DISABLED
+        self.shot_button["state"] = tkinter.DISABLED
+
+    # 画像認識ループ停止
+    def stop_image_recognize(self):
+        if self.monitor:
+            self.after_cancel(after_id)
+            self.monitor=False
+            self.monitor_var.set("キャプチャ監視開始")
+            self.websocket_button["state"] = tkinter.NORMAL
+            self.shot_button["state"] = tkinter.NORMAL
+    
+    # 手動キャプチャ
+    def manual_capture(self):
+        result = self.capture.recognize_chosen_capture()
+        if result is not None: 
+            self._party_frames[1].set_party_from_capture(result)
 
     # フォーム選択画面
     def form_select(self, no: int):

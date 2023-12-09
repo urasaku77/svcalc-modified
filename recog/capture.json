@@ -2,6 +2,5 @@
   "source_name": "capture1",
   "host_name": "localhost",
   "port": "4455",
-  "password": "panipani",
-  "use_capture": true
+  "password": "panipani"
 }

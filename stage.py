@@ -245,6 +245,10 @@ class Stage:
     # バトルのクリア
     def clear_battle(self):
         self._app.clear_battle()
+    
+    # 画像認識ループ制御
+    def loop_image_recognize(self):
+        self._app.image_recognize()
 
     # 選出の基本情報表示            
     def set_info(self, player: int):

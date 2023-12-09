@@ -18,7 +18,6 @@ class Capture:
 
     def __init__(self):
         self.coords=ConfCoordinate()
-        self.websocket = False
         self.path_tesseract = r"E:\Tesseract-OCR"
         
         # party(相手パーティ待ち)→chosen(自分選出待ち)→start(対戦開始待ち)→finish(対戦終了待ち)
@@ -32,12 +31,21 @@ class Capture:
 
     # Websocket接続
     def connect_websocket(self):
-        if not self.websocket and self.account["use_capture"]:
+        try:
             self.loop = asyncio.get_event_loop()
             self.obs=Obs(self.loop, self.account["port"], self.account["password"])
-            self.websocket = True
-        else:
-            self.websocket = False
+            return True
+        except:
+            return False
+    
+    # Websocket切断
+    def disconnect_websocket(self):
+        try:
+            self.loop.run_until_complete(self.obs.breakRequest())
+            return True
+        except:
+            return False
+
 
     # キャプチャ画像取得
     def getScreenshot(self):
@@ -49,22 +57,25 @@ class Capture:
 
     # フェーズに応じて画像認識処理
     def image_recognize(self):
-        self.getScreenshot()
         match self.phase:
             case "party":
-                if self.is_exist_image("recog/recogImg/situation/sensyutu.jpg",0.8,"sensyutu") or self.is_exist_image("recog/recogImg/situation/sensyutu2.jpg",0.8,"sensyutu"):
-                    self.phase = "chosen"
-                    self.recognize_oppo_tn()
-                    return self.recognize_oppo_party()
+                return self.recognize_chosen_capture()
             case "chosen":
-                if not self.sturted_battle():
+                chosen = self.sturted_battle()
+                if not chosen:
                     return tuple([self.recognize_chosen_num(banme) for banme in range(3)])
                 else:
-                    self.phase = "finish"
-                    return self.sturted_battle()
-            case "finish":
-                return -1
-        return None
+                    self.phase = "party"
+                    return chosen
+        return -1
+
+    # 選出画面解析
+    def recognize_chosen_capture(self):
+        self.getScreenshot()
+        if self.is_exist_image("recog/recogImg/situation/sensyutu.jpg",0.8,"sensyutu") or self.is_exist_image("recog/recogImg/situation/sensyutu2.jpg",0.8,"sensyutu"):
+            self.phase = "chosen"
+            self.recognize_oppo_tn()
+            return self.recognize_oppo_party()
 
     # 相手パーティの解析
     def recognize_oppo_party(self):
@@ -98,6 +109,7 @@ class Capture:
 
     # 対戦開始画面を検知
     def sturted_battle(self):
+        self.getScreenshot()
         return self.is_exist_image("recog/recogImg/situation/aitewomiru.jpg",0.8,"aitewomiru")
 
     # テンプレートマッチング(最大のみ)

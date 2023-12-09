@@ -442,7 +442,7 @@ class CaptureSetting(tkinter.Toplevel):
             with open(self.path, "r") as json_file:
                 self.initial_data = json.load(json_file)
         except FileNotFoundError:
-            self.initial_data = {"source_name": "", "host_name": "", "port": "", "password": "","use_capture": False}
+            self.initial_data = {"source_name": "", "host_name": "", "port": "", "password": ""}
 
         # ラベルとエントリーの作成
         self.source_label = tkinter.Label(self, text="ソース名:")
@@ -469,16 +469,10 @@ class CaptureSetting(tkinter.Toplevel):
         self.password_entry.insert(0, self.initial_data["password"])
         self.password_entry.grid(row=3, column=1, padx=10, pady=5)
         
-        # チェックボックス
-        self.capture_var = tkinter.BooleanVar()
-        self.capture_var.set(self.initial_data["use_capture"])
-        self.capture_checkbox = tkinter.Checkbutton(self, text="キャプチャを利用する", variable=self.capture_var)
-        self.capture_checkbox.grid(row=4, column=0, columnspan=2, pady=5)
-
         self.submit_button = MyButton(self, text="保存", command=self.submit_form)
-        self.submit_button.grid(row=5, column=0, pady=10)
+        self.submit_button.grid(row=4, column=0, pady=10)
         self.cancel_button = MyButton(self, text="キャンセル", command=self.on_push_button)
-        self.cancel_button.grid(row=5, column=1, pady=10)
+        self.cancel_button.grid(row=4, column=1, pady=10)
         
     def open(self, location=tuple[int, int]):
         self.grab_set()
@@ -491,15 +485,13 @@ class CaptureSetting(tkinter.Toplevel):
         self.host_name = self.host_entry.get()
         self.port = self.port_entry.get()
         self.password = self.password_entry.get()
-        self.use_capture = self.capture_var.get()
 
         # 入力された値をJSONファイルに保存
         data = {
             "source_name": self.source_name,
             "host_name": self.host_name,
             "port": self.port,
-            "password": self.password,
-            "use_capture": self.use_capture
+            "password": self.password
         }
 
         with open(self.path, "w") as json_file:

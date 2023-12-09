@@ -231,7 +231,7 @@ class WazaDamageListFrame(ttk.LabelFrame):
         self._btn_list: list[MyButton] = []
         self._dmgframe_list = []
 
-        num = 6 if self._index == 0 else 10
+        num = 5 if self._index == 0 else 10
         for i in range(num):
             if self._index == 1:
                 lbl = MyLabel(self, text = u'', width=4)
@@ -902,6 +902,7 @@ class RecordFrame(ttk.LabelFrame):
     def register(self, result: int):
         self.result = result
         self._stage.record_battle()
+        self._stage.loop_image_recognize()
     
     def clear(self):
         self._stage.clear_battle()
