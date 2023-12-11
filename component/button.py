@@ -56,15 +56,14 @@ class TypeButton(MyButton):
         super().__init__(master, size, style="leftimage.TButton", **kwargs)
         self._type = type_
         self._icon = None
-        self.type_ = type_
+        self.set_type(type_)
 
     @property
     def type_(self) -> Types:
         return self._type
 
-    @type_.setter
-    def type_(self, value: Types):
+    def set_type(self, value: Types):
         self._type = value
         self._icon = images.get_type_icon(value)
-        self["text"] = value.name
         self["image"] = self._icon
+        self["text"] = value.name

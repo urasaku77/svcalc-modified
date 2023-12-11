@@ -11,7 +11,6 @@ from component.label import MyLabel
 from data.db import DB
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
-from pokedata.stats import Stats, StatsKey
 
 
 # パーティ入力ダイアログ

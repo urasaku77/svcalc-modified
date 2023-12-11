@@ -16,7 +16,7 @@ def get_party_csv() -> str:
     with open('party/setting.txt', 'r') as txt:
         file = txt.read()
         txt.close()
-    return file
+    return 'party/csv/' + file
 
 def get_party_data(file_path: str = 'default') -> list[list[str]]:
     file = file_path
