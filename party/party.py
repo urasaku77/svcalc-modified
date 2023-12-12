@@ -14,7 +14,6 @@ from component.combobox import AutoCompleteCombobox, ModifiedEntry, MyCombobox, 
 from component.const import ALL_ITEM_COMBOBOX_VALUES
 from component.dialog import TypeSelectDialog
 from component.label import MyLabel
-from data.db import DB
 from pokedata.const import Types
 from pokedata.nature import get_seikaku_hosei, get_seikaku_list
 from pokedata.pokemon import Pokemon
@@ -47,8 +46,13 @@ class PartyEditor(tkinter.Toplevel):
 
         self.pokemons = PokemonEditors(main_frame, text="パーティ編集", padding=5)
         self.pokemons.grid(row=1, column=0, columnspan=5, sticky=N+E+W+S)
+        
+        self.select_csv(csv=self.using.using_var.get())
 
     def save_csv(self):
+        ret = messagebox.askyesno('確認', '表示されているデータをCSV書き込みますか？\n（既存のファイルの場合は上書きされます）')
+        if ret == False:
+            return
         self.title = self.settings.title_entry.get()
         self.num = self.settings.num_entry.get()
         self.sub_num = self.settings.sub_num_entry.get()
@@ -86,14 +90,15 @@ class PartyEditor(tkinter.Toplevel):
         if self.settings.is_use_var.get():
             self.using.change_csv(value=filepath.split("party\\csv\\")[1])
 
-    def select_csv(self):
-        typ = [('','*.csv')] 
-        current_directory = os.getcwd()
-        fle = filedialog.askopenfilename(filetypes = typ, initialdir = os.path.join(current_directory, 'party', "csv")) 
-        if fle == "":
-            return
+    def select_csv(self, csv:str=""):
+        if csv == "":
+            typ = [('','*.csv')] 
+            current_directory = os.getcwd()
+            fle = filedialog.askopenfilename(filetypes = typ, initialdir = os.path.join(current_directory, 'party', "csv")) 
+            if fle == "":
+                return
 
-        csv = fle.split('party/csv/')[1]
+            csv = fle.split('party/csv/')[1]
         
         self.settings.clear_setting()
 
@@ -108,10 +113,11 @@ class PartyEditor(tkinter.Toplevel):
         self.settings.is_use_var.set(True) if csv == self.using.using_var.get() else self.settings.is_use_var.set(False) 
 
         from pokedata.loader import get_party_data
-        for i, data in enumerate(get_party_data(file_path=fle)):
+        for i, data in enumerate(get_party_data(file_path='party/csv/' + csv)):
             pokemon: Pokemon = Pokemon.by_name(data[0])
             pokemon.set_load_data(data, True)
             self.pokemons.pokemon_panel_list[i].set_pokemon(pokemon)
+            self.pokemons.pokemon_panel_list[i].change_ev()
     
     def all_clear(self):
         ret = messagebox.askyesno('確認', '表示されているデータをすべてクリアしますか？')

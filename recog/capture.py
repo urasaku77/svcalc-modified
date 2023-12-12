@@ -22,9 +22,6 @@ class Capture:
         
         # party(相手パーティ待ち)→chosen(自分選出待ち)→start(対戦開始待ち)→finish(対戦終了待ち)
         self.phase = "party"
-        # 各ポケモンのdHashデータを読み込む
-        with open("recog/dhash.json", "r") as dhash_json:
-            self.hash_dict = json.load(dhash_json)
         # OBSの設定値を読み込む
         with open("recog/capture.json", "r") as json_file:
             self.account = json.load(json_file)

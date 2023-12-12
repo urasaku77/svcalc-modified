@@ -7,7 +7,7 @@ from battle.battle import Battle
 from component.button import MyButton
 from component.dialog import CaptureSetting, FormSelect, ModeSetting, SpeedComparing, TypeSelectDialog, PartyInputDialog
 from component.frame import ActivePokemonFrame, ChosenFrame, CountersFrame, FieldFrame, HomeFrame, InfoFrame, RecordFrame, SpeedButton, TimerFrame, WazaDamageListFrame, PartyFrame, WeatherFrame
-from component.party import PartyEditor
+from party.party import PartyEditor
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
 from pokedata.stats import Stats
@@ -36,9 +36,10 @@ class MainApp(ThemedTk):
 
         menu = tkinter.Menu(self) 
         self.config(menu=menu) 
-        menu.add_cascade(label='キャプチャ設定', command=self.capture_setting) 
-        menu.add_cascade(label='モード切替', command=self.mode_setting) 
-        menu.add_cascade(label='パーティ編集', command=self.edit_party_csv) 
+        menu.add_cascade(label='キャプチャ設定', command=self.capture_setting)
+        menu.add_cascade(label='モード切替', command=self.mode_setting)
+        menu.add_cascade(label='パーティ編集', command=self.edit_party_csv)
+        menu.add_cascade(label='対戦分析')
 
         for i, side in enumerate(["自分側", "相手側"]):
             # パーティ表示フレーム
@@ -226,8 +227,9 @@ class MainApp(ThemedTk):
     def edit_party_csv(self):
         dialog = PartyEditor()
         dialog.open(location=(self.winfo_x(), self.winfo_y()))
+        self.withdraw()
         self.wait_window(dialog)
-        return dialog.title
+        return self.deiconify()
 
     # パーティセット
     def set_party(self, player: int, party: list[Pokemon]):
