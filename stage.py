@@ -231,6 +231,15 @@ class Stage:
     def clear_chosen(self, player: int):
         for i in range(3):
             self.delete_chosen(player, i)
+    
+    # 自分一番手のポケモンを探す
+    def search_first_chosen(self):
+        if self._chosen[0][0].no != -1:
+            for i, pokemon in enumerate(self._party[0]):
+                if self._chosen[0][0].no == pokemon.no:
+                    print(i)
+                    return i
+        return -1 
 
     # バトルの記録
     def record_battle(self):

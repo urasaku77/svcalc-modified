@@ -490,6 +490,11 @@ class PartyFrame(ttk.LabelFrame):
     def on_push_clear_button(self):
         self._stage.clear_party(self._player)
 
+    def set_first_chosen_to_active(self):
+        index =self._stage.search_first_chosen()
+        if index != -1:
+            self.on_push_pokemon_button(index)
+
 # 選出表示フレーム
 class ChosenFrame(ttk.LabelFrame):
 

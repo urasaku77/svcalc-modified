@@ -345,6 +345,7 @@ class MainApp(ThemedTk):
             case bool():
                 if result:
                     self.timer_frame.start_button_clicked()
+                    self._party_frames[0].set_first_chosen_to_active()
                     self.stop_image_recognize()
                     return
             case int():
