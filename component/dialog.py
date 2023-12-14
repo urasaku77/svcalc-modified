@@ -455,18 +455,24 @@ class ModeSetting(tkinter.Toplevel):
             with open(self.path, "r") as json_file:
                 self.initial_data = json.load(json_file)
         except FileNotFoundError:
-            self.initial_data = {"active_chosen_auto": True}
+            self.initial_data = {"active_chosen_auto": True, "capture_monitor_auto": True}
 
-        # チェックボックス
+        # チェックボックス1
         self.active_chosen_auto_var = tkinter.BooleanVar()
         self.active_chosen_auto_var.set(self.initial_data["active_chosen_auto"])
         self.active_chosen_auto_checkbox = tkinter.Checkbutton(self, text="相手選出自動登録モード", variable=self.active_chosen_auto_var)
         self.active_chosen_auto_checkbox.grid(row=0, column=0, columnspan=2, pady=5)
+        
+        # チェックボックス2
+        self.capture_monitor_auto_var = tkinter.BooleanVar()
+        self.capture_monitor_auto_var.set(self.initial_data["capture_monitor_auto"])
+        self.capture_monitor_auto_checkbox = tkinter.Checkbutton(self, text="キャプチャ監視自動開始モード", variable=self.capture_monitor_auto_var)
+        self.capture_monitor_auto_checkbox.grid(row=1, column=0, columnspan=2, pady=5)
 
         self.submit_button = MyButton(self, text="保存", command=self.submit_form)
-        self.submit_button.grid(row=1, column=0, pady=10)
+        self.submit_button.grid(row=2, column=0, pady=10)
         self.cancel_button = MyButton(self, text="キャンセル", command=self.on_push_button)
-        self.cancel_button.grid(row=1, column=1, pady=10)
+        self.cancel_button.grid(row=2, column=1, pady=10)
 
     def open(self, location=tuple[int, int]):
         self.grab_set()
@@ -474,12 +480,10 @@ class ModeSetting(tkinter.Toplevel):
         self.geometry("+{0}+{1}".format(location[0], location[1]))
 
     def submit_form(self):
-        # 入力された値を取得
-        self.active_chosen_auto = self.active_chosen_auto_var.get()
-
         # 入力された値をJSONファイルに保存
         data = {
-            "active_chosen_auto": self.active_chosen_auto
+            "active_chosen_auto": self.active_chosen_auto_var.get(),
+            "capture_monitor_auto": self.capture_monitor_auto_var.get()
         }
 
         with open(self.path, "w") as json_file:

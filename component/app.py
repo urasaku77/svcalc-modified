@@ -1,4 +1,5 @@
 import dataclasses
+import json
 import tkinter
 from tkinter import ttk, N, E, W, S, LEFT, Menu
 from ttkthemes.themed_tk import ThemedTk
@@ -318,6 +319,17 @@ class MainApp(ThemedTk):
                 self.monitor_button["state"] = tkinter.NORMAL
                 self.shot_button["state"] = tkinter.NORMAL
                 self.websocket = True
+
+                # JSONファイルから設定値を読み取り
+                try:
+                    with open("recog/setting.json", "r") as json_file:
+                        self.setting_data = json.load(json_file)
+                except FileNotFoundError:
+                    self.setting_data = {"capture_monitor_auto": False}
+
+                if self.setting_data["capture_monitor_auto"]:
+                    self.image_recognize()
+
         else:
             value = self.capture.disconnect_websocket()
             if value:

@@ -57,7 +57,7 @@ class Stage:
             with open("recog/setting.json", "r") as json_file:
                 self.setting_data = json.load(json_file)
         except FileNotFoundError:
-            self.setting_data = {"active_chosen_auto": True}
+            self.setting_data = {"active_chosen_auto": False}
 
         if self.setting_data["active_chosen_auto"] and player == 1:
             self.set_chosen(1)
@@ -237,7 +237,6 @@ class Stage:
         if self._chosen[0][0].no != -1:
             for i, pokemon in enumerate(self._party[0]):
                 if self._chosen[0][0].no == pokemon.no:
-                    print(i)
                     return i
         return -1 
 
