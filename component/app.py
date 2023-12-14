@@ -331,6 +331,7 @@ class MainApp(ThemedTk):
         if self.monitor:
             self.stop_image_recognize()
         else:
+            self._party_frames[0].on_push_load_button()
             self.after(2000, self.loop_image_recognize)
 
     # 画像認識ループ開始
