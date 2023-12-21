@@ -1,6 +1,7 @@
 jaconv
-kivy
 opencv-python
 pillow
 pyocr
 pandas
+ttkthemes
+simpleobsws
