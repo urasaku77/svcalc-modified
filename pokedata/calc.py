@@ -71,7 +71,7 @@ class DamageCalc:
             field: Fields = Fields.なし) -> list[DamageCalcResult]:
         result_all: list[DamageCalcResult] = []
         for wazabase in attacker.waza_list:
-            if wazabase is None:
+            if wazabase is None or wazabase.name == "":
                 result_all.append(DamageCalcResult(
                     attacker=attacker, defender=defender, waza=None, damages=[]))
                 continue
