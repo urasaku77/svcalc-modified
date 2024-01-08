@@ -666,7 +666,7 @@ class DamageCalc:
     @staticmethod
     def __get_damage_hosei(attacker: 'Pokemon', defender: 'Pokemon', waza: Waza, count: int) -> int:
         hosei: dict[str, int] = {}
-        type_effective: float = defender.get_type_effective(waza, attacker.ability)
+        type_effective: float = defender.get_type_effective(waza, attacker.ability, defender.battle_terastype)
 
         # region 壁の補正
         key = "壁:" + defender.wall.name
@@ -800,12 +800,12 @@ class DamageCalc:
             match attacker.ability:
                 case "へんげんじざい" | "リベロ":
                     if attacker.ability_value == "有効":
-                        value = 8192 if teras_type_equal else 6144
-                    elif attacker.ability_value == "無効" and teras_type_equal:
+                        value = 8192 if teras_type_equal or attacker.battle_terastype == Types.ステラ else 6144
+                    elif attacker.ability_value == "無効" and (teras_type_equal or attacker.battle_terastype == Types.ステラ):
                         value = 6144
                 case "てきおうりょく":
                     # テラスタイプのみ一致判定がある。一致で2倍、元タイプとも一致した場合、2.25倍
-                    if teras_type_equal:
+                    if teras_type_equal or attacker.battle_terastype == Types.ステラ:
                         value = 9216 if type_equal else 8192
                 case _:
                     if type_equal and ( teras_type_equal or attacker.battle_terastype == Types.ステラ ):
@@ -820,7 +820,7 @@ class DamageCalc:
                     DECIMAI_ZERO, rounding=ROUND_HALF_DOWN)
 
             # × タイプ相性 → 切り捨て
-            rnd_damage = (rnd_damage * Decimal(defender.get_type_effective(waza, attacker.ability))).\
+            rnd_damage = (rnd_damage * Decimal(defender.get_type_effective(waza, attacker.ability, defender.battle_terastype))).\
                 quantize(DECIMAI_ZERO, rounding=ROUND_FLOOR)
 
             # × やけど 2048 ÷ 4096 → 五捨五超入 TBD
