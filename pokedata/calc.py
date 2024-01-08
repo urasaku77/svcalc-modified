@@ -804,8 +804,10 @@ class DamageCalc:
                     if teras_type_equal:
                         value = 9216 if type_equal else 8192
                 case _:
-                    if type_equal and teras_type_equal:
+                    if type_equal and ( teras_type_equal or attacker.battle_terastype == Types.ステラ ):
                         value = 8192
+                    elif attacker.battle_terastype == Types.ステラ:
+                        value = 4915
                     elif type_equal or teras_type_equal:
                         value = 6144
 

@@ -454,7 +454,7 @@ class Pokemon:
     # テラスタイプがある場合、そのタイプで算出
     def get_type_effective(self, waza: Waza, ability: str) -> float:
         value = Decimal(1.0)
-        types: list[Types] = self.type if self.battle_terastype == Types.なし else [self.battle_terastype]
+        types: list[Types] = self.type if self.battle_terastype == Types.なし or self.battle_terastype == Types.ステラ else [self.battle_terastype]
         for type_effective in DB.get_type_effective(waza.type, types):
             if waza.name == "フリーズドライ" and type_effective.df_type == Types.みず:
                 value = value * Decimal(2.0)

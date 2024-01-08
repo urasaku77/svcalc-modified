@@ -23,6 +23,7 @@ class Types(IntEnum):
     あく = 15
     はがね = 16
     フェアリー = 17
+    ステラ = 18
 
     @property
     def icon(self):
@@ -30,7 +31,7 @@ class Types(IntEnum):
 
     @staticmethod
     def all() -> list:
-        return [x for x in Types if (1 <= x <= 17)]
+        return [x for x in Types if (1 <= x <= 18)]
 
     @staticmethod
     def get(type_name: str):
