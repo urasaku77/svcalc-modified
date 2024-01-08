@@ -92,6 +92,8 @@ class DamageCalc:
                     waza.type = Types.ほのお
                 elif attacker.name == "オーガポン(岩)":
                     waza.type = Types.いわ
+            if attacker.ability == "うるおいボイス" and waza.name in DamageCalc.__sound_moves:
+                waza.type = Types.みず
             if waza.name == "めざめるダンス":
                 waza.type = attacker.type[0]
             if waza.name == "レイジングブル":
