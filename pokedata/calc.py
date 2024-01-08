@@ -431,6 +431,10 @@ class DamageCalc:
         power = (power * hosei_total / 4096).quantize(
             exp=DECIMAI_ZERO, rounding=ROUND_HALF_DOWN)
 
+        # 一致テラス時に威力が60以下のときは60にする
+        if waza.type == attacker.battle_terastype and power < 60:
+            power = 60
+
         return int(power) if power > 0 else 1
 
     # 攻撃力の算出
