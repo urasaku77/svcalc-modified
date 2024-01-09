@@ -320,21 +320,22 @@ class PokemonEditor(ttk.LabelFrame):
         dialog = PokemonInputDialog()
         dialog.open(location=(self.winfo_x(), self.winfo_y()))
         self.wait_window(dialog)
-        self.clear_pokemon()
-        self._pokemon_icon.set_pokemon_icon(pid=dialog.pokemon.pid, size=(60, 60))
-        self._pokemon_name_var.set(dialog.pokemon.name)
-        self._ability_combobox["values"] = dialog.pokemon.abilities
-        self._ability_combobox.set(dialog.pokemon.abilities[0])
-        self.img[0]=tkinter.PhotoImage(file=dialog.pokemon.type[0].icon).subsample(3,3)
-        self.type1_icon.configure(image=self.img[0], text=dialog.pokemon.type[0].name, compound='left')
-        self.img[1]=tkinter.PhotoImage(file=dialog.pokemon.type[1].icon if len(dialog.pokemon.type) > 1 else Types.なし.icon).subsample(3,3)
-        self.type2_icon.configure(image=self.img[1], text=dialog.pokemon.type[1].name if len(dialog.pokemon.type) > 1 else "", compound='left')
-        
-        for i, value in enumerate([dialog.pokemon.syuzoku.H, dialog.pokemon.syuzoku.A, dialog.pokemon.syuzoku.B, dialog.pokemon.syuzoku.C, dialog.pokemon.syuzoku.D, dialog.pokemon.syuzoku.S]):
-            self.syuzoku_list[i].set(value)
-        
-        self.calc_status()
-    
+        if dialog.pokemon.no != -1:
+            self.clear_pokemon()
+            self._pokemon_icon.set_pokemon_icon(pid=dialog.pokemon.pid, size=(60, 60))
+            self._pokemon_name_var.set(dialog.pokemon.name)
+            self._ability_combobox["values"] = dialog.pokemon.abilities
+            self._ability_combobox.set(dialog.pokemon.abilities[0])
+            self.img[0]=tkinter.PhotoImage(file=dialog.pokemon.type[0].icon).subsample(3,3)
+            self.type1_icon.configure(image=self.img[0], text=dialog.pokemon.type[0].name, compound='left')
+            self.img[1]=tkinter.PhotoImage(file=dialog.pokemon.type[1].icon if len(dialog.pokemon.type) > 1 else Types.なし.icon).subsample(3,3)
+            self.type2_icon.configure(image=self.img[1], text=dialog.pokemon.type[1].name if len(dialog.pokemon.type) > 1 else "", compound='left')
+            
+            for i, value in enumerate([dialog.pokemon.syuzoku.H, dialog.pokemon.syuzoku.A, dialog.pokemon.syuzoku.B, dialog.pokemon.syuzoku.C, dialog.pokemon.syuzoku.D, dialog.pokemon.syuzoku.S]):
+                self.syuzoku_list[i].set(value)
+            
+            self.calc_status()
+
     def set_pokemon(self, pokemon:Pokemon):
         self._pokemon_icon.set_pokemon_icon(pid=pokemon.pid, size=(60, 60))
         self._pokemon_name_var.set(pokemon.name)
