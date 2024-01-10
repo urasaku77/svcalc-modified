@@ -439,6 +439,7 @@ class home():
 
             with open('home/home_terastal.csv', 'a',encoding="utf-8") as terastal_csv:
                 for terastal in pdetail[pokenum][p_detail_id]['temoti']['terastal']:
+                        teras = int(terastal['id']) if int(terastal['id']) != 99 else 18
                         writer = csv.writer(terastal_csv, lineterminator="\n")
-                        writer.writerow([name, pokedex['pokeType'][int(terastal['id'])],terastal['val']])
+                        writer.writerow([name, pokedex['pokeType'][teras],terastal['val']])
     print("CSV更新完了")
