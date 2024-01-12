@@ -408,7 +408,7 @@ class PokemonEditor(ttk.LabelFrame):
     def change_ev(self, *args):
         value = 0
         for ev in self._ev_frame.ev_list:
-            value += ev._ev_num.get()
+            value += ev._ev_entry.value.get()
         self._ev_total.set("努力値（合計： "+str(value)+" ）")
         self.calc_status()
 
@@ -416,11 +416,11 @@ class PokemonEditor(ttk.LabelFrame):
         for i, syuzoku in enumerate(self.syuzoku_list):
             if syuzoku.get() != 0:
                 if i == 0:
-                    value = int(syuzoku.get() + float(self._iv_frame.iv_list[i]._iv_num.get())/2 + float(self._ev_frame.ev_list[i]._ev_num.get())/8 + 60)
+                    value = int(syuzoku.get() + float(self._iv_frame.iv_list[i]._iv_entry.value.get())/2 + float(self._ev_frame.ev_list[i]._ev_entry.value.get())/8 + 60)
                     self.jissu_list[i].set(value)
                 else:
                     hosei = get_seikaku_hosei(self._seikaku_combobox.get(), StatsKey(i))
-                    value = int((syuzoku.get() + float(self._iv_frame.iv_list[i]._iv_num.get())/2 + float(self._ev_frame.ev_list[i]._ev_num.get())/8 + 5) * hosei)
+                    value = int((syuzoku.get() + float(self._iv_frame.iv_list[i]._iv_entry.value.get())/2 + float(self._ev_frame.ev_list[i]._ev_entry.value.get())/8 + 5) * hosei)
                     self.jissu_list[i].set(value)
 
     def set_csv_row(self):
@@ -453,7 +453,7 @@ class EvEditors(ttk.Frame):
 
     def init_all_value(self):
         for i in range(6):
-            self.ev_list[i]._ev_num.set(0)
+            self.ev_list[i]._ev_entry.value.set(0)
             self.ev_list[i]._ev_entry.delete(0, tkinter.END)
             self.ev_list[i]._ev_entry.insert(0, 0)
 
@@ -461,8 +461,8 @@ class EvEditors(ttk.Frame):
         status_list = ["H", "A", "B", "C", "D", "S"]
         all_ev = ""
         for i in range(6):
-            if self.ev_list[i]._ev_num.get() != 0:
-                all_ev += status_list[i] + str(self.ev_list[i]._ev_num.get())
+            if self.ev_list[i]._ev_entry.value.get() != 0:
+                all_ev += status_list[i] + str(self.ev_list[i]._ev_entry.value.get())
         return all_ev
 
 
@@ -477,9 +477,6 @@ class EvEditor(ttk.Frame):
     def __init__(self, master, **kwargs):
         super().__init__(master=master, **kwargs)
         self.validate_cmd_3 = self.register(self.on_validate_3)
-
-        self._ev_num = tkinter.IntVar()
-        self._ev_num.set(0)
         
         self._ev_min_button = tkinter.Button(self, text="0", command=lambda: self.set_value(0, True))
         self._ev_min_button.pack(side="left")
@@ -487,7 +484,7 @@ class EvEditor(ttk.Frame):
         self._ev_count_down = tkinter.Button(self, text="↓", command=lambda: self.set_value(-4, False))
         self._ev_count_down.pack(side="left")
 
-        self._ev_entry = ModifiedEntry(self, text=0, validate="key", width=4, validatecommand=(self.validate_cmd_3, "%P", "%V"))
+        self._ev_entry = ModifiedEntry(self, validate="key", width=4, validatecommand=(self.validate_cmd_3, "%P", "%V"))
         self._ev_entry.insert(0, 0)
         self._ev_entry.pack(side="left")
 
@@ -500,14 +497,12 @@ class EvEditor(ttk.Frame):
     def set_value(self, value: int, override: bool):
         if override:
             self._ev_entry.delete(0, tkinter.END)
-            self._ev_num.set(value)
-            self._ev_entry.insert(0, value)
+            self._ev_entry.value.set(value)
         else:
-            increase_num = self._ev_num.get() + value
+            increase_num = self._ev_entry.value.get() + value
             if 0 <= increase_num <= 252: 
                 self._ev_entry.delete(0, tkinter.END)
-                self._ev_num.set(increase_num)
-                self._ev_entry.insert(0, increase_num)
+                self._ev_entry.value.set(increase_num)
 
     def setCallback(self, func):
         self._ev_entry.bind("<<TextModified>>", func)
@@ -525,7 +520,7 @@ class IvEditors(ttk.Frame):
     
     def init_all_value(self):
         for i in range(6):
-            self.iv_list[i]._iv_num.set(31)
+            self.iv_list[i]._iv_entry.value.set(31)
             self.iv_list[i]._iv_entry.delete(0, tkinter.END)
             self.iv_list[i]._iv_entry.insert(0, 31)
 
@@ -533,8 +528,8 @@ class IvEditors(ttk.Frame):
         status_list = ["H", "A", "B", "C", "D", "S"]
         all_iv = ""
         for i in range(6):
-            if self.iv_list[i]._iv_num.get() != 31:
-                all_iv += status_list[i] + str(self.iv_list[i]._iv_num.get())
+            if self.iv_list[i]._iv_entry.value.get() != 31:
+                all_iv += status_list[i] + str(self.iv_list[i]._iv_entry.value.get())
         return all_iv
 
 
@@ -549,9 +544,6 @@ class IvEditor(ttk.Frame):
     def __init__(self, master, **kwargs):
         super().__init__(master=master, **kwargs)
         self.validate_cmd_2 = self.register(self.on_validate_2)
-
-        self._iv_num = tkinter.IntVar()
-        self._iv_num.set(31)
         
         self._iv_min_button = tkinter.Button(self, text="0", command=lambda: self.set_value(0, True))
         self._iv_min_button.pack(side="left")
@@ -572,14 +564,12 @@ class IvEditor(ttk.Frame):
     def set_value(self, value: int, override: bool):
         if override:
             self._iv_entry.delete(0, tkinter.END)
-            self._iv_num.set(value)
-            self._iv_entry.insert(0, value)
+            self._iv_entry.value.set(value)
         else:
-            increase_num = self._iv_num.get() + value
+            increase_num = self._iv_entry.value.get() + value
             if 0 <= increase_num <= 31: 
                 self._iv_entry.delete(0, tkinter.END)
-                self._iv_num.set(increase_num)
-                self._iv_entry.insert(0, increase_num)
+                self._iv_entry.value.set(increase_num)
     
     def setCallback(self, func):
         self._iv_entry.bind("<<TextModified>>", func)

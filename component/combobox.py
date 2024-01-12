@@ -79,15 +79,15 @@ class ModifiedEntry(tk.Entry):
     def __init__(self, *args, **kwargs):
         # Entry自体の初期化は元のクラスと同様。
         tk.Entry.__init__(self, *args, **kwargs)
-        self.sv = tk.StringVar()
+        self.value = tk.IntVar(value=0)
         # traceメソッドでStringVarの中身を監視。変更があったらvar_changedをコールバック
-        self.sv.trace('w',self.var_changed)
+        self.value.trace_add('write',self.var_changed)
         # EntryとStringVarを紐づけ。
-        self.configure(textvariable = self.sv)
+        self.configure(textvariable = self.value)
 
     # argsにはtrace発生元のVarの_nameが入っている
     # argsのnameと内包StringVarの_nameが一致したらイベントを発生させる。
     def var_changed(self, *args):
-        if args[0] == self.sv._name:
-            s = self.sv.get()
+        if args[0] == self.value._name:
+            s = self.value.get()
             self.event_generate("<<TextModified>>")
