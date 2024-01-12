@@ -122,7 +122,7 @@ class ActivePokemonFrame(ttk.LabelFrame):
         self._ability_combobox["values"] = poke.abilities
         self._ability_combobox.set(poke.ability)
         self.set_ability_values(poke.ability)
-        self._rank_label.change_all_box(Stats(init_value=0))
+        self._rank_label.change_all_box(poke.rank)
         self._ability_value_combobox.set(poke.ability_value)
         self._teras_button.set_type(poke.battle_terastype)
         if poke.no in changeble_form_in_battle:
