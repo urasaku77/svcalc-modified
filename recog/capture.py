@@ -76,7 +76,7 @@ class Capture:
 
     # 相手パーティの解析
     def recognize_oppo_party(self):
-        pokemonImages = glob.glob("recog/recogImg/pokemon/**/*")
+        pokemonImages = glob.glob("recog/recogImg/pokemon/*")
         coordsList = ["opoPoke1", "opoPoke2", "opoPoke3", "opoPoke4", "opoPoke5", "opoPoke6"]
         pokemonlist: list[Pokemon] = [Pokemon()] * 6
 
