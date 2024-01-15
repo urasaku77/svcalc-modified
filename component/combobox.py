@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-import component.const as const
+
 import jaconv
 
 
@@ -8,20 +8,17 @@ class MyCombobox(ttk.Combobox):
     EVENT_SUBMIT = "<<submit>>"
 
     def __init__(self, master=None, **kwargs):
-        ttk.Combobox.__init__(self, master,
-                              justify="center",
-                              **kwargs)
+        ttk.Combobox.__init__(self, master, justify="center", **kwargs)
         # self["font"] = (const.FONT_FAMILY, 12)
 
 
 # オートコンプリート機能コンボボックス
 class AutoCompleteCombobox(MyCombobox):
-
     def __init__(self, master, suggest_values=None, **kwargs):
         MyCombobox.__init__(self, master, **kwargs)
         self._suggest_values = suggest_values
-        self.bind('<Return>', self.on_enter)
-        self.bind('<<ComboboxSelected>>', self.on_selected)
+        self.bind("<Return>", self.on_enter)
+        self.bind("<<ComboboxSelected>>", self.on_selected)
 
     # エンター押下時
     def on_enter(self, *args):
@@ -47,19 +44,18 @@ class AutoCompleteCombobox(MyCombobox):
     @staticmethod
     def pokemons(master, **kwargs):
         from data.db import DB
-        return AutoCompleteCombobox(master=master,
-                                    suggest_values=DB.get_pokemon_namelist(),
-                                    **kwargs)
+
+        return AutoCompleteCombobox(
+            master=master, suggest_values=DB.get_pokemon_namelist(), **kwargs
+        )
 
 
 # 技名オートコンプリート機能コンボボックス
 class WazaNameCombobox(AutoCompleteCombobox):
-
     def __init__(self, master, **kwargs):
         from data.db import DB
-        super().__init__(master=master,
-                         suggest_values=DB.get_waza_namedict(),
-                         **kwargs)
+
+        super().__init__(master=master, suggest_values=DB.get_waza_namedict(), **kwargs)
 
     def filtered_list(self, value) -> list[str]:
         waza = jaconv.alphabet2kata(value)
@@ -73,17 +69,17 @@ class WazaNameCombobox(AutoCompleteCombobox):
         else:
             super().on_enter(*args)
 
+
 # 入力変更監視フォーム
 class ModifiedEntry(tk.Entry):
-
     def __init__(self, *args, **kwargs):
         # Entry自体の初期化は元のクラスと同様。
         tk.Entry.__init__(self, *args, **kwargs)
         self.value = tk.IntVar(value=0)
         # traceメソッドでStringVarの中身を監視。変更があったらvar_changedをコールバック
-        self.value.trace_add('write',self.var_changed)
+        self.value.trace_add("write", self.var_changed)
         # EntryとStringVarを紐づけ。
-        self.configure(textvariable = self.value)
+        self.configure(textvariable=self.value)
 
     # argsにはtrace発生元のVarの_nameが入っている
     # argsのnameと内包StringVarの_nameが一致したらイベントを発生させる。

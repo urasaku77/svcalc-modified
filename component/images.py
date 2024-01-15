@@ -1,7 +1,8 @@
 import tkinter
-from PIL import Image, ImageTk
-from pokedata.const import Types
 
+from PIL import Image, ImageTk
+
+from pokedata.const import Types
 
 blank_images = {}
 

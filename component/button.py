@@ -1,4 +1,3 @@
-import tkinter
 from tkinter import ttk
 
 from component import images
@@ -6,7 +5,6 @@ from pokedata.const import Types
 
 
 class MyButton(ttk.Button):
-
     def __init__(self, master=None, size: tuple[int, int] = None, **kwargs):
         ttk.Button.__init__(self, master, **kwargs)
         self._size = size
@@ -35,7 +33,13 @@ class MyButton(ttk.Button):
 
 # タイプアイコンボタン
 class TypeIconButton(MyButton):
-    def __init__(self, master=None, types: Types = Types.なし, size: tuple[int, int] = None, **kwargs):
+    def __init__(
+        self,
+        master=None,
+        types: Types = Types.なし,
+        size: tuple[int, int] = None,
+        **kwargs,
+    ):
         super().__init__(master, size, **kwargs)
         self._type = types
         self._icon = None
@@ -52,7 +56,13 @@ class TypeIconButton(MyButton):
 
 
 class TypeButton(MyButton):
-    def __init__(self, master=None, type_: Types = Types.なし, size: tuple[int, int] = None, **kwargs):
+    def __init__(
+        self,
+        master=None,
+        type_: Types = Types.なし,
+        size: tuple[int, int] = None,
+        **kwargs,
+    ):
         super().__init__(master, size, style="leftimage.TButton", **kwargs)
         self._type = type_
         self._icon = None

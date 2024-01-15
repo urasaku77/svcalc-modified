@@ -1,22 +1,21 @@
 from typing import Optional
 
-from pokedata.const import Types
 from data.db import DB
+from pokedata.const import Types
 
 
 class Waza:
-
     def __init__(self, db_data=None, base: Optional["WazaBase"] = None):
         if db_data is not None:
-            self.__name: str = db_data['name']
-            self.__type: Types = Types[db_data['type']]
-            self.__category: str = db_data['category']
-            self.__power: int = db_data['power']
-            self.__hit: int = db_data['hit']
-            self.__pp: int = db_data['pp']
-            self.__is_touch: bool = db_data['is_touch']
-            self.__is_guard: bool = db_data['is_guard']
-            self.__description: bool = db_data['description']
+            self.__name: str = db_data["name"]
+            self.__type: Types = Types[db_data["type"]]
+            self.__category: str = db_data["category"]
+            self.__power: int = db_data["power"]
+            self.__hit: int = db_data["hit"]
+            self.__pp: int = db_data["pp"]
+            self.__is_touch: bool = db_data["is_touch"]
+            self.__is_guard: bool = db_data["is_guard"]
+            self.__description: bool = db_data["description"]
 
         self.__add_power = base.value if base.is_add_power else -1
         self.__power_hosei = base.value if base.is_power_hosei else -1
@@ -75,6 +74,7 @@ class Waza:
     @property
     def multi_hit(self) -> int:
         return self.__multi_hit
+
     # endregion
 
     @staticmethod
@@ -182,57 +182,37 @@ class WazaBase:
 
     __multi_hit_values = {
         "タネマシンガン|ロックブラスト|つららばり|スケイルショット|ミサイルばり": (
-            (2, 3, 4, 5), 3),
-        "ネズミざん": (
-            (10, 9, 8, 7, 6, 5, 4, 3, 2, 1), 10),
-        "ドラゴンアロー|ダブルウイング|タキオンカッター": (
-            (2,), 2),
-        "すいりゅうれんだ": (
-            (3,), 3),
+            (2, 3, 4, 5),
+            3,
+        ),
+        "ネズミざん": ((10, 9, 8, 7, 6, 5, 4, 3, 2, 1), 10),
+        "ドラゴンアロー|ダブルウイング|タキオンカッター": ((2,), 2),
+        "すいりゅうれんだ": ((3,), 3),
     }
 
     __add_power_values = {
-        "ふんどのこぶし": (
-            (1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0), 1.0),
-        "アクロバット|しっぺがえし": (
-            (1.0, 2.0), 2.0),
-        "おはかまいり": (
-            (1.0, 2.0, 3.0), 3.0),
-        "プレゼント": (
-            (1.0, 2.0, 3.0), 3.0),
-        "はきだす": (
-            (0.0, 1.0, 2.0, 3.0), 3.0),
-        "なげつける": (
-            (1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 13.0), 1.0),
-        "きしかいせい": (
-            (1.0, 2.0, 4.0, 5.0, 7.5, 10.0), 10.0),
-        "じたばた": (
-            (1.0, 2.0, 4.0, 5.0, 7.5, 10.0), 10.0),
+        "ふんどのこぶし": ((1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0), 1.0),
+        "アクロバット|しっぺがえし": ((1.0, 2.0), 2.0),
+        "おはかまいり": ((1.0, 2.0, 3.0), 3.0),
+        "プレゼント": ((1.0, 2.0, 3.0), 3.0),
+        "はきだす": ((0.0, 1.0, 2.0, 3.0), 3.0),
+        "なげつける": ((1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 13.0), 1.0),
+        "きしかいせい": ((1.0, 2.0, 4.0, 5.0, 7.5, 10.0), 10.0),
+        "じたばた": ((1.0, 2.0, 4.0, 5.0, 7.5, 10.0), 10.0),
     }
 
     __power_hosei_values = {
-        "はたきおとす": (
-            (1.0, 1.5), 1.5),
-        "たたりめ": (
-            (1.0, 2.0), 2.0),
-        "からげんき": (
-            (1.0, 2.0), 2.0),
-        "しおみず": (
-            (1.0, 2.0), 2.0),
-        "ベノムショック": (
-            (1.0, 2.0), 2.0),
-        "Gのちから": (
-            (1.0, 1.5), 1.0),
-        "かたきうち": (
-            (1.0, 2.0), 1.0),
-        "はりこみ": (
-            (1.0, 2.0), 1.0),
-        "きまぐレーザー": (
-            (1.0, 2.0), 2.0),
-        "じだんだ": (
-            (1.0, 2.0), 2.0),
-        "やけっぱち": (
-            (1.0, 2.0), 2.0),
+        "はたきおとす": ((1.0, 1.5), 1.5),
+        "たたりめ": ((1.0, 2.0), 2.0),
+        "からげんき": ((1.0, 2.0), 2.0),
+        "しおみず": ((1.0, 2.0), 2.0),
+        "ベノムショック": ((1.0, 2.0), 2.0),
+        "Gのちから": ((1.0, 1.5), 1.0),
+        "かたきうち": ((1.0, 2.0), 1.0),
+        "はりこみ": ((1.0, 2.0), 1.0),
+        "きまぐレーザー": ((1.0, 2.0), 2.0),
+        "じだんだ": ((1.0, 2.0), 2.0),
+        "やけっぱち": ((1.0, 2.0), 2.0),
     }
 
     __self_buff_values = {

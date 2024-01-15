@@ -4,6 +4,7 @@ from typing import Optional
 
 from component.frame import ChosenFrame, PartyFrame, RecordFrame
 
+
 @dataclasses.dataclass
 class Battle:
     id: Optional[int]
@@ -34,9 +35,14 @@ class Battle:
     opponent_choice2: Optional[str]
     opponent_choice3: Optional[str]
 
-    def set_battle(record_frame: RecordFrame, party_frames: list[PartyFrame], chosen_frames: list[ChosenFrame]):
+    def set_battle(
+        record_frame: RecordFrame,
+        party_frames: list[PartyFrame],
+        chosen_frames: list[ChosenFrame],
+    ):
         from pokedata.loader import get_party_csv
-        file = get_party_csv().split('party\\csv\\')[1]
+
+        file = get_party_csv().split("party\\csv\\")[1]
 
         return Battle(
             None,

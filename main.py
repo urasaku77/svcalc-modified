@@ -1,7 +1,6 @@
 import tkinter
 from tkinter.ttk import Style
 
-import component.const
 from component.app import MainApp
 from stage import Stage
 

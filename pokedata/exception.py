@@ -10,6 +10,7 @@ base_names = ["イルカマン", "オーガポン"]
 # 選出画面で判別付かないポケモンリスト
 unrecognizable_pokemon = ["ウーラオス"]
 
+
 def get_next_form(pid: str) -> Optional[str]:
     match pid:
         case "964-0":

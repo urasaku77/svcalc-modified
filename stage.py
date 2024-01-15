@@ -1,9 +1,8 @@
 import json
+
 from component.app import MainApp
-from component.dialog import FormSelect
-from data.db import DB
 from pokedata.calc import DamageCalc
-from pokedata.const import Ailments, Walls, Weathers, Fields, Types
+from pokedata.const import Ailments, Fields, Types, Walls, Weathers
 from pokedata.pokemon import Pokemon
 from pokedata.stats import Stats
 
@@ -13,11 +12,11 @@ class Stage:
         self._app = app
         self._party: list[list[Pokemon], list[Pokemon]] = [
             [Pokemon()] * 6,
-            [Pokemon()] * 6
+            [Pokemon()] * 6,
         ]
         self._chosen: list[list[Pokemon], list[Pokemon]] = [
             [Pokemon()] * 3,
-            [Pokemon()] * 3
+            [Pokemon()] * 3,
         ]
         self._active_pokemon: list[Pokemon] = [Pokemon()] * 2
         self._weather: Weathers = Weathers.なし
@@ -37,7 +36,9 @@ class Stage:
         if not self._party[player][index].form_selected:
             form = self._app.form_select(self._party[player][index].no)
             if form != -1:
-                self._party[player][index] = Pokemon.by_pid(str(self._party[player][index].no) + "-" + str(form), True)
+                self._party[player][index] = Pokemon.by_pid(
+                    str(self._party[player][index].no) + "-" + str(form), True
+                )
 
         if self._party[player][index].form_selected:
             self.pokemon = self._party[player][index]
@@ -51,7 +52,7 @@ class Stage:
         self._active_pokemon[player] = pokemon
         # self._active_pokemon[player].statechanged_handler = self.on_activepokemon_statechanged
         self._app.set_active_pokemon(player=player, pokemon=pokemon)
-        
+
         # JSONファイルから設定値を読み取り
         try:
             with open("recog/setting.json", "r") as json_file:
@@ -67,22 +68,22 @@ class Stage:
 
     # 表示ポケモンへの各種値セット
     def set_value_to_active_pokemon(
-            self,
-            player: int,
-            seikaku: str = None,
-            doryoku_text: str = None,
-            item: str = None,
-            ability: str = None,
-            ability_value: str = None,
-            wall: Walls = None,
-            terastype: Types = None,
-            waza: tuple[int, str] = None,
-            waza_effect: int = None,
-            critical: bool = False,
-            ailment: Ailments = Ailments.なし,
-            charging: bool = False,
-            is_same: bool = False,
-            ):
+        self,
+        player: int,
+        seikaku: str = None,
+        doryoku_text: str = None,
+        item: str = None,
+        ability: str = None,
+        ability_value: str = None,
+        wall: Walls = None,
+        terastype: Types = None,
+        waza: tuple[int, str] = None,
+        waza_effect: int = None,
+        critical: bool = False,
+        ailment: Ailments = Ailments.なし,
+        charging: bool = False,
+        is_same: bool = False,
+    ):
         pokemon = self._active_pokemon[player]
         if seikaku is not None:
             pokemon.seikaku = seikaku
@@ -180,10 +181,14 @@ class Stage:
         pokemon2 = self._active_pokemon[1]
         if pokemon1.is_empty or pokemon2.is_empty:
             return
-        calc_result = DamageCalc.get_all_damages(pokemon1, pokemon2, self._weather, self._field)
+        calc_result = DamageCalc.get_all_damages(
+            pokemon1, pokemon2, self._weather, self._field
+        )
         self._app.set_calc_results(0, calc_result)
 
-        calc_result = DamageCalc.get_all_damages(pokemon2, pokemon1, self._weather, self._field)
+        calc_result = DamageCalc.get_all_damages(
+            pokemon2, pokemon1, self._weather, self._field
+        )
         self._app.set_calc_results(1, calc_result)
 
     # パーティ編集
@@ -193,9 +198,10 @@ class Stage:
         self._app.set_party(player=player, party=party)
 
     # パーティの読み込み
-    def load_party(self, player: int, party:list[Pokemon]=[]):
+    def load_party(self, player: int, party: list[Pokemon] = []):
         from pokedata.loader import get_party_data
-        if len(party) ==0:
+
+        if len(party) == 0:
             for i, data in enumerate(get_party_data()):
                 pokemon: Pokemon = Pokemon.by_name(data[0])
                 pokemon.set_load_data(data, True)
@@ -210,49 +216,62 @@ class Stage:
         self._app.set_party(player=player, party=party)
 
     # 選出の登録
-    def set_chosen(self, player: int, index: list[int]=[]):
+    def set_chosen(self, player: int, index: list[int] = []):
         if len(index) == 0:
-            index_list = [ i for i, p in enumerate(self._chosen[player]) if p.is_empty]
-            if len(index_list) != 0 and len(list(filter(lambda p: p.name == self._active_pokemon[player].name, self._chosen[player]))) == 0:
-                self._app.set_chosen(player, self._active_pokemon[player], index_list[0])
+            index_list = [i for i, p in enumerate(self._chosen[player]) if p.is_empty]
+            if (
+                len(index_list) != 0
+                and len(
+                    list(
+                        filter(
+                            lambda p: p.name == self._active_pokemon[player].name,
+                            self._chosen[player],
+                        )
+                    )
+                )
+                == 0
+            ):
+                self._app.set_chosen(
+                    player, self._active_pokemon[player], index_list[0]
+                )
                 self._chosen[player][index_list[0]] = self._active_pokemon[player]
         else:
             for i in range(len(index)):
                 pokemon = self._party[player][index[i]] if index[i] != -1 else Pokemon()
                 self._app.set_chosen(player, pokemon, i)
                 self._chosen[player][i] = pokemon
-    
+
     # 選出の削除
     def delete_chosen(self, player: int, index: int):
         self._chosen[player][index] = Pokemon()
         self._app.set_chosen(player, Pokemon, index)
-    
+
     # 選出のクリア
     def clear_chosen(self, player: int):
         for i in range(3):
             self.delete_chosen(player, i)
-    
+
     # 自分一番手のポケモンを探す
     def search_first_chosen(self):
         if self._chosen[0][0].no != -1:
             for i, pokemon in enumerate(self._party[0]):
                 if self._chosen[0][0].no == pokemon.no:
                     return i
-        return -1 
+        return -1
 
     # バトルの記録
     def record_battle(self):
         self._app.record_battle()
-        
+
     # バトルのクリア
     def clear_battle(self):
         self._app.clear_battle()
-    
+
     # 画像認識ループ制御
     def loop_image_recognize(self):
         self._app.image_recognize()
 
-    # 選出の基本情報表示            
+    # 選出の基本情報表示
     def set_info(self, player: int):
         if self._active_pokemon[player].form != -1:
             self._app.set_info(player, self._active_pokemon[player])
@@ -274,8 +293,12 @@ class Stage:
         self._field = value
 
     def test(self):
-        self._active_pokemon[0] = pokemon_1 = Pokemon.by_name("サーフゴー", default=True)
-        self._active_pokemon[1] = pokemon_2 = Pokemon.by_name("セグレイブ", default=True)
+        self._active_pokemon[0] = pokemon_1 = Pokemon.by_name(
+            "サーフゴー", default=True
+        )
+        self._active_pokemon[1] = pokemon_2 = Pokemon.by_name(
+            "セグレイブ", default=True
+        )
         self._app.set_active_pokemon(0, pokemon_1)
         self._app.set_active_pokemon(1, pokemon_2)
         self.calc_damage()

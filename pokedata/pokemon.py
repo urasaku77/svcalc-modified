@@ -1,18 +1,19 @@
 from __future__ import annotations
+
 import math
 from decimal import Decimal
 from typing import Optional
 
-from pokedata.const import *
 from data.db import DB
+from pokedata.const import *
+from pokedata.const import ABILITY_VALUES
+from pokedata.exception import changeble_form_in_battle, get_next_form
 from pokedata.nature import get_seikaku_hosei
 from pokedata.stats import Stats, StatsKey
 from pokedata.waza import Waza, WazaBase
-from pokedata.const import ABILITY_VALUES
-from pokedata.exception import changeble_form_in_battle, get_next_form
+
 
 class Pokemon:
-
     def __init__(self, db_data=None):
         self.__no: int = -1
         self.__form: int = -1
@@ -42,22 +43,27 @@ class Pokemon:
         self.__statechanged_handler: Optional[callable] = None
 
         if db_data is not None:
-            self.__no = db_data['no']
-            self.__form = db_data['form']
-            self.__name = db_data['name']
-            self.__base_name: str = db_data['base_name']
-            self.__form_name: str = db_data['form_name']
+            self.__no = db_data["no"]
+            self.__form = db_data["form"]
+            self.__name = db_data["name"]
+            self.__base_name: str = db_data["base_name"]
+            self.__form_name: str = db_data["form_name"]
             self.__syuzoku.set_values(
-                h=db_data['H'], a=db_data['A'], b=db_data['B'],
-                c=db_data['C'], d=db_data['D'], s=db_data['S'])
-            self.__type.append(Types[db_data['type1']])
-            if len(db_data['type2']) > 0:
-                self.__type.append(Types[db_data['type2']])
+                h=db_data["H"],
+                a=db_data["A"],
+                b=db_data["B"],
+                c=db_data["C"],
+                d=db_data["D"],
+                s=db_data["S"],
+            )
+            self.__type.append(Types[db_data["type1"]])
+            if len(db_data["type2"]) > 0:
+                self.__type.append(Types[db_data["type2"]])
             for key in ["ability1", "ability2", "ability3"]:
                 if len(db_data[key]) > 0:
                     self.__abilities.append(db_data[key])
             self.__ability: str = self.__abilities[0]
-            self.__weight: float = db_data['weight']
+            self.__weight: float = db_data["weight"]
             self.__item: str = self.fixed_item(self.__name)
             self.__terastype: Types = self.fixed_terastype(self.__name)
 
@@ -130,7 +136,11 @@ class Pokemon:
 
     @property
     def icon(self) -> str:
-        return "image/pokeicon/" + self.pid + ".png" if self.__form != -1 else "image/pokeicon/" + str(self.__no) + "-0.png"
+        return (
+            "image/pokeicon/" + self.pid + ".png"
+            if self.__form != -1
+            else "image/pokeicon/" + str(self.__no) + "-0.png"
+        )
 
     @property
     def name(self) -> str:
@@ -334,9 +344,13 @@ class Pokemon:
         for key in StatsKey:
             value = get_seikaku_hosei(self.__seikaku, key)
             if value == 1.1:
-                text += "[color=#ffc0cb]" + str(self.get_ranked_stats(key)) + "[/color]-"
+                text += (
+                    "[color=#ffc0cb]" + str(self.get_ranked_stats(key)) + "[/color]-"
+                )
             elif value == 0.9:
-                text += "[color=#add8e6]" + str(self.get_ranked_stats(key)) + "[/color]-"
+                text += (
+                    "[color=#add8e6]" + str(self.get_ranked_stats(key)) + "[/color]-"
+                )
             else:
                 text += str(self.get_ranked_stats(key)) + "-"
         return text[:-1]
@@ -361,7 +375,11 @@ class Pokemon:
 
     @property
     def changeable_icon(self) -> str:
-        return "image/other/change.png" if str(self.__no) in changeble_form_in_battle else ""
+        return (
+            "image/other/change.png"
+            if str(self.__no) in changeble_form_in_battle
+            else ""
+        )
 
     @statechanged_handler.setter
     def statechanged_handler(self, handler: Optional[callable]):
@@ -373,16 +391,29 @@ class Pokemon:
 
     @property
     def is_flying(self) -> bool:
-        return (Types.ひこう in self.__type) or self.__ability == "ふゆう" or self.__item == "ふうせん"
+        return (
+            (Types.ひこう in self.__type)
+            or self.__ability == "ふゆう"
+            or self.__item == "ふうせん"
+        )
+
     # endregion
 
     # 実数値
     def __get_stats(self, key: StatsKey) -> int:
         if key == StatsKey.H:
-            value = (self.__syuzoku[key] * 2) + self.kotai[key] + math.floor(self.doryoku[key] / 4)
+            value = (
+                (self.__syuzoku[key] * 2)
+                + self.kotai[key]
+                + math.floor(self.doryoku[key] / 4)
+            )
             return math.floor(value * self.__lv / 100) + 10 + self.__lv
         else:
-            value = (self.__syuzoku[key] * 2) + self.kotai[key] + math.floor(self.doryoku[key] / 4)
+            value = (
+                (self.__syuzoku[key] * 2)
+                + self.kotai[key]
+                + math.floor(self.doryoku[key] / 4)
+            )
             value = math.floor(value * self.__lv / 100) + 5
             value = math.floor(value * get_seikaku_hosei(self.__seikaku, key))
             return value
@@ -411,6 +442,7 @@ class Pokemon:
     # デフォルトデータ設定
     def set_default_data(self):
         from pokedata.loader import get_default_data
+
         data = get_default_data(self.name)
         if data == []:
             self.set_ability_from_home()
@@ -418,7 +450,7 @@ class Pokemon:
         self.set_waza_from_home()
 
     # CSV読み込みデータの設定
-    def set_load_data(self, data, use_data:bool):
+    def set_load_data(self, data, use_data: bool):
         if len(data):
             self.__kotai.set_values_from_string(data[1])
             self.__doryoku.set_values_from_string(data[2])
@@ -428,12 +460,13 @@ class Pokemon:
             self.__terastype = Types[data[6]] if data[6] != "" else Types.なし
             if use_data:
                 for i in range(10):
-                    if i+7 < len(data):
-                        self.__waza_list[i] = WazaBase(data[i+7])
+                    if i + 7 < len(data):
+                        self.__waza_list[i] = WazaBase(data[i + 7])
 
     # HOMEデータから技を10個読み取り
     def set_waza_from_home(self):
         from pokedata.loader import get_home_data
+
         waza_data = get_home_data(self.name, "./home/home_waza.csv")
         for i in range(len(waza_data) if len(waza_data) <= 10 else 10):
             self.__waza_list[i] = WazaBase(waza_data[i][0])
@@ -443,6 +476,7 @@ class Pokemon:
     def set_ability_from_home(self):
         abilities_data = []
         from pokedata.loader import get_home_data
+
         ability_data = get_home_data(self.name, "./home/home_tokusei.csv")
         for i in range(len(ability_data)):
             if ability_data[i][0] in self.__abilities:
@@ -452,19 +486,36 @@ class Pokemon:
 
     # タイプ相性値
     # テラスタイプがある場合、そのタイプで算出
-    def get_type_effective(self, waza: Waza, ability: str, defender_terastype: Types = Types.なし) -> float:
+    def get_type_effective(
+        self, waza: Waza, ability: str, defender_terastype: Types = Types.なし
+    ) -> float:
         value = Decimal(1.0)
-        types: list[Types] = self.type if self.battle_terastype == Types.なし or self.battle_terastype == Types.ステラ else [self.battle_terastype]
+        types: list[Types] = (
+            self.type
+            if self.battle_terastype == Types.なし
+            or self.battle_terastype == Types.ステラ
+            else [self.battle_terastype]
+        )
         for type_effective in DB.get_type_effective(waza.type, types):
             if waza.name == "フリーズドライ" and type_effective.df_type == Types.みず:
                 value = value * Decimal(2.0)
-            elif waza.name == "サウザンアロー" and type_effective.df_type == Types.じめん:
-                    value = value * Decimal(2.0)
-            elif (ability == "しんがん" or ability == "きもったま") and (waza.type == Types.ノーマル or waza.type == Types.かくとう) and type_effective.df_type == Types.ゴースト:
-                    value = value * Decimal(1.0)
+            elif (
+                waza.name == "サウザンアロー" and type_effective.df_type == Types.じめん
+            ):
+                value = value * Decimal(2.0)
+            elif (
+                (ability == "しんがん" or ability == "きもったま")
+                and (waza.type == Types.ノーマル or waza.type == Types.かくとう)
+                and type_effective.df_type == Types.ゴースト
+            ):
+                value = value * Decimal(1.0)
             else:
                 value = value * Decimal(type_effective.value)
-        if (waza.name == "テラバースト" or waza.name == "テラクラスター") and self.battle_terastype == Types.ステラ and defender_terastype == Types.ステラ:
+        if (
+            (waza.name == "テラバースト" or waza.name == "テラクラスター")
+            and self.battle_terastype == Types.ステラ
+            and defender_terastype == Types.ステラ
+        ):
             value = Decimal(2.0)
         return float(value)
 
@@ -545,6 +596,7 @@ class Pokemon:
 
     def set_doryoku_preset(self, value):
         from pokedata import const
+
         preset = const.DORYOKU_PRESET[value]
         self.__seikaku = preset["nature"]
         self.__doryoku.set_values_from_stats(preset["stats"])
@@ -570,4 +622,3 @@ class Pokemon:
         for k, v in ABILITY_VALUES.items():
             if self.__ability == k:
                 self.__ability_value = v[0]
-

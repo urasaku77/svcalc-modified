@@ -1,7 +1,9 @@
 import sqlite3
 from dataclasses import dataclass
+
 from pokedata.const import Types
 from pokedata.exception import remove_pokemon_name_from_party
+
 
 @dataclass
 class TypeEffective:
@@ -11,8 +13,7 @@ class TypeEffective:
 
 
 class DB:
-
-    __db = sqlite3.connect('data/pokemon.db', check_same_thread=False)
+    __db = sqlite3.connect("data/pokemon.db", check_same_thread=False)
     __db.row_factory = sqlite3.Row
     __type_effectives: list[TypeEffective] = []
     __pokemon_namelist: list[str] = []
@@ -38,14 +39,20 @@ class DB:
     def get_pokemon_data_by_pid(pid: str):
         no = pid.split("-")[0]
         form = pid.split("-")[1]
-        sql = "SELECT * FROM pokemon_data where no = {0} and form = {1}".format(no, form)
+        sql = "SELECT * FROM pokemon_data where no = {0} and form = {1}".format(
+            no, form
+        )
         result = DB.__select(sql)
         return result[0]
 
     @staticmethod
     def get_pokemon_names_by_pid(pid: list[str]):
-        pids = f"('{pid[0]}', '{pid[1]}', '{pid[2]}', '{pid[3]}', '{pid[4]}', '{pid[5]}')"
-        sql = "SELECT no || '-' || form pid, name FROM pokemon_data where pid in " + pids
+        pids = (
+            f"('{pid[0]}', '{pid[1]}', '{pid[2]}', '{pid[3]}', '{pid[4]}', '{pid[5]}')"
+        )
+        sql = (
+            "SELECT no || '-' || form pid, name FROM pokemon_data where pid in " + pids
+        )
         result = DB.__select(sql)
 
         names = []
@@ -57,12 +64,16 @@ class DB:
 
     @staticmethod
     def get_pokemon_pid_by_name(name: str) -> str:
-        sql = "SELECT no || '-' || form pid FROM pokemon_data where name = '{0}'".format(name)
+        sql = (
+            "SELECT no || '-' || form pid FROM pokemon_data where name = '{0}'".format(
+                name
+            )
+        )
         result = DB.__select(sql)
         return result[0]["pid"]
 
     @staticmethod
-    def get_pokemon_namelist(form:bool=False) -> list[str]:
+    def get_pokemon_namelist(form: bool = False) -> list[str]:
         if len(DB.__pokemon_namelist) == 0:
             sql = "SELECT name FROM pokemon_data"
             for row in DB.__select(sql):
@@ -87,21 +98,31 @@ class DB:
     @staticmethod
     def __create_waza_namedict():
         import jaconv
+
         if len(DB.__waza_namedict) == 0:
             sql = "SELECT name FROM waza_data"
             for row in DB.__select(sql):
                 DB.__waza_namedict[jaconv.hira2kata(row["name"])] = row["name"]
 
     @staticmethod
-    def get_type_effective(attack_type: Types, target_type: list[Types]) -> list[TypeEffective]:
+    def get_type_effective(
+        attack_type: Types, target_type: list[Types]
+    ) -> list[TypeEffective]:
         if len(DB.__type_effectives) == 0:
             for row in DB.__select("SELECT * FROM type_effective"):
-                DB.__type_effectives.append(TypeEffective(
-                    at_type=Types[row["at_type"]],
-                    df_type=Types[row["df_type"]],
-                    value=row["value"]
-                ))
-        return list(filter(lambda x: x.at_type == attack_type and x.df_type in target_type, DB.__type_effectives))
+                DB.__type_effectives.append(
+                    TypeEffective(
+                        at_type=Types[row["at_type"]],
+                        df_type=Types[row["df_type"]],
+                        value=row["value"],
+                    )
+                )
+        return list(
+            filter(
+                lambda x: x.at_type == attack_type and x.df_type in target_type,
+                DB.__type_effectives,
+            )
+        )
 
     @staticmethod
     def __select(sql: str) -> list:

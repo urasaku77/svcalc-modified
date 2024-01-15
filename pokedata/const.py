@@ -1,4 +1,5 @@
 from enum import IntEnum
+
 from pokedata.stats import Stats
 
 
@@ -40,6 +41,7 @@ class Types(IntEnum):
         except KeyError:
             return Types.なし
 
+
 # 天候定義
 class Weathers(IntEnum):
     なし = 0
@@ -47,6 +49,7 @@ class Weathers(IntEnum):
     雨 = 2
     砂嵐 = 3
     雪 = 4
+
 
 # フィールド定義
 class Fields(IntEnum):
@@ -56,6 +59,7 @@ class Fields(IntEnum):
     グラス = 3
     ミスト = 4
 
+
 # 異常状態
 class Ailments(IntEnum):
     なし = 0
@@ -64,7 +68,8 @@ class Ailments(IntEnum):
     まひ = 3
     どく = 4
     もうどく = 5
-    ねむり =6
+    ねむり = 6
+
 
 class Walls(IntEnum):
     なし = 0
@@ -72,16 +77,29 @@ class Walls(IntEnum):
     ひかりのかべ = 2
     オーロラベール = 3
 
+
 DORYOKU_PRESET = {
     "ASようき": {"nature": "ようき", "stats": Stats(0).set_values(a=252, s=252)},
-    "ASいじっぱり": {"nature": "いじっぱり", "stats": Stats(0).set_values(a=252, s=252)},
-    "CSおくびょう": {"nature": "おくびょう", "stats": Stats(0).set_values(c=252, s=252)},
+    "ASいじっぱり": {
+        "nature": "いじっぱり",
+        "stats": Stats(0).set_values(a=252, s=252),
+    },
+    "CSおくびょう": {
+        "nature": "おくびょう",
+        "stats": Stats(0).set_values(c=252, s=252),
+    },
     "CSひかえめ": {"nature": "ひかえめ", "stats": Stats(0).set_values(c=252, s=252)},
-    "HAいじっぱり": {"nature": "いじっぱり", "stats": Stats(0).set_values(h=252, a=252)},
+    "HAいじっぱり": {
+        "nature": "いじっぱり",
+        "stats": Stats(0).set_values(h=252, a=252),
+    },
     "HBずぶとい": {"nature": "ずぶとい", "stats": Stats(0).set_values(h=252, b=252)},
     "HBわんぱく": {"nature": "わんぱく", "stats": Stats(0).set_values(h=252, b=252)},
     "HCひかえめ": {"nature": "ひかえめ", "stats": Stats(0).set_values(h=252, c=252)},
-    "HDしんちょう": {"nature": "しんちょう", "stats": Stats(0).set_values(h=252, d=252)},
+    "HDしんちょう": {
+        "nature": "しんちょう",
+        "stats": Stats(0).set_values(h=252, d=252),
+    },
     "HDおだやか": {"nature": "おだやか", "stats": Stats(0).set_values(h=252, d=252)},
 }
 
@@ -106,14 +124,14 @@ ABILITY_VALUES: dict[str, list[str]] = {
     "どくぼうそう": ["無効", "有効"],
     "プラス": ["無効", "有効"],
     "マイナス": ["無効", "有効"],
-    "へんげんじざい": ["有効","無効"],
-    "リベロ": ["有効","無効"],
-    "マルチスケイル": ["有効","無効"],
-    "ファントムガード": ["有効","無効"],
-    "ふしぎなうろこ": ["有効","無効"],
-    "アナライズ": ["有効","無効"],
-    "かたやぶり": ["有効","無効"],
-    "スロースタート": ["有効","無効"],
-    "よわき": ["有効","無効"],
-    "とうそうしん": ["1.0", "1.25", "0.75"]
+    "へんげんじざい": ["有効", "無効"],
+    "リベロ": ["有効", "無効"],
+    "マルチスケイル": ["有効", "無効"],
+    "ファントムガード": ["有効", "無効"],
+    "ふしぎなうろこ": ["有効", "無効"],
+    "アナライズ": ["有効", "無効"],
+    "かたやぶり": ["有効", "無効"],
+    "スロースタート": ["有効", "無効"],
+    "よわき": ["有効", "無効"],
+    "とうそうしん": ["1.0", "1.25", "0.75"],
 }

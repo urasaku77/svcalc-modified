@@ -1,5 +1,5 @@
-from enum import IntEnum
 import re
+from enum import IntEnum
 
 
 class StatsKey(IntEnum):
@@ -12,11 +12,11 @@ class StatsKey(IntEnum):
 
 
 # 文字変換用の正規表現
-pattern = "([HABCDS]+).*?([+\-]?[-0-9]+)"
+pattern = r"([HABCDS]+).*?([+\-]?[-0-9]+)"
 
 
 class Stats:
-    __slots__ = ['__H', '__A', '__B', '__C', '__D', '__S']
+    __slots__ = ["__H", "__A", "__B", "__C", "__D", "__S"]
 
     def __init__(self, init_value=0):
         self.__H: int = init_value
@@ -94,7 +94,8 @@ class Stats:
     @property
     def to_string(self):
         return "{0}-{1}-{2}-{3}-{4}-{5}".format(
-            self.__H, self.__A, self.__B, self.__C, self.__D, self.__S)
+            self.__H, self.__A, self.__B, self.__C, self.__D, self.__S
+        )
 
     def init_values(self, value: int):
         self.__H = value
@@ -157,7 +158,7 @@ class Stats:
             case "S":
                 self.__S = value
 
-    def add_values_from_string(self, values_string: str, rank:bool=False):
+    def add_values_from_string(self, values_string: str, rank: bool = False):
         values_list = re.findall(pattern, values_string, re.S)
         for values in values_list:
             value: int = int(values[1])

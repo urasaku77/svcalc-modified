@@ -184,25 +184,8 @@ DORYOKU_COMBOBOX_VALUES = [
     "おだやか HD252",
 ]
 
-WALL_COMBOBOX_VALUES = [
-    "なし",
-    "リフレクター",
-    "ひかりのかべ",
-    "オーロラベール"
-]
+WALL_COMBOBOX_VALUES = ["なし", "リフレクター", "ひかりのかべ", "オーロラベール"]
 
-WEATHER_COMBOBOX_VALUES = [
-    "なし",
-    "晴れ",
-    "雨",
-    "砂嵐",
-    "雪"
-]
+WEATHER_COMBOBOX_VALUES = ["なし", "晴れ", "雨", "砂嵐", "雪"]
 
-FIELD_COMBOBOX_VALUES = [
-    "なし",
-    "エレキ",
-    "サイコ",
-    "グラス",
-    "ミスト"
-]
+FIELD_COMBOBOX_VALUES = ["なし", "エレキ", "サイコ", "グラス", "ミスト"]

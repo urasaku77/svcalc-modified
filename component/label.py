@@ -1,15 +1,15 @@
 import tkinter
 from tkinter import ttk
+
 from component import const
 from component.images import get_pokemon_icon
 
 
 class MyLabel(ttk.Label):
-
     def __init__(self, master=None, size: tuple[int, int] = None, font=None, **kwargs):
-        super().__init__(master,
-                         font=font if font is not None else (const.FONT_FAMILY, 10),
-                         **kwargs)
+        super().__init__(
+            master, font=font if font is not None else (const.FONT_FAMILY, 10), **kwargs
+        )
         self._size = size
         self._image = None
         if "image" not in kwargs and size is not None:
