@@ -1,0 +1,8 @@
+{
+    "recommendations": [
+        "DavidAnson.vscode-markdownlint",
+        "bierner.github-markdown-preview",
+        "charliermarsh.ruff",
+        "ms-python.mypy-type-checker"
+    ]
+}
