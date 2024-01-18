@@ -1,7 +1,0 @@
-jaconv
-opencv-python
-pillow
-pyocr
-pandas
-ttkthemes
-simpleobsws

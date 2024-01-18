@@ -412,15 +412,15 @@ class home:
     with open("home/bundle.json", "r", encoding="utf-8") as json_open:
         pokedex = json.load(json_open)
 
-    if os.path.isfile("home/home_waza.csv") == True:
+    if os.path.isfile("home/home_waza.csv") is True:
         os.remove("home/home_waza.csv")
-    if os.path.isfile("home/home_tokusei.csv") == True:
+    if os.path.isfile("home/home_tokusei.csv") is True:
         os.remove("home/home_tokusei.csv")
-    if os.path.isfile("home/home_seikaku.csv") == True:
+    if os.path.isfile("home/home_seikaku.csv") is True:
         os.remove("home/home_seikaku.csv")
-    if os.path.isfile("home/home_motimono.csv") == True:
+    if os.path.isfile("home/home_motimono.csv") is True:
         os.remove("home/home_motimono.csv")
-    if os.path.isfile("home/home_terastal.csv") == True:
+    if os.path.isfile("home/home_terastal.csv") is True:
         os.remove("home/home_terastal.csv")
 
     print("CSV更新")
