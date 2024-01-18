@@ -5,8 +5,7 @@ from decimal import Decimal
 from typing import Optional
 
 from data.db import DB
-from pokedata.const import *
-from pokedata.const import ABILITY_VALUES
+from pokedata.const import ABILITY_VALUES, Ailments, Types, Walls
 from pokedata.exception import changeble_form_in_battle, get_next_form
 from pokedata.nature import get_seikaku_hosei
 from pokedata.stats import Stats, StatsKey
@@ -31,8 +30,8 @@ class Pokemon:
         self.__type: list[Types] = []
         self.__terastype: Types = Types.なし
         self.__battle_terastype: Types = Types.なし
-        self.__abilities: list[str] = [""]
-        self.__ability: str = self.__abilities[0]
+        self.__abilities: list[str] = []
+        self.__ability: str = ""
         self.__ability_value: str = ""
         self.__ailment: Ailments = Ailments.なし
         self.__charging: bool = False
@@ -62,6 +61,7 @@ class Pokemon:
             for key in ["ability1", "ability2", "ability3"]:
                 if len(db_data[key]) > 0:
                     self.__abilities.append(db_data[key])
+            self.set_ability_from_home()
             self.__ability: str = self.__abilities[0]
             self.__weight: float = db_data["weight"]
             self.__item: str = self.fixed_item(self.__name)
@@ -97,6 +97,10 @@ class Pokemon:
             return "かまどのめん"
         elif name == "オーガポン(岩)":
             return "いしずえのめん"
+        elif name == "ザシアン(王)":
+            return "くちたけん"
+        elif name == "ザマゼンタ(王)":
+            return "くちたたて"
         else:
             return "なし"
 
