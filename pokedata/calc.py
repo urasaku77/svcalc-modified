@@ -1,11 +1,10 @@
 from dataclasses import dataclass
-from decimal import Decimal, ROUND_HALF_UP, ROUND_HALF_DOWN, ROUND_FLOOR
+from decimal import ROUND_FLOOR, ROUND_HALF_DOWN, ROUND_HALF_UP, Decimal
+from typing import TYPE_CHECKING, Optional
 
 from pokedata.const import *
 from pokedata.stats import StatsKey
 from pokedata.waza import Waza
-
-from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from pokedata.pokemon import Pokemon
@@ -13,14 +12,18 @@ if TYPE_CHECKING:
 
 @dataclass
 class DamageCalcResult:
-    attacker: 'Pokemon'
-    defender: 'Pokemon'
-    waza: Optional['Waza']
+    attacker: "Pokemon"
+    defender: "Pokemon"
+    waza: Optional["Waza"]
     damages: list[int]
 
     @property
     def is_damage(self) -> bool:
-        return self.waza is not None and self.waza.category != "変化" and len(self.damages) > 0
+        return (
+            self.waza is not None
+            and self.waza.category != "変化"
+            and len(self.damages) > 0
+        )
 
     @property
     def enable(self) -> bool:
@@ -54,30 +57,36 @@ class DamageCalcResult:
 
     @property
     def to_string(self) -> str:
-        return "{0} {1}".format(
-            self.waza.name, self.min_damage_per)
+        return "{0} {1}".format(self.waza.name, self.min_damage_per)
 
 
 DECIMAI_ZERO = Decimal(0)
 
 
 class DamageCalc:
-
     @staticmethod
     def get_all_damages(
-            attacker: 'Pokemon',
-            defender: 'Pokemon',
-            weather: Weathers = Weathers.なし,
-            field: Fields = Fields.なし) -> list[DamageCalcResult]:
+        attacker: "Pokemon",
+        defender: "Pokemon",
+        weather: Weathers = Weathers.なし,
+        field: Fields = Fields.なし,
+    ) -> list[DamageCalcResult]:
         result_all: list[DamageCalcResult] = []
         for wazabase in attacker.waza_list:
             if wazabase is None or wazabase.name == "":
-                result_all.append(DamageCalcResult(
-                    attacker=attacker, defender=defender, waza=None, damages=[]))
+                result_all.append(
+                    DamageCalcResult(
+                        attacker=attacker, defender=defender, waza=None, damages=[]
+                    )
+                )
                 continue
             waza = Waza.ByWazaBase(wazabase)
 
-            if waza.name == "トリックフラワー" or waza.name == "あんこくきょうだ" or waza.name == "すいりゅうれんだ":
+            if (
+                waza.name == "トリックフラワー"
+                or waza.name == "あんこくきょうだ"
+                or waza.name == "すいりゅうれんだ"
+            ):
                 waza.critical = True
 
             # テラバーストによる種別、タイプ変化
@@ -92,7 +101,10 @@ class DamageCalc:
                     waza.type = Types.ほのお
                 elif attacker.name == "オーガポン(岩)":
                     waza.type = Types.いわ
-            if attacker.ability == "うるおいボイス" and waza.name in DamageCalc.__sound_moves:
+            if (
+                attacker.ability == "うるおいボイス"
+                and waza.name in DamageCalc.__sound_moves
+            ):
                 waza.type = Types.みず
             if waza.name == "めざめるダンス":
                 waza.type = attacker.type[0]
@@ -105,20 +117,26 @@ class DamageCalc:
                     waza.type = Types.みず
 
             damages = DamageCalc.__get_damage(
-                attacker=attacker, defender=defender, waza=waza,
-                weather=weather, field=field)
+                attacker=attacker,
+                defender=defender,
+                waza=waza,
+                weather=weather,
+                field=field,
+            )
             result = DamageCalcResult(
-                attacker=attacker, defender=defender, waza=waza, damages=damages)
+                attacker=attacker, defender=defender, waza=waza, damages=damages
+            )
             result_all.append(result)
         return result_all
 
     @staticmethod
     def __get_damage(
-            attacker: 'Pokemon',
-            defender: 'Pokemon',
-            waza: Waza,
-            weather: Weathers,
-            field: Fields) -> Optional[list[int]]:
+        attacker: "Pokemon",
+        defender: "Pokemon",
+        waza: Waza,
+        weather: Weathers,
+        field: Fields,
+    ) -> Optional[list[int]]:
         # 変化技は計算しない
         if waza.category == 変化:
             return None
@@ -132,7 +150,7 @@ class DamageCalc:
                 defender=defender,
                 waza=waza,
                 weather=weather,
-                field=field
+                field=field,
             )
             if waza_power == -1:
                 return None
@@ -142,7 +160,7 @@ class DamageCalc:
                 defender=defender,
                 waza=waza,
                 weather=weather,
-                field=field
+                field=field,
             )
             # 防御力
             defence_power: int = DamageCalc.__get_defence_power(
@@ -150,14 +168,11 @@ class DamageCalc:
                 defender=defender,
                 waza=waza,
                 weather=weather,
-                field=field
+                field=field,
             )
             # ダメージ補正
             damage_hosei: int = DamageCalc.__get_damage_hosei(
-                attacker=attacker,
-                defender=defender,
-                waza=waza,
-                count=count
+                attacker=attacker, defender=defender, waza=waza, count=count
             )
             # 最終ダメージ
             damages = DamageCalc.__get_fix_damages(
@@ -168,29 +183,36 @@ class DamageCalc:
                 attack_power=attack_power,
                 defence_power=defence_power,
                 damage_hosei=damage_hosei,
-                weather=weather
+                weather=weather,
             )
             # 合計ダメージに合算する
-            total_damages = [sum(x) for x in zip(total_damages, damages)]
+            total_damages = [sum(x) for x in zip(total_damages, damages, strict=False)]
 
         return total_damages
 
     # 技威力の算出
     @staticmethod
     def __get_waza_power(
-            attacker: 'Pokemon',
-            defender: 'Pokemon',
-            waza: Waza,
-            weather: Weathers,
-            field: Fields) -> int:
+        attacker: "Pokemon",
+        defender: "Pokemon",
+        waza: Waza,
+        weather: Weathers,
+        field: Fields,
+    ) -> int:
         hosei: dict[str, int] = {}
 
         # region 技の初期威力
         match waza.name:
             case "ジャイロボール":
-                power = min(int(Decimal(25 * defender.rankedS / attacker.rankedS).quantize(
-                    DECIMAI_ZERO, rounding=ROUND_FLOOR
-                ) + 1), 150)
+                power = min(
+                    int(
+                        Decimal(25 * defender.rankedS / attacker.rankedS).quantize(
+                            DECIMAI_ZERO, rounding=ROUND_FLOOR
+                        )
+                        + 1
+                    ),
+                    150,
+                )
             case "エレキボール":
                 rate = int(Decimal(25 * attacker.rankedS / defender.rankedS))
                 if rate < 1:
@@ -216,7 +238,7 @@ class DamageCalc:
                         power = values[1]
                         break
             case "アシストパワー" | "つけあがる":
-                power = 20 + attacker.rank.sum_plus_num()*20
+                power = 20 + attacker.rank.sum_plus_num() * 20
             case "ウェザーボール":
                 power = 50
                 if weather == Weathers.晴れ:
@@ -233,7 +255,11 @@ class DamageCalc:
                     power = 100
             case "だいちのはどう":
                 power = 50
-                if attacker.type != Types.ひこう and attacker.ability != "ふゆう" and field != Fields.なし:
+                if (
+                    attacker.type != Types.ひこう
+                    and attacker.ability != "ふゆう"
+                    and field != Fields.なし
+                ):
                     if field == Fields.グラス:
                         waza.type = Types.くさ
                         power = 100
@@ -260,7 +286,12 @@ class DamageCalc:
         # region 攻撃側の特性補正
         key: str = "攻撃特性:" + attacker.ability
         match attacker.ability:
-            case "エレキスキン" | "スカイスキン" | "フェアリースキン" | "フリーズスキン":
+            case (
+                "エレキスキン"
+                | "スカイスキン"
+                | "フェアリースキン"
+                | "フリーズスキン"
+            ):
                 if waza.type == Types.ノーマル:
                     waza.type = DamageCalc.__skin_abilities[attacker.ability]
                     hosei[key] = 4915
@@ -278,7 +309,10 @@ class DamageCalc:
                 if waza.has_effect:
                     hosei[key] = 5325
             case "すなのちから":
-                if waza.type in [Types.じめん, Types.いわ, Types.はがね] and weather == Weathers.砂嵐:
+                if (
+                    waza.type in [Types.じめん, Types.いわ, Types.はがね]
+                    and weather == Weathers.砂嵐
+                ):
                     hosei[key] = 5325
             case "アナライズ":
                 if attacker.ability_enable:
@@ -351,16 +385,28 @@ class DamageCalc:
                 if waza.name in DamageCalc.__punch_moves:
                     hosei[key] = 4506
             case "こんごうだま":
-                if attacker.name == "ディアルガ" and waza.type in [Types.はがね, Types.ドラゴン]:
+                if attacker.name == "ディアルガ" and waza.type in [
+                    Types.はがね,
+                    Types.ドラゴン,
+                ]:
                     hosei[key] = 4915
             case "しらたま":
-                if attacker.name == "パルキア" and waza.type in [Types.みず, Types.ドラゴン]:
+                if attacker.name == "パルキア" and waza.type in [
+                    Types.みず,
+                    Types.ドラゴン,
+                ]:
                     hosei[key] = 4915
             case "はっきんだま":
-                if attacker.name == "ギラティナ(オリジン)" and waza.type in [Types.ゴースト, Types.ドラゴン]:
+                if attacker.name == "ギラティナ(オリジン)" and waza.type in [
+                    Types.ゴースト,
+                    Types.ドラゴン,
+                ]:
                     hosei[key] = 4915
             case "こころのしずく":
-                if attacker.name in ["ラティアス", "ラティオス"] and waza.type in [Types.エスパー, Types.ドラゴン]:
+                if attacker.name in ["ラティアス", "ラティオス"] and waza.type in [
+                    Types.エスパー,
+                    Types.ドラゴン,
+                ]:
                     hosei[key] = 4915
             case "ノーマルジュエル":
                 if waza.type == Types.ノーマル:
@@ -415,7 +461,10 @@ class DamageCalc:
             case Fields.グラス:
                 if waza.type == Types.くさ and not attacker.is_flying:
                     hosei[key] = 5325
-                if waza.name in ["じしん", "じならし", "マグニチュード"] and not defender.is_flying:
+                if (
+                    waza.name in ["じしん", "じならし", "マグニチュード"]
+                    and not defender.is_flying
+                ):
                     hosei[key] = 2048
             case Fields.ミスト:
                 if waza.type == Types.ドラゴン and not defender.is_flying:
@@ -423,13 +472,15 @@ class DamageCalc:
         # endregion
 
         # 最終補正値の計算
-        hosei_total = Decimal('4096')
+        hosei_total = Decimal("4096")
         for value in hosei.values():
             hosei_total = (hosei_total * value / 4096).quantize(
-                exp=DECIMAI_ZERO, rounding=ROUND_HALF_UP)
+                exp=DECIMAI_ZERO, rounding=ROUND_HALF_UP
+            )
 
         power = (power * hosei_total / 4096).quantize(
-            exp=DECIMAI_ZERO, rounding=ROUND_HALF_DOWN)
+            exp=DECIMAI_ZERO, rounding=ROUND_HALF_DOWN
+        )
 
         # 一致テラス時に威力が60以下のときは60にする
         if waza.type == attacker.battle_terastype and power < 60:
@@ -440,11 +491,12 @@ class DamageCalc:
     # 攻撃力の算出
     @staticmethod
     def __get_attack_power(
-            attacker: 'Pokemon',
-            defender: 'Pokemon',
-            waza: Waza,
-            weather: Weathers,
-            field: Fields) -> int:
+        attacker: "Pokemon",
+        defender: "Pokemon",
+        waza: Waza,
+        weather: Weathers,
+        field: Fields,
+    ) -> int:
         base_power: int
         hosei: dict[str, int] = {}
 
@@ -479,7 +531,8 @@ class DamageCalc:
             case "はりきり":  # 攻撃補正でなく攻撃力そのものに乗る
                 if waza.category == 物理:
                     power = (power * 6144 / 4096).quantize(
-                        DECIMAI_ZERO, rounding=ROUND_FLOOR)
+                        DECIMAI_ZERO, rounding=ROUND_FLOOR
+                    )
             case "スロースタート" | "よわき":
                 if attacker.ability_enable:
                     hosei[key] = 2048
@@ -504,7 +557,10 @@ class DamageCalc:
                 if attacker.ailment != Ailments.なし and waza.category == 物理:
                     hosei[key] = 6144
             case "しんりょく" | "もうか" | "もらいび" | "げきりゅう" | "むしのしらせ":
-                if attacker.ability_enable and waza.type == DamageCalc.__type_buff_abilities[attacker.ability]:
+                if (
+                    attacker.ability_enable
+                    and waza.type == DamageCalc.__type_buff_abilities[attacker.ability]
+                ):
                     hosei[key] = 6144
             case "サンパワー":
                 if weather == Weathers.晴れ and waza.category == 特殊:
@@ -557,7 +613,10 @@ class DamageCalc:
                 if waza.category == 特殊:
                     hosei[key] = 6144
             case "ふといホネ":
-                if attacker.name in ["カラカラ", "ガラガラ", "アローラガラガラ"] and waza.category == 物理:
+                if (
+                    attacker.name in ["カラカラ", "ガラガラ", "アローラガラガラ"]
+                    and waza.category == 物理
+                ):
                     hosei[key] = 8192
             case "しんかいのキバ":
                 if attacker.name == "パールル" and waza.category == 特殊:
@@ -568,23 +627,26 @@ class DamageCalc:
         # endregion
 
         # 最終補正値の計算
-        hosei_total = Decimal('4096')
+        hosei_total = Decimal("4096")
         for value in hosei.values():
             hosei_total = (hosei_total * value / 4096).quantize(
-                exp=DECIMAI_ZERO, rounding=ROUND_HALF_UP)
+                exp=DECIMAI_ZERO, rounding=ROUND_HALF_UP
+            )
 
         power = (power * hosei_total / 4096).quantize(
-            exp=DECIMAI_ZERO, rounding=ROUND_HALF_DOWN)
+            exp=DECIMAI_ZERO, rounding=ROUND_HALF_DOWN
+        )
         return int(power) if power > 1 else 1
 
     # 防御力の算出
     @staticmethod
     def __get_defence_power(
-            attacker: 'Pokemon',
-            defender: 'Pokemon',
-            waza: Waza,
-            weather: Weathers,
-            field: Fields) -> int:
+        attacker: "Pokemon",
+        defender: "Pokemon",
+        waza: Waza,
+        weather: Weathers,
+        field: Fields,
+    ) -> int:
         power: Decimal
         hosei: dict[str, int] = {}
 
@@ -599,21 +661,33 @@ class DamageCalc:
             power = Decimal(defender.get_ranked_stats(df_key))
 
         # region SV準伝のわざわいシリーズ対応、防御力が25%減少。暫定実装
-        if (df_key == StatsKey.B and attacker.ability == "わざわいのつるぎ" and defender.ability != "わざわいのつるぎ") or \
-                (df_key == StatsKey.D and attacker.ability == "わざわいのたま" and defender.ability != "わざわいのたま"):
-            power = (power * 3072 / 4096).quantize(
-                DECIMAI_ZERO, rounding=ROUND_FLOOR)
+        if (
+            df_key == StatsKey.B
+            and attacker.ability == "わざわいのつるぎ"
+            and defender.ability != "わざわいのつるぎ"
+        ) or (
+            df_key == StatsKey.D
+            and attacker.ability == "わざわいのたま"
+            and defender.ability != "わざわいのたま"
+        ):
+            power = (power * 3072 / 4096).quantize(DECIMAI_ZERO, rounding=ROUND_FLOOR)
         # endregion
 
         # 岩タイプは砂嵐で特防が1.5倍
-        if weather == Weathers.砂嵐 and defender.has_type(Types.いわ) and df_key == StatsKey.D:
-            power = (power * 6144 / 4096).quantize(
-                DECIMAI_ZERO, rounding=ROUND_FLOOR)
+        if (
+            weather == Weathers.砂嵐
+            and defender.has_type(Types.いわ)
+            and df_key == StatsKey.D
+        ):
+            power = (power * 6144 / 4096).quantize(DECIMAI_ZERO, rounding=ROUND_FLOOR)
 
         # 氷タイプは雪で防御が1.5倍
-        if weather == Weathers.雪 and defender.has_type(Types.こおり) and df_key == StatsKey.B:
-            power = (power * 6144 / 4096).quantize(
-                DECIMAI_ZERO, rounding=ROUND_FLOOR)
+        if (
+            weather == Weathers.雪
+            and defender.has_type(Types.こおり)
+            and df_key == StatsKey.B
+        ):
+            power = (power * 6144 / 4096).quantize(DECIMAI_ZERO, rounding=ROUND_FLOOR)
 
         # region 防御側の特性補正
         key = "防御特性:" + defender.ability
@@ -653,24 +727,44 @@ class DamageCalc:
         # endregion
 
         # 最終補正値の計算
-        hosei_total = Decimal('4096')
+        hosei_total = Decimal("4096")
         for value in hosei.values():
             hosei_total = (hosei_total * value / 4096).quantize(
-                exp=DECIMAI_ZERO, rounding=ROUND_HALF_UP)
+                exp=DECIMAI_ZERO, rounding=ROUND_HALF_UP
+            )
 
         power = (power * hosei_total / 4096).quantize(
-            exp=DECIMAI_ZERO, rounding=ROUND_HALF_DOWN)
+            exp=DECIMAI_ZERO, rounding=ROUND_HALF_DOWN
+        )
         return int(power) if power > 1 else 1
 
     # ダメージ補正値の算出
     @staticmethod
-    def __get_damage_hosei(attacker: 'Pokemon', defender: 'Pokemon', waza: Waza, count: int) -> int:
+    def __get_damage_hosei(
+        attacker: "Pokemon", defender: "Pokemon", waza: Waza, count: int
+    ) -> int:
         hosei: dict[str, int] = {}
-        type_effective: float = defender.get_type_effective(waza, attacker.ability, defender.battle_terastype)
+        type_effective: float = defender.get_type_effective(
+            waza, attacker.ability, defender.battle_terastype
+        )
 
         # region 壁の補正
         key = "壁:" + defender.wall.name
-        if ((defender.wall.name in ["リフレクター", "オーロラベール"] and waza.category == 物理 and not waza in ["かわらわり", "サイコファング"]) or (defender.wall.name in ["ひかりのかべ", "オーロラベール"] and waza.category == 特殊)) and not waza.critical and attacker.ability != "すりぬけ":
+        if (
+            (
+                (
+                    defender.wall.name in ["リフレクター", "オーロラベール"]
+                    and waza.category == 物理
+                    and waza not in ["かわらわり", "サイコファング"]
+                )
+                or (
+                    defender.wall.name in ["ひかりのかべ", "オーロラベール"]
+                    and waza.category == 特殊
+                )
+            )
+            and not waza.critical
+            and attacker.ability != "すりぬけ"
+        ):
             hosei[key] = 2048
         # endregion
 
@@ -683,7 +777,7 @@ class DamageCalc:
                 if waza.critical and attacker.ability_enable:
                     hosei[key] = 6144
             case "アクセルブレイク" | "イナズマドライブ":
-                pass # 弱点突いたら1.33倍
+                pass  # 弱点突いたら1.33倍
             case "いろめがね":
                 if type_effective < 1.0:
                     hosei[key] = 8192
@@ -698,7 +792,14 @@ class DamageCalc:
                 if waza.is_touch:
                     hosei["もふもふ(接触)"] = 2048
             case "マルチスケイル" | "ファントムガード":
-                if defender.ability_enable and (attacker.ability != "かたやぶり" or attacker.ability_enable is False) and count == 0:
+                if (
+                    defender.ability_enable
+                    and (
+                        attacker.ability != "かたやぶり"
+                        or attacker.ability_enable is False
+                    )
+                    and count == 0
+                ):
                     hosei[key] = 2048
             case "パンクロック":
                 if waza.name in DamageCalc.__sound_moves:
@@ -728,35 +829,37 @@ class DamageCalc:
         # 半減きのみ TBD
 
         # 最終補正値の計算
-        hosei_total = Decimal('4096')
+        hosei_total = Decimal("4096")
         for value in hosei.values():
             hosei_total = (hosei_total * value / 4096).quantize(
-                exp=DECIMAI_ZERO, rounding=ROUND_HALF_UP)
+                exp=DECIMAI_ZERO, rounding=ROUND_HALF_UP
+            )
         return int(hosei_total)
 
     # ダメージの算出
     @staticmethod
     def __get_fix_damages(
-            attacker: 'Pokemon',
-            defender: 'Pokemon',
-            waza: Waza,
-            waza_power: int,
-            attack_power: int,
-            defence_power: int,
-            damage_hosei: int,
-            weather: Weathers) -> list[int]:
-
+        attacker: "Pokemon",
+        defender: "Pokemon",
+        waza: Waza,
+        waza_power: int,
+        attack_power: int,
+        defence_power: int,
+        damage_hosei: int,
+        weather: Weathers,
+    ) -> list[int]:
         # 攻撃側のレベル × 2 ÷ 5 ＋ 2 → 切り捨て
         damage: Decimal = Decimal(attacker.lv * 2 / 5 + 2).quantize(
-            DECIMAI_ZERO, rounding=ROUND_FLOOR)
+            DECIMAI_ZERO, rounding=ROUND_FLOOR
+        )
 
         # × 最終威力 × 最終攻撃 ÷ 最終防御 → 切り捨て
         damage = (damage * waza_power * attack_power / defence_power).quantize(
-            DECIMAI_ZERO, rounding=ROUND_FLOOR)
+            DECIMAI_ZERO, rounding=ROUND_FLOOR
+        )
 
         # ÷ 50 ＋ 2 → 切り捨て
-        damage = (damage / 50 + 2).quantize(
-            DECIMAI_ZERO, rounding=ROUND_FLOOR)
+        damage = (damage / 50 + 2).quantize(DECIMAI_ZERO, rounding=ROUND_FLOOR)
 
         # × 複数対象 3072 ÷ 4096 → 五捨五超入 TBD
         # × おやこあい(2発目) 1024 ÷ 4096 → 五捨五超入 TBD?
@@ -768,47 +871,60 @@ class DamageCalc:
                 case Weathers.晴れ:
                     if waza.type == Types.ほのお or waza.name == "ハイドロスチーム":
                         damage = (damage * 6144 / 4096).quantize(
-                            DECIMAI_ZERO, rounding=ROUND_HALF_DOWN)
+                            DECIMAI_ZERO, rounding=ROUND_HALF_DOWN
+                        )
                     elif waza.type == Types.みず:
                         damage = (damage * 2048 / 4096).quantize(
-                            DECIMAI_ZERO, rounding=ROUND_HALF_DOWN)
+                            DECIMAI_ZERO, rounding=ROUND_HALF_DOWN
+                        )
                 case Weathers.雨:
                     if waza.type == Types.みず:
                         damage = (damage * 6144 / 4096).quantize(
-                            DECIMAI_ZERO, rounding=ROUND_HALF_DOWN)
+                            DECIMAI_ZERO, rounding=ROUND_HALF_DOWN
+                        )
                     elif waza.type == Types.ほのお:
                         damage = (damage * 2048 / 4096).quantize(
-                            DECIMAI_ZERO, rounding=ROUND_HALF_DOWN)
+                            DECIMAI_ZERO, rounding=ROUND_HALF_DOWN
+                        )
 
         # × 急所 6144 ÷ 4096 → 五捨五超入
         if waza.critical:
             damage = (damage * 6144 / 4096).quantize(
-                DECIMAI_ZERO, rounding=ROUND_HALF_DOWN)
+                DECIMAI_ZERO, rounding=ROUND_HALF_DOWN
+            )
 
         damages: list[int] = []
         for i in range(0, 16):
             # × 乱数(0.85, 0.86, …… 0.99, 1.00 の何れか) → 切り捨て
-            rnd = Decimal('0.85') + Decimal(str(i / 100))
-            rnd_damage = (damage * rnd).quantize(
-                DECIMAI_ZERO, rounding=ROUND_FLOOR)
+            rnd = Decimal("0.85") + Decimal(str(i / 100))
+            rnd_damage = (damage * rnd).quantize(DECIMAI_ZERO, rounding=ROUND_FLOOR)
 
             # × タイプ一致 6144  (更にテラス一致なら8192) (適応力なら8192) ÷ 4096 → 五捨五超入
             value = 4096
-            type_equal: bool = (waza.type in attacker.type)
+            type_equal: bool = waza.type in attacker.type
             teras_type_equal: bool = waza.type == attacker.battle_terastype
 
             match attacker.ability:
                 case "へんげんじざい" | "リベロ":
                     if attacker.ability_value == "有効":
-                        value = 8192 if teras_type_equal or attacker.battle_terastype == Types.ステラ else 6144
-                    elif attacker.ability_value == "無効" and (teras_type_equal or attacker.battle_terastype == Types.ステラ):
+                        value = (
+                            8192
+                            if teras_type_equal
+                            or attacker.battle_terastype == Types.ステラ
+                            else 6144
+                        )
+                    elif attacker.ability_value == "無効" and (
+                        teras_type_equal or attacker.battle_terastype == Types.ステラ
+                    ):
                         value = 6144
                 case "てきおうりょく":
                     # テラスタイプのみ一致判定がある。一致で2倍、元タイプとも一致した場合、2.25倍
                     if teras_type_equal or attacker.battle_terastype == Types.ステラ:
                         value = 9216 if type_equal else 8192
                 case _:
-                    if type_equal and ( teras_type_equal or attacker.battle_terastype == Types.ステラ ):
+                    if type_equal and (
+                        teras_type_equal or attacker.battle_terastype == Types.ステラ
+                    ):
                         value = 8192
                     elif attacker.battle_terastype == Types.ステラ:
                         value = 4915
@@ -817,20 +933,33 @@ class DamageCalc:
 
             if value != 4096:
                 rnd_damage = (rnd_damage * value / 4096).quantize(
-                    DECIMAI_ZERO, rounding=ROUND_HALF_DOWN)
+                    DECIMAI_ZERO, rounding=ROUND_HALF_DOWN
+                )
 
             # × タイプ相性 → 切り捨て
-            rnd_damage = (rnd_damage * Decimal(defender.get_type_effective(waza, attacker.ability, defender.battle_terastype))).\
-                quantize(DECIMAI_ZERO, rounding=ROUND_FLOOR)
+            rnd_damage = (
+                rnd_damage
+                * Decimal(
+                    defender.get_type_effective(
+                        waza, attacker.ability, defender.battle_terastype
+                    )
+                )
+            ).quantize(DECIMAI_ZERO, rounding=ROUND_FLOOR)
 
             # × やけど 2048 ÷ 4096 → 五捨五超入 TBD
-            if attacker.ailment == Ailments.やけど and waza.category == 物理 and waza.name != "からげんき":
+            if (
+                attacker.ailment == Ailments.やけど
+                and waza.category == 物理
+                and waza.name != "からげんき"
+            ):
                 rnd_damage = (rnd_damage * 2048 / 4096).quantize(
-                DECIMAI_ZERO, rounding=ROUND_HALF_DOWN)
+                    DECIMAI_ZERO, rounding=ROUND_HALF_DOWN
+                )
 
             # × ダメージの補正値 ÷ 4096 → 五捨五超入
             rnd_damage = (rnd_damage * damage_hosei / 4096).quantize(
-                DECIMAI_ZERO, rounding=ROUND_HALF_DOWN)
+                DECIMAI_ZERO, rounding=ROUND_HALF_DOWN
+            )
 
             damages.append(int(rnd_damage))
 
@@ -840,9 +969,13 @@ class DamageCalc:
     @staticmethod
     def add_rank_value(stats: int, rank: int) -> int:
         if rank > 0:
-            stats = Decimal(stats / 2 * (2 + rank)).quantize(DECIMAI_ZERO, rounding=ROUND_FLOOR)
+            stats = Decimal(stats / 2 * (2 + rank)).quantize(
+                DECIMAI_ZERO, rounding=ROUND_FLOOR
+            )
         elif rank < 0:
-            stats = Decimal(stats / (2 + rank) * 2).quantize(DECIMAI_ZERO, rounding=ROUND_FLOOR)
+            stats = Decimal(stats / (2 + rank) * 2).quantize(
+                DECIMAI_ZERO, rounding=ROUND_FLOOR
+            )
         return int(stats)
 
     # region 特定の技や特性などの定義
@@ -906,7 +1039,7 @@ class DamageCalc:
         "ブレイブバード",
         "ボルテッカー",
         "ワイルドボルト",
-        "ウェーブタックル"
+        "ウェーブタックル",
     ]
     # 音技(パンクロックとか)
     __sound_moves = [
@@ -939,7 +1072,7 @@ class DamageCalc:
         "どくどくのキバ",
         "サイコファング",
         "エラがみ",
-        "くらいつく"
+        "くらいつく",
     ]
     # 波動技(メガランチャー)
     __blast_moves = [
@@ -948,7 +1081,7 @@ class DamageCalc:
         "みずのはどう",
         "りゅうのはどう",
         "だいちのはどう",
-        "こんげんのはどう"
+        "こんげんのはどう",
     ]
     # 切る技(きれあじ)
     __slash_moves = [
@@ -975,7 +1108,7 @@ class DamageCalc:
         "ひけん・ちえなみ",
         "むねんのつるぎ",
         "リーフブレード",
-        "れんぞくぎり"
+        "れんぞくぎり",
     ]
     # タイプ強化アイテム
     __type_buff_items = {
@@ -1007,12 +1140,19 @@ class DamageCalc:
 
     # そうだいしょう倍率
     __soudaisyou_values = {
-        "1.0": 4096, "1.1": 4506, "1.2": 4915, "1.3": 5325, "1.4": 5734, "1.5": 6144,
+        "1.0": 4096,
+        "1.1": 4506,
+        "1.2": 4915,
+        "1.3": 5325,
+        "1.4": 5734,
+        "1.5": 6144,
     }
 
-    #とうそうしん倍率
+    # とうそうしん倍率
     __tousoushin_values = {
-        "1.0": 4096, "1.25": 5120, "0.75": 3072,
+        "1.0": 4096,
+        "1.25": 5120,
+        "0.75": 3072,
     }
 
     __damages_at_weight = ((10, 20), (25, 40), (50, 60), (100, 80), (200, 100))

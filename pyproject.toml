@@ -45,4 +45,4 @@ target-version = "py310"
 select = ["E", "F", "W", "I", "B"]
 fixable = ["ALL"]
 
-ignore = ["E402", "E501", "E722"]
+ignore = ["E402", "E501", "E722", "F403", "F405"]
