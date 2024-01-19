@@ -2,6 +2,7 @@
 
 import csv
 import glob
+import math
 import os
 import tkinter
 from tkinter import E, N, S, W, filedialog, messagebox, ttk
@@ -310,7 +311,9 @@ class PokemonEditor(ttk.LabelFrame):
         self._pokemon_name_label = ttk.Label(self, textvariable=self._pokemon_name_var)
         self._pokemon_name_label.grid(column=0, row=2, columnspan=2)
 
-        self._clear_button = MyButton(self, text="クリア", command=self.clear_pokemon)
+        self._clear_button = MyButton(
+            self, image=images.get_menu_icon("trush"), command=self.clear_pokemon
+        )
         self._clear_button.grid(column=2, row=0)
 
         self._teras_var = Types.なし
@@ -544,23 +547,27 @@ class PokemonEditor(ttk.LabelFrame):
         for i, syuzoku in enumerate(self.syuzoku_list):
             if syuzoku.get() != 0:
                 if i == 0:
-                    value = int(
-                        syuzoku.get()
-                        + float(self._iv_frame.iv_list[i]._iv_entry.value.get()) / 2
-                        + float(self._ev_frame.ev_list[i]._ev_entry.value.get()) / 8
-                        + 60
+                    value = (
+                        (syuzoku.get() * 2)
+                        + self._iv_frame.iv_list[i]._iv_entry.value.get()
+                        + math.floor(
+                            self._ev_frame.ev_list[i]._ev_entry.value.get() / 4
+                        )
                     )
+                    value = math.floor(value / 2) + 60
                     self.jissu_list[i].set(value)
                 else:
-                    hosei = get_seikaku_hosei(self._seikaku_combobox.get(), StatsKey(i))
-                    value = int(
-                        (
-                            syuzoku.get()
-                            + float(self._iv_frame.iv_list[i]._iv_entry.value.get()) / 2
-                            + float(self._ev_frame.ev_list[i]._ev_entry.value.get()) / 8
-                            + 5
-                        )
-                        * hosei
+                    value = (
+                        (syuzoku.get() * 2)
+                        + self._iv_frame.iv_list[i]._iv_entry.value.get()
+                        + math.floor(self._ev_frame.ev_list[i]._ev_entry.value.get())
+                        / 4
+                    )
+
+                    value = math.floor(value / 2) + 5
+                    value = math.floor(
+                        value
+                        * get_seikaku_hosei(self._seikaku_combobox.get(), StatsKey(i))
                     )
                     self.jissu_list[i].set(value)
 
