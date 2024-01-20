@@ -81,6 +81,7 @@ class Stage:
         doryoku_text: str = None,
         doryoku_number: Stats = None,
         kotai: Stats = None,
+        rank: Stats = None,
         item: str = None,
         ability: str = None,
         ability_value: str = None,
@@ -115,6 +116,9 @@ class Stage:
             self._app.set_active_pokemon(player, pokemon)
         if kotai is not None:
             pokemon.kotai.set_values_from_stats(kotai)
+            self._app.set_active_pokemon(player, pokemon)
+        if rank is not None:
+            pokemon.rank.set_values_from_stats(rank)
             self._app.set_active_pokemon(player, pokemon)
         if item is not None:
             if is_same and pokemon.item == item:
@@ -167,17 +171,6 @@ class Stage:
             if f.name == field:
                 self._field = f
         self.calc_damage()
-
-    # ランク編集
-    def edit_rank(self, player: int, rank: Stats):
-        pokemon = self._active_pokemon[player]
-        if pokemon.is_empty is False:
-            pokemon.rank.set_values_from_stats(rank)
-            self.calc_damage()
-
-    # ランクのクリア
-    def clear_rank(self, player: int):
-        self._app.clear_rank(player)
 
     # 戦闘時テラスタイプ変更
     def select_terastype(self, player: int):

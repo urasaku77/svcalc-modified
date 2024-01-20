@@ -35,7 +35,6 @@ from component.frame.whole import (
 from party.party import PartyEditor
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
-from pokedata.stats import Stats
 from recog.capture import Capture
 
 
@@ -279,10 +278,6 @@ class MainApp(ThemedTk):
     # ダメージ計算
     def set_calc_results(self, player: int, results):
         self._waza_damage_frames[player].set_damages(results)
-
-    # ランクのクリア
-    def clear_rank(self, player: int):
-        self._active_poke_frames[player]._status_frame.set_rank(Stats(init_value=0))
 
     # タイプ選択
     def select_type(self, player: int) -> Types:

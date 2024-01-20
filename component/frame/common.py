@@ -277,7 +277,7 @@ class ActivePokemonFrame(ttk.LabelFrame):
         self._pokemon = poke
         self._pokemon_icon.set_pokemon_icon(pid=poke.pid, size=(60, 60))
         self._status_frame.set_stats(poke.get_all_stats())
-        self._status_frame.set_doryoku(poke.doryoku)
+        self._status_frame.change_all_doryoku_box(poke.doryoku)
         self._status_frame.change_all_rank_box(poke.rank)
         self._status_frame.on_kotai_check_change(poke.kotai)
         self._seikaku_combobox.set(poke.seikaku)
@@ -416,7 +416,9 @@ class StatusFrame(ttk.LabelFrame):
                     to=6,
                     increment=1,
                     width=3,
-                    command=lambda key=statskey: self.on_push_rank_spin(key),
+                    command=lambda key=statskey: self.on_push_rank_spin(
+                        key, int(self._rank_spinbox_dict[key].get())
+                    ),
                 )
                 rank_spin.grid(column=i + 1, row=3, padx=2, pady=3)
                 self._rank_spinbox_dict[statskey] = rank_spin
@@ -453,7 +455,7 @@ class StatusFrame(ttk.LabelFrame):
             master=self,
             image=images.get_menu_icon("trush"),
             padding=0,
-            command=lambda: self.on_push_rank_clear_button(),
+            command=self.on_push_rank_clear_button,
         )
         rank_clear_btn.grid(column=7, row=3)
 
@@ -494,47 +496,58 @@ class StatusFrame(ttk.LabelFrame):
             kotai[StatsKey.S] = 0
         self._stage.set_value_to_active_pokemon(self._player, kotai=kotai)
 
-    # Spinbox外から全努力値の値を書き換える
-    def set_doryoku(self, doryoku: Stats):
+    # 努力値Spinbox直接入力時処理（Enter押下後起動）
+    def on_change_doryoku_spin(self, *args):
+        for _i, key in enumerate([x for x in StatsKey]):
+            self._doryoku[key] = int(self._doryoku_spinbox_dict[key].get())
+        if self._stage is not None:
+            self._stage.set_value_to_active_pokemon(
+                self._player,
+                doryoku_number=self._doryoku,
+            )
+
+    # 努力値Spinboxの上下ボタン押下時処理
+    def on_push_doryoku_spin(self, key: StatsKey):
+        self._doryoku[key] = int(self._doryoku_spinbox_dict[key].get())
+        if self._stage is not None:
+            self._stage.set_value_to_active_pokemon(
+                self._player,
+                doryoku_number=self._doryoku,
+            )
+
+    # Spinbox外から全努力値の値を変更
+    def change_all_doryoku_box(self, doryoku: Stats):
         for key in [x for x in StatsKey]:
             self._doryoku[key] = doryoku[key]
             self._doryoku_spinbox_dict[key].select_clear()
             self._doryoku_spinbox_dict[key].set(doryoku[key])
 
-    # 努力値Spinboxの上下ボタン押下時処理
-    def on_push_doryoku_spin(self, key: StatsKey):
-        self._doryoku[key] = int(self._doryoku_spinbox_dict[key].get())
-        self._stage.set_value_to_active_pokemon(
-            self._player,
-            doryoku_number=self._doryoku,
-        )
-
-    # 努力値Spinbox直接入力時処理（Enter押下後起動）
-    def on_change_doryoku_spin(self, *args):
-        for _i, key in enumerate([x for x in StatsKey]):
-            self._doryoku[key] = int(self._doryoku_spinbox_dict[key].get())
-        self._stage.set_value_to_active_pokemon(
-            self._player,
-            doryoku_number=self._doryoku,
-        )
-
     # 努力値Spinbox全クリア処理
     def on_push_doryoku_clear_button(self):
-        self.set_doryoku(Stats(0))
-        self._stage.set_value_to_active_pokemon(
-            self._player, doryoku_number=self._doryoku
-        )
-
-    def set_rank(self, rank: Stats):
-        self.change_all_rank_box(rank)
+        self.change_all_doryoku_box(Stats(0))
         if self._stage is not None:
-            self._stage.edit_rank(self._player, self._rank)
+            self._stage.set_value_to_active_pokemon(
+                self._player, doryoku_number=self._doryoku
+            )
 
-    def set_rank_value(self, key: StatsKey, value: int):
+    # ランクSpinboxの上下ボタン押下時処理
+    def on_push_rank_spin(self, key: StatsKey, value: int):
         self.change_rank_box(key, value)
         if self._stage is not None:
-            self._stage.edit_rank(self._player, self._rank)
+            self._stage.set_value_to_active_pokemon(self._player, rank=self._rank)
 
+    # Spinbox外から全ランクの値を変更
+    def change_all_rank_box(self, rank: Stats):
+        for key in [x for x in StatsKey if x != StatsKey.H]:
+            self.change_rank_box(key, rank[key])
+
+    # ランクSpinbox全クリア処理
+    def on_push_rank_clear_button(self):
+        self.change_all_rank_box(Stats(0))
+        if self._stage is not None:
+            self._stage.set_value_to_active_pokemon(self._player, rank=self._rank)
+
+    # ランクSpinboxの表示変更（色など）
     def change_rank_box(self, key: StatsKey, value: int):
         self._rank[key] = value
         self._rank_spinbox_dict[key].select_clear()
@@ -546,16 +559,6 @@ class StatusFrame(ttk.LabelFrame):
             self._rank_spinbox_dict[key]["foreground"] = (
                 "steel blue" if value < 0 else ""
             )
-
-    def change_all_rank_box(self, rank: Stats):
-        for key in [x for x in StatsKey if x != StatsKey.H]:
-            self.change_rank_box(key, rank[key])
-
-    def on_push_rank_spin(self, key: StatsKey):
-        self.set_rank_value(key, int(self._rank_spinbox_dict[key].get()))
-
-    def on_push_rank_clear_button(self):
-        self._stage.clear_rank(self._player)
 
 
 # 技・ダメージ表示リストフレーム
@@ -859,13 +862,3 @@ class InfoFrame(ttk.LabelFrame):
         if self._no != 0:
             url = "https://yakkun.com/sv/zukan/?national_no=" + str(self._no)
             webbrowser.open(url)
-
-
-# 天気フレーム
-# フィールドフレーム
-# 素早さ比較ボタン
-# HOME情報フレーム
-# タイマーフレーム
-# カウンターフレーム(2個)
-# カウンターフレーム(単体)
-# 対戦記録フレーム
