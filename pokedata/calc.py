@@ -421,10 +421,15 @@ class DamageCalc:
                 if attacker.name == "オーガポン(岩)":
                     hosei[key] = 4915
 
-        if attacker.item in DamageCalc.__type_buff_items.keys():
+        if (
+            attacker.item in DamageCalc.__type_buff_items.keys()
+            or attacker.item == "タイプ強化アイテム"
+        ):
             # タイプ強化アイテム系
             t = DamageCalc.__type_buff_items.get(attacker.item)
-            if t is not None and t == waza.type:
+            if (
+                t is not None and t == waza.type
+            ) or attacker.item == "タイプ強化アイテム":
                 hosei[attacker.item] = 4915
         # endregion
 
@@ -826,7 +831,16 @@ class DamageCalc:
                 pass  # 誰も使わないはず
         # endregion
 
-        # 半減きのみ TBD
+        # region 防御側の持ち物補正
+        key = "防御持ち物:" + attacker.item
+        if (
+            defender.item in DamageCalc.__type_debuff_items.keys()
+            or defender.item == "半減きのみ"
+        ):
+            t = DamageCalc.__type_debuff_items.get(defender.item)
+            if (t is not None and t == waza.type) or defender.item == "半減きのみ":
+                hosei[attacker.item] = 2048
+        # endregion
 
         # 最終補正値の計算
         hosei_total = Decimal("4096")
@@ -1136,6 +1150,28 @@ class DamageCalc:
         "がんせきおこう": Types.いわ,
         "あやしいおこう": Types.エスパー,
         "ようせいのハネ": Types.フェアリー,
+    }
+
+    # 半減きのみ
+    __type_debuff_items = {
+        "ホズのみ": Types.ノーマル,
+        "オッカのみ": Types.ほのお,
+        "イトケのみ": Types.みず,
+        "ソクノのみ": Types.でんき,
+        "リンドのみ": Types.くさ,
+        "ヤチェのみ": Types.こおり,
+        "ヨプのみ": Types.かくとう,
+        "ビアーのみ": Types.どく,
+        "シュカのみ": Types.じめん,
+        "バコウのみ": Types.ひこう,
+        "ウタンのみ": Types.エスパー,
+        "タンガのみ": Types.むし,
+        "ヨロギのみ": Types.いわ,
+        "カシブのみ": Types.ゴースト,
+        "ハバンのみ": Types.ドラゴン,
+        "ナモのみ": Types.あく,
+        "リリバのみ": Types.はがね,
+        "ロゼルのみ": Types.フェアリー,
     }
 
     # そうだいしょう倍率
