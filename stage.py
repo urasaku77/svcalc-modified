@@ -6,6 +6,7 @@ from pokedata.const import Ailments, Fields, Types, Walls, Weathers
 from pokedata.nature import get_default_doryoku
 from pokedata.pokemon import Pokemon
 from pokedata.stats import Stats
+from pokedata.waza import WazaBase
 
 
 class Stage:
@@ -143,8 +144,8 @@ class Stage:
             pokemon.set_waza(waza_name=waza[1], index=waza[0])
             self._app.set_active_pokemon(player, pokemon)
         if waza_effect is not None:
-            pokemon.use_waza_effect(waza_effect)
-            self._app.set_active_pokemon(player, pokemon)
+            wazabase = pokemon.waza_list[waza_effect]
+            self.set_waza_effect(player, wazabase)
         if ailment is not None:
             pokemon.ailment = ailment
             self._app.set_active_pokemon(player, pokemon)
@@ -192,6 +193,23 @@ class Stage:
         # 表示の更新、ダメージ計算の再実行
         self._app.set_active_pokemon(player, pokemon)
         self.calc_damage()
+
+    # 技追加効果の分岐処理
+    def set_waza_effect(self, player: int, wazabase: WazaBase):
+        non_player = 0 if player == 1 else 1
+        if wazabase is not None:
+            if wazabase.has_value_list:
+                wazabase.set_next_value()
+            if wazabase.is_self_buff or wazabase.is_self_debuff:
+                self._active_pokemon[player].rank.add_values_from_string(
+                    wazabase.value, True
+                )
+            elif wazabase.is_opponent_buff or wazabase.is_opponent_debuff:
+                self._active_pokemon[non_player].rank.add_values_from_string(
+                    wazabase.value, True
+                )
+            for i in range(2):
+                self._app.set_active_pokemon(i, self._active_pokemon[i])
 
     # ダメージ計算
     def calc_damage(self):

@@ -619,8 +619,10 @@ class WazaDamageListFrame(ttk.LabelFrame):
                         | wazabase.TYPE_POWER_HOSEI
                     ):
                         self._btn_list[i].text = "x" + str(wazabase.value)
-                    case wazabase.TYPE_SELF_BUFF:
+                    case wazabase.TYPE_SELF_BUFF | wazabase.TYPE_OPPONENT_BUFF:
                         self._btn_list[i].text = "+"
+                    case wazabase.TYPE_SELF_DEBUFF | wazabase.TYPE_OPPONENT_DEBUFF:
+                        self._btn_list[i].text = "-"
                     case _:
                         self._btn_list[i].text = ""
             else:

@@ -574,17 +574,6 @@ class Pokemon:
             self.__waza_list.append(WazaBase(waza_name))
         self.statechanged()
 
-    # 技の回数、威力などの編集
-    def use_waza_effect(self, index):
-        wazabase = self.__waza_list[index]
-        if wazabase is not None:
-            if wazabase.has_value_list:
-                wazabase.set_next_value()
-                self.statechanged()
-            elif wazabase.is_self_buff:
-                self.__rank.add_values_from_string(wazabase.value, True)
-                self.statechanged()
-
     # 対象のタイプを持っているか（テラスタイプの場合含む）
     def has_type(self, _type: Types) -> bool:
         if self.battle_terastype is not None and self.battle_terastype != Types.なし:

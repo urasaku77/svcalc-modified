@@ -93,6 +93,7 @@ class WazaBase:
     TYPE_MULTI_HIT = 3
     TYPE_SELF_BUFF = 11
     TYPE_SELF_DEBUFF = 12
+    TYPE_OPPONENT_BUFF = 13
     TYPE_OPPONENT_DEBUFF = 14
 
     def __init__(self, name):
@@ -126,10 +127,31 @@ class WazaBase:
                 self.__value = v[1]
                 break
 
-        # ステータス強化技
+        # 自分ステータス強化技
         for k, v in WazaBase.__self_buff_values.items():
             if name in k:
                 self.__type = WazaBase.TYPE_SELF_BUFF
+                self.__value = v
+                break
+
+        # 自分ステータス弱化技
+        for k, v in WazaBase.__self_debuff_values.items():
+            if name in k:
+                self.__type = WazaBase.TYPE_SELF_DEBUFF
+                self.__value = v
+                break
+
+        # 相手ステータス強化技
+        for k, v in WazaBase.__opponent_buff_values.items():
+            if name in k:
+                self.__type = WazaBase.TYPE_OPPONENT_BUFF
+                self.__value = v
+                break
+
+        # 相手ステータス弱化技
+        for k, v in WazaBase.__opponent_debuff_values.items():
+            if name in k:
+                self.__type = WazaBase.TYPE_OPPONENT_DEBUFF
                 self.__value = v
                 break
 
@@ -168,6 +190,18 @@ class WazaBase:
     @property
     def is_self_buff(self) -> bool:
         return self.__type == WazaBase.TYPE_SELF_BUFF
+
+    @property
+    def is_self_debuff(self) -> bool:
+        return self.__type == WazaBase.TYPE_SELF_DEBUFF
+
+    @property
+    def is_opponent_buff(self) -> bool:
+        return self.__type == WazaBase.TYPE_OPPONENT_BUFF
+
+    @property
+    def is_opponent_debuff(self) -> bool:
+        return self.__type == WazaBase.TYPE_OPPONENT_DEBUFF
 
     @property
     def has_value_list(self) -> bool:
@@ -226,4 +260,16 @@ class WazaBase:
         "わるだくみ": "C+2",
         "てっぺき": "B+2",
         "ドわすれ": "D+2",
+    }
+
+    __self_debuff_values = {
+        "インファイト": "BD-1",
+    }
+
+    __opponent_buff_values = {
+        "いばる": "A+2",
+    }
+
+    __opponent_debuff_values = {
+        "あまえる": "A-2",
     }
