@@ -2,7 +2,8 @@ import dataclasses
 import datetime
 from typing import Optional
 
-from component.frame import ChosenFrame, PartyFrame, RecordFrame
+from component.frame.common import ChosenFrame, PartyFrame
+from component.frame.whole import RecordFrame
 
 
 @dataclasses.dataclass

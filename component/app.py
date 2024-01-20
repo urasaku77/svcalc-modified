@@ -16,18 +16,20 @@ from component.dialog import (
     SpeedComparing,
     TypeSelectDialog,
 )
-from component.frame import (
+from component.frame.common import (
     ActivePokemonFrame,
     ChosenFrame,
+    InfoFrame,
+    PartyFrame,
+    WazaDamageListFrame,
+)
+from component.frame.whole import (
     CountersFrame,
     FieldFrame,
     HomeFrame,
-    InfoFrame,
-    PartyFrame,
     RecordFrame,
     SpeedButton,
     TimerFrame,
-    WazaDamageListFrame,
     WeatherFrame,
 )
 from party.party import PartyEditor
