@@ -418,18 +418,8 @@ class PokemonEditor(ttk.LabelFrame):
                 else "",
                 compound="left",
             )
-
-            for i, value in enumerate(
-                [
-                    dialog.pokemon.syuzoku.H,
-                    dialog.pokemon.syuzoku.A,
-                    dialog.pokemon.syuzoku.B,
-                    dialog.pokemon.syuzoku.C,
-                    dialog.pokemon.syuzoku.D,
-                    dialog.pokemon.syuzoku.S,
-                ]
-            ):
-                self.syuzoku_list[i].set(value)
+            for i, statskey in enumerate([x for x in StatsKey]):
+                self.syuzoku_list[i].set(dialog.pokemon.syuzoku[statskey])
 
             self.calc_status()
 
@@ -454,40 +444,14 @@ class PokemonEditor(ttk.LabelFrame):
             text=pokemon.type[1].name if len(pokemon.type) > 1 else "",
             compound="left",
         )
+        for i, statskey in enumerate([x for x in StatsKey]):
+            self.syuzoku_list[i].set(pokemon.syuzoku[statskey])
 
-        for i, value in enumerate(
-            [
-                pokemon.syuzoku.H,
-                pokemon.syuzoku.A,
-                pokemon.syuzoku.B,
-                pokemon.syuzoku.C,
-                pokemon.syuzoku.D,
-                pokemon.syuzoku.S,
-            ]
-        ):
-            self.syuzoku_list[i].set(value)
+        for i, statskey in enumerate([x for x in StatsKey]):
+            self._ev_frame.ev_list[i].set_value(pokemon.doryoku[statskey], True)
 
-        for i, doryoku in enumerate(self._ev_frame.ev_list):
-            doryokus = self.doryoku_list = [
-                pokemon.doryoku.H,
-                pokemon.doryoku.A,
-                pokemon.doryoku.B,
-                pokemon.doryoku.C,
-                pokemon.doryoku.D,
-                pokemon.doryoku.S,
-            ]
-            doryoku.set_value(doryokus[i], True)
-
-        for i, kotai in enumerate(self._iv_frame.iv_list):
-            kotais = self.doryoku_list = [
-                pokemon.kotai.H,
-                pokemon.kotai.A,
-                pokemon.kotai.B,
-                pokemon.kotai.C,
-                pokemon.kotai.D,
-                pokemon.kotai.S,
-            ]
-            kotai.set_value(kotais[i], True)
+        for i, statskey in enumerate([x for x in StatsKey]):
+            self._iv_frame.iv_list[i].set_value(pokemon.kotai[statskey], True)
 
         for i, waza in enumerate(self.waza_list):
             value = pokemon.waza_list[i]

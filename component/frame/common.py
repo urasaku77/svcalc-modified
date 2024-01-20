@@ -722,6 +722,7 @@ class InfoFrame(ttk.LabelFrame):
         super().__init__(master, **kwargs)
         self._player: int = player
         self._no: int = 0
+        self.syuzoku = {}
         global img
         img = [
             [tkinter.PhotoImage(file=Types.なし.icon).subsample(3, 3)] * 2,
@@ -745,59 +746,18 @@ class InfoFrame(ttk.LabelFrame):
         self.type2_icon = ttk.Label(self, image=self.type2_img)
         self.type2_icon.grid(column=8, row=0, columnspan=3)
 
-        self.h_label = ttk.Label(self, text=" H ", font=(const.FONT_FAMILY, 15))
-        self.h_label.grid(column=0, row=1)
-        self.h = tkinter.StringVar()
-        self.h.set("")
-        self.h_text = ttk.Label(
-            self, textvariable=self.h, font=(const.FONT_FAMILY, 15, "bold")
-        )
-        self.h_text.grid(column=1, row=1)
-
-        self.a_label = ttk.Label(self, text=" A ", font=(const.FONT_FAMILY, 15))
-        self.a_label.grid(column=2, row=1)
-        self.a = tkinter.StringVar()
-        self.a.set("")
-        self.a_text = ttk.Label(
-            self, textvariable=self.a, font=(const.FONT_FAMILY, 15, "bold")
-        )
-        self.a_text.grid(column=3, row=1)
-
-        self.b_label = ttk.Label(self, text=" B ", font=(const.FONT_FAMILY, 15))
-        self.b_label.grid(column=4, row=1)
-        self.b = tkinter.StringVar()
-        self.b.set("")
-        self.b_text = ttk.Label(
-            self, textvariable=self.b, font=(const.FONT_FAMILY, 15, "bold")
-        )
-        self.b_text.grid(column=5, row=1)
-
-        self.c_label = ttk.Label(self, text=" C ", font=(const.FONT_FAMILY, 15))
-        self.c_label.grid(column=6, row=1)
-        self.c = tkinter.StringVar()
-        self.c.set("")
-        self.c_text = ttk.Label(
-            self, textvariable=self.c, font=(const.FONT_FAMILY, 15, "bold")
-        )
-        self.c_text.grid(column=7, row=1)
-
-        self.d_label = ttk.Label(self, text=" D ", font=(const.FONT_FAMILY, 15))
-        self.d_label.grid(column=8, row=1)
-        self.d = tkinter.StringVar()
-        self.d.set("")
-        self.d_text = ttk.Label(
-            self, textvariable=self.d, font=(const.FONT_FAMILY, 15, "bold")
-        )
-        self.d_text.grid(column=9, row=1)
-
-        self.s_label = ttk.Label(self, text=" S ", font=(const.FONT_FAMILY, 15))
-        self.s_label.grid(column=10, row=1)
-        self.s = tkinter.StringVar()
-        self.s.set("")
-        self.s_text = ttk.Label(
-            self, textvariable=self.s, font=(const.FONT_FAMILY, 15, "bold")
-        )
-        self.s_text.grid(column=11, row=1)
+        for i, statskey in enumerate([x for x in StatsKey]):
+            label = ttk.Label(
+                self, text=f" {statskey.name} ", font=(const.FONT_FAMILY, 15)
+            )
+            label.grid(column=i * 2, row=1)
+            value = tkinter.StringVar()
+            value.set("")
+            text = ttk.Label(
+                self, textvariable=value, font=(const.FONT_FAMILY, 15, "bold")
+            )
+            text.grid(column=i * 2 + 1, row=1)
+            self.syuzoku[statskey] = value
 
         self.ketaguri_label = ttk.Label(
             self, text=" けたぐりの威力： ", font=(const.FONT_FAMILY, 11)
@@ -840,12 +800,9 @@ class InfoFrame(ttk.LabelFrame):
                 text=pokemon.type[1].name if len(pokemon.type) > 1 else "",
                 compound="left",
             )
-            self.h.set(pokemon.syuzoku.H)
-            self.a.set(pokemon.syuzoku.A)
-            self.b.set(pokemon.syuzoku.B)
-            self.c.set(pokemon.syuzoku.C)
-            self.d.set(pokemon.syuzoku.D)
-            self.s.set(pokemon.syuzoku.S)
+            for _i, statskey in enumerate([x for x in StatsKey]):
+                self.syuzoku[statskey].set(pokemon.syuzoku[statskey])
+
             self.weight.set("(重さ：" + str(pokemon.weight) + " kg )")
             if pokemon.weight < 10:
                 self.ketaguri.set("20")
