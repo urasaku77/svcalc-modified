@@ -3,6 +3,7 @@ import json
 from component.app import MainApp
 from pokedata.calc import DamageCalc
 from pokedata.const import Ailments, Fields, Types, Walls, Weathers
+from pokedata.nature import get_default_doryoku
 from pokedata.pokemon import Pokemon
 from pokedata.stats import Stats
 
@@ -22,6 +23,12 @@ class Stage:
         self._weather: Weathers = Weathers.なし
         self._field: Fields = Fields.なし
         self._app.set_stage(self)
+
+        try:
+            with open("recog/setting.json", "r") as json_file:
+                self.setting_data = json.load(json_file)
+        except FileNotFoundError:
+            self.setting_data = {"doryoku_reset_auto": False}
 
     def get_party(self, index: int) -> list[Pokemon]:
         return self._party[index]
@@ -72,6 +79,8 @@ class Stage:
         player: int,
         seikaku: str = None,
         doryoku_text: str = None,
+        doryoku_number: Stats = None,
+        kotai: Stats = None,
         item: str = None,
         ability: str = None,
         ability_value: str = None,
@@ -86,10 +95,26 @@ class Stage:
     ):
         pokemon = self._active_pokemon[player]
         if seikaku is not None:
-            pokemon.seikaku = seikaku
+            if is_same and pokemon.seikaku == seikaku:
+                pokemon.seikaku = "まじめ"
+            else:
+                pokemon.seikaku = seikaku
+            if player == 1 and self.setting_data["doryoku_reset_auto"]:
+                pokemon.doryoku.init_values(0)
+                pokemon.doryoku.set_values_from_stats(
+                    get_default_doryoku(seikaku, pokemon.syuzoku)
+                )
+                self._app.set_active_pokemon(player, pokemon)
         if doryoku_text is not None:
             pokemon.doryoku.init_values(0)
             pokemon.doryoku.set_values_from_string(doryoku_text)
+            self._app.set_active_pokemon(player, pokemon)
+        if doryoku_number is not None:
+            pokemon.doryoku.init_values(0)
+            pokemon.doryoku.set_values_from_stats(doryoku_number)
+            self._app.set_active_pokemon(player, pokemon)
+        if kotai is not None:
+            pokemon.kotai.set_values_from_stats(kotai)
             self._app.set_active_pokemon(player, pokemon)
         if item is not None:
             if is_same and pokemon.item == item:

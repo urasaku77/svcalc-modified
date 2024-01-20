@@ -504,7 +504,9 @@ class SpeedComparing(tkinter.Toplevel):
             self.pokemon_icon[i].set_pokemon_icon(pokemons[i].pid, [60, 60])
             self.name_var[i].set(pokemons[i].name)
             self.base_stat_var[i].set(pokemons[i].syuzoku.S)
+            self.iv_entry[i].delete(0, tkinter.END)
             self.iv_entry[i].insert(0, pokemons[i].kotai.S)
+            self.ev_entry[i].delete(0, tkinter.END)
             self.ev_entry[i].insert(0, pokemons[i].doryoku.S)
             self.rank_var[i].set(pokemons[i].rank.S)
             if pokemons[i].seikaku in ["おくびょう", "せっかち", "やんちゃ", "ようき"]:
@@ -704,6 +706,7 @@ class ModeSetting(tkinter.Toplevel):
             self.initial_data = {
                 "active_chosen_auto": True,
                 "capture_monitor_auto": True,
+                "doryoku_reset_auto": True,
             }
 
         # チェックボックス1
@@ -724,12 +727,22 @@ class ModeSetting(tkinter.Toplevel):
         )
         self.capture_monitor_auto_checkbox.grid(row=1, column=0, columnspan=2, pady=5)
 
+        # チェックボックス3
+        self.doryoku_reset_auto_var = tkinter.BooleanVar()
+        self.doryoku_reset_auto_var.set(self.initial_data["doryoku_reset_auto"])
+        self.doryoku_reset_auto_checkbox = tkinter.Checkbutton(
+            self,
+            text="相手性格変更時自動努力値変更モード",
+            variable=self.doryoku_reset_auto_var,
+        )
+        self.doryoku_reset_auto_checkbox.grid(row=2, column=0, columnspan=2, pady=5)
+
         self.submit_button = MyButton(self, text="保存", command=self.submit_form)
-        self.submit_button.grid(row=2, column=0, pady=10)
+        self.submit_button.grid(row=3, column=0, pady=10)
         self.cancel_button = MyButton(
             self, text="キャンセル", command=self.on_push_button
         )
-        self.cancel_button.grid(row=2, column=1, pady=10)
+        self.cancel_button.grid(row=3, column=1, pady=10)
 
     def open(self, location=tuple[int, int]):
         self.grab_set()
@@ -741,6 +754,7 @@ class ModeSetting(tkinter.Toplevel):
         data = {
             "active_chosen_auto": self.active_chosen_auto_var.get(),
             "capture_monitor_auto": self.capture_monitor_auto_var.get(),
+            "doryoku_reset_auto": self.doryoku_reset_auto_var.get(),
         }
 
         with open(self.path, "w") as json_file:

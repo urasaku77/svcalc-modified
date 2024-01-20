@@ -12,7 +12,6 @@ from component import const, images
 from component.button import MyButton, TypeIconButton
 from component.combobox import MyCombobox, WazaNameCombobox
 from component.const import (
-    DORYOKU_COMBOBOX_VALUES,
     FIELD_COMBOBOX_VALUES,
     ITEM_COMBOBOX_VALUES,
     WALL_COMBOBOX_VALUES,
@@ -22,6 +21,7 @@ from component.label import MyLabel
 from pokedata.calc import DamageCalcResult
 from pokedata.const import ABILITY_VALUES, Types, Walls
 from pokedata.exception import changeble_form_in_battle
+from pokedata.nature import get_seikaku_list
 from pokedata.pokemon import Pokemon
 from pokedata.stats import Stats, StatsKey
 from pokedata.waza import WazaBase
@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 # 選択状態ポケモン表示フレーム
 class ActivePokemonFrame(ttk.LabelFrame):
     def __init__(self, master, player: int, **kwargs):
-        super().__init__(master, padding=5, **kwargs)
+        super().__init__(master, **kwargs)
         self._player: int = player
         self._pokemon: Pokemon = Pokemon()
         self._stage: Stage | None = None
@@ -41,7 +41,7 @@ class ActivePokemonFrame(ttk.LabelFrame):
 
         # ウィジェットの配置
         left_frame = ttk.Frame(self)
-        left_frame.grid(column=0, row=0, rowspan=4)
+        left_frame.grid(column=0, row=0, rowspan=4, padx=3)
 
         self._pokemon_icon = MyButton(
             left_frame, size=(60, 60), padding=0, command=self.on_push_pokemon_button
@@ -57,98 +57,109 @@ class ActivePokemonFrame(ttk.LabelFrame):
         )
         self._teras_button.grid(column=0, row=0, sticky=W + E)
 
-        for i, text in enumerate(["ステータス", "持ち物", "特性", "ランク"]):
-            label = MyLabel(self, text=text)
-            label.grid(column=1, row=i, padx=5, pady=5)
-        label = MyLabel(self, text="壁")
-        label.grid(column=3, row=0, padx=5, pady=5)
-
-        self._status_combobox = MyCombobox(
-            self, values=DORYOKU_COMBOBOX_VALUES, width=24
+        self._form_button_state = tkinter.BooleanVar()
+        self._form_button_state.set(False)
+        self._form_button = MyButton(
+            left_frame,
+            text="フォーム",
+            state=tkinter.DISABLED,
+            command=self.change_form,
         )
-        self._status_combobox.bind("<<ComboboxSelected>>", self.on_select_doryoku)
-        self._status_combobox.grid(column=2, row=0, sticky=W + E)
+        self._form_button.grid(column=0, row=2, pady=5)
 
+        seikakus = get_seikaku_list()
+        seikakus.insert(0, "まじめ")
+        self._seikaku_combobox = MyCombobox(left_frame, values=seikakus, width=8)
+        self._seikaku_combobox.set(seikakus[0])
+        self._seikaku_combobox.bind("<<ComboboxSelected>>", self.on_select_seikaku)
+        self._seikaku_combobox.bind("<Return>", self.on_select_seikaku)
+        self._seikaku_combobox.grid(column=0, row=3, sticky=W + E)
+
+        self._status_frame = StatusFrame(self, player, text="ステータス")
+        # self._status_combobox.bind("<<ComboboxSelected>>", self.on_select_doryoku)
+        self._status_frame.grid(
+            column=1, row=0, columnspan=4, sticky=S + N + W + E, padx=3
+        )
+
+        self._item_label = MyLabel(self, text="持ち物")
+        self._item_label.grid(column=1, row=2, padx=5, pady=5)
         self._item_combobox = MyCombobox(self, values=ITEM_COMBOBOX_VALUES)
+        self._item_combobox.set(ITEM_COMBOBOX_VALUES[0])
         self._item_combobox.bind("<<ComboboxSelected>>", self.on_select_item)
         self._item_combobox.bind("<Return>", self.on_select_item)
-        self._item_combobox.grid(column=2, row=1, sticky=W + E)
+        self._item_combobox.grid(column=2, row=2, sticky=W + E)
 
-        self._ability_combobox = MyCombobox(self, width=16)
+        self._ability_label = MyLabel(self, text="特性")
+        self._ability_label.grid(column=1, row=3, padx=5, pady=5)
+        self._ability_combobox = MyCombobox(self)
         self._ability_combobox.bind("<<ComboboxSelected>>", self.on_select_ability)
-        self._ability_combobox.grid(column=2, row=2, sticky=W + E)
+        self._ability_combobox.grid(column=2, row=3, sticky=W + E)
 
         self._ability_value_combobox = MyCombobox(self, width=4, state="disable")
         self._ability_value_combobox.bind(
             "<<ComboboxSelected>>", self.on_select_ability_value
         )
-        self._ability_value_combobox.grid(column=3, row=2)
+        self._ability_value_combobox.grid(column=3, row=3)
 
-        self._wall_combobox = MyCombobox(self, width=16, values=WALL_COMBOBOX_VALUES)
-        self._wall_combobox.bind("<<ComboboxSelected>>", self.on_select_wall)
-        self._wall_combobox.grid(column=4, row=0, sticky=W)
+        wall_frame = ttk.Frame(self)
 
-        self.burned = tkinter.BooleanVar()
-        self.burned_check = tkinter.Checkbutton(
-            self, text="やけど", variable=self.burned, command=self.change_burned
+        self._wall_combobox = MyCombobox(
+            wall_frame, width=12, values=WALL_COMBOBOX_VALUES
         )
-        self.burned.set(False)
-        self.burned_check.grid(column=3, row=1, sticky=W)
+        self._wall_combobox.set(WALL_COMBOBOX_VALUES[0])
+        self._wall_combobox.bind("<<ComboboxSelected>>", self.on_select_wall)
+        self._wall_combobox.grid(column=1, row=0, sticky=W)
+
+        wall_frame.grid(column=4, row=3, sticky=W)
+        wall_label = MyLabel(wall_frame, text="壁")
+        wall_label.grid(column=0, row=0, padx=5, pady=5)
+
+        checkbox_frame = ttk.Frame(self)
 
         self.critical = tkinter.BooleanVar()
         self.critical_check = tkinter.Checkbutton(
-            self,
-            text="きゅうしょ",
+            checkbox_frame,
+            text="急所",
             variable=self.critical,
             command=self.change_critical,
         )
         self.critical.set(False)
-        self.critical_check.grid(column=4, row=1, sticky=W)
+        self.critical_check.grid(column=0, row=0, sticky=W + E)
+
+        self.burned = tkinter.BooleanVar()
+        self.burned_check = tkinter.Checkbutton(
+            checkbox_frame,
+            text="やけど",
+            variable=self.burned,
+            command=self.change_burned,
+        )
+        self.burned.set(False)
+        self.burned_check.grid(column=1, row=0, sticky=W)
 
         self.charging = tkinter.BooleanVar()
         self.charging_check = tkinter.Checkbutton(
-            self,
+            checkbox_frame,
             text="じゅうでん",
             variable=self.charging,
             command=self.change_charging,
         )
         self.charging.set(False)
-        self.charging_check.grid(column=4, row=2, sticky=W)
+        self.charging_check.grid(column=2, row=0, sticky=W)
 
-        self._rank_label = RankFrame(self, player)
-        self._rank_label.grid(column=2, row=3, columnspan=2, sticky=W + E)
-
-        # ランククリアボタンととフォーム変更ボタン
-        other_button_frame = ttk.Frame(self)
-        other_button_frame.grid(column=4, row=3)
-
-        self._form_button_state = tkinter.BooleanVar()
-        self._form_button_state.set(False)
-        self._form_button = MyButton(
-            other_button_frame,
-            text="フォーム",
-            state=tkinter.DISABLED,
-            command=self.change_form,
-        )
-        self._form_button.grid(column=1, row=0, sticky=W)
-
-        clear_btn = MyButton(
-            master=other_button_frame,
-            image=images.get_menu_icon("trush"),
-            padding=0,
-            command=lambda: self.on_push_rankclear_button(),
-        )
-        clear_btn.grid(column=0, row=0)
+        checkbox_frame.grid(column=3, row=2, columnspan=2)
 
     def set_pokemon(self, poke: Pokemon):
         self._pokemon = poke
         self._pokemon_icon.set_pokemon_icon(pid=poke.pid, size=(60, 60))
-        self._status_combobox.set(poke.status_text)
+        self._status_frame.set_stats(poke.get_all_stats())
+        self._status_frame.set_doryoku(poke.doryoku)
+        self._status_frame.change_all_rank_box(poke.rank)
+        self._status_frame.on_kotai_check_change(poke.kotai)
+        self._seikaku_combobox.set(poke.seikaku)
         self._item_combobox.set(poke.item)
         self._ability_combobox["values"] = poke.abilities
         self._ability_combobox.set(poke.ability)
         self.set_ability_values(poke.ability)
-        self._rank_label.change_all_box(poke.rank)
         self._ability_value_combobox.set(poke.ability_value)
         self._teras_button.set_type(poke.battle_terastype)
         if poke.no in changeble_form_in_battle:
@@ -185,11 +196,9 @@ class ActivePokemonFrame(ttk.LabelFrame):
             player=self._player, charging=self.charging.get()
         )
 
-    def on_select_doryoku(self, *_args):
-        values = self._status_combobox.get().split(" ")
-        self._status_combobox.delete(0, 30)
+    def on_select_seikaku(self, *_args):
         self._stage.set_value_to_active_pokemon(
-            player=self._player, seikaku=values[0], doryoku_text=values[1]
+            player=self._player, seikaku=self._seikaku_combobox.get()
         )
 
     def on_select_item(self, *_args):
@@ -218,77 +227,206 @@ class ActivePokemonFrame(ttk.LabelFrame):
     def on_push_terasbutton(self, *_args):
         self._stage.select_terastype(self._player)
 
-    def on_push_rankclear_button(self):
-        self._stage.clear_rank(self._player)
-
     def change_form(self):
         self._pokemon.form_change()
         self._pokemon_icon.set_pokemon_icon(pid=self._pokemon.pid, size=(60, 60))
-        self._status_combobox.set(self._pokemon.status_text)
+        self._status_frame.set(self._pokemon.status_text)
         self._stage.set_info(self._player)
         self._stage.calc_damage()
 
 
-# ランクフレーム
-class RankFrame(ttk.Frame):
+# ステータスフレーム
+class StatusFrame(ttk.LabelFrame):
+    def on_validate_3(self, P):
+        if P.isdigit() or P == "":
+            return len(P) <= 3
+        else:
+            return False
+
     def __init__(self, master, player: int, **kwargs):
         super().__init__(master, **kwargs)
+        self._stats: list[int] = []
+        self._doryoku: Stats = Stats(0)
         self._rank: Stats = Stats(0)
-        self._spinbox_dict = {}
+        self._stats_value_list: list[tkinter.IntVar] = []
+        self._doryoku_spinbox_dict = {}
+        self._rank_spinbox_dict = {}
         self._player = player
         self._stage: Stage | None = None
 
-        for i, statskey in enumerate([x for x in StatsKey if x != StatsKey.H]):
-            label = MyLabel(self, text=statskey.name, anchor=tkinter.CENTER)
-            label.grid(column=i, row=0, padx=2, sticky=W + E)
+        self.doryoku_validate = self.register(self.on_validate_3)
 
-            spin = ttk.Spinbox(
+        for i, text in enumerate(["実数値", "努力値", "ランク"]):
+            label = MyLabel(self, text=text)
+            label.grid(column=0, row=i + 1, padx=5)
+
+        for i, statskey in enumerate([x for x in StatsKey]):
+            label = ttk.Label(self, text=statskey.name, anchor=tkinter.CENTER)
+            label.grid(column=i + 1, row=0, padx=2, sticky=W + E)
+
+            stats_value = tkinter.IntVar()
+            stats_value.set(0)
+            stats_label = MyLabel(self, textvariable=stats_value, anchor=tkinter.CENTER)
+            stats_label.grid(column=i + 1, row=1, padx=2, sticky=W + E)
+            self._stats_value_list.append(stats_value)
+
+            doryoku_spin = ttk.Spinbox(
                 self,
-                from_=-6,
-                to=6,
-                increment=1,
-                state="readonly",
-                width=3,
-                command=lambda key=statskey: self.on_push_spin(key),
+                from_=0,
+                to=252,
+                increment=252,
+                width=4,
+                validate="key",
+                validatecommand=(self.doryoku_validate, "%P"),
+                command=lambda key=statskey: self.on_push_doryoku_spin(key),
             )
-            spin.grid(column=i, row=1, padx=2)
-            self._spinbox_dict[statskey] = spin
+            doryoku_spin.bind("<Return>", self.on_change_doryoku_spin)
+            doryoku_spin.grid(column=i + 1, row=2, padx=2, pady=3)
+            self._doryoku_spinbox_dict[statskey] = doryoku_spin
+
+            if statskey != StatsKey.H:
+                rank_spin = ttk.Spinbox(
+                    self,
+                    from_=-6,
+                    to=6,
+                    increment=1,
+                    width=3,
+                    command=lambda key=statskey: self.on_push_rank_spin(key),
+                )
+                rank_spin.grid(column=i + 1, row=3, padx=2, pady=3)
+                self._rank_spinbox_dict[statskey] = rank_spin
 
         self.set_rank(self._rank)
+        self.set_doryoku(self._doryoku)
+
+        self.a0 = tkinter.BooleanVar()
+        self.a0_check = tkinter.Checkbutton(
+            self,
+            text="A0",
+            variable=self.a0,
+            command=self.on_kotai_value_change,
+        )
+        self.a0.set(False)
+        self.a0_check.grid(column=7, row=0, columnspan=2, sticky=W)
+
+        self.s0 = tkinter.BooleanVar()
+        self.s0_check = tkinter.Checkbutton(
+            self,
+            text="S0",
+            variable=self.s0,
+            command=self.on_kotai_value_change,
+        )
+        self.s0.set(False)
+        self.s0_check.grid(column=7, row=1, columnspan=2, sticky=W)
+
+        doryoku_clear_btn = MyButton(
+            master=self,
+            image=images.get_menu_icon("trush"),
+            padding=0,
+            command=lambda: self.on_push_doryoku_clear_button(),
+        )
+        doryoku_clear_btn.grid(column=7, row=2)
+
+        rank_clear_btn = MyButton(
+            master=self,
+            image=images.get_menu_icon("trush"),
+            padding=0,
+            command=lambda: self.on_push_rank_clear_button(),
+        )
+        rank_clear_btn.grid(column=7, row=3)
 
     def set_stage(self, stage: Stage):
         self._stage = stage
 
     @property
+    def doryoku(self) -> Stats:
+        return self._doryoku
+
+    @property
     def rank(self) -> Stats:
         return self._rank
 
+    def set_stats(self, stats: list[int]):
+        for i in range(len(stats)):
+            self._stats = stats
+            self._stats_value_list[i].set(stats[i])
+
+    def set_doryoku(self, doryoku: Stats):
+        for key in [x for x in StatsKey]:
+            self._doryoku[key] = doryoku[key]
+            self._doryoku_spinbox_dict[key].select_clear()
+            self._doryoku_spinbox_dict[key].set(doryoku[key])
+
+    def on_push_doryoku_spin(self, key: StatsKey):
+        self._doryoku[key] = int(self._doryoku_spinbox_dict[key].get())
+        self._stage.set_value_to_active_pokemon(
+            self._player,
+            doryoku_number=self._doryoku,
+        )
+
+    def on_change_doryoku_spin(self, *args):
+        for _i, key in enumerate([x for x in StatsKey]):
+            self._doryoku[key] = int(self._doryoku_spinbox_dict[key].get())
+        self._stage.set_value_to_active_pokemon(
+            self._player,
+            doryoku_number=self._doryoku,
+        )
+
+    def on_push_doryoku_clear_button(self):
+        self.set_doryoku(Stats(0))
+        self._stage.set_value_to_active_pokemon(
+            self._player, doryoku_number=self._doryoku
+        )
+
     def set_rank(self, rank: Stats):
-        self.change_all_box(rank)
+        self.change_all_rank_box(rank)
         if self._stage is not None:
             self._stage.edit_rank(self._player, self._rank)
 
     def set_rank_value(self, key: StatsKey, value: int):
-        self.change_box(key, value)
+        self.change_rank_box(key, value)
         if self._stage is not None:
             self._stage.edit_rank(self._player, self._rank)
 
-    def change_box(self, key: StatsKey, value: int):
+    def change_rank_box(self, key: StatsKey, value: int):
         self._rank[key] = value
-        self._spinbox_dict[key].select_clear()
+        self._rank_spinbox_dict[key].select_clear()
         if value > 0:
-            self._spinbox_dict[key].set("+" + str(value))
-            self._spinbox_dict[key]["foreground"] = "coral"
+            self._rank_spinbox_dict[key].set("+" + str(value))
+            self._rank_spinbox_dict[key]["foreground"] = "coral"
         else:
-            self._spinbox_dict[key].set(value)
-            self._spinbox_dict[key]["foreground"] = "steel blue" if value < 0 else ""
+            self._rank_spinbox_dict[key].set(value)
+            self._rank_spinbox_dict[key]["foreground"] = (
+                "steel blue" if value < 0 else ""
+            )
 
-    def change_all_box(self, rank: Stats):
+    def change_all_rank_box(self, rank: Stats):
         for key in [x for x in StatsKey if x != StatsKey.H]:
-            self.change_box(key, rank[key])
+            self.change_rank_box(key, rank[key])
 
-    def on_push_spin(self, key: StatsKey):
-        self.set_rank_value(key, int(self._spinbox_dict[key].get()))
+    def on_push_rank_spin(self, key: StatsKey):
+        self.set_rank_value(key, int(self._rank_spinbox_dict[key].get()))
+
+    def on_push_rank_clear_button(self):
+        self._stage.clear_rank(self._player)
+
+    def on_kotai_check_change(self, kotai: Stats):
+        if kotai[StatsKey.A] == 0:
+            self.a0.set(True)
+        else:
+            self.a0.set(False)
+        if kotai[StatsKey.S] == 0:
+            self.s0.set(True)
+        else:
+            self.s0.set(False)
+
+    def on_kotai_value_change(self):
+        kotai = Stats(31)
+        if self.a0.get():
+            kotai[StatsKey.A] = 0
+        if self.s0.get():
+            kotai[StatsKey.S] = 0
+        self._stage.set_value_to_active_pokemon(self._player, kotai=kotai)
 
 
 # 技・ダメージ表示リストフレーム
@@ -736,6 +874,7 @@ class WeatherFrame(ttk.LabelFrame):
         self._weather_combobox = MyCombobox(
             self, width=17, height=30, values=WEATHER_COMBOBOX_VALUES
         )
+        self._weather_combobox.set(WEATHER_COMBOBOX_VALUES[0])
         self._weather_combobox.bind("<<ComboboxSelected>>", self.change_weather)
         self._weather_combobox.pack()
 
@@ -755,6 +894,7 @@ class FieldFrame(ttk.LabelFrame):
         self._field_combobox = MyCombobox(
             self, width=17, height=30, values=FIELD_COMBOBOX_VALUES
         )
+        self._field_combobox.set(FIELD_COMBOBOX_VALUES[0])
         self._field_combobox.bind("<<ComboboxSelected>>", self.change_field)
         self._field_combobox.pack()
 
@@ -787,7 +927,7 @@ class HomeFrame(ttk.LabelFrame):
             ["もちもの", "./home/home_motimono.csv"],
             ["とくせい", "./home/home_tokusei.csv"],
             ["せいかく", "./home/home_seikaku.csv"],
-            ["テラスタイプ", "./home/home_terastal.csv"],
+            ["テラスタル", "./home/home_terastal.csv"],
         ]
         for i in range(len(self._type)):
             # 列の識別名を指定
@@ -797,15 +937,21 @@ class HomeFrame(ttk.LabelFrame):
             tree["show"] = "headings"
             # 列の設定
             tree.column("No", width=10)
-            tree.column(self._type[i][0], width=70)
-            tree.column("%", width=25)
+            if i == 0:
+                tree.column(self._type[i][0], width=70)
+            elif i == 1:
+                tree.column(self._type[i][0], width=74)
+            else:
+                tree.column(self._type[i][0], width=60)
+            tree.column("%", width=22)
             # 列の見出し設定
             tree.heading("No", text="No")
             tree.heading(self._type[i][0], text=self._type[i][0])
             tree.heading("%", text="%")
             # ウィジェットの配置
-            tree.pack(side=tkinter.LEFT)
+            tree.grid(column=i, row=0)
             self._tree_list.append(tree)
+            self.grid_columnconfigure(i, weight=1)
 
     def set_stage(self, stage: Stage):
         self._stage = stage
@@ -845,8 +991,8 @@ class HomeFrame(ttk.LabelFrame):
                         player=1, ability=value[1], is_same=True
                     )
                 case 2:
-                    self._tree_list[index].selection_remove(
-                        self._tree_list[index].selection()
+                    self._stage.set_value_to_active_pokemon(
+                        player=1, seikaku=value[1], is_same=True
                     )
                 case 3:
                     self._stage.set_value_to_active_pokemon(
@@ -1069,7 +1215,7 @@ class RecordFrame(ttk.LabelFrame):
 
         self.memo_lbl = MyLabel(self, text="メモ")
         self.memo_lbl.grid(column=0, row=2)
-        self.memo = ScrolledText(self, font=("", 15), height=7, width=45)
+        self.memo = ScrolledText(self, font=("", 15), height=6, width=45)
         self.memo.grid(column=1, row=2, columnspan=4, sticky=N + E + W + S)
 
         self.favo = tkinter.BooleanVar()

@@ -53,7 +53,7 @@ class MainApp(ThemedTk):
         self._waza_damage_frames: list[WazaDamageListFrame] = []
 
         # メインフレーム
-        main_frame = ttk.Frame(self, padding=10)
+        main_frame = ttk.Frame(self, padding=5)
         main_frame.grid(row=0, column=0, sticky=N + E + W + S)
 
         menu = tkinter.Menu(self)
@@ -101,7 +101,7 @@ class MainApp(ThemedTk):
                 master=main_frame,
                 player=i,
                 width=530,
-                height=170,
+                height=213,
                 text=side + "ポケモン",
             )
             poke_frame.grid(row=3, column=i * 3, columnspan=3, sticky=N + E + W + S)
@@ -127,7 +127,9 @@ class MainApp(ThemedTk):
         self._waza_damage_frames.append(waza_frame_your)
 
         # HOME情報フレーム
-        self.home_frame = HomeFrame(master=main_frame, width=530, text="HOME情報")
+        self.home_frame = HomeFrame(
+            master=main_frame, width=530, height=258, text="HOME情報"
+        )
         self.home_frame.grid(
             row=6, column=3, rowspan=4, columnspan=3, sticky=N + E + W + S
         )
@@ -174,13 +176,15 @@ class MainApp(ThemedTk):
 
         # 対戦記録フレーム
         self.record_frame = RecordFrame(
-            master=main_frame, width=530, height=220, text="対戦記録"
+            master=main_frame, width=530, height=203, text="対戦記録"
         )
         self.record_frame.grid(row=8, column=0, columnspan=3, sticky=N + E + W + S)
         self.record_frame.grid_propagate(False)
 
         # 制御フレーム
-        control_frame = ttk.LabelFrame(master=main_frame, text="制御")
+        control_frame = ttk.LabelFrame(
+            master=main_frame, text="制御", width=150, height=55, padding=5
+        )
         control_frame.grid(row=9, column=0, sticky=N + E + W + S)
 
         # Websocket接続ボタン
@@ -235,7 +239,7 @@ class MainApp(ThemedTk):
             self._party_frames[i].set_stage(stage)
             self._chosen_frames[i].set_stage(stage)
             self._active_poke_frames[i].set_stage(stage)
-            self._active_poke_frames[i]._rank_label.set_stage(stage)
+            self._active_poke_frames[i]._status_frame.set_stage(stage)
             self._waza_damage_frames[i].set_stage(stage)
             self.weather_frame.set_stage(stage)
             self.field_frame.set_stage(stage)
@@ -276,7 +280,7 @@ class MainApp(ThemedTk):
 
     # ランクのクリア
     def clear_rank(self, player: int):
-        self._active_poke_frames[player]._rank_label.set_rank(Stats(init_value=0))
+        self._active_poke_frames[player]._status_frame.set_rank(Stats(init_value=0))
 
     # タイプ選択
     def select_type(self, player: int) -> Types:

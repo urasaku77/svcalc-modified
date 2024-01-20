@@ -216,6 +216,11 @@ class Pokemon:
     def kotai(self) -> Stats:
         return self.__kotai
 
+    @kotai.setter
+    def kotai(self, value) -> None:
+        self.__kotai.set_values_from_stats(value)
+        self.statechanged()
+
     @property
     def doryoku(self) -> Stats:
         return self.__doryoku
@@ -421,6 +426,28 @@ class Pokemon:
             value = math.floor(value * self.__lv / 100) + 5
             value = math.floor(value * get_seikaku_hosei(self.__seikaku, key))
             return value
+
+    # 全実数値
+    def get_all_stats(self) -> list[int]:
+        stats: list[int] = []
+        for _i, key in enumerate([x for x in StatsKey]):
+            if key == StatsKey.H:
+                value = (
+                    (self.__syuzoku[key] * 2)
+                    + self.kotai[key]
+                    + math.floor(self.doryoku[key] / 4)
+                )
+                stats.append(math.floor(value * self.__lv / 100) + 10 + self.__lv)
+            else:
+                value = (
+                    (self.__syuzoku[key] * 2)
+                    + self.kotai[key]
+                    + math.floor(self.doryoku[key] / 4)
+                )
+                value = math.floor(value * self.__lv / 100) + 5
+                value = math.floor(value * get_seikaku_hosei(self.__seikaku, key))
+                stats.append(value)
+        return stats
 
     # 最も高い実数値のキーを返す（こだいかっせい、クォークチャージ用）
     def __get_best_stats_key(self) -> StatsKey:
