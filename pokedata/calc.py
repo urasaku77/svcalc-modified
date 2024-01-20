@@ -116,6 +116,13 @@ class DamageCalc:
                 elif attacker.name == "ケンタロス(パルデア水)":
                     waza.type = Types.みず
 
+            if attacker.ability == "トレース":
+                if defender.ability not in DamageCalc.__un_trace_abillity:
+                    attacker.ability = defender.ability
+            if defender.ability == "トレース":
+                if attacker.ability not in DamageCalc.__un_trace_abillity:
+                    defender.ability = attacker.ability
+
             damages = DamageCalc.__get_damage(
                 attacker=attacker,
                 defender=defender,
@@ -1122,7 +1129,16 @@ class DamageCalc:
         "ひけん・ちえなみ",
         "むねんのつるぎ",
         "リーフブレード",
-        "れんぞくぎり",
+    ]
+    # トレースできない特性
+    __un_trace_abillity = [
+        "フラワーベール",
+        "イリュージョン",
+        "かわりもの",
+        "ぜったいねむり",
+        "ばけのかわ",
+        "レシーバー",
+        "アイスフェイス",
     ]
     # タイプ強化アイテム
     __type_buff_items = {
