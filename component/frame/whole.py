@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from stage import Stage
 
 
+# 天気フレーム
 class WeatherFrame(ttk.LabelFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -37,6 +38,7 @@ class WeatherFrame(ttk.LabelFrame):
         self._stage.change_weather(self._weather_combobox.get())
 
 
+# フィールドフレーム
 class FieldFrame(ttk.LabelFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -56,6 +58,7 @@ class FieldFrame(ttk.LabelFrame):
         self._stage.change_field(self._field_combobox.get())
 
 
+# 素早さ比較ボタン
 class SpeedButton(MyButton):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -67,6 +70,7 @@ class SpeedButton(MyButton):
         return self._stage.get_active_pokemons()
 
 
+# HOME情報フレーム
 class HomeFrame(ttk.LabelFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -149,6 +153,7 @@ class HomeFrame(ttk.LabelFrame):
                     )
 
 
+# タイマーフレーム
 class TimerFrame(ttk.LabelFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -273,6 +278,7 @@ class TimerFrame(ttk.LabelFrame):
         )  # 秒を表示
 
 
+# カウンターフレーム(2個)
 class CounterFrame(tkinter.Canvas):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -324,6 +330,7 @@ class CounterFrame(tkinter.Canvas):
             self.label_count["text"] = self.count_num.get()
 
 
+# カウンターフレーム(単体)
 class CountersFrame(ttk.LabelFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -342,6 +349,7 @@ class CountersFrame(ttk.LabelFrame):
         self.counter_2.CountReset()
 
 
+# 対戦記録フレーム
 class RecordFrame(ttk.LabelFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
