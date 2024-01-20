@@ -595,56 +595,6 @@ class Pokemon:
         if self.__statechanged_handler is not None:
             self.__statechanged_handler()
 
-    # デフォルトの性格、努力値の設定
-    def set_default_evs(self):
-        max_key: StatsKey = StatsKey.A
-        for key in [x for x in StatsKey if x != StatsKey.H and x != StatsKey.A]:
-            if self.__syuzoku[key] > self.__syuzoku[max_key]:
-                max_key = key
-
-        match max_key:
-            case StatsKey.A:
-                if self.__syuzoku.H > self.__syuzoku.S:
-                    self.__seikaku = "いじっぱり"
-                    self.__doryoku.set_values(a=252, h=252)
-                else:
-                    self.__seikaku = "ようき"
-                    self.__doryoku.set_values(a=252, s=252)
-            case StatsKey.B:
-                if self.__syuzoku.A > self.__syuzoku.C:
-                    self.__seikaku = "わんぱく"
-                else:
-                    self.__seikaku = "ずぶとい"
-                self.__doryoku.set_values(h=252, b=252)
-            case StatsKey.C:
-                if self.__syuzoku.H > self.__syuzoku.S:
-                    self.__seikaku = "ひかえめ"
-                    self.__doryoku.set_values(c=252, h=252)
-                else:
-                    self.__seikaku = "おくびょう"
-                    self.__doryoku.set_values(c=252, s=252)
-            case StatsKey.D:
-                if self.__syuzoku.A > self.__syuzoku.C:
-                    self.__seikaku = "しんちょう"
-                else:
-                    self.__seikaku = "おだやか"
-                self.__doryoku.set_values(h=252, d=252)
-            case StatsKey.S:
-                if self.__syuzoku.A > self.__syuzoku.C:
-                    self.__seikaku = "ようき"
-                    self.__doryoku.set_values(a=252, s=252)
-                else:
-                    self.__seikaku = "おくびょう"
-                    self.__doryoku.set_values(c=252, s=252)
-
-    def set_doryoku_preset(self, value):
-        from pokedata import const
-
-        preset = const.DORYOKU_PRESET[value]
-        self.__seikaku = preset["nature"]
-        self.__doryoku.set_values_from_stats(preset["stats"])
-        self.statechanged()
-
     def form_change(self):
         form_id = self.next_form_pid
         if form_id is not None:
