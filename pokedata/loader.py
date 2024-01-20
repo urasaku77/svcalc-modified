@@ -3,15 +3,6 @@ import re
 
 from pokedata.exception import base_names
 
-with open("party/default.csv", encoding="sjis") as csv_file:
-    default_data = [x for x in csv.reader(csv_file)]
-    del default_data[0]
-
-
-def get_default_data(name: str) -> list[str]:
-    lst = [x for x in default_data if x[0] == name]
-    return lst[0] if len(lst) else []
-
 
 def get_party_csv() -> str:
     with open("party/setting.txt", "r") as txt:

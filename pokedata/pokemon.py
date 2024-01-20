@@ -7,7 +7,7 @@ from typing import Optional
 from data.db import DB
 from pokedata.const import ABILITY_VALUES, Ailments, Types, Walls
 from pokedata.exception import changeble_form_in_battle, get_next_form
-from pokedata.nature import get_seikaku_hosei
+from pokedata.nature import get_default_doryoku, get_seikaku_hosei
 from pokedata.stats import Stats, StatsKey
 from pokedata.waza import Waza, WazaBase
 
@@ -472,12 +472,9 @@ class Pokemon:
 
     # デフォルトデータ設定
     def set_default_data(self):
-        from pokedata.loader import get_default_data
-
-        data = get_default_data(self.name)
-        if data == []:
-            self.set_ability_from_home()
-        self.set_load_data(data, False)
+        self.set_top_data_from_home()
+        self.set_default_doryoku_from_seikaku()
+        self.set_ability_from_home()
         self.set_waza_from_home()
 
     # CSV読み込みデータの設定
@@ -514,6 +511,21 @@ class Pokemon:
                 abilities_data.append(ability_data[i][0])
         if len(abilities_data) != 0:
             self.__abilities = abilities_data
+
+    # HOMEデータで一番使用率が高いものをセット
+    def set_top_data_from_home(self):
+        from pokedata.loader import get_home_data
+
+        item_data = get_home_data(self.name, "./home/home_motimono.csv")
+        self.item = item_data[0][0]
+        seikaku_data = get_home_data(self.name, "./home/home_seikaku.csv")
+        self.seikaku = seikaku_data[0][0]
+        terastal_data = get_home_data(self.name, "./home/home_terastal.csv")
+        self.terastype = Types.get(terastal_data[0][0])
+
+    def set_default_doryoku_from_seikaku(self):
+        doryoku = get_default_doryoku(self.seikaku, self.syuzoku)
+        self.doryoku = doryoku
 
     # タイプ相性値
     # テラスタイプがある場合、そのタイプで算出

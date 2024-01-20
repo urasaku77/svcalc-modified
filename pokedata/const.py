@@ -1,7 +1,5 @@
 from enum import IntEnum
 
-from pokedata.stats import Stats
-
 
 # タイプ定義
 class Types(IntEnum):
@@ -76,32 +74,6 @@ class Walls(IntEnum):
     リフレクター = 1
     ひかりのかべ = 2
     オーロラベール = 3
-
-
-DORYOKU_PRESET = {
-    "ASようき": {"nature": "ようき", "stats": Stats(0).set_values(a=252, s=252)},
-    "ASいじっぱり": {
-        "nature": "いじっぱり",
-        "stats": Stats(0).set_values(a=252, s=252),
-    },
-    "CSおくびょう": {
-        "nature": "おくびょう",
-        "stats": Stats(0).set_values(c=252, s=252),
-    },
-    "CSひかえめ": {"nature": "ひかえめ", "stats": Stats(0).set_values(c=252, s=252)},
-    "HAいじっぱり": {
-        "nature": "いじっぱり",
-        "stats": Stats(0).set_values(h=252, a=252),
-    },
-    "HBずぶとい": {"nature": "ずぶとい", "stats": Stats(0).set_values(h=252, b=252)},
-    "HBわんぱく": {"nature": "わんぱく", "stats": Stats(0).set_values(h=252, b=252)},
-    "HCひかえめ": {"nature": "ひかえめ", "stats": Stats(0).set_values(h=252, c=252)},
-    "HDしんちょう": {
-        "nature": "しんちょう",
-        "stats": Stats(0).set_values(h=252, d=252),
-    },
-    "HDおだやか": {"nature": "おだやか", "stats": Stats(0).set_values(h=252, d=252)},
-}
 
 
 # 技種別定義
