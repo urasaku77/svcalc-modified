@@ -517,11 +517,13 @@ class Pokemon:
         from pokedata.loader import get_home_data
 
         item_data = get_home_data(self.name, "./home/home_motimono.csv")
-        self.item = item_data[0][0]
+        self.item = item_data[0][0] if len(item_data) != 0 else "なし"
         seikaku_data = get_home_data(self.name, "./home/home_seikaku.csv")
-        self.seikaku = seikaku_data[0][0]
+        self.seikaku = seikaku_data[0][0] if len(seikaku_data) != 0 else "まじめ"
         terastal_data = get_home_data(self.name, "./home/home_terastal.csv")
-        self.terastype = Types.get(terastal_data[0][0])
+        self.terastype = (
+            Types.get(terastal_data[0][0]) if len(terastal_data) != 0 else Types.なし
+        )
 
     def set_default_doryoku_from_seikaku(self):
         doryoku = get_default_doryoku(self.seikaku, self.syuzoku)
