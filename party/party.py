@@ -2,6 +2,7 @@
 
 import csv
 import glob
+import json
 import math
 import os
 import tkinter
@@ -722,6 +723,7 @@ class IvEditor(ttk.Frame):
         self._iv_entry.bind("<<TextModified>>", func)
 
 
+# ポケモン登録用ダイアログ
 class PokemonInputDialog(tkinter.Toplevel):
     def __init__(self, title: str = "", width: int = 400, height: int = 300):
         super().__init__()
@@ -731,8 +733,6 @@ class PokemonInputDialog(tkinter.Toplevel):
         # ウィジェットの配置
         main_frame = ttk.Frame(self, padding=10)
         main_frame.grid(row=0, column=0, sticky=N + E + W + S)
-        self.columnconfigure(0, weight=1)
-        self.rowconfigure(0, weight=1)
 
         self._labelframe = ttk.LabelFrame(main_frame, text="ポケモン名を入力")
         self._labelframe.grid(row=0, column=0, columnspan=6)
@@ -742,6 +742,21 @@ class PokemonInputDialog(tkinter.Toplevel):
         )
         self._name_input.bind("<<submit>>", self.on_input_name)
         self._name_input.grid(row=0, column=0)
+
+        with open("home/poke_rank.json", "r", encoding="utf-8") as rank_json_open:
+            list = json.load(rank_json_open)
+            print(len(list))
+
+        poke_frame = ttk.Frame(main_frame, padding=10)
+        for i in range(100):
+            row = int(i / 10)
+            column = i % 10
+            self._pokemon_icon = MyButton(
+                poke_frame, size=(60, 60), padding=0, command=self.on_input_name
+            )
+            self._pokemon_icon.grid(row=row, column=column, padx=20, pady=20)
+
+        poke_frame.grid(row=1, column=0, sticky=N + E + W + S)
 
     def open(self, location=tuple[int, int]):
         self.grab_set()

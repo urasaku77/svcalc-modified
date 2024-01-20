@@ -362,6 +362,7 @@ class home:
     rst = 0
     ts2 = ""
     pdetail = {}
+    prank = []
 
     print("ランクマッチ情報取得")
     url = "https://api.battle.pokemon-home.com/tt/cbd/competition/rankmatch/list"
@@ -407,6 +408,27 @@ class home:
         with urllib.request.urlopen(req) as res:
             pdetail_tmp = json.load(res)
             pdetail = dict(pdetail, **pdetail_tmp)
+
+    print("ポケモンランキング情報取得")
+    url_rank = (
+        "https://resource.pokemon-home.com/battledata/ranking/scvi/"
+        + str(cid)
+        + "/"
+        + str(rst)
+        + "/"
+        + str(ts2)
+        + "/pokemon"
+    )
+    headers_rank = {
+        "accept": "application/json, text/javascript, */*",
+        "user-agent": "Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Mobile Safari/537.36",
+    }
+    req_rank = urllib.request.Request(url_rank, headers=headers_rank)
+    with urllib.request.urlopen(req_rank) as res_rank:
+        prank = json.load(res_rank)
+
+    with open("home/poke_rank.json", "w", encoding="utf-8") as rank_json_open:
+        json.dump(prank, rank_json_open, indent=2)
 
     pokedex = ""
     with open("home/bundle.json", "r", encoding="utf-8") as json_open:
