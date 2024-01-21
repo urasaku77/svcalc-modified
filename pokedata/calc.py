@@ -370,13 +370,17 @@ class DamageCalc:
 
         # region 防御側の特性補正
         key: str = "防御特性:" + defender.ability
-        match defender.ability:
-            case "たいねつ":
-                if waza.type == Types.ほのお:
-                    hosei[key] = 2048
-            case "かんそうはだ":
-                if waza.type == Types.ほのお:
-                    hosei[key] = 5120
+        if (
+            attacker.ability not in ["かたやぶり", "テラボルテージ", "ターボブレイズ"]
+            or attacker.ability_enable is False
+        ) and waza.name not in ["メテオドライブ", "シャドーレイ"]:
+            match defender.ability:
+                case "たいねつ":
+                    if waza.type == Types.ほのお:
+                        hosei[key] = 2048
+                case "かんそうはだ":
+                    if waza.type == Types.ほのお:
+                        hosei[key] = 5120
         # endregion
 
         # region 攻撃側の持ち物補正
@@ -524,13 +528,23 @@ class DamageCalc:
                     base_power = attacker[StatsKey.B]
                 else:
                     base_power = attacker.rankedB
+            case "フォトンゲイザー":
+                base_power = max([attacker.rankedA, attacker.rankedC])
             case _:
                 statskey = StatsKey.A if waza.category == 物理 else StatsKey.C
                 # 急所時、攻撃ランクが0未満なら0として扱う
                 if waza.critical and attacker.rank[statskey] < 0:
                     base_power = attacker[statskey]
                 # 防御側が特性てんねんの場合、ランク補正なしで計算する
-                elif defender.ability == "てんねん":
+                elif (
+                    defender.ability == "てんねん"
+                    and (
+                        attacker.ability
+                        not in ["かたやぶり", "テラボルテージ", "ターボブレイズ"]
+                        or attacker.ability_enable is False
+                    )
+                    and waza.name not in ["メテオドライブ", "シャドーレイ"]
+                ):
                     base_power = attacker[statskey]
                 else:
                     base_power = attacker.get_ranked_stats(statskey)
@@ -604,15 +618,21 @@ class DamageCalc:
             case "わざわいのうつわ":
                 if waza.category == 特殊 and attacker.ability != "わざわいのうつわ":
                     hosei[key] = 3072
-            case "あついしぼう":
-                if waza.type in [Types.ほのお, Types.こおり]:
-                    hosei[key] = 2048
-            case "きよめのしお":
-                if waza.type in [Types.ゴースト]:
-                    hosei[key] = 2048
-            case "すいほう":
-                if waza.type == Types.ほのお:
-                    hosei[key] = 2048
+
+        if (
+            attacker.ability not in ["かたやぶり", "テラボルテージ", "ターボブレイズ"]
+            or attacker.ability_enable is False
+        ) and waza.name not in ["メテオドライブ", "シャドーレイ"]:
+            match defender.ability:
+                case "あついしぼう":
+                    if waza.type in [Types.ほのお, Types.こおり]:
+                        hosei[key] = 2048
+                case "きよめのしお":
+                    if waza.type in [Types.ゴースト]:
+                        hosei[key] = 2048
+                case "すいほう":
+                    if waza.type == Types.ほのお:
+                        hosei[key] = 2048
         # endregion
 
         # region 攻撃側の持ち物補正
@@ -714,23 +734,24 @@ class DamageCalc:
                     hosei[key] = 5325
                 elif defender.ability_value == "D" and df_key == StatsKey.D:
                     hosei[key] = 5325
-            case "フラワーギフト":
-                if weather == Weathers.晴れ and df_key == StatsKey.D:
-                    hosei[key] = 6144
-            case "ふしぎなうろこ":
-                if defender.ability_enable and df_key == StatsKey.B:
-                    hosei[key] = 6144
-            case "くさのけがわ":
-                if field == Fields.グラス and df_key == StatsKey.B:
-                    hosei[key] = 6144
-            case "ファーコート":
-                if waza.category == 物理:
-                    hosei[key] = 8192
-            case "こだいかっせい" | "クォークチャージ":
-                if defender.ability_value == "B" and df_key == StatsKey.B:
-                    hosei[key] = 5325
-                elif defender.ability_value == "D" and df_key == StatsKey.D:
-                    hosei[key] = 5325
+
+        if (
+            attacker.ability not in ["かたやぶり", "テラボルテージ", "ターボブレイズ"]
+            or attacker.ability_enable is False
+        ) and waza.name not in ["メテオドライブ", "シャドーレイ"]:
+            match defender.ability:
+                case "フラワーギフト":
+                    if weather == Weathers.晴れ and df_key == StatsKey.D:
+                        hosei[key] = 6144
+                case "ふしぎなうろこ":
+                    if defender.ability_enable and df_key == StatsKey.B:
+                        hosei[key] = 6144
+                case "くさのけがわ":
+                    if field == Fields.グラス and df_key == StatsKey.B:
+                        hosei[key] = 6144
+                case "ファーコート":
+                    if waza.category == 物理:
+                        hosei[key] = 8192
         # endregion
 
         # region 防御側の持ち物補正
@@ -803,32 +824,32 @@ class DamageCalc:
         # region 防御側の特性補正
         key = "防御特性:" + defender.ability
         match defender.ability:
-            case "もふもふ":
-                if waza.type == Types.ほのお:
-                    hosei["もふもふ(ほのお)"] = 6144
-                if waza.is_touch:
-                    hosei["もふもふ(接触)"] = 2048
-            case "マルチスケイル" | "ファントムガード":
-                if (
-                    defender.ability_enable
-                    and (
-                        attacker.ability != "かたやぶり"
-                        or attacker.ability_enable is False
-                    )
-                    and count == 0
-                ):
-                    hosei[key] = 2048
-            case "パンクロック":
-                if waza.name in DamageCalc.__sound_moves:
-                    hosei[key] = 2048
-            case "こおりのりんぷん":
-                if waza.category == 特殊:
-                    hosei[key] = 2048
-            case "フレンドガード":
-                pass  # 自分以外の味方が受けるダメージが3 / 4に軽減される。(ダブルバトル用)
-            case "ハードロック" | "フィルター" | "プリズムアーマー":
+            case "ファントムガード":
+                hosei[key] = 2048
+            case "プリズムアーマー":
                 if type_effective > 1.0:
                     hosei[key] = 3072
+
+        if attacker.ability != "かたやぶり" or attacker.ability_enable is False:
+            match defender.ability:
+                case "もふもふ":
+                    if waza.type == Types.ほのお:
+                        hosei["もふもふ(ほのお)"] = 6144
+                    if waza.is_touch:
+                        hosei["もふもふ(接触)"] = 2048
+                case "マルチスケイル" | "ファントムガード":
+                    hosei[key] = 2048
+                case "パンクロック":
+                    if waza.name in DamageCalc.__sound_moves:
+                        hosei[key] = 2048
+                case "こおりのりんぷん":
+                    if waza.category == 特殊:
+                        hosei[key] = 2048
+                case "フレンドガード":
+                    pass  # 自分以外の味方が受けるダメージが3 / 4に軽減される。(ダブルバトル用)
+                case "ハードロック" | "フィルター":
+                    if type_effective > 1.0:
+                        hosei[key] = 3072
         # endregion
 
         # region 攻撃側の持ち物補正
