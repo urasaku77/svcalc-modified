@@ -201,12 +201,14 @@ class Stage:
             if wazabase.has_value_list:
                 wazabase.set_next_value()
             if wazabase.is_self_buff or wazabase.is_self_debuff:
-                self._active_pokemon[player].rank.add_values_from_string(
-                    wazabase.value, True
+                self._active_pokemon[player].rank.add_ranks_from_string(
+                    wazabase.value,
+                    self._active_pokemon[player].ability == "あまのじゃく",
                 )
             elif wazabase.is_opponent_buff or wazabase.is_opponent_debuff:
-                self._active_pokemon[non_player].rank.add_values_from_string(
-                    wazabase.value, True
+                self._active_pokemon[non_player].rank.add_ranks_from_string(
+                    wazabase.value,
+                    self._active_pokemon[player].ability == "あまのじゃく",
                 )
             for i in range(2):
                 self._app.set_active_pokemon(i, self._active_pokemon[i])

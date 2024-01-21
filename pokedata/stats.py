@@ -143,38 +143,26 @@ class Stats:
                     case "S":
                         self.__S = value
 
-    def add_values_from_string(self, values_string: str, rank: bool = False):
+    def add_ranks_from_string(self, values_string: str, reverse: bool = False):
         values_list = re.findall(pattern, values_string, re.S)
         for values in values_list:
-            value: int = int(values[1])
+            value: int = int(values[1]) if not reverse else int(values[1]) * -1
             for key in values[0]:
                 match key:
-                    case "H":
-                        self.__H += value
                     case "A":
-                        if not rank:
-                            self.__A += value
-                        elif self.__A + value <= 6:
+                        if self.__A + value <= 6 and self.__A + value >= -6:
                             self.__A += value
                     case "B":
-                        if not rank:
-                            self.__B += value
-                        elif self.__B + value <= 6:
+                        if self.__B + value <= 6 and self.__B + value >= -6:
                             self.__B += value
                     case "C":
-                        if not rank:
-                            self.__C += value
-                        elif self.__C + value <= 6:
+                        if self.__C + value <= 6 and self.__C + value >= -6:
                             self.__C += value
                     case "D":
-                        if not rank:
-                            self.__D += value
-                        elif self.__D + value <= 6:
+                        if self.__D + value <= 6 and self.__D + value >= -6:
                             self.__D += value
                     case "S":
-                        if not rank:
-                            self.__S += value
-                        elif self.__S + value <= 6:
+                        if self.__S + value <= 6 and self.__S + value >= -6:
                             self.__S += value
 
     def max_stats(self) -> StatsKey:
