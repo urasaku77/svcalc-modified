@@ -287,6 +287,7 @@ class ActivePokemonFrame(ttk.LabelFrame):
         self.set_ability_values(poke.ability)
         self._ability_value_combobox.set(poke.ability_value)
         self._teras_button.set_type(poke.battle_terastype)
+        self._wall_combobox.set(poke.wall.name)
         if poke.no in changeble_form_in_battle:
             self._form_button["state"] = tkinter.NORMAL
         else:

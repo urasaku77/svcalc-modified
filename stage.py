@@ -210,6 +210,24 @@ class Stage:
                     wazabase.value,
                     self._active_pokemon[player].ability == "あまのじゃく",
                 )
+            elif wazabase.name == "じこあんじ":
+                self._active_pokemon[0].rank = self._active_pokemon[1].rank
+            elif wazabase.name == "スキルスワップ":
+                (
+                    self._active_pokemon[0].ability,
+                    self._active_pokemon[1].ability,
+                ) = (
+                    self._active_pokemon[1].ability,
+                    self._active_pokemon[0].ability,
+                )
+            elif wazabase.name == "コートチェンジ":
+                (
+                    self._active_pokemon[0].wall,
+                    self._active_pokemon[1].wall,
+                ) = (
+                    self._active_pokemon[1].wall,
+                    self._active_pokemon[0].wall,
+                )
             for i in range(2):
                 self._app.set_active_pokemon(i, self._active_pokemon[i])
 
