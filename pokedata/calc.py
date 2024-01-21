@@ -669,6 +669,11 @@ class DamageCalc:
             df_key = StatsKey.D
         if waza.critical and defender.rank[df_key] > 0:
             power = Decimal(defender[df_key])
+        elif (
+            waza.name in ["せいなるつるぎ", "DDラリアット"]
+            and defender.rank[df_key] > 0
+        ):
+            power = Decimal(defender[df_key])
         else:
             power = Decimal(defender.get_ranked_stats(df_key))
 
@@ -767,7 +772,7 @@ class DamageCalc:
                 (
                     defender.wall.name in ["リフレクター", "オーロラベール"]
                     and waza.category == 物理
-                    and waza not in ["かわらわり", "サイコファング"]
+                    and waza not in ["かわらわり", "サイコファング", "レイジングブル"]
                 )
                 or (
                     defender.wall.name in ["ひかりのかべ", "オーロラベール"]
