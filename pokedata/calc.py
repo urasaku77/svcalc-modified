@@ -283,6 +283,9 @@ class DamageCalc:
                 power = 80
                 if field == Fields.サイコ:
                     power = 120
+            case "テラバースト":
+                if attacker.battle_terastype != Types.ステラ:
+                    power = 100
             case _:
                 if waza.add_power > -1:
                     power = int(waza.power * waza.add_power)
