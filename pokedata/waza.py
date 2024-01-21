@@ -95,6 +95,7 @@ class WazaBase:
     TYPE_SELF_DEBUFF = 12
     TYPE_OPPONENT_BUFF = 13
     TYPE_OPPONENT_DEBUFF = 14
+    TYPE_OTHER_EFFECT = 15
 
     def __init__(self, name):
         self.__name = name
@@ -153,6 +154,14 @@ class WazaBase:
             if name in k:
                 self.__type = WazaBase.TYPE_OPPONENT_DEBUFF
                 self.__value = v
+                break
+
+        # その他効果技
+        for k, v in WazaBase.__other_effect_values.items():
+            if name in k:
+                self.__type = WazaBase.TYPE_OTHER_EFFECT
+                self.__value_list = v[0]
+                self.__value = v[1]
                 break
 
     @property
@@ -272,4 +281,10 @@ class WazaBase:
 
     __opponent_debuff_values = {
         "あまえる": "A-2",
+    }
+
+    __other_effect_values = {
+        "じこあんじ": (("無効", "有効"), "無効"),
+        "スキルスワップ": (("無効", "有効"), "無効"),
+        "コートチェンジ": (("無効", "有効"), "無効"),
     }
