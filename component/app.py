@@ -378,7 +378,10 @@ class MainApp(ThemedTk):
                 self._chosen_frames[0].set_chosen_from_capture(list(result))
             case bool():
                 if result:
+                    # タイマーをリセットしてスタート
+                    self.timer_frame.reset_button_clicked()
                     self.timer_frame.start_button_clicked()
+                    # 選出一体目を自動登録
                     self._party_frames[0].set_first_chosen_to_active()
                     self.stop_image_recognize()
                     return
