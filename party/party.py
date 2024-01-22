@@ -568,7 +568,7 @@ class EvEditors(ttk.Frame):
     def __init__(self, master, callback, **kwargs):
         super().__init__(master=master, **kwargs)
         self.ev_list: list[EvEditor] = []
-        for i in range(6):
+        for _i in range(6):
             self.ev_editor = EvEditor(self)
             self.ev_editor.setCallback(callback)
             self.ev_editor.pack(pady=10)
@@ -647,7 +647,7 @@ class IvEditors(ttk.Frame):
     def __init__(self, master, callback, **kwargs):
         super().__init__(master=master, **kwargs)
         self.iv_list: list[IvEditor] = []
-        for i in range(6):
+        for _i in range(6):
             self.iv_editor = IvEditor(self)
             self.iv_editor.setCallback(callback)
             self.iv_editor.pack(pady=10)

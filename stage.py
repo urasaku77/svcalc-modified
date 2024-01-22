@@ -258,7 +258,7 @@ class Stage:
         from pokedata.loader import get_party_data
 
         if len(party) == 0:
-            for i, data in enumerate(get_party_data()):
+            for _i, data in enumerate(get_party_data()):
                 pokemon: Pokemon = Pokemon.by_name(data[0])
                 pokemon.set_load_data(data, True)
                 party.append(pokemon)

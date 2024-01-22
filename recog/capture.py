@@ -170,7 +170,7 @@ class Capture:
 
         match = cv2.matchTemplate(gray, temp, cv2.TM_CCOEFF_NORMED)
         loc = np.where(match >= accuracy)
-        for pt in zip(*loc[::-1], strict=False):
+        for _pt in zip(*loc[::-1], strict=False):
             result = True
         return result
 
