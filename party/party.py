@@ -396,32 +396,7 @@ class PokemonEditor(ttk.LabelFrame):
         self.wait_window(dialog)
         if dialog.pokemon.no != -1:
             self.clear_pokemon()
-            self._pokemon_icon.set_pokemon_icon(pid=dialog.pokemon.pid, size=(60, 60))
-            self._pokemon_name_var.set(dialog.pokemon.name)
-            self._ability_combobox["values"] = dialog.pokemon.abilities
-            self._ability_combobox.set(dialog.pokemon.abilities[0])
-            self.img[0] = tkinter.PhotoImage(
-                file=dialog.pokemon.type[0].icon
-            ).subsample(3, 3)
-            self.type1_icon.configure(
-                image=self.img[0], text=dialog.pokemon.type[0].name, compound="left"
-            )
-            self.img[1] = tkinter.PhotoImage(
-                file=dialog.pokemon.type[1].icon
-                if len(dialog.pokemon.type) > 1
-                else Types.なし.icon
-            ).subsample(3, 3)
-            self.type2_icon.configure(
-                image=self.img[1],
-                text=dialog.pokemon.type[1].name
-                if len(dialog.pokemon.type) > 1
-                else "",
-                compound="left",
-            )
-            for i, statskey in enumerate([x for x in StatsKey]):
-                self.syuzoku_list[i].set(dialog.pokemon.syuzoku[statskey])
-
-            self.calc_status()
+            self.set_pokemon(dialog.pokemon)
 
     def set_pokemon(self, pokemon: Pokemon):
         self._pokemon_icon.set_pokemon_icon(pid=pokemon.pid, size=(60, 60))
