@@ -248,7 +248,6 @@ class ActivePokemonFrame(ttk.LabelFrame):
             variable=self.critical,
             command=self.change_critical,
         )
-        self.critical.set(False)
         self.critical_check.grid(column=0, row=0, sticky=W + E)
 
         self.burned = tkinter.BooleanVar()
@@ -258,7 +257,6 @@ class ActivePokemonFrame(ttk.LabelFrame):
             variable=self.burned,
             command=self.change_burned,
         )
-        self.burned.set(False)
         self.burned_check.grid(column=1, row=0, sticky=W)
 
         self.charging = tkinter.BooleanVar()
@@ -268,18 +266,17 @@ class ActivePokemonFrame(ttk.LabelFrame):
             variable=self.charging,
             command=self.change_charging,
         )
-        self.charging.set(False)
         self.charging_check.grid(column=2, row=0, sticky=W)
+
+        self.all_check_reset()
 
         checkbox_frame.grid(column=3, row=2, columnspan=2)
 
     def set_pokemon(self, poke: Pokemon):
-        self._pokemon = poke
-        self._pokemon_icon.set_pokemon_icon(pid=poke.pid, size=(60, 60))
-        self._status_frame.set_stats(poke.get_all_stats())
-        self._status_frame.change_all_doryoku_box(poke.doryoku)
-        self._status_frame.change_all_rank_box(poke.rank)
-        self._status_frame.on_kotai_check_change(poke.kotai)
+        if self._pokemon.no != poke.no:
+            self.all_check_reset()
+            self._pokemon_icon.set_pokemon_icon(pid=poke.pid, size=(60, 60))
+        self._status_frame.update_pokemon(poke)
         self._seikaku_combobox.set(poke.seikaku)
         self._item_combobox.set(poke.item)
         self._ability_combobox["values"] = poke.abilities
@@ -292,6 +289,7 @@ class ActivePokemonFrame(ttk.LabelFrame):
             self._form_button["state"] = tkinter.NORMAL
         else:
             self._form_button["state"] = tkinter.DISABLED
+        self._pokemon = poke
 
     def set_stage(self, stage: Stage):
         self._stage = stage
@@ -360,6 +358,11 @@ class ActivePokemonFrame(ttk.LabelFrame):
         self._stage.set_info(self._player)
         self._stage.calc_damage()
 
+    def all_check_reset(self):
+        self.critical.set(False)
+        self.burned.set(False)
+        self.charging.set(False)
+
 
 # ステータスフレーム
 class StatusFrame(ttk.LabelFrame):
@@ -371,7 +374,7 @@ class StatusFrame(ttk.LabelFrame):
 
     def __init__(self, master, player: int, **kwargs):
         super().__init__(master, **kwargs)
-        self._stats: list[int] = []
+        self._pokemon = Pokemon()
         self._doryoku: Stats = Stats(0)
         self._rank: Stats = Stats(0)
         self._stats_value_list: list[tkinter.IntVar] = []
@@ -381,6 +384,16 @@ class StatusFrame(ttk.LabelFrame):
         self._stage: Stage | None = None
 
         self.doryoku_validate = self.register(self.on_validate_3)
+
+        self.is_rank = tkinter.BooleanVar()
+        self.is_rank__check = tkinter.Checkbutton(
+            self,
+            text="反映",
+            variable=self.is_rank,
+            command=self.set_stats,
+        )
+        self.is_rank.set(True)
+        self.is_rank__check.grid(column=1, row=3, sticky=W + E)
 
         for i, text in enumerate(["実数値", "努力値", "ランク"]):
             label = MyLabel(self, text=text)
@@ -471,11 +484,22 @@ class StatusFrame(ttk.LabelFrame):
     def rank(self) -> Stats:
         return self._rank
 
+    def update_pokemon(self, poke: Pokemon):
+        self._pokemon = poke
+        self.set_stats()
+        self.change_all_doryoku_box(poke.doryoku)
+        self.change_all_rank_box(poke.rank)
+        self.on_kotai_check_change(poke.kotai)
+
     # ポケモン登録時に実数値を表示する
-    def set_stats(self, stats: list[int]):
-        for i in range(len(stats)):
-            self._stats = stats
-            self._stats_value_list[i].set(stats[i])
+    def set_stats(self):
+        self.stats: list[int] = []
+        if self.is_rank.get():
+            self.stats = self._pokemon.get_all_ranked_stats()
+        else:
+            self.stats = self._pokemon.get_all_stats()
+        for i in range(len(self.stats)):
+            self._stats_value_list[i].set(self.stats[i])
 
     # ポケモン登録時に個体値のチェックボックスを更新する
     def on_kotai_check_change(self, kotai: Stats):

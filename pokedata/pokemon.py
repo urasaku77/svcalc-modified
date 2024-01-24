@@ -431,23 +431,33 @@ class Pokemon:
     def get_all_stats(self) -> list[int]:
         stats: list[int] = []
         for _i, key in enumerate([x for x in StatsKey]):
-            if key == StatsKey.H:
-                value = (
-                    (self.__syuzoku[key] * 2)
-                    + self.kotai[key]
-                    + math.floor(self.doryoku[key] / 4)
-                )
-                stats.append(math.floor(value * self.__lv / 100) + 10 + self.__lv)
-            else:
-                value = (
-                    (self.__syuzoku[key] * 2)
-                    + self.kotai[key]
-                    + math.floor(self.doryoku[key] / 4)
-                )
-                value = math.floor(value * self.__lv / 100) + 5
-                value = math.floor(value * get_seikaku_hosei(self.__seikaku, key))
-                stats.append(value)
+            value = self.__get_stats(key)
+            stats.append(value)
         return stats
+
+    # 実数値(ランク補正込み)
+    def __get_ranked_stats(self, key: StatsKey) -> int:
+        before_stats = self.__get_stats(key)
+        value = before_stats
+        if key != StatsKey.H:
+            rank = self.__rank[key]
+            if rank > 0:
+                value = math.floor(before_stats / 2 * (2 + rank))
+            elif rank < 0:
+                value = math.floor(before_stats / (2 - rank) * 2)
+            else:
+                value = before_stats
+        else:
+            value = before_stats
+        return value
+
+    # 全実数値(ランク補正込み)
+    def get_all_ranked_stats(self) -> list[int]:
+        ranked_stats: list[int] = []
+        for _i, key in enumerate([x for x in StatsKey]):
+            value = self.__get_ranked_stats(key)
+            ranked_stats.append(value)
+        return ranked_stats
 
     # 最も高い実数値のキーを返す（こだいかっせい、クォークチャージ用）
     def __get_best_stats_key(self) -> StatsKey:
