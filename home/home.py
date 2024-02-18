@@ -387,6 +387,9 @@ class home:
         rst = rankmatch_list["list"][next(iter(rankmatch_list["list"]))][cid]["rst"]
         ts2 = rankmatch_list["list"][next(iter(rankmatch_list["list"]))][cid]["ts2"]
 
+    with open("home/season.txt", mode="w", encoding="utf-8") as ranking_txt:
+        ranking_txt.write(next(iter(rankmatch_list["list"])))
+
     print("ポケモンランキング取得")
     url = (
         "https://resource.pokemon-home.com/battledata/ranking/scvi/"

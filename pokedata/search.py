@@ -56,12 +56,19 @@ class Search:
         print("書き込み完了")
 
     def get_latest_party_per_pokemon(self, pid: str, num: int):
+        season = 1
         options = webdriver.ChromeOptions()
         options.add_argument("--headless")
 
         driver = webdriver.Chrome(options=options)
+
+        with open("home/season.txt", encoding="utf-8") as ranking_txt:
+            season = ranking_txt.read()
+
         try:
-            driver.get(f"https://sv.pokedb.tokyo/pokemon/show/{pid}?season=15&rule=0")
+            driver.get(
+                f"https://sv.pokedb.tokyo/pokemon/show/{pid}?season={season}&rule=0"
+            )
 
             party_classes = driver.find_elements(
                 By.XPATH,
