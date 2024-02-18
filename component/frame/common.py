@@ -29,7 +29,7 @@ class PartyFrame(ttk.LabelFrame):
         self._player: int = player
         self._stage: Stage | None = None
         self._button_list: list[MyButton] = []
-        self._pokemon_list: list[str] = ["-1", "-1", "-1", "-1", "-1", "-1"]
+        self._pokemon_list: list[Pokemon] = [None, None, None, None, None, None]
 
         # ポケモン表示ボタン
         for i in range(6):
@@ -77,10 +77,10 @@ class PartyFrame(ttk.LabelFrame):
         for i, pokemon in enumerate(party):
             if pokemon.is_empty is False:
                 self._button_list[i].set_pokemon_icon(pokemon.pid, size=(30, 30))
-                self._pokemon_list[i] = pokemon.pid
+                self._pokemon_list[i] = pokemon
             else:
                 self._button_list[i].set_image(images.get_blank_image(size=(30, 30)))
-                self._pokemon_list[i] = "-1"
+                self._pokemon_list[i] = None
 
     def set_party_from_capture(self, party: list[Pokemon]):
         self._stage.load_party(1, party)

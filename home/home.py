@@ -387,6 +387,35 @@ class home:
         rst = rankmatch_list["list"][next(iter(rankmatch_list["list"]))][cid]["rst"]
         ts2 = rankmatch_list["list"][next(iter(rankmatch_list["list"]))][cid]["ts2"]
 
+    print("ポケモンランキング取得")
+    url = (
+        "https://resource.pokemon-home.com/battledata/ranking/scvi/"
+        + str(cid)
+        + "/"
+        + str(rst)
+        + "/"
+        + str(ts2)
+        + "/pokemon"
+    )
+    headers = {
+        "accept": "application/json, text/javascript, */*",
+        "user-agent": "Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Mobile Safari/537.36",
+    }
+    req = urllib.request.Request(url, headers=headers)
+    with urllib.request.urlopen(req) as res:
+        ranking = json.load(res)
+        if os.path.isfile("home/ranking.txt") is True:
+            os.remove("home/ranking.txt")
+
+        for pokemon in ranking:
+            pid = str(pokemon["id"]).zfill(4) + "-0" + str(pokemon["form"])
+            with open("home/ranking.txt", mode="a", encoding="utf-8") as ranking_txt:
+                ranking_txt.write(pid + "\n")
+                if pokemon["id"] == 1017:
+                    ranking_txt.write(str(pokemon["id"]) + "-01\n")
+                    ranking_txt.write(str(pokemon["id"]) + "-02\n")
+                    ranking_txt.write(str(pokemon["id"]) + "-03\n")
+
     print("ポケモン情報取得")
     for i in range(1, 7):
         url = (

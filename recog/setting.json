@@ -1,5 +1,6 @@
 {
-  "active_chosen_auto": true, 
+  "active_chosen_auto": true,
   "capture_monitor_auto": true,
-  "doryoku_reset_auto": true
+  "doryoku_reset_auto": true,
+  "similar_party_auto": false
 }

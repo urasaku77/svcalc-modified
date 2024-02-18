@@ -693,7 +693,7 @@ class CaptureSetting(tkinter.Toplevel):
 
 # モード切替画面
 class ModeSetting(tkinter.Toplevel):
-    def __init__(self, title: str = "モード切替", width: int = 400, height: int = 300):
+    def __init__(self, title: str = "モード切替", width: int = 400, height: int = 400):
         super().__init__()
         self.title(title)
         self.path = "recog/setting.json"
@@ -707,6 +707,7 @@ class ModeSetting(tkinter.Toplevel):
                 "active_chosen_auto": True,
                 "capture_monitor_auto": True,
                 "doryoku_reset_auto": True,
+                "similar_party_auto": False,
             }
 
         # チェックボックス1
@@ -737,12 +738,22 @@ class ModeSetting(tkinter.Toplevel):
         )
         self.doryoku_reset_auto_checkbox.grid(row=2, column=0, columnspan=2, pady=5)
 
+        # チェックボックス4
+        self.similar_party_auto_var = tkinter.BooleanVar()
+        self.similar_party_auto_var.set(self.initial_data["similar_party_auto"])
+        self.similar_party_auto_checkbox = tkinter.Checkbutton(
+            self,
+            text="類似パーティ自動検索モード",
+            variable=self.similar_party_auto_var,
+        )
+        self.similar_party_auto_checkbox.grid(row=3, column=0, columnspan=2, pady=5)
+
         self.submit_button = MyButton(self, text="保存", command=self.submit_form)
-        self.submit_button.grid(row=3, column=0, pady=10)
+        self.submit_button.grid(row=4, column=0, pady=10)
         self.cancel_button = MyButton(
             self, text="キャンセル", command=self.on_push_button
         )
-        self.cancel_button.grid(row=3, column=1, pady=10)
+        self.cancel_button.grid(row=4, column=1, pady=10)
 
     def open(self, location=tuple[int, int]):
         self.grab_set()
@@ -755,6 +766,7 @@ class ModeSetting(tkinter.Toplevel):
             "active_chosen_auto": self.active_chosen_auto_var.get(),
             "capture_monitor_auto": self.capture_monitor_auto_var.get(),
             "doryoku_reset_auto": self.doryoku_reset_auto_var.get(),
+            "similar_party_auto": self.similar_party_auto_var.get(),
         }
 
         with open(self.path, "w") as json_file:

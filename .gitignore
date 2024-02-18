@@ -5,6 +5,8 @@ home/home_terastal.csv
 home/home_tokusei.csv
 home/home_waza.csv
 home/home_seikaku.csv
+home/ranking.json
+home/ranking.txt
 party/csv/*
 party/txt/*
 party/setting.txt

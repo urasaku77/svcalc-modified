@@ -1,7 +1,8 @@
 import dataclasses
 import json
+import subprocess
 import tkinter
-from tkinter import E, N, S, W, ttk
+from tkinter import E, N, S, W, messagebox, ttk
 
 from ttkthemes.themed_tk import ThemedTk
 
@@ -35,6 +36,7 @@ from component.frame.whole import (
 from party.party import PartyEditor
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
+from pokedata.search import get_similar_party
 from recog.capture import Capture
 
 
@@ -61,6 +63,10 @@ class MainApp(ThemedTk):
         self.config(menu=menu)
         menu.add_cascade(label="キャプチャ設定", command=self.capture_setting)
         menu.add_cascade(label="モード切替", command=self.mode_setting)
+        menu.add_cascade(label="HOME情報更新", command=self.get_home_data_from_menu)
+        menu.add_cascade(
+            label="構築記事一覧取得", command=self.search_similar_party_from_menu
+        )
         menu.add_cascade(label="パーティ編集", command=self.edit_party_csv)
         menu.add_cascade(label="対戦分析")
 
@@ -186,7 +192,7 @@ class MainApp(ThemedTk):
         control_frame = ttk.LabelFrame(
             master=main_frame, text="制御", width=150, height=55, padding=5
         )
-        control_frame.grid(row=9, column=0, sticky=N + E + W + S)
+        control_frame.grid(row=9, column=0, columnspan=3, sticky=N + E + W + S)
 
         # Websocket接続ボタン
         self.websocket_var = tkinter.StringVar()
@@ -218,6 +224,15 @@ class MainApp(ThemedTk):
             state=tkinter.DISABLED,
         )
         self.shot_button.pack(fill="both", expand=0, side="left")
+
+        # 類似パーティ検索ボタン
+        self.search_button = MyButton(
+            control_frame,
+            text="類似パーティ検索",
+            command=self.search_similar_party,
+            state=tkinter.DISABLED,
+        )
+        self.search_button.pack(fill="both", expand=0, side="left")
 
         # グリッド間ウェイト
         main_frame.columnconfigure(0, weight=1)
@@ -339,6 +354,7 @@ class MainApp(ThemedTk):
                 self.websocket_var.set("Websocket切断")
                 self.monitor_button["state"] = tkinter.NORMAL
                 self.shot_button["state"] = tkinter.NORMAL
+                self.search_button["state"] = tkinter.NORMAL
                 self.websocket = True
 
                 # JSONファイルから設定値を読み取り
@@ -357,6 +373,7 @@ class MainApp(ThemedTk):
                 self.websocket_var.set("Websocket接続")
                 self.monitor_button["state"] = tkinter.DISABLED
                 self.shot_button["state"] = tkinter.DISABLED
+                self.search_button["state"] = tkinter.DISABLED
                 self.websocket = False
 
     # 画像認識処理
@@ -374,6 +391,16 @@ class MainApp(ThemedTk):
         match result:
             case list():
                 self._party_frames[1].set_party_from_capture(result)
+                # JSONファイルから設定値を読み取り
+                try:
+                    with open("recog/setting.json", "r") as json_file:
+                        self.setting_data = json.load(json_file)
+                except FileNotFoundError:
+                    self.setting_data = {"similar_party_auto": False}
+
+                if self.setting_data["similar_party_auto"]:
+                    self.search_similar_party()
+
             case tuple():
                 self._chosen_frames[0].set_chosen_from_capture(list(result))
             case bool():
@@ -392,6 +419,7 @@ class MainApp(ThemedTk):
         self.monitor_var.set("キャプチャ監視停止")
         self.websocket_button["state"] = tkinter.DISABLED
         self.shot_button["state"] = tkinter.DISABLED
+        self.search_button["state"] = tkinter.DISABLED
 
     # 画像認識ループ停止
     def stop_image_recognize(self):
@@ -401,12 +429,17 @@ class MainApp(ThemedTk):
             self.monitor_var.set("キャプチャ監視開始")
             self.websocket_button["state"] = tkinter.NORMAL
             self.shot_button["state"] = tkinter.NORMAL
+            self.search_button["state"] = tkinter.NORMAL
 
     # 手動キャプチャ
     def manual_capture(self):
         result = self.capture.recognize_chosen_capture()
         if result is not None:
             self._party_frames[1].set_party_from_capture(result)
+
+    # 類似パーティ検索
+    def search_similar_party(self):
+        get_similar_party(self._party_frames[1]._pokemon_list)
 
     # フォーム選択画面
     def form_select(self, no: int):
@@ -415,3 +448,40 @@ class MainApp(ThemedTk):
         dialog.open(location=(self.winfo_x(), self.winfo_y()))
         self.wait_window(dialog)
         return dialog.form_num
+
+    # メニューからHOME情報取得
+    def get_home_data_from_menu(self):
+        ret = messagebox.askyesno(
+            "確認",
+            "処理を開始します\nネットワークには繋がっていますか？",
+        )
+        if ret is False:
+            return
+        result = subprocess.run(
+            "python home/home.py",
+            shell=True,
+            capture_output=True,
+            text=True,
+        )
+        print("returnCode:" + result.returncode)
+        print("Log:" + result.stdout)
+        print("Err:" + result.stderr)
+
+    # メニューから類似パーティ検索
+    def search_similar_party_from_menu(self):
+        ret = messagebox.askyesno(
+            "確認",
+            "処理を開始します\nネットワークには繋がっていますか？\n（処理に15分ほどかかります。その間はアプリを利用できません）",
+        )
+        if ret is False:
+            return
+
+        result = subprocess.run(
+            "python pokedata/search.py",
+            shell=True,
+            capture_output=True,
+            text=True,
+        )
+        print("returnCode:" + result.returncode)
+        print("Log" + result.stdout)
+        print("Err:" + result.stderr)
