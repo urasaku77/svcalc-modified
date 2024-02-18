@@ -39,23 +39,44 @@ class PartyEditor(tkinter.Toplevel):
         self.settings = PartySettings(main_frame, padding=5)
         self.settings.grid(row=0, column=0, columnspan=2, sticky=N + E + W + S)
 
+        csv_button = ttk.Frame(main_frame)
         self.read_csv_button = MyButton(
-            main_frame, text="CSV読み込み", command=self.select_csv
+            csv_button, text="CSV読み込み", command=self.select_csv
         )
-        self.read_csv_button.grid(row=0, column=2, padx=5, pady=5, sticky=N + S + W)
+        self.read_csv_button.grid(row=0, column=0, padx=5, pady=5, sticky=N + S + W + E)
 
-        self.read_csv_button = MyButton(
-            main_frame, text="CSV書き込み", command=self.save_csv
+        self.write_csv_button = MyButton(
+            csv_button, text="CSV書き込み", command=self.save_csv
         )
-        self.read_csv_button.grid(row=0, column=2, padx=5, pady=5, sticky=N + S)
+        self.write_csv_button.grid(
+            row=1, column=0, padx=5, pady=5, sticky=N + S + W + E
+        )
+
+        self.make_table_button = MyButton(
+            csv_button, text="星取表作成", command=self.make_table
+        )
+        self.make_table_button.grid(
+            row=0, column=1, padx=5, pady=5, sticky=N + S + W + E
+        )
 
         self.all_clear_button = MyButton(
-            main_frame, text="全クリア", command=self.all_clear
+            csv_button, text="全クリア", command=self.all_clear
         )
-        self.all_clear_button.grid(row=0, column=2, padx=5, pady=5, sticky=N + S + E)
+        self.all_clear_button.grid(
+            row=1, column=1, padx=5, pady=5, sticky=N + S + W + E
+        )
+
+        csv_button.grid(
+            row=0,
+            column=2,
+            columnspan=2,
+            padx=5,
+            pady=5,
+            sticky=N + S + W,
+        )
 
         self.using = UseParty(main_frame, text="使用するパーティ", padding=5)
-        self.using.grid(row=0, column=3, columnspan=2, sticky=N + E + W + S)
+        self.using.grid(row=0, column=3, columnspan=2, sticky=N + E + S + W)
 
         self.pokemons = PokemonEditors(main_frame, text="パーティ編集", padding=5)
         self.pokemons.grid(row=1, column=0, columnspan=5, sticky=N + E + W + S)
@@ -179,6 +200,39 @@ class PartyEditor(tkinter.Toplevel):
         self.grab_set()
         self.focus_set()
         self.geometry("+{0}+{1}".format(location[0], location[1]))
+
+    def make_table(self):
+        num = self.input_num()
+        pids = []
+        with open("home/ranking.txt", encoding="utf-8") as ranking_txt:
+            pids = [next(ranking_txt).strip() for _ in range(num)]
+
+        pokemons = [Pokemon.by_pid(pids[i]).name for i in range(len(pids))]
+
+        self.title = self.settings.title_entry.get()
+        self.num = self.settings.num_entry.get()
+        self.sub_num = self.settings.sub_num_entry.get()
+
+        table_name = (
+            f"{self.num}-{self.sub_num}_{self.title}"
+            if f"{self.num}-{self.sub_num}_{self.title}" != ""
+            else "undefined"
+        )
+
+        with open(f"party/table/{table_name}.csv", mode="w", newline="") as table_csv:
+            pokemons.insert(0, "")
+            writer = csv.writer(table_csv)
+            writer.writerow(pokemons)
+            for pokemon in self.pokemons.pokemon_panel_list:
+                party = [""] * num
+                party.insert(0, pokemon._pokemon_name_var.get())
+                writer.writerow(party)
+
+    def input_num(self):
+        dialog = TableNumInputDialog()
+        dialog.open(location=(self.winfo_x(), self.winfo_y()))
+        self.wait_window(dialog)
+        return dialog.no
 
 
 class PartySettings(ttk.Frame):
@@ -726,4 +780,54 @@ class PokemonInputDialog(tkinter.Toplevel):
     def on_input_name(self, *args):
         pokemon_name = self._name_input.get()
         self.pokemon = Pokemon.by_name(pokemon_name, default=True)
+        self.destroy()
+
+
+class TableNumInputDialog(tkinter.Toplevel):
+    def on_validate_3(self, P, V):
+        if P.isdigit() or P == "":
+            return len(P) <= 3
+        else:
+            return False
+
+    def __init__(self, title: str = "", width: int = 400, height: int = 300):
+        super().__init__()
+        self.validate_cmd_3 = self.register(self.on_validate_3)
+        self.title("星取表作成")
+        self.no = 30
+
+        # ウィジェットの配置
+        main_frame = ttk.Frame(self, padding=10)
+        main_frame.pack()
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
+
+        self._labelframe = ttk.LabelFrame(
+            main_frame, text="上位何体までの星取表を作成しますか？"
+        )
+        self._labelframe.pack()
+
+        self._no_input = ModifiedEntry(
+            self._labelframe,
+            validate="key",
+            width=4,
+            validatecommand=(self.validate_cmd_3, "%P", "%V"),
+        )
+        self._no_input.insert(0, 3)
+        self._no_input.pack(padx=10, pady=10)
+
+        self.button = MyButton(self._labelframe, text="決定", command=self.on_input_no)
+        self.button.pack(padx=10, pady=10)
+
+    def open(self, location=tuple[int, int]):
+        self.grab_set()
+        self._no_input.focus_set()
+        self.geometry("+{0}+{1}".format(location[0], location[1]))
+
+    def on_input_no(self, *args):
+        self.no = (
+            int(self._no_input.get())
+            if int(self._no_input.get()) <= 150 and int(self._no_input.get()) >= 10
+            else 30
+        )
         self.destroy()

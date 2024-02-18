@@ -9,4 +9,5 @@ home/ranking.json
 home/ranking.txt
 party/csv/*
 party/txt/*
+party/table/*
 party/setting.txt
