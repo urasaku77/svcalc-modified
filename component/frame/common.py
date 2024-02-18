@@ -749,6 +749,7 @@ class InfoFrame(ttk.LabelFrame):
         super().__init__(master, **kwargs)
         self._player: int = player
         self._no: int = 0
+        self._form: int = -1
         self.syuzoku = {}
         global img
         img = [
@@ -804,14 +805,25 @@ class InfoFrame(ttk.LabelFrame):
         )
         self.weight_text.grid(column=8, row=2, columnspan=8, sticky=W)
 
+        buttons = ttk.Frame(self)
         self.poketetsu_button = MyButton(
-            self, text="ポケ徹", command=self.open_poketetsu
+            buttons,
+            image=images.get_menu_icon("poketetsu"),
+            command=self.open_poketetsu,
         )
-        self.poketetsu_button.grid(column=11, row=0, columnspan=5)
+        self.poketetsu_button.pack(fill="both", expand=0, side="left")
+
+        self.db_button = MyButton(
+            buttons, image=images.get_menu_icon("battle_db"), command=self.open_db
+        )
+        self.db_button.pack(fill="both", expand=0, side="left")
+
+        buttons.grid(column=11, row=0, columnspan=4)
 
     def set_info(self, pokemon: Pokemon):
         if pokemon.is_empty is False:
             self._no = pokemon.no
+            self._form = pokemon.form
             self.name.set(pokemon.name)
             img[self._player][0] = tkinter.PhotoImage(
                 file=pokemon.type[0].icon
@@ -847,4 +859,14 @@ class InfoFrame(ttk.LabelFrame):
     def open_poketetsu(self):
         if self._no != 0:
             url = "https://yakkun.com/sv/zukan/?national_no=" + str(self._no)
+            webbrowser.open(url)
+
+    def open_db(self):
+        if self._no != 0:
+            season = 1
+            pid = str(self._no).zfill(4) + "-0" + str(self._form)
+            with open("home/season.txt", encoding="utf-8") as ranking_txt:
+                season = ranking_txt.read()
+
+            url = f"https://sv.pokedb.tokyo/pokemon/show/{pid}?season={season}&rule=0"
             webbrowser.open(url)
