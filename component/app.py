@@ -14,6 +14,7 @@ from component.dialog import (
     FormSelect,
     ModeSetting,
     PartyInputDialog,
+    SimilarParty,
     SpeedComparing,
     TypeSelectDialog,
 )
@@ -230,7 +231,6 @@ class MainApp(ThemedTk):
             control_frame,
             text="類似パーティ検索",
             command=self.search_similar_party,
-            state=tkinter.DISABLED,
         )
         self.search_button.pack(fill="both", expand=0, side="left")
 
@@ -354,7 +354,6 @@ class MainApp(ThemedTk):
                 self.websocket_var.set("Websocket切断")
                 self.monitor_button["state"] = tkinter.NORMAL
                 self.shot_button["state"] = tkinter.NORMAL
-                self.search_button["state"] = tkinter.NORMAL
                 self.websocket = True
 
                 # JSONファイルから設定値を読み取り
@@ -373,7 +372,6 @@ class MainApp(ThemedTk):
                 self.websocket_var.set("Websocket接続")
                 self.monitor_button["state"] = tkinter.DISABLED
                 self.shot_button["state"] = tkinter.DISABLED
-                self.search_button["state"] = tkinter.DISABLED
                 self.websocket = False
 
     # 画像認識処理
@@ -419,7 +417,6 @@ class MainApp(ThemedTk):
         self.monitor_var.set("キャプチャ監視停止")
         self.websocket_button["state"] = tkinter.DISABLED
         self.shot_button["state"] = tkinter.DISABLED
-        self.search_button["state"] = tkinter.DISABLED
 
     # 画像認識ループ停止
     def stop_image_recognize(self):
@@ -429,7 +426,6 @@ class MainApp(ThemedTk):
             self.monitor_var.set("キャプチャ監視開始")
             self.websocket_button["state"] = tkinter.NORMAL
             self.shot_button["state"] = tkinter.NORMAL
-            self.search_button["state"] = tkinter.NORMAL
 
     # 手動キャプチャ
     def manual_capture(self):
@@ -439,7 +435,10 @@ class MainApp(ThemedTk):
 
     # 類似パーティ検索
     def search_similar_party(self):
-        get_similar_party(self._party_frames[1]._pokemon_list)
+        current_party = [pokemon.pid for pokemon in self._party_frames[1]._pokemon_list]
+        party_list = get_similar_party(self._party_frames[1]._pokemon_list)
+        dialog = SimilarParty(current_party=current_party, party_list=party_list)
+        dialog.open(location=(self.winfo_x(), self.winfo_y()))
 
     # フォーム選択画面
     def form_select(self, no: int):

@@ -59,8 +59,8 @@ class Capture:
             case "party":
                 return self.recognize_chosen_capture()
             case "chosen":
-                chosen = self.sturted_battle()
-                if not chosen:
+                chosen = self.started_battle()
+                if not chosen and self.chose_pokemon():
                     return tuple(
                         [self.recognize_chosen_num(banme) for banme in range(3)]
                     )
@@ -69,14 +69,18 @@ class Capture:
                     return chosen
         return -1
 
-    # 選出画面解析
-    def recognize_chosen_capture(self):
-        self.getScreenshot()
-        if self.is_exist_image(
+    # 選出画面検知
+    def chose_pokemon(self):
+        return self.is_exist_image(
             "recog/recogImg/situation/sensyutu.jpg", 0.8, "sensyutu"
         ) or self.is_exist_image(
             "recog/recogImg/situation/sensyutu2.jpg", 0.8, "sensyutu"
-        ):
+        )
+
+    # 選出画面解析
+    def recognize_chosen_capture(self):
+        self.getScreenshot()
+        if self.chose_pokemon():
             self.phase = "chosen"
             self.recognize_oppo_tn()
             return self.recognize_oppo_party()
@@ -123,7 +127,7 @@ class Capture:
         return -1
 
     # 対戦開始画面を検知
-    def sturted_battle(self):
+    def started_battle(self):
         self.getScreenshot()
         return self.is_exist_image(
             "recog/recogImg/situation/aitewomiru.jpg", 0.8, "aitewomiru"
