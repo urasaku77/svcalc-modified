@@ -17,6 +17,7 @@ from component.dialog import (
     SimilarParty,
     SpeedComparing,
     TypeSelectDialog,
+    WeightComparing,
 )
 from component.frame.common import (
     ActivePokemonFrame,
@@ -26,11 +27,11 @@ from component.frame.common import (
     WazaDamageListFrame,
 )
 from component.frame.whole import (
+    CompareButton,
     CountersFrame,
     FieldFrame,
     HomeFrame,
     RecordFrame,
-    SpeedButton,
     TimerFrame,
     WeatherFrame,
 )
@@ -172,15 +173,29 @@ class MainApp(ThemedTk):
         )
         self.field_frame.pack(fill="x", expand=0)
 
+        # 比較ボタンフレーム（素早さ・重さ）
+        compare_frame = ttk.Frame(common_frame)
+        compare_frame.pack(fill="both", expand=0)
+
         # 素早さ比較ボタン
-        self.speed_button = SpeedButton(
-            master=common_frame,
+        self.speed_button = CompareButton(
+            master=compare_frame,
             text="素早さ比較",
-            width=6,
+            width=10,
             padding=5,
             command=self.speed_comparing,
         )
-        self.speed_button.pack(fill="both", expand=0)
+        self.speed_button.pack(fill="both", expand=0, side="left")
+
+        # 重さ比較ボタン
+        self.weight_button = CompareButton(
+            master=compare_frame,
+            text="重さ比較",
+            width=8,
+            padding=5,
+            command=self.weight_comparing,
+        )
+        self.weight_button.pack(fill="both", expand=0, side="left")
 
         # 対戦記録フレーム
         self.record_frame = RecordFrame(
@@ -260,6 +275,7 @@ class MainApp(ThemedTk):
             self.weather_frame.set_stage(stage)
             self.field_frame.set_stage(stage)
             self.speed_button.set_stage(stage)
+            self.weight_button.set_stage(stage)
             self.record_frame.set_stage(stage)
 
     # パーティCSV編集
@@ -314,6 +330,15 @@ class MainApp(ThemedTk):
         pokemons = self.speed_button.get_active_pokemons()
         if pokemons[0].no != -1 and pokemons[1].no != -1:
             dialog = SpeedComparing()
+            dialog.set_pokemon(pokemons)
+            dialog.open(location=(self.winfo_x(), self.winfo_y()))
+            self.wait_window(dialog)
+
+    # 重さ比較
+    def weight_comparing(self):
+        pokemons = self.weight_button.get_active_pokemons()
+        if pokemons[0].no != -1 and pokemons[1].no != -1:
+            dialog = WeightComparing()
             dialog.set_pokemon(pokemons)
             dialog.open(location=(self.winfo_x(), self.winfo_y()))
             self.wait_window(dialog)

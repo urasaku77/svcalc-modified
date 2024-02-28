@@ -58,8 +58,8 @@ class FieldFrame(ttk.LabelFrame):
         self._stage.change_field(self._field_combobox.get())
 
 
-# 素早さ比較ボタン
-class SpeedButton(MyButton):
+# 比較ボタン
+class CompareButton(MyButton):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
 

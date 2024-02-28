@@ -161,7 +161,7 @@ class SpeedComparing(tkinter.Toplevel):
             tkinter.StringVar(),
             tkinter.StringVar(),
         ]
-        self.compare_mark: list[tkinter.StringVar] = tkinter.StringVar()
+        self.compare_mark: tkinter.StringVar = tkinter.StringVar()
         self.speed_var: list[tkinter.StringVar] = [
             tkinter.StringVar(),
             tkinter.StringVar(),
@@ -884,6 +884,115 @@ class SimilarParty(tkinter.Toplevel):
                     )
                     link_button.pack(side="left", padx=50)
                     icons_frame.pack(side="top")
+
+    def open(self, location=tuple[int, int]):
+        self.grab_set()
+        self.focus_set()
+        self.geometry("+{0}+{1}".format(location[0], location[1]))
+
+
+# 重さ比較画面
+class WeightComparing(tkinter.Toplevel):
+    def __init__(self, title: str = "重さ比較", width: int = 600, height: int = 500):
+        super().__init__()
+        self.title(title)
+        self.pokemons: list[Pokemon] = [Pokemon(), Pokemon()]
+
+        self.name_var: list[tkinter.StringVar] = [
+            tkinter.StringVar(),
+            tkinter.StringVar(),
+        ]
+        self.compare_mark: tkinter.StringVar = tkinter.StringVar()
+        self.weight_var: list[tkinter.DoubleVar] = [
+            tkinter.DoubleVar(),
+            tkinter.DoubleVar(),
+        ]
+        self.power_var: list[tkinter.IntVar] = [
+            tkinter.IntVar(),
+            tkinter.IntVar(),
+        ]
+
+        self.pokemon_icon: list[MyLabel] = [MyLabel(self), MyLabel(self)]
+        self.name_label = [
+            tkinter.Label(self, textvariable=self.name_var[i]) for i in range(2)
+        ]
+        self.weight_label = [
+            tkinter.Label(
+                self, textvariable=self.weight_var[i], font=Font(weight="bold", size=32)
+            )
+            for i in range(2)
+        ]
+
+        self.power_label = [
+            tkinter.Label(
+                self, textvariable=self.power_var[i], font=Font(weight="bold", size=32)
+            )
+            for i in range(2)
+        ]
+
+        self.compare = tkinter.Label(
+            self, textvariable=self.compare_mark, font=Font(weight="bold", size=16)
+        )
+        self.compare.grid(row=2, column=1, pady=5)
+
+        self.power_name_label = tkinter.Label(
+            self, text="威力", font=Font(weight="bold", size=16)
+        )
+        self.power_name_label.grid(row=3, column=1, pady=5)
+
+        self.all_components: list[list] = [
+            self.pokemon_icon,
+            self.name_label,
+        ]
+
+        for i in range(2):
+            for j in range(len(self.all_components)):
+                self.all_components[j][i].grid(row=j, column=i * 2, pady=5)
+
+        for i in range(2):
+            self.weight_label[i].grid(row=2, column=i * 2, pady=5)
+            self.power_label[i].grid(row=3, column=i * 2, pady=5)
+
+    def set_pokemon(self, pokemons: list[Pokemon]):
+        self.pokemons = pokemons
+        for i in range(2):
+            self.pokemon_icon[i].set_pokemon_icon(pokemons[i].pid, [60, 60])
+            self.name_var[i].set(pokemons[i].name)
+            self.weight_var[i].set(pokemons[i].weight)
+        self.calc_weight()
+        self.calc_power()
+
+    def calc_weight(self, *args):
+        if self.weight_var[0].get() < self.weight_var[1].get():
+            self.compare_mark.set("<")
+            self.weight_label[0]["fg"] = "blue"
+            self.weight_label[1]["fg"] = "red"
+        elif self.weight_var[0].get() > self.weight_var[1].get():
+            self.compare_mark.set(">")
+            self.weight_label[0]["fg"] = "red"
+            self.weight_label[1]["fg"] = "blue"
+        else:
+            self.compare_mark.set("=")
+            self.weight_label[0]["fg"] = "black"
+            self.weight_label[1]["fg"] = "black"
+
+    def calc_power(self, *args):
+        power: list[float] = [
+            self.weight_var[1].get() / self.weight_var[0].get(),
+            self.weight_var[0].get() / self.weight_var[1].get(),
+        ]
+
+        for i in range(2):
+            if power[i] < 0.2:
+                self.power_var[i].set(120)
+            elif power[i] < 0.25:
+                self.power_var[i].set(100)
+            elif power[i] < 0.3:
+                self.power_var[i].set(80)
+            elif power[i] < 0.5:
+                self.power_var[i].set(60)
+            else:
+                self.power_var[i].set(40)
 
     def open(self, location=tuple[int, int]):
         self.grab_set()
