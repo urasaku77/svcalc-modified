@@ -325,6 +325,7 @@ class MainApp(ThemedTk):
         )
         battle_data = dataclasses.astuple(battle)
         DB_battle.register_battle(battle_data)
+        self.clear_battle()
 
     # 対戦記録情報クリア
     def clear_battle(self):
@@ -400,7 +401,8 @@ class MainApp(ThemedTk):
                     self.search_similar_party()
 
             case tuple():
-                self._chosen_frames[0].set_chosen_from_capture(list(result))
+                if result != (-1, -1, -1):
+                    self._chosen_frames[0].set_chosen_from_capture(list(result))
             case bool():
                 if result:
                     # タイマーをリセットしてスタート

@@ -43,7 +43,7 @@ class Battle:
     ):
         from pokedata.loader import get_party_csv
 
-        file = get_party_csv().split("party\\csv\\")[1]
+        file = get_party_csv().split("party/csv/")[1]
 
         return Battle(
             None,
