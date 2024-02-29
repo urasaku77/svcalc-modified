@@ -341,17 +341,50 @@ class PokemonEditors(ttk.LabelFrame):
         self.pokemon_panel_list: list[PokemonEditor] = []
 
         for i in range(6):
-            self.pokemon_panel = PokemonEditor(self, text=str(i + 1) + "体目")
+            self.change_widget = ttk.Frame(self)
+            self.up_button = ttk.Button(
+                self.change_widget,
+                command=lambda index=i: self.change_line(True, index),
+                text="↑",
+                width=3,
+            )
+            self.up_button.pack(side="left")
+            self.pokemon_label = ttk.Label(self.change_widget, text=str(i + 1) + "体目")
+            self.pokemon_label.pack(side="left")
+            self.down_button = ttk.Button(
+                self.change_widget,
+                command=lambda index=i: self.change_line(False, index),
+                text="↓",
+                width=3,
+            )
+            self.down_button.pack(side="left")
+            self.pokemon_panel = PokemonEditor(self, labelwidget=self.change_widget)
             c = i if i < 3 else i - 3
             r = 0 if i < 3 else 1
-            self.pokemon_panel.grid(column=c, row=r, sticky=E)
+            self.pokemon_panel.grid(column=c, row=r, sticky=E, pady=3)
             self.pokemon_panel_list.append(self.pokemon_panel)
+
+    def change_line(self, up: bool, num: int):
+        if up and num != 0:
+            pokemon1 = self.pokemon_panel_list[num - 1].pokemon
+            pokemon2 = self.pokemon_panel_list[num].pokemon
+
+            self.pokemon_panel_list[num - 1].set_pokemon(pokemon2)
+            self.pokemon_panel_list[num].set_pokemon(pokemon1)
+
+        elif not up and num != 5:
+            pokemon1 = self.pokemon_panel_list[num].pokemon
+            pokemon2 = self.pokemon_panel_list[num + 1].pokemon
+
+            self.pokemon_panel_list[num].set_pokemon(pokemon2)
+            self.pokemon_panel_list[num + 1].set_pokemon(pokemon1)
 
 
 class PokemonEditor(ttk.LabelFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master=master, **kwargs)
 
+        self.pokemon: Pokemon = Pokemon()
         self.syuzoku_list: list[tkinter.IntVar] = []
         self.jissu_list: list[tkinter.IntVar] = []
         self.waza_list: list[WazaNameCombobox] = []
@@ -453,6 +486,7 @@ class PokemonEditor(ttk.LabelFrame):
             self.set_pokemon(dialog.pokemon)
 
     def set_pokemon(self, pokemon: Pokemon):
+        self.pokemon = pokemon
         self._pokemon_icon.set_pokemon_icon(pid=pokemon.pid, size=(60, 60))
         self._pokemon_name_var.set(pokemon.name)
         self._teras_var = pokemon.terastype
@@ -600,7 +634,7 @@ class EvEditors(ttk.Frame):
         for _i in range(6):
             self.ev_editor = EvEditor(self)
             self.ev_editor.setCallback(callback)
-            self.ev_editor.pack(pady=10)
+            self.ev_editor.pack(pady=5)
             self.ev_list.append(self.ev_editor)
 
     def init_all_value(self):
@@ -679,7 +713,7 @@ class IvEditors(ttk.Frame):
         for _i in range(6):
             self.iv_editor = IvEditor(self)
             self.iv_editor.setCallback(callback)
-            self.iv_editor.pack(pady=10)
+            self.iv_editor.pack(pady=5)
             self.iv_list.append(self.iv_editor)
 
     def init_all_value(self):
