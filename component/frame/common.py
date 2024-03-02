@@ -9,6 +9,7 @@ from component import const, images
 from component.button import MyButton, TypeIconButton
 from component.combobox import MyCombobox, WazaNameCombobox
 from component.const import ITEM_COMBOBOX_VALUES, WALL_COMBOBOX_VALUES
+from component.dialog import PokemonMemoLabelDialog
 from component.label import MyLabel
 from pokedata.calc import DamageCalcResult
 from pokedata.const import ABILITY_VALUES, Types, Walls
@@ -395,6 +396,15 @@ class StatusFrame(ttk.LabelFrame):
         self.is_rank.set(True)
         self.is_rank__check.grid(column=1, row=3, sticky=W + E)
 
+        if player == 0:
+            self.memo_btn = MyButton(
+                master=self,
+                image=images.get_menu_icon("load"),
+                padding=0,
+                command=self.show_memo,
+            )
+            self.memo_btn.grid(column=0, row=0)
+
         for i, text in enumerate(["実数値", "努力値", "ランク"]):
             label = MyLabel(self, text=text)
             label.grid(column=0, row=i + 1, padx=5)
@@ -584,6 +594,11 @@ class StatusFrame(ttk.LabelFrame):
             self._rank_spinbox_dict[key]["foreground"] = (
                 "steel blue" if value < 0 else ""
             )
+
+    def show_memo(self):
+        dialog = PokemonMemoLabelDialog()
+        dialog.open(self._pokemon.memo, location=(self.winfo_x(), self.winfo_y()))
+        self.wait_window(dialog)
 
 
 # 技・ダメージ表示リストフレーム

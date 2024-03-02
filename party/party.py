@@ -127,6 +127,7 @@ class PartyEditor(tkinter.Toplevel):
                     "持ち物",
                     "特性",
                     "テラス",
+                    "メモ",
                     "技",
                     "技",
                     "技",
@@ -409,6 +410,8 @@ class PokemonEditor(ttk.LabelFrame):
         )
         self._teras_button.grid(column=0, row=3, columnspan=2, sticky=W + E + N + S)
 
+        self._memo_var = ""
+
         self.img = [tkinter.PhotoImage(file=Types.なし.icon).subsample(3, 3)] * 2
         self.type_img = ttk.Frame(self)
         self.type_img.grid(column=3, row=0)
@@ -439,6 +442,14 @@ class PokemonEditor(ttk.LabelFrame):
             cbx = WazaNameCombobox(self, width=16)
             cbx.grid(column=5, row=i)
             self.waza_list.append(cbx)
+
+        self.memo_btn = MyButton(
+            master=self,
+            image=images.get_menu_icon("load"),
+            padding=0,
+            command=lambda: self.input_memo(),
+        )
+        self.memo_btn.grid(column=0, row=4)
 
         for i, text in enumerate(["HP", "攻撃", "防御", "特攻", "特防", "素早さ"]):
             label = MyLabel(self, text=text)
@@ -520,6 +531,8 @@ class PokemonEditor(ttk.LabelFrame):
             value = pokemon.waza_list[i]
             waza.set(value.name if value is not None else "")
 
+        self._memo_var = pokemon.memo
+
         self.calc_status()
 
     def clear_pokemon(self):
@@ -551,6 +564,8 @@ class PokemonEditor(ttk.LabelFrame):
 
         self._ev_frame.init_all_value()
         self._iv_frame.init_all_value()
+
+        self._memo_var = ""
 
     def on_push_terasbutton(self):
         type: Types = self.select_type()
@@ -614,6 +629,7 @@ class PokemonEditor(ttk.LabelFrame):
                 self._item_combobox.get(),
                 self._ability_combobox.get(),
                 self._teras_var.name if self._teras_var != Types.なし else "",
+                self._memo_var,
                 waza_list[0],
                 waza_list[1],
                 waza_list[2],
@@ -625,6 +641,12 @@ class PokemonEditor(ttk.LabelFrame):
         for waza in self.waza_list:
             waza_list.append(waza.get())
         return waza_list
+
+    def input_memo(self):
+        dialog = PokemonMemoInputDialog()
+        dialog.open(self._memo_var, location=(self.winfo_x(), self.winfo_y()))
+        self.wait_window(dialog)
+        self._memo_var = dialog.memo
 
 
 class EvEditors(ttk.Frame):
@@ -814,6 +836,35 @@ class PokemonInputDialog(tkinter.Toplevel):
     def on_input_name(self, *args):
         pokemon_name = self._name_input.get()
         self.pokemon = Pokemon.by_name(pokemon_name, default=True)
+        self.destroy()
+
+
+class PokemonMemoInputDialog(tkinter.Toplevel):
+    def __init__(self, title: str = "", width: int = 400, height: int = 300):
+        super().__init__()
+        self.title("メモ入力")
+        self.memo = ""
+
+        # ウィジェットの配置
+        main_frame = ttk.Frame(self, padding=10)
+        main_frame.pack()
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
+
+        self.memo_input = ScrolledText(main_frame, height=3, width=60, padx=3, pady=3)
+        self.memo_input.pack(padx=10, pady=10)
+
+        self.button = MyButton(main_frame, text="決定", command=self.close)
+        self.button.pack(padx=10, pady=10)
+
+    def open(self, memo: str, location=tuple[int, int]):
+        self.grab_set()
+        self.memo_input.insert(tkinter.END, memo)
+        self.memo_input.focus_set()
+        self.geometry("+{0}+{1}".format(location[0], location[1]))
+
+    def close(self, *args):
+        self.memo = self.memo_input.get("1.0", "end-1c")
         self.destroy()
 
 

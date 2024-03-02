@@ -39,6 +39,7 @@ class Pokemon:
         self.__waza_list: list[Optional[WazaBase]] = [None for _ in range(10)]
         self.__waza_rate_list: list[Optional[float]] = [0.0 for _ in range(10)]
         self.__weight: float = 0.0
+        self.__memo: str = ""
         self.__statechanged_handler: Optional[callable] = None
 
         if db_data is not None:
@@ -344,6 +345,14 @@ class Pokemon:
         return self.__weight
 
     @property
+    def memo(self) -> str:
+        return self.__memo
+
+    @memo.setter
+    def memo(self, value) -> None:
+        self.__memo = value
+
+    @property
     def status_text(self) -> str:
         return "-".join([str(self.__get_stats(x)) for x in StatsKey])
 
@@ -496,10 +505,11 @@ class Pokemon:
             self.__item = data[4]
             self.__ability = data[5]
             self.__terastype = Types[data[6]] if data[6] != "" else Types.なし
+            self.__memo = data[7]
             if use_data:
-                for i in range(10):
-                    if i + 7 < len(data):
-                        self.__waza_list[i] = WazaBase(data[i + 7])
+                for i in range(11):
+                    if i + 8 < len(data):
+                        self.__waza_list[i] = WazaBase(data[i + 8])
 
     # HOMEデータから技を10個読み取り
     def set_waza_from_home(self):

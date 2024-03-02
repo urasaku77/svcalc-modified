@@ -136,6 +136,32 @@ class TypeSelectDialog(tkinter.Toplevel):
         self.destroy()
 
 
+# ポケモンメモ表示ダイアログ
+class PokemonMemoLabelDialog(tkinter.Toplevel):
+    def __init__(self, title: str = "", width: int = 400, height: int = 300):
+        super().__init__()
+        self.title("ポケモンメモ")
+
+        # ウィジェットの配置
+        main_frame = ttk.Frame(self, padding=10)
+        main_frame.pack()
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
+
+        self.memo_var = tkinter.StringVar()
+        self.memo_var.set("")
+        self.memo_label = ttk.Label(main_frame, textvariable=self.memo_var)
+        self.memo_label.pack()
+
+    def open(self, memo: str, location=tuple[int, int]):
+        self.grab_set()
+        self.memo_var.set(memo)
+        self.geometry("+{0}+{1}".format(location[0], location[1]))
+
+    def close(self, *args):
+        self.destroy()
+
+
 # 素早さ比較画面
 class SpeedComparing(tkinter.Toplevel):
     def on_validate_2(self, P, V):
