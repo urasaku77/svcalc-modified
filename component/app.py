@@ -43,8 +43,8 @@ from recog.capture import Capture
 
 
 class MainApp(ThemedTk):
-    def __init__(self, *args, **kwargs):
-        super().__init__(theme="arc", *args, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(theme="arc", **kwargs)
         self.title("SV Auto Damage Calculator")
         self.iconbitmap(default="image/favicon.ico")
         self.capture = Capture()
@@ -350,7 +350,7 @@ class MainApp(ThemedTk):
         )
         battle_data = dataclasses.astuple(battle)
         DB_battle.register_battle(battle_data)
-        self.clear_battle()
+        self.record_frame.clear()
 
     # 対戦記録情報クリア
     def clear_battle(self):

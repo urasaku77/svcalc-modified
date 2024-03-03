@@ -259,9 +259,11 @@ class Stage:
         self._app.set_party(player=player, party=party)
 
     # パーティの読み込み
-    def load_party(self, player: int, party: list[Pokemon] = []):
+    def load_party(self, player: int, party: list[Pokemon] = None):
         from pokedata.loader import get_party_data
 
+        if party is None:
+            party = []
         if len(party) == 0:
             for _i, data in enumerate(get_party_data()):
                 pokemon: Pokemon = Pokemon.by_name(data[0])
@@ -277,7 +279,9 @@ class Stage:
         self._app.set_party(player=player, party=party)
 
     # 選出の登録
-    def set_chosen(self, player: int, index: list[int] = []):
+    def set_chosen(self, player: int, index: list[int] = None):
+        if index is None:
+            index = []
         if len(index) == 0:
             index_list = [i for i, p in enumerate(self._chosen[player]) if p.is_empty]
             if (
