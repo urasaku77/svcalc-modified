@@ -60,13 +60,13 @@ class Capture:
                 return self.recognize_chosen_capture()
             case "chosen":
                 chosen = self.started_battle()
-                if not chosen and self.chose_pokemon():
+                if chosen:
+                    self.phase = "party"
+                    return chosen
+                elif self.chose_pokemon():
                     return tuple(
                         [self.recognize_chosen_num(banme) for banme in range(3)]
                     )
-                else:
-                    self.phase = "party"
-                    return chosen
         return -1
 
     # 選出画面検知
