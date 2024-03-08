@@ -351,6 +351,13 @@ class MainApp(ThemedTk):
         battle_data = dataclasses.astuple(battle)
         DB_battle.register_battle(battle_data)
         self.record_frame.clear()
+        ret = messagebox.askyesno(
+            "確認",
+            "データを登録しました\n次の対戦へ移りますか？）",
+        )
+        if ret is False:
+            return
+        self.image_recognize()
 
     # 対戦記録情報クリア
     def clear_battle(self):
