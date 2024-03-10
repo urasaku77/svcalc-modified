@@ -20,7 +20,7 @@ class Capture:
         self.coords = ConfCoordinate()
         self.path_tesseract = r"E:\Tesseract-OCR"
 
-        # party(相手パーティ待ち)→chosen(自分選出待ち)→start(対戦開始待ち)→finish(対戦終了待ち)
+        # party(相手パーティ待ち)→chosen(対戦画面待ち)→一旦終了
         self.phase = "party"
         # OBSの設定値を読み込む
         with open("recog/capture.json", "r") as json_file:

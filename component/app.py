@@ -496,7 +496,7 @@ class MainApp(ThemedTk):
             capture_output=True,
             text=True,
         )
-        print("returnCode:" + result.returncode)
+        print("returnCode:" + str(result.returncode))
         print("Log:" + result.stdout)
         print("Err:" + result.stderr)
 
