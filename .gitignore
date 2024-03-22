@@ -8,6 +8,7 @@ home/home_seikaku.csv
 home/ranking.json
 home/ranking.txt
 home/season.txt
+home/party_members.json
 party/csv/*
 party/txt/*
 party/table/*
