@@ -142,7 +142,7 @@ class Search:
                             )
                             .get_attribute("href")
                         )
-                        no = icon.split("show/")[1].split("-0")[0]
+                        no = icon.split("show/")[1].split("-")[0]
                         form = (
                             icon.split(f"{no}-")[1].split("?season")[0].lstrip("0")
                             if icon.split(f"{no}-")[1].split("?season")[0].lstrip("0")
@@ -184,3 +184,4 @@ class Search:
 if __name__ == "__main__":
     search = Search()
     search.search_party_members()
+    search.search_latest_party()
