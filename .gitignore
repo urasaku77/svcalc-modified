@@ -13,3 +13,4 @@ party/csv/*
 party/txt/*
 party/table/*
 party/setting.txt
+chromedriver.exe
