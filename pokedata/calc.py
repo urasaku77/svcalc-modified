@@ -971,6 +971,8 @@ class DamageCalc:
                     # テラスタイプのみ一致判定がある。一致で2倍、元タイプとも一致した場合、2.25倍
                     if teras_type_equal or attacker.battle_terastype == Types.ステラ:
                         value = 9216 if type_equal else 8192
+                    elif attacker.battle_terastype == Types.なし and type_equal:
+                        value = 8192
                 case _:
                     if type_equal and (
                         teras_type_equal or attacker.battle_terastype == Types.ステラ
