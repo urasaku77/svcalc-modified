@@ -4,8 +4,10 @@ from functools import reduce
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
+from pokedata.pokemon import Pokemon
 
-def get_similar_party(pids):
+
+def get_similar_party(pids: list[Pokemon]) -> list:
     all_urls = []
     undefines = []
     with open("home/ranking.json", encoding="utf-8") as ranking_json:
@@ -18,7 +20,9 @@ def get_similar_party(pids):
                             undefines.append(ranking["party"])
             else:
                 for ranking in rankings:
-                    if ranking["pid"] == str(pid.no).zfill(4) + "-0" + str(pid.form):
+                    if ranking["pid"] == str(pid.no).zfill(4) + "-" + str(
+                        pid.form
+                    ).zfill(2):
                         all_urls.append(ranking["party"])
     results = reduce(set.intersection, map(set, all_urls))
 

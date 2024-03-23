@@ -430,7 +430,7 @@ class MainApp(ThemedTk):
                     self.setting_data = {"similar_party_auto": False}
 
                 if self.setting_data["similar_party_auto"]:
-                    self.search_similar_party()
+                    self.search_similar_party(isOpen=False)
 
             case tuple():
                 if result != (-1, -1, -1):
@@ -468,11 +468,12 @@ class MainApp(ThemedTk):
             self._party_frames[1].set_party_from_capture(result)
 
     # 類似パーティ検索
-    def search_similar_party(self):
+    def search_similar_party(self, isOpen: bool = True):
         current_party = [pokemon.pid for pokemon in self._party_frames[1]._pokemon_list]
         party_list = get_similar_party(self._party_frames[1]._pokemon_list)
-        dialog = SimilarParty(current_party=current_party, party_list=party_list)
-        dialog.open(location=(self.winfo_x(), self.winfo_y()))
+        if isOpen or party_list:
+            dialog = SimilarParty(current_party=current_party, party_list=party_list)
+            dialog.open(location=(self.winfo_x(), self.winfo_y()))
 
     # フォーム選択画面
     def form_select(self, no: int):
@@ -515,6 +516,6 @@ class MainApp(ThemedTk):
             capture_output=True,
             text=True,
         )
-        print("returnCode:" + result.returncode)
+        print("returnCode:" + str(result.returncode))
         print("Log" + result.stdout)
         print("Err:" + result.stderr)
