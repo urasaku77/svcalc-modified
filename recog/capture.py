@@ -22,6 +22,7 @@ class Capture:
 
         # party(相手パーティ待ち)→chosen(対戦画面待ち)→一旦終了
         self.phase = "party"
+        self.banme = 0
         # OBSの設定値を読み込む
         with open("recog/capture.json", "r") as json_file:
             self.account = json.load(json_file)
@@ -44,7 +45,7 @@ class Capture:
             return False
 
     # キャプチャ画像取得
-    def getScreenshot(self):
+    def get_screenshot(self):
         responseData = self.loop.run_until_complete(
             self.obs.getScreenshot(self.account["source_name"])
         )
@@ -52,6 +53,12 @@ class Capture:
         img_binary = base64.b64decode(screenshotBase64)
         jpg = np.frombuffer(img_binary, dtype=np.uint8)
         self.img = cv2.imdecode(jpg, cv2.IMREAD_COLOR)
+
+    # キャプチャ画像保存
+    def save_screenshot(self, coordName, savePath):
+        coord = self.coords.dicCoord[coordName]
+        img1 = self.img[coord.top : coord.bottom, coord.left : coord.right]
+        cv2.imwrite(savePath, img1)
 
     # フェーズに応じて画像認識処理
     def image_recognize(self):
@@ -64,9 +71,13 @@ class Capture:
                     self.phase = "party"
                     return chosen
                 elif self.chose_pokemon():
-                    return tuple(
-                        [self.recognize_chosen_num(banme) for banme in range(3)]
+                    banme_list = [
+                        self.recognize_chosen_num(banme) for banme in range(3)
+                    ]
+                    self.create_my_chosen_image(
+                        banme_list, len(banme_list) - banme_list.count(-1)
                     )
+                    return tuple(banme_list)
         return -1
 
     # 選出画面検知
@@ -79,7 +90,7 @@ class Capture:
 
     # 選出画面解析
     def recognize_chosen_capture(self):
-        self.getScreenshot()
+        self.get_screenshot()
         if self.chose_pokemon():
             self.phase = "chosen"
             self.recognize_oppo_tn()
@@ -87,6 +98,11 @@ class Capture:
 
     # 相手パーティの解析
     def recognize_oppo_party(self):
+        # OBS表示用のキャプチャ取得
+        self.save_screenshot("myPokemon", "recog/outputImg/myPokemon.jpg")
+        self.save_screenshot("opoPokemon", "recog/outputImg/opoPokemon.jpg")
+        self.set_my_party_img()
+
         pokemonImages = glob.glob("recog/recogImg/pokemon/*")
         coordsList = [
             "opoPoke1",
@@ -115,6 +131,11 @@ class Capture:
         tn = self.ocr_full(img)
         return tn.replace(" ", "")
 
+    # OBS表示用の自分パーティ画像取得
+    def set_my_party_img(self):
+        coord = self.coords.dicCoord["mySensyutu"]
+        self.myPartyImg = self.img[coord.top : coord.bottom, coord.left : coord.right]
+
     # 自分の選出番号を取得
     def recognize_chosen_num(self, banme):
         for num in range(6):
@@ -126,9 +147,26 @@ class Capture:
                 return num
         return -1
 
+    # OBS表示用の自分選出画像作成
+    def create_my_chosen_image(self, sensyutuPoke, count):
+        img = Image.fromarray(cv2.cvtColor(self.myPartyImg, cv2.COLOR_BGR2RGB))
+        if self.banme == count:
+            return
+        self.banme = count
+        i = 0
+        dst = Image.new("RGB", (575 * (count) + 1, 106))
+        for num in sensyutuPoke:
+            if num == -1:
+                dst.save("recog/outputImg/outputSensyutu.jpg", quality=95)
+                return
+            outputImg = img.crop((0, 0 + 115 * num, 570, 105 + 115 * num))
+            dst.paste(outputImg, (0 + 570 * i, 0))
+            i = i + 1
+        dst.save("recog/outputImg/outputSensyutu.jpg", quality=95)
+
     # 対戦開始画面を検知
     def started_battle(self):
-        self.getScreenshot()
+        self.get_screenshot()
         return self.is_exist_image(
             "recog/recogImg/situation/aitewomiru.jpg", 0.8, "aitewomiru"
         )

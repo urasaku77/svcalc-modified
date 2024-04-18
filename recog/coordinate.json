@@ -14,4 +14,7 @@
 "opoPoke6": {"top": 735, "bottom":835, "left":1240, "right":1342 },
 "opoTn": {"top":160, "bottom":210, "left":1300, "right":1550 },
 "kurai": {"top":825, "bottom":870, "left":580, "right":1350},
-"myKurai": {"top":465, "bottom":550, "left":1410, "right":1740}}
+"myKurai": {"top":465, "bottom":550, "left":1410, "right":1740},
+"myPokemon": {"top": 150, "bottom":840 , "left":570, "right":740},
+"opoPokemon": {"top": 235, "bottom":835 , "left":1250, "right":1330},
+"mySensyutu": {"top": 150, "bottom":840 , "left":170, "right":740}}
