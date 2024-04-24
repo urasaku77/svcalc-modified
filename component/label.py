@@ -20,5 +20,5 @@ class MyLabel(ttk.Label):
         self["image"] = self._image
 
     def set_pokemon_icon(self, pid: str, size: tuple[int, int] = None):
-        image_size = size if size is None else self._size
+        image_size = size if size is not None else self._size
         self.set_image(get_pokemon_icon(pid, image_size))

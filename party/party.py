@@ -2,6 +2,7 @@
 
 import csv
 import glob
+import json
 import math
 import os
 import tkinter
@@ -19,6 +20,7 @@ from component.combobox import (
 from component.const import ALL_ITEM_COMBOBOX_VALUES
 from component.dialog import TypeSelectDialog
 from component.label import MyLabel
+from data.db import DB
 from pokedata.const import Types
 from pokedata.nature import get_seikaku_hosei, get_seikaku_list
 from pokedata.pokemon import Pokemon
@@ -828,6 +830,48 @@ class PokemonInputDialog(tkinter.Toplevel):
         self._name_input.bind("<<submit>>", self.on_input_name)
         self._name_input.grid(row=0, column=0)
 
+        with open("home/ranking.json", "r", encoding="utf-8") as ranking_json:
+            list = json.load(ranking_json)
+
+        pokes_frame = ttk.Frame(main_frame, padding=10)
+        for i in range(100):
+            row = int(i / 10)
+            column = i % 10
+
+            no = list[i]["pid"].split("-")[0].lstrip("0")
+            form = (
+                list[i]["pid"].split("-")[1].lstrip("0")
+                if list[i]["pid"].split("-")[1].lstrip("0") != ""
+                else 0
+            )
+            pid = f"{no.lstrip('0')}-{form}"
+
+            poke_frame = ttk.Frame(pokes_frame, padding=5)
+            self._pokemon_icon = MyLabel(
+                poke_frame,
+                size=(30, 30),
+                padding=0,
+            )
+            self._pokemon_icon.set_pokemon_icon(pid)
+            self._pokemon_icon.bind(
+                "<Button-1>", lambda _, pokemon=pid: self.on_choose_pokemons(pokemon)
+            )
+            self._pokemon_icon.grid(row=0, column=0)
+            self._pokemon_label = ttk.Label(
+                poke_frame, text=DB.get_pokemon_name_by_pid(pid)
+            )
+            self._pokemon_label.grid(row=0, column=1)
+            self._pokemon_label.bind(
+                "<Button-1>", lambda _, pokemon=pid: self.on_choose_pokemons(pokemon)
+            )
+
+            poke_frame.bind(
+                "<Button-1>", lambda _, pokemon=pid: self.on_choose_pokemons(pokemon)
+            )
+            poke_frame.grid(row=row, column=column, padx=20, pady=20)
+
+        pokes_frame.grid(row=1, column=0, sticky=N + E + W + S)
+
     def open(self, location=tuple[int, int]):
         self.grab_set()
         self._name_input.focus_set()
@@ -836,6 +880,10 @@ class PokemonInputDialog(tkinter.Toplevel):
     def on_input_name(self, *args):
         pokemon_name = self._name_input.get()
         self.pokemon = Pokemon.by_name(pokemon_name, default=True)
+        self.destroy()
+
+    def on_choose_pokemons(self, pid: str):
+        self.pokemon = Pokemon.by_pid(pid, default=True)
         self.destroy()
 
 

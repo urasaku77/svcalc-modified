@@ -46,21 +46,14 @@ class DB:
         return result[0]
 
     @staticmethod
-    def get_pokemon_names_by_pid(pid: list[str]):
-        pids = (
-            f"('{pid[0]}', '{pid[1]}', '{pid[2]}', '{pid[3]}', '{pid[4]}', '{pid[5]}')"
-        )
-        sql = (
-            "SELECT no || '-' || form pid, name FROM pokemon_data where pid in " + pids
+    def get_pokemon_name_by_pid(pid: str):
+        no = pid.split("-")[0]
+        form = pid.split("-")[1]
+        sql = "SELECT name FROM pokemon_data where no = {0} and form = {1}".format(
+            no, form
         )
         result = DB.__select(sql)
-
-        names = []
-        for p in pid:
-            for row in result:
-                if row["pid"] == p:
-                    names.append(row["name"])
-        return names
+        return result[0]["name"]
 
     @staticmethod
     def get_pokemon_pid_by_name(name: str) -> str:
