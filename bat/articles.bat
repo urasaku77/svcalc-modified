@@ -1,3 +1,4 @@
 e:
 cd E:\svcalc-modified
-python pokedata/search.py
+python party/search.py
+pause

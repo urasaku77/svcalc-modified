@@ -36,9 +36,9 @@ from component.frame.whole import (
     WeatherFrame,
 )
 from party.party import PartyEditor
+from party.search import get_similar_party
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
-from pokedata.search import get_similar_party
 from recog.capture import Capture
 
 
@@ -65,10 +65,6 @@ class MainApp(ThemedTk):
         self.config(menu=menu)
         menu.add_cascade(label="キャプチャ設定", command=self.capture_setting)
         menu.add_cascade(label="モード切替", command=self.mode_setting)
-        menu.add_cascade(label="HOME情報更新", command=self.get_home_data_from_menu)
-        menu.add_cascade(
-            label="構築記事一覧取得", command=self.search_similar_party_from_menu
-        )
         menu.add_cascade(label="パーティ編集", command=self.edit_party_csv)
         menu.add_cascade(label="対戦分析")
 

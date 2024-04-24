@@ -4,10 +4,10 @@ from functools import reduce
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
-from pokedata.pokemon import Pokemon
+# Pokemonクラスを読み込むとバッチファイルからうまく起動しないため省略している
 
 
-def get_similar_party(pids: list[Pokemon]) -> list:
+def get_similar_party(pids: list) -> list:
     all_urls = []
     undefines = []
     with open("home/ranking.json", encoding="utf-8") as ranking_json:
