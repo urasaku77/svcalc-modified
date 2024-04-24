@@ -93,7 +93,7 @@ class Search:
 
             party_classes = driver.find_elements(
                 By.XPATH,
-                "//a[@class='icon-text is-hidden-mobile is-flex is-flex-direction-column is-align-items-center is-justify-content-center link-team-article']",
+                "//a[@class='icon-text is-hidden-mobile link-team-article']",
             )
             urls = []
             number = num if len(party_classes) > num else len(party_classes)
