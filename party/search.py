@@ -133,7 +133,7 @@ class Search:
                 for i in range(len(trainer_classes)):
                     icon_classes = trainer_classes[i].find_elements(
                         By.XPATH,
-                        ".//div[@class='trainer-team-pokemon has-text-centered']",
+                        ".//div[@class='team-pokemon']",
                     )
                     urls = []
                     print(f"{i+1}/{len(trainer_classes)}実行中")
