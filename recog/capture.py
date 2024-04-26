@@ -74,9 +74,10 @@ class Capture:
                     banme_list = [
                         self.recognize_chosen_num(banme) for banme in range(3)
                     ]
-                    self.create_my_chosen_image(
-                        banme_list, len(banme_list) - banme_list.count(-1)
-                    )
+                    if banme_list != [-1, -1, -1]:
+                        self.create_my_chosen_image(
+                            banme_list, len(banme_list) - banme_list.count(-1)
+                        )
                     return tuple(banme_list)
         return -1
 
