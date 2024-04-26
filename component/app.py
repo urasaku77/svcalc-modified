@@ -416,8 +416,9 @@ class MainApp(ThemedTk):
         global after_id
         result = self.capture.image_recognize()
         match result:
-            case list():
-                self._party_frames[1].set_party_from_capture(result)
+            case tuple():
+                self._party_frames[1].set_party_from_capture(result[0])
+                self.record_frame.tn.insert(0, result[1])
                 # JSONファイルから設定値を読み取り
                 try:
                     with open("recog/setting.json", "r") as json_file:
@@ -428,9 +429,9 @@ class MainApp(ThemedTk):
                 if self.setting_data["similar_party_auto"]:
                     self.search_similar_party(isOpen=False)
 
-            case tuple():
-                if result != (-1, -1, -1):
-                    self._chosen_frames[0].set_chosen_from_capture(list(result))
+            case list():
+                if result != [-1, -1, -1]:
+                    self._chosen_frames[0].set_chosen_from_capture(result)
             case bool():
                 if result:
                     # タイマーをリセットしてスタート
@@ -461,7 +462,8 @@ class MainApp(ThemedTk):
     def manual_capture(self):
         result = self.capture.recognize_chosen_capture()
         if result is not None:
-            self._party_frames[1].set_party_from_capture(result)
+            self._party_frames[1].set_party_from_capture(result[0])
+            self.record_frame.tn.insert(0, result[1])
 
     # 類似パーティ検索
     def search_similar_party(self, isOpen: bool = True):

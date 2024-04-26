@@ -85,7 +85,7 @@ class Capture:
                         self.create_my_chosen_image(
                             banme_list, len(banme_list) - banme_list.count(-1)
                         )
-                    return tuple(banme_list)
+                    return banme_list
         return -1
 
     # 選出画面検知
@@ -97,12 +97,12 @@ class Capture:
         )
 
     # 選出画面解析
-    def recognize_chosen_capture(self):
+    def recognize_chosen_capture(self) -> tuple[list[Pokemon], str]:
         self.get_screenshot()
         if self.chose_pokemon():
             self.phase = "chosen"
-            self.recognize_oppo_tn()
-            return self.recognize_oppo_party()
+            oppo_tn = self.recognize_oppo_tn()
+            return (self.recognize_oppo_party(), oppo_tn)
 
     # 相手パーティの解析
     def recognize_oppo_party(self):
@@ -242,13 +242,13 @@ class Capture:
             return ""
 
     # 全体OCR
-    def ocr_full(self, img):
+    def ocr_full(self, base_img):
         try:
             if self.path_tesseract not in os.environ["PATH"].split(os.pathsep):
                 os.environ["PATH"] += os.pathsep + self.path_tesseract
             tools = pyocr.get_available_tools()
             tool = tools[0]
-            img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)  # グレースケールに変換
+            img = cv2.cvtColor(base_img, cv2.COLOR_BGR2RGB)
             # 閾値の設定
             threshold_value = 85
             # 配列の作成（output用）
