@@ -56,30 +56,3 @@ class Obs(object):
             return ret
         else:
             return
-
-    async def setText(self, source, text):
-        request = simpleobsws.Request(
-            "SetInputSettings", {"inputName": source, "inputSettings": {"text": text}}
-        )
-        await self.ws.call(request)
-
-    async def setTextList(self, source, textList):
-        requests = []
-        for i, text in enumerate(textList):
-            request = simpleobsws.Request(
-                "SetInputSettings",
-                {"inputName": source + str(i + 1), "inputSettings": {"text": text}},
-            )
-            requests.append(request)
-        await self.ws.call_batch(requests, halt_on_failure=False)
-
-    async def getInputList(self):
-        request = simpleobsws.Request("GetInputList", {})
-        ret = await self.ws.call(request)
-        return ret.responseData["inputs"]
-
-    async def setScene(self, sceneName):
-        request = simpleobsws.Request(
-            "SetCurrentProgramScene", {"sceneName": sceneName}
-        )
-        await self.ws.call(request)
