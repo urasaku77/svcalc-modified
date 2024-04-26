@@ -735,6 +735,7 @@ class ModeSetting(tkinter.Toplevel):
                 "capture_monitor_auto": True,
                 "doryoku_reset_auto": True,
                 "similar_party_auto": False,
+                "panipani_auto": True,
             }
 
         # チェックボックス1
@@ -775,12 +776,22 @@ class ModeSetting(tkinter.Toplevel):
         )
         self.similar_party_auto_checkbox.grid(row=3, column=0, columnspan=2, pady=5)
 
+        # チェックボックス5
+        self.panipani_auto_var = tkinter.BooleanVar()
+        self.panipani_auto_var.set(self.initial_data["panipani_auto"])
+        self.panipani_auto_checkbox = tkinter.Checkbutton(
+            self,
+            text="ぱにぱにツール自動起動モード",
+            variable=self.panipani_auto_var,
+        )
+        self.panipani_auto_checkbox.grid(row=4, column=0, columnspan=2, pady=5)
+
         self.submit_button = MyButton(self, text="保存", command=self.submit_form)
-        self.submit_button.grid(row=4, column=0, pady=10)
+        self.submit_button.grid(row=5, column=0, pady=10)
         self.cancel_button = MyButton(
             self, text="キャンセル", command=self.on_push_button
         )
-        self.cancel_button.grid(row=4, column=1, pady=10)
+        self.cancel_button.grid(row=5, column=1, pady=10)
 
     def open(self, location=tuple[int, int]):
         self.grab_set()
@@ -794,6 +805,7 @@ class ModeSetting(tkinter.Toplevel):
             "capture_monitor_auto": self.capture_monitor_auto_var.get(),
             "doryoku_reset_auto": self.doryoku_reset_auto_var.get(),
             "similar_party_auto": self.similar_party_auto_var.get(),
+            "panipani_auto": self.panipani_auto_var.get(),
         }
 
         with open(self.path, "w") as json_file:

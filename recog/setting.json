@@ -2,5 +2,6 @@
   "active_chosen_auto": true,
   "capture_monitor_auto": true,
   "doryoku_reset_auto": true,
-  "similar_party_auto": false
+  "similar_party_auto": false,
+  "panipani_auto": true
 }

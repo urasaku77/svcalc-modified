@@ -26,6 +26,13 @@ class Capture:
         # OBSの設定値を読み込む
         with open("recog/capture.json", "r") as json_file:
             self.account = json.load(json_file)
+        try:
+            with open("recog/setting.json", "r") as json_file:
+                self.setting_data = json.load(json_file)
+        except FileNotFoundError:
+            self.setting_data = {"panipani_auto": False}
+
+        self.is_panipani = self.setting_data["panipani_auto"]
 
     # Websocket接続
     def connect_websocket(self):
@@ -74,7 +81,7 @@ class Capture:
                     banme_list = [
                         self.recognize_chosen_num(banme) for banme in range(3)
                     ]
-                    if banme_list != [-1, -1, -1]:
+                    if self.is_panipani and banme_list != [-1, -1, -1]:
                         self.create_my_chosen_image(
                             banme_list, len(banme_list) - banme_list.count(-1)
                         )
@@ -99,10 +106,11 @@ class Capture:
 
     # 相手パーティの解析
     def recognize_oppo_party(self):
-        # OBS表示用のキャプチャ取得
-        self.save_screenshot("myPokemon", "recog/outputImg/myPokemon.jpg")
-        self.save_screenshot("opoPokemon", "recog/outputImg/opoPokemon.jpg")
-        self.set_my_party_img()
+        if self.is_panipani:
+            # OBS表示用のキャプチャ取得
+            self.save_screenshot("myPokemon", "recog/outputImg/myPokemon.jpg")
+            self.save_screenshot("opoPokemon", "recog/outputImg/opoPokemon.jpg")
+            self.set_my_party_img()
 
         pokemonImages = glob.glob("recog/recogImg/pokemon/*")
         coordsList = [
