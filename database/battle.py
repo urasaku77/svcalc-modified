@@ -1,6 +1,6 @@
 import dataclasses
-import datetime
 import sqlite3
+from time import time
 from typing import Optional
 
 from component.frames.common import ChosenFrame, PartyFrame
@@ -10,7 +10,7 @@ from component.frames.whole import RecordFrame
 @dataclasses.dataclass
 class Battle:
     id: Optional[int]
-    date: Optional[str]
+    date: Optional[int]
     result: Optional[int]
     favorite: Optional[int]
     opponent_tn: Optional[str]
@@ -48,7 +48,7 @@ class Battle:
 
         return Battle(
             None,
-            str(datetime.datetime.now()),
+            int(time()),
             record_frame.result,
             record_frame.favo.get(),
             record_frame.tn.get(),
