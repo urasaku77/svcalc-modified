@@ -8,7 +8,7 @@ from component.parts import images
 from component.parts.button import MyButton, TypeButton
 from component.parts.combobox import AutoCompleteCombobox, ModifiedEntry
 from component.parts.label import MyLabel
-from database.pokemon import DB
+from database.pokemon import DB_pokemon
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
 
@@ -828,7 +828,7 @@ class FormSelect(tkinter.Toplevel):
 
     def set_pokemon(self, num: int):
         self.no = str(num)
-        self.pokemon_names = DB.get_pokemons_name_by_no(self.no)
+        self.pokemon_names = DB_pokemon.get_pokemons_name_by_no(self.no)
 
         for i in range(len(self.pokemon_names)):
             self.form_button = MyButton(

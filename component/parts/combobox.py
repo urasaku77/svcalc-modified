@@ -43,19 +43,21 @@ class AutoCompleteCombobox(MyCombobox):
 
     @staticmethod
     def pokemons(master, **kwargs):
-        from database.pokemon import DB
+        from database.pokemon import DB_pokemon
 
         return AutoCompleteCombobox(
-            master=master, suggest_values=DB.get_pokemon_namelist(), **kwargs
+            master=master, suggest_values=DB_pokemon.get_pokemon_namelist(), **kwargs
         )
 
 
 # 技名オートコンプリート機能コンボボックス
 class WazaNameCombobox(AutoCompleteCombobox):
     def __init__(self, master, **kwargs):
-        from database.pokemon import DB
+        from database.pokemon import DB_pokemon
 
-        super().__init__(master=master, suggest_values=DB.get_waza_namedict(), **kwargs)
+        super().__init__(
+            master=master, suggest_values=DB_pokemon.get_waza_namedict(), **kwargs
+        )
 
     def filtered_list(self, value) -> list[str]:
         waza = jaconv.alphabet2kata(value)

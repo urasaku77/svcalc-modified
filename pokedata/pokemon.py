@@ -4,7 +4,7 @@ import math
 from decimal import Decimal
 from typing import Optional
 
-from database.pokemon import DB
+from database.pokemon import DB_pokemon
 from pokedata.const import ABILITY_VALUES, Ailments, Types, Walls
 from pokedata.exception import changeble_form_in_battle, get_next_form
 from pokedata.nature import get_default_doryoku, get_seikaku_hosei
@@ -78,14 +78,14 @@ class Pokemon:
 
     @staticmethod
     def by_name(name: str, default=False) -> Pokemon:
-        pokemon = Pokemon(DB.get_pokemon_data_by_name(name))
+        pokemon = Pokemon(DB_pokemon.get_pokemon_data_by_name(name))
         if default:
             pokemon.set_default_data()
         return pokemon
 
     @staticmethod
     def by_pid(pid: str, default=False) -> Pokemon:
-        pokemon = Pokemon(DB.get_pokemon_data_by_pid(pid))
+        pokemon = Pokemon(DB_pokemon.get_pokemon_data_by_pid(pid))
         if default:
             pokemon.set_default_data()
         return pokemon
@@ -557,7 +557,7 @@ class Pokemon:
             or self.battle_terastype == Types.ステラ
             else [self.battle_terastype]
         )
-        for type_effective in DB.get_type_effective(waza.type, types):
+        for type_effective in DB_pokemon.get_type_effective(waza.type, types):
             if waza.name == "フリーズドライ" and type_effective.df_type == Types.みず:
                 value = value * Decimal(2.0)
             elif (

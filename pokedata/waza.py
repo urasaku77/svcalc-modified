@@ -1,6 +1,6 @@
 from typing import Optional
 
-from database.pokemon import DB
+from database.pokemon import DB_pokemon
 from pokedata.const import Types
 
 
@@ -79,11 +79,11 @@ class Waza:
 
     @staticmethod
     def ByName(name):
-        return Waza(db_data=DB.get_waza_data_by_name(name))
+        return Waza(db_data=DB_pokemon.get_waza_data_by_name(name))
 
     @staticmethod
     def ByWazaBase(base: "WazaBase"):
-        return Waza(db_data=DB.get_waza_data_by_name(base.name), base=base)
+        return Waza(db_data=DB_pokemon.get_waza_data_by_name(base.name), base=base)
 
 
 class WazaBase:

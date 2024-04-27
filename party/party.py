@@ -20,7 +20,7 @@ from component.parts.combobox import (
 from component.parts.const import ALL_ITEM_COMBOBOX_VALUES
 from component.parts.dialog import TypeSelectDialog
 from component.parts.label import MyLabel
-from database.pokemon import DB
+from database.pokemon import DB_pokemon
 from pokedata.const import Types
 from pokedata.nature import get_seikaku_hosei, get_seikaku_list
 from pokedata.pokemon import Pokemon
@@ -858,7 +858,7 @@ class PokemonInputDialog(tkinter.Toplevel):
             )
             self._pokemon_icon.grid(row=0, column=0)
             self._pokemon_label = ttk.Label(
-                poke_frame, text=DB.get_pokemon_name_by_pid(pid)
+                poke_frame, text=DB_pokemon.get_pokemon_name_by_pid(pid)
             )
             self._pokemon_label.grid(row=0, column=1)
             self._pokemon_label.bind(
