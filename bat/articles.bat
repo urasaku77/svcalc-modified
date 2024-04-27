@@ -1,4 +1,4 @@
 e:
 cd E:\svcalc-modified
-python party/search.py
+python stats/search.py
 pause

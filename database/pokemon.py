@@ -13,7 +13,7 @@ class TypeEffective:
 
 
 class DB:
-    __db = sqlite3.connect("data/pokemon.db", check_same_thread=False)
+    __db = sqlite3.connect("database/pokemon.db", check_same_thread=False)
     __db.row_factory = sqlite3.Row
     __type_effectives: list[TypeEffective] = []
     __pokemon_namelist: list[str] = []

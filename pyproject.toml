@@ -20,8 +20,8 @@ requires-python = ">= 3.10"
 
 [tool.rye.scripts]
 main = "python main.py"
-home = "python home/home.py"
-article = "python pokedata/search.py"
+home = "python stats/home.py"
+article = "python stats/search.py"
 
 [build-system]
 requires = ["hatchling"]

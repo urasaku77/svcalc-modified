@@ -1,6 +1,6 @@
 from typing import Optional
 
-from data.db import DB
+from database.pokemon import DB
 from pokedata.const import Types
 
 

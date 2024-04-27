@@ -1,9 +1,10 @@
 import dataclasses
 import datetime
+import sqlite3
 from typing import Optional
 
-from component.frame.common import ChosenFrame, PartyFrame
-from component.frame.whole import RecordFrame
+from component.frames.common import ChosenFrame, PartyFrame
+from component.frames.whole import RecordFrame
 
 
 @dataclasses.dataclass
@@ -74,3 +75,18 @@ class Battle:
             chosen_frames[1]._pokemon_list[1],
             chosen_frames[1]._pokemon_list[2],
         )
+
+
+class DB_battle:
+    def register_battle(battle):
+        dbname = "database/battle.db"
+        conn = sqlite3.connect(dbname)
+        cur = conn.cursor()
+
+        cur.executemany(
+            "INSERT INTO battle values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (battle,),
+        )
+        cur.close()
+        conn.commit()
+        conn.close()

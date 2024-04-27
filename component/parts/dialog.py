@@ -4,11 +4,11 @@ import webbrowser
 from tkinter import E, N, S, W, ttk
 from tkinter.font import Font
 
-from component import images
-from component.button import MyButton, TypeButton
-from component.combobox import AutoCompleteCombobox, ModifiedEntry
-from component.label import MyLabel
-from data.db import DB
+from component.parts import images
+from component.parts.button import MyButton, TypeButton
+from component.parts.combobox import AutoCompleteCombobox, ModifiedEntry
+from component.parts.label import MyLabel
+from database.pokemon import DB
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
 

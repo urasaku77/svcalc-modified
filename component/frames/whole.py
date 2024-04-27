@@ -7,15 +7,15 @@ from tkinter import E, N, S, W, ttk
 from tkinter.scrolledtext import ScrolledText
 from typing import TYPE_CHECKING
 
-from component import const
-from component.button import MyButton
-from component.combobox import MyCombobox
-from component.const import FIELD_COMBOBOX_VALUES, WEATHER_COMBOBOX_VALUES
-from component.label import MyLabel
+from component.parts import const
+from component.parts.button import MyButton
+from component.parts.combobox import MyCombobox
+from component.parts.const import FIELD_COMBOBOX_VALUES, WEATHER_COMBOBOX_VALUES
+from component.parts.label import MyLabel
 from pokedata.const import Types
 
 if TYPE_CHECKING:
-    from stage import Stage
+    from component.stage import Stage
 
 
 # 天気フレーム
@@ -77,10 +77,10 @@ class HomeFrame(ttk.LabelFrame):
         self._stage: Stage | None = None
         self._tree_list: list[ttk.Treeview] = []
         self._type = [
-            ["もちもの", "./home/home_motimono.csv"],
-            ["とくせい", "./home/home_tokusei.csv"],
-            ["せいかく", "./home/home_seikaku.csv"],
-            ["テラスタル", "./home/home_terastal.csv"],
+            ["もちもの", "./stats/home_motimono.csv"],
+            ["とくせい", "./stats/home_tokusei.csv"],
+            ["せいかく", "./stats/home_seikaku.csv"],
+            ["テラスタル", "./stats/home_terastal.csv"],
         ]
         for i in range(len(self._type)):
             # 列の識別名を指定

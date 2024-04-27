@@ -9,18 +9,18 @@ import tkinter
 from tkinter import E, N, S, W, filedialog, messagebox, ttk
 from tkinter.scrolledtext import ScrolledText
 
-from component import images
-from component.button import MyButton, TypeButton
-from component.combobox import (
+from component.parts import images
+from component.parts.button import MyButton, TypeButton
+from component.parts.combobox import (
     AutoCompleteCombobox,
     ModifiedEntry,
     MyCombobox,
     WazaNameCombobox,
 )
-from component.const import ALL_ITEM_COMBOBOX_VALUES
-from component.dialog import TypeSelectDialog
-from component.label import MyLabel
-from data.db import DB
+from component.parts.const import ALL_ITEM_COMBOBOX_VALUES
+from component.parts.dialog import TypeSelectDialog
+from component.parts.label import MyLabel
+from database.pokemon import DB
 from pokedata.const import Types
 from pokedata.nature import get_seikaku_hosei, get_seikaku_list
 from pokedata.pokemon import Pokemon
@@ -207,7 +207,7 @@ class PartyEditor(tkinter.Toplevel):
     def make_table(self):
         num = self.input_num()
         pids = []
-        with open("home/ranking.txt", encoding="utf-8") as ranking_txt:
+        with open("stats/ranking.txt", encoding="utf-8") as ranking_txt:
             pids = [next(ranking_txt).strip() for _ in range(num)]
 
         pokemons = [Pokemon.by_pid(pids[i]).name for i in range(len(pids))]
@@ -830,7 +830,7 @@ class PokemonInputDialog(tkinter.Toplevel):
         self._name_input.bind("<<submit>>", self.on_input_name)
         self._name_input.grid(row=0, column=0)
 
-        with open("home/ranking.json", "r", encoding="utf-8") as ranking_json:
+        with open("stats/ranking.json", "r", encoding="utf-8") as ranking_json:
             list = json.load(ranking_json)
 
         pokes_frame = ttk.Frame(main_frame, padding=10)

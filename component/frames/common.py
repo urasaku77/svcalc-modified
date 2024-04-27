@@ -5,12 +5,12 @@ import webbrowser
 from tkinter import E, N, S, W, ttk
 from typing import TYPE_CHECKING
 
-from component import const, images
-from component.button import MyButton, TypeIconButton
-from component.combobox import MyCombobox, WazaNameCombobox
-from component.const import ITEM_COMBOBOX_VALUES, WALL_COMBOBOX_VALUES
-from component.dialog import PokemonMemoLabelDialog
-from component.label import MyLabel
+from component.parts import const, images
+from component.parts.button import MyButton, TypeIconButton
+from component.parts.combobox import MyCombobox, WazaNameCombobox
+from component.parts.const import ITEM_COMBOBOX_VALUES, WALL_COMBOBOX_VALUES
+from component.parts.dialog import PokemonMemoLabelDialog
+from component.parts.label import MyLabel
 from pokedata.calc import DamageCalcResult
 from pokedata.const import ABILITY_VALUES, Types, Walls
 from pokedata.exception import changeble_form_in_battle
@@ -20,7 +20,7 @@ from pokedata.stats import Stats, StatsKey
 from pokedata.waza import WazaBase
 
 if TYPE_CHECKING:
-    from stage import Stage
+    from component.stage import Stage
 
 
 # パーティ表示フレーム
@@ -880,7 +880,7 @@ class InfoFrame(ttk.LabelFrame):
         if self._no != 0:
             season = 1
             pid = str(self._no).zfill(4) + "-0" + str(self._form)
-            with open("home/season.txt", encoding="utf-8") as ranking_txt:
+            with open("stats/season.txt", encoding="utf-8") as ranking_txt:
                 season = ranking_txt.read()
 
             url = f"https://sv.pokedb.tokyo/pokemon/show/{pid}?season={season}&rule=0"

@@ -1,8 +1,8 @@
 import tkinter
 from tkinter import ttk
 
-from component import const
-from component.images import get_pokemon_icon
+from component.parts import const
+from component.parts.images import get_pokemon_icon
 
 
 class MyLabel(ttk.Label):

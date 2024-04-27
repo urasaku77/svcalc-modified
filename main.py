@@ -2,7 +2,7 @@ import tkinter
 from tkinter.ttk import Style
 
 from component.app import MainApp
-from stage import Stage
+from component.stage import Stage
 
 app = MainApp()
 stage = Stage(app)

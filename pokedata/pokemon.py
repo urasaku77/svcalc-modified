@@ -4,7 +4,7 @@ import math
 from decimal import Decimal
 from typing import Optional
 
-from data.db import DB
+from database.pokemon import DB
 from pokedata.const import ABILITY_VALUES, Ailments, Types, Walls
 from pokedata.exception import changeble_form_in_battle, get_next_form
 from pokedata.nature import get_default_doryoku, get_seikaku_hosei
@@ -515,7 +515,7 @@ class Pokemon:
     def set_waza_from_home(self):
         from pokedata.loader import get_home_data
 
-        waza_data = get_home_data(self.name, "./home/home_waza.csv")
+        waza_data = get_home_data(self.name, "./stats/home_waza.csv")
         for i in range(len(waza_data) if len(waza_data) <= 10 else 10):
             self.__waza_list[i] = WazaBase(waza_data[i][0])
             self.__waza_rate_list[i] = waza_data[i][1]
@@ -525,7 +525,7 @@ class Pokemon:
         abilities_data = []
         from pokedata.loader import get_home_data
 
-        ability_data = get_home_data(self.name, "./home/home_tokusei.csv")
+        ability_data = get_home_data(self.name, "./stats/home_tokusei.csv")
         for i in range(len(ability_data)):
             if ability_data[i][0] in self.__abilities:
                 abilities_data.append(ability_data[i][0])
@@ -536,9 +536,9 @@ class Pokemon:
     def set_top_data_from_home(self):
         from pokedata.loader import get_home_data
 
-        item_data = get_home_data(self.name, "./home/home_motimono.csv")
+        item_data = get_home_data(self.name, "./stats/home_motimono.csv")
         self.item = item_data[0][0] if len(item_data) != 0 else "なし"
-        seikaku_data = get_home_data(self.name, "./home/home_seikaku.csv")
+        seikaku_data = get_home_data(self.name, "./stats/home_seikaku.csv")
         self.seikaku = seikaku_data[0][0] if len(seikaku_data) != 0 else "まじめ"
 
     def set_default_doryoku_from_seikaku(self):

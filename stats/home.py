@@ -387,7 +387,7 @@ class home:
         rst = rankmatch_list["list"][next(iter(rankmatch_list["list"]))][cid]["rst"]
         ts2 = rankmatch_list["list"][next(iter(rankmatch_list["list"]))][cid]["ts2"]
 
-    with open("home/season.txt", mode="w", encoding="utf-8") as ranking_txt:
+    with open("stats/season.txt", mode="w", encoding="utf-8") as ranking_txt:
         ranking_txt.write(next(iter(rankmatch_list["list"])))
 
     print("ポケモンランキング取得")
@@ -407,12 +407,12 @@ class home:
     req = urllib.request.Request(url, headers=headers)
     with urllib.request.urlopen(req) as res:
         ranking = json.load(res)
-        if os.path.isfile("home/ranking.txt") is True:
-            os.remove("home/ranking.txt")
+        if os.path.isfile("stats/ranking.txt") is True:
+            os.remove("stats/ranking.txt")
 
         for pokemon in ranking:
             pid = str(pokemon["id"]).zfill(4) + "-0" + str(pokemon["form"])
-            with open("home/ranking.txt", mode="a", encoding="utf-8") as ranking_txt:
+            with open("stats/ranking.txt", mode="a", encoding="utf-8") as ranking_txt:
                 ranking_txt.write(pid + "\n")
                 if pokemon["id"] == 1017:
                     ranking_txt.write(str(pokemon["id"]) + "-01\n")
@@ -441,19 +441,19 @@ class home:
             pdetail = dict(pdetail, **pdetail_tmp)
 
     pokedex = ""
-    with open("home/bundle.json", "r", encoding="utf-8") as json_open:
+    with open("stats/bundle.json", "r", encoding="utf-8") as json_open:
         pokedex = json.load(json_open)
 
-    if os.path.isfile("home/home_waza.csv") is True:
-        os.remove("home/home_waza.csv")
-    if os.path.isfile("home/home_tokusei.csv") is True:
-        os.remove("home/home_tokusei.csv")
-    if os.path.isfile("home/home_seikaku.csv") is True:
-        os.remove("home/home_seikaku.csv")
-    if os.path.isfile("home/home_motimono.csv") is True:
-        os.remove("home/home_motimono.csv")
-    if os.path.isfile("home/home_terastal.csv") is True:
-        os.remove("home/home_terastal.csv")
+    if os.path.isfile("stats/home_waza.csv") is True:
+        os.remove("stats/home_waza.csv")
+    if os.path.isfile("stats/home_tokusei.csv") is True:
+        os.remove("stats/home_tokusei.csv")
+    if os.path.isfile("stats/home_seikaku.csv") is True:
+        os.remove("stats/home_seikaku.csv")
+    if os.path.isfile("stats/home_motimono.csv") is True:
+        os.remove("stats/home_motimono.csv")
+    if os.path.isfile("stats/home_terastal.csv") is True:
+        os.remove("stats/home_terastal.csv")
 
     print("CSV更新")
     for pokenum in pdetail.keys():
@@ -462,7 +462,7 @@ class home:
             if name == "":
                 name = pokedex["poke"][int(pokenum) - 1]
 
-            with open("home/home_waza.csv", "a", encoding="utf-8") as waza_csv:
+            with open("stats/home_waza.csv", "a", encoding="utf-8") as waza_csv:
                 for waza in pdetail[pokenum][p_detail_id]["temoti"]["waza"]:
                     writer = csv.writer(waza_csv, lineterminator="\n")
                     writer.writerow(
@@ -478,7 +478,7 @@ class home:
                         ]
                     )
 
-            with open("home/home_tokusei.csv", "a", encoding="utf-8") as tokusei_csv:
+            with open("stats/home_tokusei.csv", "a", encoding="utf-8") as tokusei_csv:
                 for tokusei in pdetail[pokenum][p_detail_id]["temoti"]["tokusei"]:
                     writer = csv.writer(tokusei_csv, lineterminator="\n")
                     writer.writerow(
@@ -494,7 +494,7 @@ class home:
                         ]
                     )
 
-            with open("home/home_seikaku.csv", "a", encoding="utf-8") as seikaku_csv:
+            with open("stats/home_seikaku.csv", "a", encoding="utf-8") as seikaku_csv:
                 for seikaku in pdetail[pokenum][p_detail_id]["temoti"]["seikaku"]:
                     writer = csv.writer(seikaku_csv, lineterminator="\n")
                     writer.writerow(
@@ -510,7 +510,7 @@ class home:
                         ]
                     )
 
-            with open("home/home_motimono.csv", "a", encoding="utf-8") as motimono_csv:
+            with open("stats/home_motimono.csv", "a", encoding="utf-8") as motimono_csv:
                 for motimono in pdetail[pokenum][p_detail_id]["temoti"]["motimono"]:
                     writer = csv.writer(motimono_csv, lineterminator="\n")
                     writer.writerow(
@@ -526,7 +526,7 @@ class home:
                         ]
                     )
 
-            with open("home/home_terastal.csv", "a", encoding="utf-8") as terastal_csv:
+            with open("stats/home_terastal.csv", "a", encoding="utf-8") as terastal_csv:
                 for terastal in pdetail[pokenum][p_detail_id]["temoti"]["terastal"]:
                     teras = int(terastal["id"]) if int(terastal["id"]) != 99 else 18
                     writer = csv.writer(terastal_csv, lineterminator="\n")

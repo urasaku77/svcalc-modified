@@ -1,6 +1,6 @@
 from tkinter import ttk
 
-from component import images
+from component.parts import images
 from pokedata.const import Types
 
 

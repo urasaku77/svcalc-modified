@@ -1,15 +1,28 @@
 import dataclasses
 import json
-import subprocess
 import tkinter
 from tkinter import E, N, S, W, messagebox, ttk
 
 from ttkthemes.themed_tk import ThemedTk
 
-from battle.battle import Battle
-from battle.DB_battle import DB_battle
-from component.button import MyButton
-from component.dialog import (
+from component.frames.common import (
+    ActivePokemonFrame,
+    ChosenFrame,
+    InfoFrame,
+    PartyFrame,
+    WazaDamageListFrame,
+)
+from component.frames.whole import (
+    CompareButton,
+    CountersFrame,
+    FieldFrame,
+    HomeFrame,
+    RecordFrame,
+    TimerFrame,
+    WeatherFrame,
+)
+from component.parts.button import MyButton
+from component.parts.dialog import (
     CaptureSetting,
     FormSelect,
     ModeSetting,
@@ -19,27 +32,12 @@ from component.dialog import (
     TypeSelectDialog,
     WeightComparing,
 )
-from component.frame.common import (
-    ActivePokemonFrame,
-    ChosenFrame,
-    InfoFrame,
-    PartyFrame,
-    WazaDamageListFrame,
-)
-from component.frame.whole import (
-    CompareButton,
-    CountersFrame,
-    FieldFrame,
-    HomeFrame,
-    RecordFrame,
-    TimerFrame,
-    WeatherFrame,
-)
+from database.battle import Battle, DB_battle
 from party.party import PartyEditor
-from party.search import get_similar_party
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
 from recog.capture import Capture
+from stats.search import get_similar_party
 
 
 class MainApp(ThemedTk):
@@ -480,40 +478,3 @@ class MainApp(ThemedTk):
         dialog.open(location=(self.winfo_x(), self.winfo_y()))
         self.wait_window(dialog)
         return dialog.form_num
-
-    # メニューからHOME情報取得
-    def get_home_data_from_menu(self):
-        ret = messagebox.askyesno(
-            "確認",
-            "処理を開始します\nネットワークには繋がっていますか？",
-        )
-        if ret is False:
-            return
-        result = subprocess.run(
-            "python home/home.py",
-            shell=True,
-            capture_output=True,
-            text=True,
-        )
-        print("returnCode:" + str(result.returncode))
-        print("Log:" + result.stdout)
-        print("Err:" + result.stderr)
-
-    # メニューから類似パーティ検索
-    def search_similar_party_from_menu(self):
-        ret = messagebox.askyesno(
-            "確認",
-            "処理を開始します\nネットワークには繋がっていますか？\n（処理に15分ほどかかります。その間はアプリを利用できません）",
-        )
-        if ret is False:
-            return
-
-        result = subprocess.run(
-            "python pokedata/search.py",
-            shell=True,
-            capture_output=True,
-            text=True,
-        )
-        print("returnCode:" + str(result.returncode))
-        print("Log" + result.stdout)
-        print("Err:" + result.stderr)

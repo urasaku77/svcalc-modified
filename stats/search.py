@@ -10,7 +10,7 @@ from selenium.webdriver.common.by import By
 def get_similar_party(pids: list) -> list:
     all_urls = []
     undefines = []
-    with open("home/ranking.json", encoding="utf-8") as ranking_json:
+    with open("stats/ranking.json", encoding="utf-8") as ranking_json:
         rankings = list(json.load(ranking_json))
         for pid in pids:
             if 892 == pid.no:
@@ -44,7 +44,7 @@ def get_similar_party(pids: list) -> list:
 
 def get_party_members(url: str):
     party_member = []
-    with open("home/party_members.json", encoding="utf-8") as party_members_json:
+    with open("stats/party_members.json", encoding="utf-8") as party_members_json:
         party_members_list = list(json.load(party_members_json))
         party_member = [
             party_members
@@ -59,7 +59,7 @@ class Search:
     def search_latest_party(self):
         print("構築記事一覧取得処理開始")
         party_list = []
-        with open("home/ranking.txt", encoding="utf-8") as ranking_txt:
+        with open("stats/ranking.txt", encoding="utf-8") as ranking_txt:
             ranking_list = [line.rstrip("\n") for line in ranking_txt]
             for i in range(len(ranking_list)):
                 print(f"{i+1}/{len(ranking_list)}：{ranking_list[i]}")
@@ -72,7 +72,7 @@ class Search:
                     }
                 )
         print("読み込み完了")
-        with open("home/ranking.json", "w", encoding="utf-8") as ranking_json:
+        with open("stats/ranking.json", "w", encoding="utf-8") as ranking_json:
             json.dump(party_list, ranking_json, indent=2)
         print("書き込み完了")
 
@@ -83,7 +83,7 @@ class Search:
 
         driver = webdriver.Chrome(options=options)
 
-        with open("home/season.txt", encoding="utf-8") as ranking_txt:
+        with open("stats/season.txt", encoding="utf-8") as ranking_txt:
             season = ranking_txt.read()
 
         try:
@@ -111,7 +111,7 @@ class Search:
 
         driver = webdriver.Chrome(options=options)
 
-        with open("home/season.txt", encoding="utf-8") as ranking_txt:
+        with open("stats/season.txt", encoding="utf-8") as ranking_txt:
             season = ranking_txt.read()
 
         try:
@@ -177,7 +177,7 @@ class Search:
                 ):
                     page_flag = False
             with open(
-                "home/party_members.json", "w", encoding="utf-8"
+                "stats/party_members.json", "w", encoding="utf-8"
             ) as party_members_json:
                 json.dump(ranking_list, party_members_json, indent=2)
 
