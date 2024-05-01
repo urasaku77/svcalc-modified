@@ -33,6 +33,7 @@ from component.parts.dialog import (
     WeightComparing,
 )
 from database.battle import Battle, DB_battle
+from mypgl import analytics, record
 from party.party import PartyEditor
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
@@ -64,7 +65,8 @@ class MainApp(ThemedTk):
         menu.add_cascade(label="キャプチャ設定", command=self.capture_setting)
         menu.add_cascade(label="モード切替", command=self.mode_setting)
         menu.add_cascade(label="パーティ編集", command=self.edit_party_csv)
-        menu.add_cascade(label="対戦分析")
+        menu.add_cascade(label="対戦履歴", command=self.open_records)
+        menu.add_cascade(label="対戦分析", command=self.open_analytics)
 
         for i, side in enumerate(["自分側", "相手側"]):
             # パーティ表示フレーム
@@ -478,3 +480,19 @@ class MainApp(ThemedTk):
         dialog.open(location=(self.winfo_x(), self.winfo_y()))
         self.wait_window(dialog)
         return dialog.form_num
+
+    # 対戦履歴画面
+    def open_records(self):
+        dialog = record.Record()
+        dialog.open()
+        self.withdraw()
+        self.wait_window(dialog)
+        return self.deiconify()
+
+    # 対戦分析画面
+    def open_analytics(self):
+        dialog = analytics.Analytics()
+        dialog.open()
+        self.withdraw()
+        self.wait_window(dialog)
+        return self.deiconify()

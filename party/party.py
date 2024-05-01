@@ -29,9 +29,7 @@ from pokedata.stats import StatsKey
 
 # パーティCSV編集用ダイアログ
 class PartyEditor(tkinter.Toplevel):
-    def __init__(
-        self, title: str = "パーティ編集", width: int = 400, height: int = 300
-    ):
+    def __init__(self, title: str = "パーティ編集"):
         super().__init__()
         self.title(title)
 
