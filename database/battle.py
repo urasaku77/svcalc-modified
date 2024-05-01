@@ -286,19 +286,19 @@ class DB_battle:
             return -1
 
     @staticmethod
-    def get_win_rate(kpList: list, from_date, to_date):
+    def get_win_rate(pokemonList: list, from_date, to_date):
         cur = DB_battle.__db.cursor()
         winRateList = []
-        for pokeName in kpList:
+        for pokeName in pokemonList:
             paramList = (
                 from_date,
                 to_date,
-                pokeName[0],
-                pokeName[0],
-                pokeName[0],
-                pokeName[0],
-                pokeName[0],
-                pokeName[0],
+                pokeName,
+                pokeName,
+                pokeName,
+                pokeName,
+                pokeName,
+                pokeName,
             )
             sql = "select count(*) from battle where date >=? and date <=? and (opponent_pokemon1=? or opponent_pokemon2=? or opponent_pokemon3=? or opponent_pokemon4=? or opponent_pokemon5=? or opponent_pokemon6=?)"
             cur.execute(sql, paramList)
@@ -313,20 +313,20 @@ class DB_battle:
         return winRateList
 
     @staticmethod
-    def get_win_rate_for_party_num(kpList, from_date, to_date, partyNum):
+    def get_win_rate_for_party_num(pokemonList, from_date, to_date, partyNum):
         cur = DB_battle.__db.cursor()
         winRateList = []
-        for pokeName in kpList:
+        for pokeName in pokemonList:
             paramList = (
                 from_date,
                 to_date,
                 partyNum,
-                pokeName[0],
-                pokeName[0],
-                pokeName[0],
-                pokeName[0],
-                pokeName[0],
-                pokeName[0],
+                pokeName,
+                pokeName,
+                pokeName,
+                pokeName,
+                pokeName,
+                pokeName,
             )
             sql = "select count(*) from battle where date >=? and date <=? and player_party_num=? and (opponent_pokemon1=? or opponent_pokemon2=? or opponent_pokemon3=? or opponent_pokemon4=? or opponent_pokemon5=? or opponent_pokemon6=?)"
             cur.execute(sql, paramList)
@@ -342,22 +342,22 @@ class DB_battle:
 
     @staticmethod
     def get_win_rate_for_party_subnum(
-        kpList, from_date, to_date, partyNum, partySubNum
+        pokemonList, from_date, to_date, partyNum, partySubNum
     ):
         cur = DB_battle.__db.cursor()
         winRateList = []
-        for pokeName in kpList:
+        for pokeName in pokemonList:
             paramList = (
                 from_date,
                 to_date,
                 partyNum,
                 partySubNum,
-                pokeName[0],
-                pokeName[0],
-                pokeName[0],
-                pokeName[0],
-                pokeName[0],
-                pokeName[0],
+                pokeName,
+                pokeName,
+                pokeName,
+                pokeName,
+                pokeName,
+                pokeName,
             )
             sql = "select count(*) from battle where date >=? and date <=? and player_party_num=? and player_party_subnum=? and (opponent_pokemon1=? or opponent_pokemon2=? or opponent_pokemon3=? or opponent_pokemon4=? or opponent_pokemon5=? or opponent_pokemon6=?)"
             cur.execute(sql, paramList)
@@ -372,97 +372,169 @@ class DB_battle:
         return winRateList
 
     @staticmethod
-    def get_oppo_chosen_rate_for_party_num(kpList, from_date, to_date, partyNum):
+    def get_oppo_chosen_rate_for_party_num(pokemonList, from_date, to_date, partyNum):
         cur = DB_battle.__db.cursor()
         sensyutuRateList = []
-        for pokeName in kpList:
+        for pokeName in pokemonList:
             paramList = (
                 from_date,
                 to_date,
                 partyNum,
-                pokeName[0],
-                pokeName[0],
-                pokeName[0],
+                pokeName,
+                pokeName,
+                pokeName,
+                pokeName,
+                pokeName,
+                pokeName,
+            )
+            sql = "select count(*) from battle where date >=? and date <=? and player_party_num=? and (opponent_pokemon1=? or opponent_pokemon2=? or opponent_pokemon3=? or opponent_pokemon4=? or opponent_pokemon5=? or opponent_pokemon6=?)"
+            cur.execute(sql, paramList)
+            matchNum = cur.fetchone()
+            paramList = (
+                from_date,
+                to_date,
+                partyNum,
+                pokeName,
+                pokeName,
+                pokeName,
             )
             sql = "select count(*) from battle where date >=? and date <=? and player_party_num=? and (opponent_choice1=? or opponent_choice2=? or opponent_choice3=?)"
             cur.execute(sql, paramList)
-            sensyutuCount = cur.fetchone()
-            sensyutuRateList.append(sensyutuCount[0] / pokeName[1])
+            winNum = cur.fetchone()
+            if matchNum[0] == 0:
+                sensyutuRateList.append(0)
+            else:
+                sensyutuRateList.append(winNum[0] / matchNum[0])
         return sensyutuRateList
 
     @staticmethod
     def get_oppo_chosen_rate_for_party_subnum(
-        kpList, from_date, to_date, partyNum, partySubNum
+        pokemonList, from_date, to_date, partyNum, partySubNum
     ):
         cur = DB_battle.__db.cursor()
         sensyutuRateList = []
-        for pokeName in kpList:
+        for pokeName in pokemonList:
             paramList = (
                 from_date,
                 to_date,
                 partyNum,
                 partySubNum,
-                pokeName[0],
-                pokeName[0],
-                pokeName[0],
+                pokeName,
+                pokeName,
+                pokeName,
+                pokeName,
+                pokeName,
+                pokeName,
             )
-            sql = "select count(*) from battle where date >=? and date <=? and player_party_num=? and player_party_subnum=? and (opponent_choice1=? or opponent_choice2=? or opponent_choice3=?)"
+            sql = "select count(*) from battle where date >=? and date <=? and player_party_num=? and player_party_subnum=? and (opponent_pokemon1=? or opponent_pokemon2=? or opponent_pokemon3=? or opponent_pokemon4=? or opponent_pokemon5=? or opponent_pokemon6=?)"
             cur.execute(sql, paramList)
-            sensyutuCount = cur.fetchone()
-            sensyutuRateList.append(sensyutuCount[0] / pokeName[1])
-        return sensyutuRateList
-
-    @staticmethod
-    def get_oppo_first_chosen_rate_for_party_num(kpList, from_date, to_date, partyNum):
-        cur = DB_battle.__db.cursor()
-        sensyutuRateList = []
-        for pokeName in kpList:
+            matchNum = cur.fetchone()
             paramList = (
                 from_date,
                 to_date,
                 partyNum,
-                pokeName[0],
+                partySubNum,
+                pokeName,
+                pokeName,
+                pokeName,
+            )
+            sql = "select count(*) from battle where date >=? and date <=? and player_party_num=? and player_party_subnum=? and (opponent_choice1=? or opponent_choice2=? or opponent_choice3=?)"
+            cur.execute(sql, paramList)
+            winNum = cur.fetchone()
+            if matchNum[0] == 0:
+                sensyutuRateList.append(0)
+            else:
+                sensyutuRateList.append(winNum[0] / matchNum[0])
+        return sensyutuRateList
+
+    @staticmethod
+    def get_oppo_first_chosen_rate_for_party_num(
+        pokemonList, from_date, to_date, partyNum
+    ):
+        cur = DB_battle.__db.cursor()
+        sensyutuRateList = []
+        for pokeName in pokemonList:
+            paramList = (
+                from_date,
+                to_date,
+                partyNum,
+                pokeName,
+                pokeName,
+                pokeName,
+                pokeName,
+                pokeName,
+                pokeName,
+            )
+            sql = "select count(*) from battle where date >=? and date <=? and player_party_num=? and (opponent_pokemon1=? or opponent_pokemon2=? or opponent_pokemon3=? or opponent_pokemon4=? or opponent_pokemon5=? or opponent_pokemon6=?)"
+            cur.execute(sql, paramList)
+            matchNum = cur.fetchone()
+            paramList = (
+                from_date,
+                to_date,
+                partyNum,
+                pokeName,
             )
             sql = "select count(*) from battle where date >=? and date <=? and player_party_num=? and opponent_choice1=?"
             cur.execute(sql, paramList)
-            sensyutuCount = cur.fetchone()
-            sensyutuRateList.append(sensyutuCount[0] / pokeName[1])
+            winNum = cur.fetchone()
+            if matchNum[0] == 0:
+                sensyutuRateList.append(0)
+            else:
+                sensyutuRateList.append(winNum[0] / matchNum[0])
         return sensyutuRateList
 
     @staticmethod
     def get_oppo_first_chosen_rate_for_party_subnum(
-        kpList, from_date, to_date, partyNum, partySubNum
+        pokemonList, from_date, to_date, partyNum, partySubNum
     ):
         cur = DB_battle.__db.cursor()
         sensyutuRateList = []
-        for pokeName in kpList:
+        for pokeName in pokemonList:
             paramList = (
                 from_date,
                 to_date,
                 partyNum,
                 partySubNum,
-                pokeName[0],
+                pokeName,
+                pokeName,
+                pokeName,
+                pokeName,
+                pokeName,
+                pokeName,
             )
-            sql = "select count(*) from battle where date >=? and date <=? and player_party_num=? and player_party_subnum=? and opponent_choice1=?"
+            sql = "select count(*) from battle where date >=? and date <=? and player_party_num=? and player_party_subnum=? and (opponent_pokemon1=? or opponent_pokemon2=? or opponent_pokemon3=? or opponent_pokemon4=? or opponent_pokemon5=? or opponent_pokemon6=?)"
             cur.execute(sql, paramList)
-            sensyutuCount = cur.fetchone()
-            sensyutuRateList.append(sensyutuCount[0] / pokeName[1])
-        return sensyutuRateList
-
-    @staticmethod
-    def get_oppo_chosen_and_win_rate_for_party_num(
-        kpList, from_date, to_date, partyNum
-    ):
-        cur = DB_battle.__db.cursor()
-        winRateList = []
-        for pokeName in kpList:
+            matchNum = cur.fetchone()
             paramList = (
                 from_date,
                 to_date,
                 partyNum,
-                pokeName[0],
-                pokeName[0],
-                pokeName[0],
+                partySubNum,
+                pokeName,
+            )
+            sql = "select count(*) from battle where date >=? and date <=? and player_party_num=? and player_party_subnum=? and opponent_choice1=?"
+            cur.execute(sql, paramList)
+            winNum = cur.fetchone()
+            if matchNum[0] == 0:
+                sensyutuRateList.append(0)
+            else:
+                sensyutuRateList.append(winNum[0] / matchNum[0])
+        return sensyutuRateList
+
+    @staticmethod
+    def get_oppo_chosen_and_win_rate_for_party_num(
+        pokemonList, from_date, to_date, partyNum
+    ):
+        cur = DB_battle.__db.cursor()
+        winRateList = []
+        for pokeName in pokemonList:
+            paramList = (
+                from_date,
+                to_date,
+                partyNum,
+                pokeName,
+                pokeName,
+                pokeName,
             )
             sql = "select count(*) from battle where date >=? and date <=? and player_party_num=? and (opponent_choice1=? or opponent_choice2=? or opponent_choice3=?)"
             cur.execute(sql, paramList)
@@ -478,19 +550,19 @@ class DB_battle:
 
     @staticmethod
     def get_oppo_chosen_and_win_rate_for_party_subnum(
-        kpList, from_date, to_date, partyNum, partySubNum
+        pokemonList, from_date, to_date, partyNum, partySubNum
     ):
         cur = DB_battle.__db.cursor()
         winRateList = []
-        for pokeName in kpList:
+        for pokeName in pokemonList:
             paramList = (
                 from_date,
                 to_date,
                 partyNum,
                 partySubNum,
-                pokeName[0],
-                pokeName[0],
-                pokeName[0],
+                pokeName,
+                pokeName,
+                pokeName,
             )
             sql = "select count(*) from battle where date >=? and date <=? and player_party_num=? and player_party_subnum=? and (opponent_choice1=? or opponent_choice2=? or opponent_choice3=?)"
             cur.execute(sql, paramList)
@@ -506,16 +578,16 @@ class DB_battle:
 
     @staticmethod
     def get_oppo_first_chosen_and_win_rate_for_party_num(
-        kpList, from_date, to_date, partyNum
+        pokemonList, from_date, to_date, partyNum
     ):
         cur = DB_battle.__db.cursor()
         winRateList = []
-        for pokeName in kpList:
+        for pokeName in pokemonList:
             paramList = (
                 from_date,
                 to_date,
                 partyNum,
-                pokeName[0],
+                pokeName,
             )
             sql = "select count(*) from battle where date >=? and date <=? and player_party_num=? and opponent_choice1=?"
             cur.execute(sql, paramList)
@@ -531,17 +603,17 @@ class DB_battle:
 
     @staticmethod
     def get_oppo_first_chosen_and_win_rate_for_party_subnum(
-        kpList, from_date, to_date, partyNum, partySubNum
+        pokemonList, from_date, to_date, partyNum, partySubNum
     ):
         cur = DB_battle.__db.cursor()
         winRateList = []
-        for pokeName in kpList:
+        for pokeName in pokemonList:
             paramList = (
                 from_date,
                 to_date,
                 partyNum,
                 partySubNum,
-                pokeName[0],
+                pokeName,
             )
             sql = "select count(*) from battle where date >=? and date <=? and player_party_num=? and player_party_subnum=? and opponent_choice1=?"
             cur.execute(sql, paramList)

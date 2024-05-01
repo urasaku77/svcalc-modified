@@ -24,13 +24,21 @@ class Analytics(tkinter.Toplevel):
         )
         self.party_num = 0
         self.party_subnum = 0
+
+        self.pokemon_list = []
+        self.result_1_list = []
+        self.result_2_list = []
+        self.result_1_label_list = []
+        self.result_2_label_list = []
+
         self.imgList = []
-        self.kpList = []
-        self.kpLabelList = []
-        self.winRateLabelList = []
         self.canvasList = []
+
         self.recordCountLabel = None
         self.wholeWinRateLabel = None
+
+        self.sort_condition_options = [("KP（選出/初手）", 0), ("勝率", 1)]
+        self.sort_line_options = [("降順", False), ("昇順", True)]
 
         self.createSearch(self.recentDate)
         self.searchKP(
@@ -121,7 +129,7 @@ class Analytics(tkinter.Toplevel):
             x=Const.searchX + 200, y=Const.searchY + Const.searchDY * 2.7
         )
         self.title_var = tkinter.StringVar()
-        self.title_var.set("KPと勝率")
+        self.title_var.set("ＫＰと勝率")
         self.mainTitleLabel = tkinter.Button(
             self,
             textvariable=self.title_var,
@@ -129,6 +137,32 @@ class Analytics(tkinter.Toplevel):
             state="disable",
             command=self.change_mode,
         )
+        sort_condition_frame = tkinter.Frame(self)
+        self.sort_condition_var = tkinter.IntVar()
+        self.sort_condition_var.set(0)
+        for text, value in self.sort_condition_options:
+            rb = tkinter.Radiobutton(
+                sort_condition_frame,
+                text=text,
+                variable=self.sort_condition_var,
+                value=value,
+                command=self.change_sort_condition,
+            )
+            rb.grid(sticky="w")
+        sort_condition_frame.place(x=Const.searchX + 130, y=Const.kpStartY - 60)
+        sort_line_frame = tkinter.Frame(self)
+        self.sort_line_var = tkinter.BooleanVar()
+        self.sort_line_var.set(True)
+        for text, value in self.sort_line_options:
+            rb = tkinter.Radiobutton(
+                sort_line_frame,
+                text=text,
+                variable=self.sort_line_var,
+                value=value,
+                command=self.change_sort_condition,
+            )
+            rb.grid(sticky="w")
+        sort_line_frame.place(x=Const.searchX + 270, y=Const.kpStartY - 60)
         self.mainTitleLabel.place(x=Const.kpStartX, y=Const.kpStartY - 60)
         self.subtitle_var = tkinter.StringVar()
         self.subtitle_var.set("直近使用したパーティ")
@@ -157,52 +191,91 @@ class Analytics(tkinter.Toplevel):
             time9Bl,
         )
         self.delete_result_page()
-        if (
-            self.numTxt.get() is not None
-            and self.numTxt.get() != ""
-            and self.subNumTxt.get() is not None
-            and self.subNumTxt.get() != ""
-        ):
-            list1 = DB_battle.calc_kp_for_party_subnum(
-                self.from_date, self.to_date, self.numTxt.get(), self.subNumTxt.get()
+        self.sort_condition_var.set(0)
+        self.sort_line_var.set(True)
+        self.party_num = (
+            int(self.numTxt.get())
+            if self.numTxt.get() is not None and self.numTxt.get() != ""
+            else 0
+        )
+        self.party_subnum = (
+            int(self.subNumTxt.get())
+            if self.subNumTxt.get() is not None and self.subNumTxt.get() != ""
+            else 0
+        )
+        self.title_var.set("ＫＰと勝率")
+        self.mainTitleLabel["state"] = (
+            "disable" if self.party_num == 0 and self.party_subnum == 0 else "normal"
+        )
+        if self.party_num != 0 and self.party_subnum != 0:
+            self.pokemon_list = [
+                item[0]
+                for item in DB_battle.calc_kp_for_party_subnum(
+                    self.from_date,
+                    self.to_date,
+                    self.party_num,
+                    self.party_subnum,
+                )
+            ]
+            self.result_1_list = [
+                item[1]
+                for item in DB_battle.calc_kp_for_party_subnum(
+                    self.from_date,
+                    self.to_date,
+                    self.party_num,
+                    self.party_subnum,
+                )
+            ]
+            self.result_2_list = DB_battle.get_win_rate_for_party_subnum(
+                self.pokemon_list,
+                self.from_date,
+                self.to_date,
+                self.party_num,
+                self.party_subnum,
             )
-            self.kpList = list1
             self.recordCount = DB_battle.count_record_for_party_subnum(
-                self.from_date, self.to_date, self.numTxt.get(), self.subNumTxt.get()
+                self.from_date, self.to_date, self.party_num, self.party_subnum
             )
             self.winCount = DB_battle.count_win_for_party_subnum(
-                self.from_date, self.to_date, self.numTxt.get(), self.subNumTxt.get()
+                self.from_date, self.to_date, self.party_num, self.party_subnum
             )
-            self.displayWinRateForPartySubnum(
-                self.from_date, self.to_date, self.numTxt.get(), self.subNumTxt.get()
+        elif self.party_num != 0:
+            self.pokemon_list = [
+                item[0]
+                for item in DB_battle.calc_kp_for_party_num(
+                    self.from_date, self.to_date, self.party_num
+                )
+            ]
+            self.result_1_list = [
+                item[1]
+                for item in DB_battle.calc_kp_for_party_num(
+                    self.from_date, self.to_date, self.party_num
+                )
+            ]
+            self.result_2_list = DB_battle.get_win_rate_for_party_num(
+                self.pokemon_list, self.from_date, self.to_date, self.party_num
             )
-            self.party_num = int(self.numTxt.get())
-            self.party_subnum = int(self.subNumTxt.get())
-        elif self.numTxt.get() is not None and self.numTxt.get() != "":
-            list1 = DB_battle.calc_kp_for_party_num(
-                self.from_date, self.to_date, self.numTxt.get()
-            )
-            self.kpList = list1
             self.recordCount = DB_battle.count_record_for_party_num(
-                self.from_date, self.to_date, self.numTxt.get()
+                self.from_date, self.to_date, self.party_num
             )
             self.winCount = DB_battle.count_win_for_party_num(
-                self.from_date, self.to_date, self.numTxt.get()
+                self.from_date, self.to_date, self.party_num
             )
-            self.displayWinRateForPartyNum(
-                self.from_date, self.to_date, self.numTxt.get()
-            )
-            self.party_num = int(self.numTxt.get())
-            self.party_subnum = 0
         else:
-            list1 = DB_battle.calc_kp(self.from_date, self.to_date)
-            self.kpList = list1
+            self.pokemon_list = [
+                item[0] for item in DB_battle.calc_kp(self.from_date, self.to_date)
+            ]
+            self.result_1_list = [
+                item[1] for item in DB_battle.calc_kp(self.from_date, self.to_date)
+            ]
+            self.result_2_list = DB_battle.get_win_rate(
+                self.pokemon_list, self.from_date, self.to_date
+            )
             self.recordCount = DB_battle.count_record(self.from_date, self.to_date)
             self.winCount = DB_battle.count_win(self.from_date, self.to_date)
-            self.displayWinRate(self.from_date, self.to_date)
-            self.party_num = 0
-            self.party_subnum = 0
-        self.displayKP(self.kpList, self.recordCount)
+        self.display_result_1()
+        self.display_result_2()
+        self.displayImage()
         self.recordCountLabel = tkinter.Label(
             self,
             text="対戦数：" + str(self.recordCount[0]),
@@ -224,150 +297,142 @@ class Analytics(tkinter.Toplevel):
         )
         self.displayPartyDetail()
 
-    def displayKP(self, list1, recordCount):
-        i = 0
-        for list in list1:
-            if len(list[0]) < 1:
+    def display_result_1(self):
+        if self.title_var.get() == "ＫＰと勝率":
+            for i in range(len(self.result_1_list)):
+                if i > 49:
+                    break
+                result_1_label = tkinter.Label(
+                    self,
+                    text=str(
+                        "{:.1f}".format(
+                            (
+                                int(self.result_1_list[i])
+                                * 100
+                                / int(self.recordCount[0])
+                            )
+                        )
+                    )
+                    + "%",
+                )
+                result_1_label.place(x=Const.list2[i][1] - 40, y=Const.list2[i][2] + 20)
+                self.result_1_label_list.append(result_1_label)
+        else:
+            for i in range(len(self.result_1_list)):
+                if i > 49:
+                    break
+                result_1_label = tkinter.Label(
+                    self,
+                    text=str("{:.1f}".format(self.result_1_list[i] * 100)) + "%",
+                )
+                result_1_label.place(x=Const.list2[i][1] - 40, y=Const.list2[i][2] + 20)
+                self.result_1_label_list.append(result_1_label)
+
+    def display_result_2(self):
+        for i in range(len(self.result_2_list)):
+            if i > 49:
                 break
-            if recordCount[0] == 0:
-                recordCount = (-1,)
-            img = Image.open(Const.createPass(list[0]))
+            result_2_label = tkinter.Label(
+                self, text=str("{:.1f}".format(self.result_2_list[i] * 100)) + "%"
+            )
+            result_2_label.place(x=Const.list2[i][1] - 40, y=Const.list2[i][2] + 40)
+            self.result_2_label_list.append(result_2_label)
+            i = i + 1
+
+    def displayImage(self):
+        i = 0
+        for pokemon in self.pokemon_list:
+            if len(pokemon[0]) < 1:
+                break
+            img = Image.open(Const.createPass(pokemon))
             img = img.resize((40, 40))
             img = ImageTk.PhotoImage(img)
             canvas = tkinter.Canvas(self, width=50, height=50)
             canvas.place(x=Const.list2[i][1], y=Const.list2[i][2] + 10)
             canvas.create_image(5, 5, image=img, anchor=tkinter.NW)
-            self.kpLabel = tkinter.Label(
-                self,
-                text=str("{:.1f}".format((int(list[1]) * 100 / int(recordCount[0]))))
-                + "%",
-            )
-            self.kpLabel.place(x=Const.list2[i][1] - 40, y=Const.list2[i][2] + 20)
             self.imgList.append(img)
             self.canvasList.append(canvas)
-            self.kpLabelList.append(self.kpLabel)
             i = i + 1
             if i > 49:
                 break
 
-    def displayWinRate(self, from_date, to_date):
-        self.title_var.set("KPと勝率")
-        self.mainTitleLabel["state"] = "disable"
-        winRateList = DB_battle.get_win_rate(self.kpList, from_date, to_date)
-        i = 0
-        for winRate in winRateList:
-            kpLabel = tkinter.Label(
-                self, text=str("{:.1f}".format(winRate * 100)) + "%"
+    def change_sort_condition(self):
+        self.delete_result()
+        new_result_list = list(
+            zip(
+                self.pokemon_list,
+                self.result_1_list,
+                self.result_2_list,
+                strict=False,
             )
-            kpLabel.place(x=Const.list2[i][1] - 40, y=Const.list2[i][2] + 40)
-            self.winRateLabelList.append(kpLabel)
-            i = i + 1
-            if i > 49:
-                break
-
-    def displayWinRateForPartyNum(self, from_date, to_date, party_num):
-        self.title_var.set("KPと勝率")
-        self.mainTitleLabel["state"] = "normal"
-        winRateList = DB_battle.get_win_rate_for_party_num(
-            self.kpList, from_date, to_date, party_num
         )
-        i = 0
-        for winRate in winRateList:
-            kpLabel = tkinter.Label(
-                self, text=str("{:.1f}".format(winRate * 100)) + "%"
-            )
-            kpLabel.place(x=Const.list2[i][1] - 40, y=Const.list2[i][2] + 40)
-            self.winRateLabelList.append(kpLabel)
-            i = i + 1
-            if i > 49:
-                break
 
-    def displayWinRateForPartySubnum(self, from_date, to_date, party_num, party_subnum):
-        self.title_var.set("KPと勝率")
-        self.mainTitleLabel["state"] = "normal"
-        winRateList = DB_battle.get_win_rate_for_party_subnum(
-            self.kpList, from_date, to_date, party_num, party_subnum
-        )
-        i = 0
-        for winRate in winRateList:
-            kpLabel = tkinter.Label(
-                self, text=str("{:.1f}".format(winRate * 100)) + "%"
-            )
-            kpLabel.place(x=Const.list2[i][1] - 40, y=Const.list2[i][2] + 40)
-            self.winRateLabelList.append(kpLabel)
-            i = i + 1
-            if i > 49:
-                break
+        if self.sort_condition_var.get() == 0:
+            new_result_list.sort(key=lambda x: x[1], reverse=self.sort_line_var.get())
+        elif self.sort_condition_var.get() == 1:
+            new_result_list.sort(key=lambda x: x[2], reverse=self.sort_line_var.get())
+
+        self.pokemon_list = [item[0] for item in new_result_list]
+        self.result_1_list = [item[1] for item in new_result_list]
+        self.result_2_list = [item[2] for item in new_result_list]
+
+        self.display_result_1()
+        self.display_result_2()
+        self.displayImage()
 
     def change_mode(self):
         self.delete_result()
-        if self.title_var.get() == "KPと勝率":
+        if self.title_var.get() == "ＫＰと勝率":
             self.title_var.set("選出と勝率")
-            chosenRateList = (
+            self.result_1_list = (
                 DB_battle.get_oppo_chosen_rate_for_party_num(
-                    self.kpList, self.from_date, self.to_date, self.party_num
+                    self.pokemon_list, self.from_date, self.to_date, self.party_num
                 )
                 if self.party_subnum == 0
                 else DB_battle.get_oppo_chosen_rate_for_party_subnum(
-                    self.kpList,
+                    self.pokemon_list,
                     self.from_date,
                     self.to_date,
                     self.party_num,
                     self.party_subnum,
                 )
             )
-            winRateList = (
+            self.result_2_list = (
                 DB_battle.get_oppo_chosen_and_win_rate_for_party_num(
-                    self.kpList, self.from_date, self.to_date, self.party_num
+                    self.pokemon_list, self.from_date, self.to_date, self.party_num
                 )
                 if self.party_subnum == 0
                 else DB_battle.get_oppo_chosen_and_win_rate_for_party_subnum(
-                    self.kpList,
+                    self.pokemon_list,
                     self.from_date,
                     self.to_date,
                     self.party_num,
                     self.party_subnum,
                 )
             )
-
-            for i in range(len(chosenRateList)):
-                self.kpLabel = tkinter.Label(
-                    self,
-                    text=str("{:.1f}".format(chosenRateList[i] * 100)) + "%",
-                )
-                self.kpLabel.place(x=Const.list2[i][1] - 40, y=Const.list2[i][2] + 20)
-                self.kpLabelList.append(self.kpLabel)
-
-                kpLabel = tkinter.Label(
-                    self, text=str("{:.1f}".format(winRateList[i] * 100)) + "%"
-                )
-                kpLabel.place(x=Const.list2[i][1] - 40, y=Const.list2[i][2] + 40)
-                self.winRateLabelList.append(kpLabel)
-                if i + 1 > 49:
-                    break
 
         elif self.title_var.get() == "選出と勝率":
             self.title_var.set("初手と勝率")
-            chosenRateList = (
+            self.result_1_list = (
                 DB_battle.get_oppo_first_chosen_rate_for_party_num(
-                    self.kpList, self.from_date, self.to_date, self.party_num
+                    self.pokemon_list, self.from_date, self.to_date, self.party_num
                 )
                 if self.party_subnum == 0
                 else DB_battle.get_oppo_first_chosen_rate_for_party_subnum(
-                    self.kpList,
+                    self.pokemon_list,
                     self.from_date,
                     self.to_date,
                     self.party_num,
                     self.party_subnum,
                 )
             )
-            winRateList = (
+            self.result_2_list = (
                 DB_battle.get_oppo_first_chosen_and_win_rate_for_party_num(
-                    self.kpList, self.from_date, self.to_date, self.party_num
+                    self.pokemon_list, self.from_date, self.to_date, self.party_num
                 )
                 if self.party_subnum == 0
                 else DB_battle.get_oppo_first_chosen_and_win_rate_for_party_subnum(
-                    self.kpList,
+                    self.pokemon_list,
                     self.from_date,
                     self.to_date,
                     self.party_num,
@@ -375,30 +440,55 @@ class Analytics(tkinter.Toplevel):
                 )
             )
 
-            for i in range(len(chosenRateList)):
-                self.kpLabel = tkinter.Label(
-                    self,
-                    text=str("{:.1f}".format(chosenRateList[i] * 100)) + "%",
-                )
-                self.kpLabel.place(x=Const.list2[i][1] - 40, y=Const.list2[i][2] + 20)
-                self.kpLabelList.append(self.kpLabel)
-
-                kpLabel = tkinter.Label(
-                    self, text=str("{:.1f}".format(winRateList[i] * 100)) + "%"
-                )
-                kpLabel.place(x=Const.list2[i][1] - 40, y=Const.list2[i][2] + 40)
-                self.winRateLabelList.append(kpLabel)
-                if i + 1 > 49:
-                    break
-
         elif self.title_var.get() == "初手と勝率":
-            self.title_var.set("KPと勝率")
-            self.displayWinRateForPartyNum(
-                self.from_date, self.to_date, self.party_num
-            ) if self.party_subnum == 0 else self.displayWinRateForPartySubnum(
-                self.from_date, self.to_date, self.party_num, self.party_subnum
+            self.title_var.set("ＫＰと勝率")
+            self.pokemon_list = (
+                [
+                    item[0]
+                    for item in DB_battle.calc_kp_for_party_num(
+                        self.from_date, self.to_date, self.party_num
+                    )
+                ]
+                if self.party_subnum == 0
+                else [
+                    item[0]
+                    for item in DB_battle.calc_kp_for_party_subnum(
+                        self.from_date, self.to_date, self.party_num, self.party_subnum
+                    )
+                ]
             )
-            self.displayKP(self.kpList, self.recordCount)
+            self.result_1_list = (
+                [
+                    item[1]
+                    for item in DB_battle.calc_kp_for_party_num(
+                        self.from_date, self.to_date, self.party_num
+                    )
+                ]
+                if self.party_subnum == 0
+                else [
+                    item[1]
+                    for item in DB_battle.calc_kp_for_party_subnum(
+                        self.from_date, self.to_date, self.party_num, self.party_subnum
+                    )
+                ]
+            )
+            self.result_2_list = (
+                DB_battle.get_win_rate_for_party_num(
+                    self.pokemon_list, self.from_date, self.to_date, self.party_num
+                )
+                if self.party_subnum == 0
+                else DB_battle.get_win_rate_for_party_subnum(
+                    self.pokemon_list,
+                    self.from_date,
+                    self.to_date,
+                    self.party_num,
+                    self.party_subnum,
+                )
+            )
+
+        self.display_result_1()
+        self.display_result_2()
+        self.displayImage()
 
     def displayPartyDetail(self):
         partyCanvas = tkinter.Canvas(self, width=350, height=600)
@@ -586,12 +676,12 @@ class Analytics(tkinter.Toplevel):
             self.recordCountLabel.destroy()
         if self.wholeWinRateLabel is not None:
             self.wholeWinRateLabel.destroy()
-        if self.kpLabelList is not []:
-            for kpLabel in self.kpLabelList:
+        if self.result_1_label_list is not []:
+            for kpLabel in self.result_1_label_list:
                 kpLabel.destroy()
-                self.kpLabelList = []
-        if self.winRateLabelList is not []:
-            for winRateLabel in self.winRateLabelList:
+                self.result_1_label_list = []
+        if self.result_2_label_list is not []:
+            for winRateLabel in self.result_2_label_list:
                 winRateLabel.destroy()
                 self.winRateLabel = []
         if self.canvasList is not []:
@@ -600,11 +690,11 @@ class Analytics(tkinter.Toplevel):
                 self.canvasList = []
 
     def delete_result(self):
-        if self.kpLabelList is not []:
-            for kpLabel in self.kpLabelList:
+        if self.result_1_label_list is not []:
+            for kpLabel in self.result_1_label_list:
                 kpLabel.destroy()
-                self.kpLabelList = []
-        if self.winRateLabelList is not []:
-            for winRateLabel in self.winRateLabelList:
+                self.result_1_label_list = []
+        if self.result_2_label_list is not []:
+            for winRateLabel in self.result_2_label_list:
                 winRateLabel.destroy()
                 self.winRateLabel = []
