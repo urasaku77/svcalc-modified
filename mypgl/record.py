@@ -107,6 +107,18 @@ class Record(tkinter.Toplevel):
         search_button.place(
             x=Const.searchX + 200, y=Const.searchY + Const.searchDY * 2.7
         )
+        self.favorite_var = tkinter.BooleanVar()
+        self.favorite_var.set(False)
+        favorite_check = tkinter.Checkbutton(
+            self,
+            variable=self.favorite_var,
+            text="お気に入り",
+            command=self.filter_favorites,
+        )
+        favorite_check.place(
+            x=Const.searchX + 270, y=Const.searchY + Const.searchDY * 2.7
+        )
+
         koumoku_label0 = tkinter.Label(
             self,
             text="対戦時間",
@@ -312,6 +324,14 @@ class Record(tkinter.Toplevel):
                     anchor=tkinter.NW,
                 )
                 self.sensyutu_img_list.append(img)
+
+    def filter_favorites(self):
+        if self.favorite_var.get():
+            self.battle_data_list = [x for x in self.battle_data_list if x[3] == "1"]
+            self.page_num_var.set(1)
+            self.update_result()
+        else:
+            self.get_battle_data()
 
     def click_paging_left(self):
         if self.page_num_var.get() > 1:
