@@ -17,30 +17,16 @@ class Obs(object):
         self.ws = simpleobsws.WebSocketClient(
             url=url, password=password, identification_parameters=parameters
         )
-        loop.run_until_complete(self.makeRequest())
+        loop.run_until_complete(self.make_request())
 
-    async def makeRequest(self):
+    async def make_request(self):
         await self.ws.connect()
         await self.ws.wait_until_identified()
 
-    async def breakRequest(self):
+    async def break_request(self):
         await self.ws.disconnect()
 
-    async def takeScreenshot(self, filename, source):
-        request = simpleobsws.Request(
-            "SaveSourceScreenshot",
-            {
-                "sourceName": source,
-                "imageFormat": "jpg",
-                "imageFilePath": filename,
-                "imageWidth": 1920,
-                "imageHeight": 1080,
-                "imageCompressionQuality": 100,
-            },
-        )
-        await self.ws.call(request)
-
-    async def getScreenshot(self, source):
+    async def get_screenshot(self, source):
         request = simpleobsws.Request(
             "GetSourceScreenshot",
             {

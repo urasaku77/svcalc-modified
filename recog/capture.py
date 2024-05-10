@@ -46,7 +46,7 @@ class Capture:
     # Websocket切断
     def disconnect_websocket(self):
         try:
-            self.loop.run_until_complete(self.obs.breakRequest())
+            self.loop.run_until_complete(self.obs.break_request())
             return True
         except:
             return False
@@ -54,7 +54,7 @@ class Capture:
     # キャプチャ画像取得
     def get_screenshot(self):
         responseData = self.loop.run_until_complete(
-            self.obs.getScreenshot(self.account["source_name"])
+            self.obs.get_screenshot(self.account["source_name"])
         )
         screenshotBase64 = responseData.responseData["imageData"].split(",")[1]
         img_binary = base64.b64decode(screenshotBase64)

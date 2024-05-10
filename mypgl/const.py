@@ -40,7 +40,7 @@ class Const(object):
     searchY = 60
     searchDY = 20
     txtboxWidth = 5
-    yearList = [2020, 2021, 2022, 2023, 2024]
+    yearList = [2024, 2025]
     monthList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     dateList = [
         1,
