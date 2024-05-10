@@ -30,7 +30,7 @@ class PartyFrame(ttk.LabelFrame):
         self._player: int = player
         self._stage: Stage | None = None
         self._button_list: list[MyButton] = []
-        self._pokemon_list: list[Pokemon] = [None, None, None, None, None, None]
+        self.pokemon_list: list[Pokemon] = [Pokemon()] * 6
 
         # ポケモン表示ボタン
         for i in range(6):
@@ -78,10 +78,10 @@ class PartyFrame(ttk.LabelFrame):
         for i, pokemon in enumerate(party):
             if pokemon.is_empty is False:
                 self._button_list[i].set_pokemon_icon(pokemon.pid, size=(30, 30))
-                self._pokemon_list[i] = pokemon
+                self.pokemon_list[i] = pokemon
             else:
                 self._button_list[i].set_image(images.get_blank_image(size=(30, 30)))
-                self._pokemon_list[i] = None
+                self.pokemon_list[i] = Pokemon()
 
     def set_party_from_capture(self, party: list[Pokemon]):
         self._stage.load_party(1, party)
@@ -113,8 +113,7 @@ class ChosenFrame(ttk.LabelFrame):
         self._player: int = player
         self._stage: Stage | None = None
         self._button_list: list[MyButton] = []
-        self._pokemon_list: list[str] = ["-1", "-1", "-1"]
-
+        self.pokemon_list: list[Pokemon] = [Pokemon()] * 3
         # ポケモン表示ボタン
         for i in range(3):
             btn = MyButton(
@@ -141,10 +140,10 @@ class ChosenFrame(ttk.LabelFrame):
     def set_chosen(self, pokemon: Pokemon, index: int):
         if pokemon.is_empty is False:
             self._button_list[index].set_pokemon_icon(pokemon.pid, size=(30, 30))
-            self._pokemon_list[index] = pokemon.pid
+            self.pokemon_list[index] = pokemon
         else:
             self._button_list[index].set_image(images.get_blank_image(size=(30, 30)))
-            self._pokemon_list[index] = "-1"
+            self.pokemon_list[index] = Pokemon()
 
     def set_chosen_from_capture(self, index: list[int]):
         self._stage.set_chosen(0, index)
@@ -274,9 +273,8 @@ class ActivePokemonFrame(ttk.LabelFrame):
         checkbox_frame.grid(column=3, row=2, columnspan=2)
 
     def set_pokemon(self, poke: Pokemon):
-        if self._pokemon.no != poke.no:
-            self.all_check_reset()
-            self._pokemon_icon.set_pokemon_icon(pid=poke.pid, size=(60, 60))
+        self.all_check_reset()
+        self._pokemon_icon.set_pokemon_icon(pid=poke.pid, size=(60, 60))
         self._status_frame.update_pokemon(poke)
         self._seikaku_combobox.set(poke.seikaku)
         self._item_combobox.set(poke.item)

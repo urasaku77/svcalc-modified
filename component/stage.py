@@ -12,15 +12,6 @@ from pokedata.waza import WazaBase
 class Stage:
     def __init__(self, app: MainApp):
         self._app = app
-        self._party: list[list[Pokemon], list[Pokemon]] = [
-            [Pokemon()] * 6,
-            [Pokemon()] * 6,
-        ]
-        self._chosen: list[list[Pokemon], list[Pokemon]] = [
-            [Pokemon()] * 3,
-            [Pokemon()] * 3,
-        ]
-        self._active_pokemon: list[Pokemon] = [Pokemon()] * 2
         self._weather: Weathers = Weathers.なし
         self._field: Fields = Fields.なし
         self._app.set_stage(self)
@@ -32,33 +23,40 @@ class Stage:
             self.setting_data = {"doryoku_reset_auto": False}
 
     def get_party(self, index: int) -> list[Pokemon]:
-        return self._party[index]
+        return self._app.party_frames[index].pokemon_list
 
     def set_party(self, index: int, party: list[Pokemon]):
-        self._party[index] = party
+        self._app.party_frames[index].set_party(party)
 
     def get_active_pokemons(self):
-        return self._active_pokemon
+        return [
+            self._app.active_poke_frames[0]._pokemon,
+            self._app.active_poke_frames[1]._pokemon,
+        ]
 
     def set_active_pokemon_from_index(self, player: int, index: int):
-        if not self._party[player][index].form_selected:
-            form = self._app.form_select(self._party[player][index].no)
+        if not self._app.party_frames[player].pokemon_list[index].form_selected:
+            form = self._app.form_select(
+                self._app.party_frames[player].pokemon_list[index].no
+            )
             if form != -1:
-                self._party[player][index] = Pokemon.by_pid(
-                    str(self._party[player][index].no) + "-" + str(form), True
+                print(form)
+                self._app.party_frames[player].pokemon_list[index] = Pokemon.by_pid(
+                    str(self._app.party_frames[player].pokemon_list[index].no)
+                    + "-"
+                    + str(form),
+                    True,
                 )
 
-        if self._party[player][index].form_selected:
-            self.pokemon = self._party[player][index]
+        if self._app.party_frames[player].pokemon_list[index].form_selected:
+            self.pokemon = self._app.party_frames[player].pokemon_list[index]
             self.pokemon.on_stage()
             if self.pokemon.is_empty is False:
                 self.set_active_pokemon(player, self.pokemon)
                 self.calc_damage()
 
     def set_active_pokemon(self, player: int, pokemon: Pokemon):
-        # self._active_pokemon[player].statechanged_handler = None
-        self._active_pokemon[player] = pokemon
-        # self._active_pokemon[player].statechanged_handler = self.on_activepokemon_statechanged
+        self._app.active_poke_frames[player]._pokemon = pokemon
         self._app.set_active_pokemon(player=player, pokemon=pokemon)
 
         # JSONファイルから設定値を読み取り
@@ -95,7 +93,7 @@ class Stage:
         charging: bool = False,
         is_same: bool = False,
     ):
-        pokemon = self._active_pokemon[player]
+        pokemon = self._app.active_poke_frames[player]._pokemon
         if seikaku is not None:
             if is_same and pokemon.seikaku == seikaku:
                 pokemon.seikaku = "まじめ"
@@ -175,7 +173,7 @@ class Stage:
 
     # 戦闘時テラスタイプ変更
     def select_terastype(self, player: int):
-        pokemon = self._active_pokemon[player]
+        pokemon = self._app.active_poke_frames[player]._pokemon
         if pokemon.is_empty:
             return
         # テラスタイプの設定がある場合
@@ -202,44 +200,54 @@ class Stage:
                 wazabase.set_next_value()
             if wazabase.is_self_buff or wazabase.is_self_debuff:
                 if wazabase.name == "はらだいこ":
-                    self._active_pokemon[player].rank.set_values_from_string(
-                        wazabase.value
-                    )
+                    self._app.active_poke_frames[
+                        player
+                    ]._pokemon.rank.set_values_from_string(wazabase.value)
                 else:
-                    self._active_pokemon[player].rank.add_ranks_from_string(
+                    self._app.active_poke_frames[
+                        player
+                    ]._pokemon.rank.add_ranks_from_string(
                         wazabase.value,
-                        self._active_pokemon[player].ability == "あまのじゃく",
+                        self._app.active_poke_frames[player]._pokemon.ability
+                        == "あまのじゃく",
                     )
             elif wazabase.is_opponent_buff or wazabase.is_opponent_debuff:
-                self._active_pokemon[non_player].rank.add_ranks_from_string(
+                self._app.active_poke_frames[
+                    non_player
+                ]._pokemon.rank.add_ranks_from_string(
                     wazabase.value,
-                    self._active_pokemon[player].ability == "あまのじゃく",
+                    self._app.active_poke_frames[player]._pokemon.ability
+                    == "あまのじゃく",
                 )
             elif wazabase.name == "じこあんじ":
-                self._active_pokemon[0].rank = self._active_pokemon[1].rank
+                self._app.active_poke_frames[
+                    0
+                ]._pokemon.rank = self._app.active_poke_frames[1]._pokemon.rank
             elif wazabase.name == "スキルスワップ":
                 (
-                    self._active_pokemon[0].ability,
-                    self._active_pokemon[1].ability,
+                    self._app.active_poke_frames[0]._pokemon.ability,
+                    self._app.active_poke_frames[1]._pokemon.ability,
                 ) = (
-                    self._active_pokemon[1].ability,
-                    self._active_pokemon[0].ability,
+                    self._app.active_poke_frames[1]._pokemon.ability,
+                    self._app.active_poke_frames[0]._pokemon.ability,
                 )
             elif wazabase.name == "コートチェンジ":
                 (
-                    self._active_pokemon[0].wall,
-                    self._active_pokemon[1].wall,
+                    self._app.active_poke_frames[0]._pokemon.wall,
+                    self._app.active_poke_frames[1]._pokemon.wall,
                 ) = (
-                    self._active_pokemon[1].wall,
-                    self._active_pokemon[0].wall,
+                    self._app.active_poke_frames[1]._pokemon.wall,
+                    self._app.active_poke_frames[0]._pokemon.wall,
                 )
             for i in range(2):
-                self._app.set_active_pokemon(i, self._active_pokemon[i])
+                self._app.set_active_pokemon(
+                    i, self._app.active_poke_frames[i]._pokemon
+                )
 
     # ダメージ計算
     def calc_damage(self):
-        pokemon1 = self._active_pokemon[0]
-        pokemon2 = self._active_pokemon[1]
+        pokemon1 = self._app.active_poke_frames[0]._pokemon
+        pokemon2 = self._app.active_poke_frames[1]._pokemon
         if pokemon1.is_empty or pokemon2.is_empty:
             return
         calc_result = DamageCalc.get_all_damages(
@@ -254,8 +262,7 @@ class Stage:
 
     # パーティ編集
     def edit_party(self, player: int):
-        party = self._app.edit_party(party=self._party[player])
-        self._party[player] = party
+        party = self._app.edit_party(party=self._app.party_frames[player].pokemon_list)
         self._app.set_party(player=player, party=party)
 
     # パーティの読み込み
@@ -269,13 +276,11 @@ class Stage:
                 pokemon: Pokemon = Pokemon.by_name(data[0])
                 pokemon.set_load_data(data, True)
                 party.append(pokemon)
-        self._party[player] = party
         self._app.set_party(player=player, party=party)
 
     # パーティのクリア
     def clear_party(self, player: int):
         party = [Pokemon()] * 6
-        self._party[player] = party
         self._app.set_party(player=player, party=party)
 
     # 選出の登録
@@ -283,32 +288,43 @@ class Stage:
         if index is None:
             index = []
         if len(index) == 0:
-            index_list = [i for i, p in enumerate(self._chosen[player]) if p.is_empty]
+            index_list = [
+                i
+                for i, p in enumerate(self._app.chosen_frames[player].pokemon_list)
+                if p.is_empty
+            ]
             if (
                 len(index_list) != 0
                 and len(
                     list(
                         filter(
-                            lambda p: p.name == self._active_pokemon[player].name,
-                            self._chosen[player],
+                            lambda p: p.name
+                            == self._app.active_poke_frames[player]._pokemon.name,
+                            self._app.chosen_frames[player].pokemon_list,
                         )
                     )
                 )
                 == 0
             ):
                 self._app.set_chosen(
-                    player, self._active_pokemon[player], index_list[0]
+                    player, self._app.active_poke_frames[player]._pokemon, index_list[0]
                 )
-                self._chosen[player][index_list[0]] = self._active_pokemon[player]
+                self._app.chosen_frames[player].pokemon_list[
+                    index_list[0]
+                ] = self._app.active_poke_frames[player]._pokemon
         else:
             for i in range(len(index)):
-                pokemon = self._party[player][index[i]] if index[i] != -1 else Pokemon()
+                pokemon = (
+                    self._app.party_frames[player].pokemon_list[index[i]]
+                    if index[i] != -1
+                    else Pokemon()
+                )
                 self._app.set_chosen(player, pokemon, i)
-                self._chosen[player][i] = pokemon
+                self._app.chosen_frames[player].pokemon_list[i] = pokemon
 
     # 選出の削除
     def delete_chosen(self, player: int, index: int):
-        self._chosen[player][index] = Pokemon()
+        self._app.chosen_frames[player].pokemon_list[index] = Pokemon()
         self._app.set_chosen(player, Pokemon, index)
 
     # 選出のクリア
@@ -318,9 +334,9 @@ class Stage:
 
     # 自分一番手のポケモンを探す
     def search_first_chosen(self):
-        if self._chosen[0][0].no != -1:
-            for i, pokemon in enumerate(self._party[0]):
-                if self._chosen[0][0].no == pokemon.no:
+        if self._app.chosen_frames[0].pokemon_list[0].no != -1:
+            for i, pokemon in enumerate(self._app.party_frames[0].pokemon_list):
+                if self._app.chosen_frames[0].pokemon_list[0].no == pokemon.no:
                     return i
         return -1
 
@@ -338,8 +354,8 @@ class Stage:
 
     # 選出の基本情報表示
     def set_info(self, player: int):
-        if self._active_pokemon[player].form != -1:
-            self._app.set_info(player, self._active_pokemon[player])
+        if self._app.active_poke_frames[player]._pokemon.form != -1:
+            self._app.set_info(player, self._app.active_poke_frames[player]._pokemon)
 
     @property
     def weather(self) -> Weathers:
@@ -356,14 +372,3 @@ class Stage:
     @field.setter
     def field(self, value):
         self._field = value
-
-    def test(self):
-        self._active_pokemon[0] = pokemon_1 = Pokemon.by_name(
-            "サーフゴー", default=True
-        )
-        self._active_pokemon[1] = pokemon_2 = Pokemon.by_name(
-            "セグレイブ", default=True
-        )
-        self._app.set_active_pokemon(0, pokemon_1)
-        self._app.set_active_pokemon(1, pokemon_2)
-        self.calc_damage()

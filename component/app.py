@@ -50,10 +50,10 @@ class MainApp(ThemedTk):
         self.websocket = False
         self.monitor = False
 
-        self._party_frames: list[PartyFrame] = []
-        self._chosen_frames: list[ChosenFrame] = []
+        self.party_frames: list[PartyFrame] = []
+        self.chosen_frames: list[ChosenFrame] = []
         self._info_frames: list[InfoFrame] = []
-        self._active_poke_frames: list[ActivePokemonFrame] = []
+        self.active_poke_frames: list[ActivePokemonFrame] = []
         self._waza_damage_frames: list[WazaDamageListFrame] = []
 
         # メインフレーム
@@ -79,7 +79,7 @@ class MainApp(ThemedTk):
             )
             party_frame.grid(row=1, column=i * 3, columnspan=2, sticky=N + E + W + S)
             party_frame.grid_propagate(False)
-            self._party_frames.append(party_frame)
+            self.party_frames.append(party_frame)
 
             # 選出表示フレーム
             chosen_frame = ChosenFrame(
@@ -87,7 +87,7 @@ class MainApp(ThemedTk):
             )
             chosen_frame.grid(row=1, column=i * 3 + 2, sticky=N + E + W + S)
             chosen_frame.grid_propagate(False)
-            self._chosen_frames.append(chosen_frame)
+            self.chosen_frames.append(chosen_frame)
 
             # 選択ポケモン基本情報表示フレーム
             info_frame = InfoFrame(
@@ -111,7 +111,7 @@ class MainApp(ThemedTk):
             )
             poke_frame.grid(row=3, column=i * 3, columnspan=3, sticky=N + E + W + S)
             poke_frame.grid_propagate(False)
-            self._active_poke_frames.append(poke_frame)
+            self.active_poke_frames.append(poke_frame)
 
         # 技・ダメージ表示フレーム(自分)
         waza_frame_my = WazaDamageListFrame(
@@ -263,10 +263,10 @@ class MainApp(ThemedTk):
         self._stage = stage
         self.home_frame.set_stage(stage)
         for i in range(2):
-            self._party_frames[i].set_stage(stage)
-            self._chosen_frames[i].set_stage(stage)
-            self._active_poke_frames[i].set_stage(stage)
-            self._active_poke_frames[i]._status_frame.set_stage(stage)
+            self.party_frames[i].set_stage(stage)
+            self.chosen_frames[i].set_stage(stage)
+            self.active_poke_frames[i].set_stage(stage)
+            self.active_poke_frames[i]._status_frame.set_stage(stage)
             self._waza_damage_frames[i].set_stage(stage)
             self.weather_frame.set_stage(stage)
             self.field_frame.set_stage(stage)
@@ -284,11 +284,11 @@ class MainApp(ThemedTk):
 
     # パーティセット
     def set_party(self, player: int, party: list[Pokemon]):
-        self._party_frames[player].set_party(party)
+        self.party_frames[player].set_party(party)
 
     # 選出登録
     def set_chosen(self, player: int, pokemon: Pokemon, index: int):
-        self._chosen_frames[player].set_chosen(pokemon, index)
+        self.chosen_frames[player].set_chosen(pokemon, index)
 
     # 選出基本情報表示
     def set_info(self, player: int, pokemon: Pokemon):
@@ -296,7 +296,7 @@ class MainApp(ThemedTk):
 
     # ポケモン選択
     def set_active_pokemon(self, player: int, pokemon: Pokemon):
-        self._active_poke_frames[player].set_pokemon(pokemon)
+        self.active_poke_frames[player].set_pokemon(pokemon)
         self._waza_damage_frames[player].set_waza_info(pokemon.waza_list)
         if player == 1:
             self._waza_damage_frames[player].set_waza_rate(pokemon.waza_rate_list)
@@ -342,7 +342,7 @@ class MainApp(ThemedTk):
     # 対戦登録
     def record_battle(self):
         battle = Battle.set_battle(
-            self.record_frame, self._party_frames, self._chosen_frames
+            self.record_frame, self.party_frames, self.chosen_frames
         )
         battle_data = dataclasses.astuple(battle)
         DB_battle.register_battle(battle_data)
@@ -357,9 +357,9 @@ class MainApp(ThemedTk):
 
     # 対戦記録情報クリア
     def clear_battle(self):
-        self._party_frames[1].on_push_clear_button()
-        self._chosen_frames[0].on_push_clear_button()
-        self._chosen_frames[1].on_push_clear_button()
+        self.party_frames[1].on_push_clear_button()
+        self.chosen_frames[0].on_push_clear_button()
+        self.chosen_frames[1].on_push_clear_button()
         self.timer_frame.reset_button_clicked()
         self.counter_frame.clear_all_counters()
 
@@ -408,7 +408,7 @@ class MainApp(ThemedTk):
         if self.monitor:
             self.stop_image_recognize()
         else:
-            self._party_frames[0].on_push_load_button()
+            self.party_frames[0].on_push_load_button()
             self.after(2000, self.loop_image_recognize)
 
     # 画像認識ループ開始
@@ -417,7 +417,7 @@ class MainApp(ThemedTk):
         result = self.capture.image_recognize()
         match result:
             case tuple():
-                self._party_frames[1].set_party_from_capture(result[0])
+                self.party_frames[1].set_party_from_capture(result[0])
                 self.record_frame.tn.insert(0, result[1])
                 # JSONファイルから設定値を読み取り
                 try:
@@ -431,14 +431,14 @@ class MainApp(ThemedTk):
 
             case list():
                 if result != [-1, -1, -1]:
-                    self._chosen_frames[0].set_chosen_from_capture(result)
+                    self.chosen_frames[0].set_chosen_from_capture(result)
             case bool():
                 if result:
                     # タイマーをリセットしてスタート
                     self.timer_frame.reset_button_clicked()
                     self.timer_frame.start_button_clicked()
                     # 選出一体目を自動登録
-                    self._party_frames[0].set_first_chosen_to_active()
+                    self.party_frames[0].set_first_chosen_to_active()
                     self.stop_image_recognize()
                     return
             case int():
@@ -462,13 +462,13 @@ class MainApp(ThemedTk):
     def manual_capture(self):
         result = self.capture.recognize_chosen_capture()
         if result is not None:
-            self._party_frames[1].set_party_from_capture(result[0])
+            self.party_frames[1].set_party_from_capture(result[0])
             self.record_frame.tn.insert(0, result[1])
 
     # 類似パーティ検索
     def search_similar_party(self, isOpen: bool = True):
-        current_party = [pokemon.pid for pokemon in self._party_frames[1]._pokemon_list]
-        party_list = get_similar_party(self._party_frames[1]._pokemon_list)
+        current_party = [pokemon.pid for pokemon in self.party_frames[1].pokemon_list]
+        party_list = get_similar_party(self.party_frames[1].pokemon_list)
         if isOpen or party_list:
             dialog = SimilarParty(current_party=current_party, party_list=party_list)
             dialog.open(location=(self.winfo_x(), self.winfo_y()))

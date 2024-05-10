@@ -57,24 +57,60 @@ class Battle:
             record_frame.memo.get("1.0", "end-1c"),
             file.split("-")[0],
             file.split("-")[1].split("_")[0],
-            party_frames[0]._pokemon_list[0].pid,
-            party_frames[0]._pokemon_list[1].pid,
-            party_frames[0]._pokemon_list[2].pid,
-            party_frames[0]._pokemon_list[3].pid,
-            party_frames[0]._pokemon_list[4].pid,
-            party_frames[0]._pokemon_list[5].pid,
-            party_frames[1]._pokemon_list[0].pid,
-            party_frames[1]._pokemon_list[1].pid,
-            party_frames[1]._pokemon_list[2].pid,
-            party_frames[1]._pokemon_list[3].pid,
-            party_frames[1]._pokemon_list[4].pid,
-            party_frames[1]._pokemon_list[5].pid,
-            chosen_frames[0]._pokemon_list[0],
-            chosen_frames[0]._pokemon_list[1],
-            chosen_frames[0]._pokemon_list[2],
-            chosen_frames[1]._pokemon_list[0],
-            chosen_frames[1]._pokemon_list[1],
-            chosen_frames[1]._pokemon_list[2],
+            party_frames[0].pokemon_list[0].pid
+            if party_frames[0].pokemon_list[0].no != -1
+            else -1,
+            party_frames[0].pokemon_list[1].pid
+            if party_frames[0].pokemon_list[1].no != -1
+            else -1,
+            party_frames[0].pokemon_list[2].pid
+            if party_frames[0].pokemon_list[2].no != -1
+            else -1,
+            party_frames[0].pokemon_list[3].pid
+            if party_frames[0].pokemon_list[3].no != -1
+            else -1,
+            party_frames[0].pokemon_list[4].pid
+            if party_frames[0].pokemon_list[4].no != -1
+            else -1,
+            party_frames[0].pokemon_list[5].pid
+            if party_frames[0].pokemon_list[5].no != -1
+            else -1,
+            party_frames[1].pokemon_list[0].pid
+            if party_frames[1].pokemon_list[0].no != -1
+            else -1,
+            party_frames[1].pokemon_list[1].pid
+            if party_frames[1].pokemon_list[1].no != -1
+            else -1,
+            party_frames[1].pokemon_list[2].pid
+            if party_frames[1].pokemon_list[2].no != -1
+            else -1,
+            party_frames[1].pokemon_list[3].pid
+            if party_frames[1].pokemon_list[3].no != -1
+            else -1,
+            party_frames[1].pokemon_list[4].pid
+            if party_frames[1].pokemon_list[4].no != -1
+            else -1,
+            party_frames[1].pokemon_list[5].pid
+            if party_frames[1].pokemon_list[5].no != -1
+            else -1,
+            chosen_frames[0].pokemon_list[0].pid
+            if chosen_frames[0].pokemon_list[0].no != -1
+            else -1,
+            chosen_frames[0].pokemon_list[1].pid
+            if chosen_frames[0].pokemon_list[1].no != -1
+            else -1,
+            chosen_frames[0].pokemon_list[2].pid
+            if chosen_frames[0].pokemon_list[2].no != -1
+            else -1,
+            chosen_frames[1].pokemon_list[0].pid
+            if chosen_frames[1].pokemon_list[0].no != -1
+            else -1,
+            chosen_frames[1].pokemon_list[1].pid
+            if chosen_frames[1].pokemon_list[1].no != -1
+            else -1,
+            chosen_frames[1].pokemon_list[2].pid
+            if chosen_frames[1].pokemon_list[2].no != -1
+            else -1,
         )
 
 
