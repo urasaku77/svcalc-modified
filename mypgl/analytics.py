@@ -4,7 +4,7 @@ import tkinter
 from PIL import Image, ImageTk
 
 from database.battle import DB_battle
-from mypgl.common.const import Const
+from mypgl.const import Const
 
 
 class Analytics(tkinter.Toplevel):
@@ -12,14 +12,14 @@ class Analytics(tkinter.Toplevel):
         super().__init__()
         self.title("myPGL")
 
-        beforeRecentDate = DB_battle.get_recent_date()[0]
-        self.recentDate = (
+        before_recent_date = DB_battle.get_recent_date()[0]
+        self.recent_date = (
             datetime.date(
-                datetime.datetime.fromtimestamp(beforeRecentDate).year,
-                datetime.datetime.fromtimestamp(beforeRecentDate).month,
-                datetime.datetime.fromtimestamp(beforeRecentDate).day,
+                datetime.datetime.fromtimestamp(before_recent_date).year,
+                datetime.datetime.fromtimestamp(before_recent_date).month,
+                datetime.datetime.fromtimestamp(before_recent_date).day,
             )
-            if beforeRecentDate is not None
+            if before_recent_date is not None
             else datetime.datetime.today()
         )
         self.party_num = 0
@@ -31,106 +31,100 @@ class Analytics(tkinter.Toplevel):
         self.result_1_label_list = []
         self.result_2_label_list = []
 
-        self.imgList = []
-        self.canvasList = []
+        self.img_list = []
+        self.canvas_list = []
 
-        self.recordCountLabel = None
-        self.wholeWinRateLabel = None
+        self.record_count_label = None
+        self.whole_win_rate_label = None
 
         self.sort_condition_options = [("KP（選出/初手）", 0), ("勝率", 1)]
         self.sort_line_options = [("降順", False), ("昇順", True)]
 
-        self.createSearch(self.recentDate)
-        self.searchKP(
-            int(self.recentDate.year),
-            int(self.recentDate.month),
+        self.display_gui(self.recent_date)
+        self.update_result(
+            int(self.recent_date.year),
+            int(self.recent_date.month),
             1,
-            int(self.recentDate.year),
-            int(self.recentDate.month),
-            int(self.recentDate.day),
+            int(self.recent_date.year),
+            int(self.recent_date.month),
+            int(self.recent_date.day),
             True,
         )
 
         for i in range(50):
-            rankLabel = tkinter.Label(self, text=str(i + 1) + "位")
-            rankLabel.place(x=Const.list2[i][1] - 40, y=Const.list2[i][2])
+            rank_label = tkinter.Label(self, text=str(i + 1) + "位")
+            rank_label.place(x=Const.list2[i][1] - 40, y=Const.list2[i][2])
 
     def open(self):
         self.grab_set()
         self.focus_set()
         self.geometry("1280x720")
 
-    def createSearch(self, searchDate: datetime.datetime):
-        kikanLabel = tkinter.Label(self, text="期間")
-        kikanLabel.place(x=Const.searchX, y=Const.searchY - Const.searchDY)
-        rankLabel = tkinter.Label(self, text="パーティ絞り込み")
-        rankLabel.place(x=Const.searchX, y=Const.searchY + Const.searchDY * 2)
-        """FROM時間"""
-        fromYearVar = tkinter.IntVar(self)
-        fromYearVar.set(int(searchDate.year))
-        fromYearMenu = tkinter.OptionMenu(self, fromYearVar, *Const.yearList)
-        fromYearMenu.place(x=Const.searchX, y=Const.searchY)
-        fromMonthVar = tkinter.IntVar(self)
-        fromMonthVar.set(int(searchDate.month))
-        fromDateVar = tkinter.IntVar(self)
-        fromDateVar.set(1)
-        fromMonthMenu = tkinter.OptionMenu(self, fromMonthVar, *Const.monthList)
-        fromMonthMenu.place(x=Const.searchX + 70, y=Const.searchY)
-        fromDateMenu = tkinter.OptionMenu(self, fromDateVar, *Const.dateList)
-        fromDateMenu.place(x=Const.searchX + 120, y=Const.searchY)
+    def display_gui(self, search_date: datetime.datetime):
+        kikan_label = tkinter.Label(self, text="期間")
+        kikan_label.place(x=Const.searchX, y=Const.searchY - Const.searchDY)
+        rank_label = tkinter.Label(self, text="パーティ絞り込み")
+        rank_label.place(x=Const.searchX, y=Const.searchY + Const.searchDY * 2)
 
-        mackLabel = tkinter.Label(self, text=" ~ ", font=Const.titleFont)
-        mackLabel.place(x=Const.searchX + 170, y=Const.searchY)
-
-        """TO時間"""
-        toYearVar = tkinter.IntVar(self)
-        toYearVar.set(int(searchDate.year))
-        toYearMenu = tkinter.OptionMenu(self, toYearVar, *Const.yearList)
-        toYearMenu.place(x=Const.searchX + 200, y=Const.searchY)
-        toMonthVar = tkinter.IntVar(self)
-        toMonthVar.set(int(searchDate.month))
-        toDateVar = tkinter.IntVar(self)
-        toDateVar.set(int(searchDate.day))
-        toMonthMenu = tkinter.OptionMenu(self, toMonthVar, *Const.monthList)
-        toMonthMenu.place(x=Const.searchX + 270, y=Const.searchY)
-        toDateMenu = tkinter.OptionMenu(self, toDateVar, *Const.dateList)
-        toDateMenu.place(x=Const.searchX + 330, y=Const.searchY)
-        """初日を9時以降にする"""
-        time9Bln = tkinter.BooleanVar()
-        time9Bln.set(True)
-        time9Check = tkinter.Checkbutton(
-            self, variable=time9Bln, text="初日を9時以降にする"
+        self.from_year_var = tkinter.IntVar(self)
+        self.from_year_var.set(int(search_date.year))
+        from_year_menu = tkinter.OptionMenu(self, self.from_year_var, *Const.yearList)
+        from_year_menu.place(x=Const.searchX, y=Const.searchY)
+        self.from_month_var = tkinter.IntVar(self)
+        self.from_month_var.set(int(search_date.month))
+        self.from_date_var = tkinter.IntVar(self)
+        self.from_date_var.set(1)
+        from_month_menu = tkinter.OptionMenu(
+            self, self.from_month_var, *Const.monthList
         )
-        time9Check.place(x=Const.searchX + 400, y=Const.searchY)
-        numLabel = tkinter.Label(self, text="番号")
-        numLabel.place(x=Const.searchX, y=Const.searchY + Const.searchDY * 3)
-        self.numTxt = tkinter.Entry(self, width=Const.txtboxWidth)
-        self.numTxt.place(x=Const.searchX + 40, y=Const.searchY + Const.searchDY * 3)
-        subNumLabel = tkinter.Label(self, text="連番")
-        subNumLabel.place(x=Const.searchX + 90, y=Const.searchY + Const.searchDY * 3)
-        self.subNumTxt = tkinter.Entry(self, width=Const.txtboxWidth)
-        self.subNumTxt.place(
+        from_month_menu.place(x=Const.searchX + 70, y=Const.searchY)
+        from_date_menu = tkinter.OptionMenu(self, self.from_date_var, *Const.dateList)
+        from_date_menu.place(x=Const.searchX + 120, y=Const.searchY)
+
+        mack_label = tkinter.Label(self, text=" ~ ", font=Const.titleFont)
+        mack_label.place(x=Const.searchX + 170, y=Const.searchY)
+
+        self.to_year_var = tkinter.IntVar(self)
+        self.to_year_var.set(int(search_date.year))
+        to_year_menu = tkinter.OptionMenu(self, self.to_year_var, *Const.yearList)
+        to_year_menu.place(x=Const.searchX + 200, y=Const.searchY)
+        self.to_month_var = tkinter.IntVar(self)
+        self.to_month_var.set(int(search_date.month))
+        self.to_date_var = tkinter.IntVar(self)
+        self.to_date_var.set(int(search_date.day))
+        to_month_menu = tkinter.OptionMenu(self, self.to_month_var, *Const.monthList)
+        to_month_menu.place(x=Const.searchX + 270, y=Const.searchY)
+        to_date_menu = tkinter.OptionMenu(self, self.to_date_var, *Const.dateList)
+        to_date_menu.place(x=Const.searchX + 330, y=Const.searchY)
+
+        self.time9_bln = tkinter.BooleanVar()
+        self.time9_bln.set(True)
+        time9_check = tkinter.Checkbutton(
+            self, variable=self.time9_bln, text="初日を9時以降にする"
+        )
+        time9_check.place(x=Const.searchX + 400, y=Const.searchY)
+
+        num_label = tkinter.Label(self, text="番号")
+        num_label.place(x=Const.searchX, y=Const.searchY + Const.searchDY * 3)
+        self.num_txt = tkinter.Entry(self, width=Const.txtboxWidth)
+        self.num_txt.place(x=Const.searchX + 40, y=Const.searchY + Const.searchDY * 3)
+        sub_num_label = tkinter.Label(self, text="連番")
+        sub_num_label.place(x=Const.searchX + 90, y=Const.searchY + Const.searchDY * 3)
+        self.sub_num_txt = tkinter.Entry(self, width=Const.txtboxWidth)
+        self.sub_num_txt.place(
             x=Const.searchX + 130, y=Const.searchY + Const.searchDY * 3
         )
-        searchButton = tkinter.Button(
+        search_button = tkinter.Button(
             self,
             text="検索",
-            command=lambda: self.searchKP(
-                fromYearVar.get(),
-                fromMonthVar.get(),
-                fromDateVar.get(),
-                toYearVar.get(),
-                toMonthVar.get(),
-                toDateVar.get(),
-                time9Bln.get(),
-            ),
+            command=self.update_result,
         )
-        searchButton.place(
+        search_button.place(
             x=Const.searchX + 200, y=Const.searchY + Const.searchDY * 2.7
         )
         self.title_var = tkinter.StringVar()
         self.title_var.set("ＫＰと勝率")
-        self.mainTitleLabel = tkinter.Button(
+        self.main_title_label = tkinter.Button(
             self,
             textvariable=self.title_var,
             font=Const.titleFont,
@@ -163,48 +157,39 @@ class Analytics(tkinter.Toplevel):
             )
             rb.grid(sticky="w")
         sort_line_frame.place(x=Const.searchX + 270, y=Const.kpStartY - 60)
-        self.mainTitleLabel.place(x=Const.kpStartX, y=Const.kpStartY - 60)
+        self.main_title_label.place(x=Const.kpStartX, y=Const.kpStartY - 60)
         self.subtitle_var = tkinter.StringVar()
         self.subtitle_var.set("直近使用したパーティ")
-        self.subTitleLabel = tkinter.Label(
+        self.sub_title_label = tkinter.Label(
             self, textvariable=self.subtitle_var, font=Const.titleFont
         )
-        self.subTitleLabel.place(x=Const.myPartyStartX, y=Const.myPartyStartY - 30)
+        self.sub_title_label.place(x=Const.myPartyStartX, y=Const.myPartyStartY - 30)
 
-    def searchKP(
-        self,
-        fromYear,
-        fromMonth,
-        fromDate,
-        toYear,
-        toMonth,
-        toDate,
-        time9Bl,
-    ):
+    def update_result(self):
         self.from_date, self.to_date = DB_battle.chenge_date_from_datetime_to_unix(
-            fromYear,
-            fromMonth,
-            fromDate,
-            toYear,
-            toMonth,
-            toDate,
-            time9Bl,
+            self.from_year_var.get(),
+            self.from_month_var.get(),
+            self.from_date_var.get(),
+            self.to_year_var.get(),
+            self.to_month_var.get(),
+            self.to_date_var.get(),
+            self.time9_bln.get(),
         )
         self.delete_result_page()
         self.sort_condition_var.set(0)
         self.sort_line_var.set(True)
         self.party_num = (
-            int(self.numTxt.get())
-            if self.numTxt.get() is not None and self.numTxt.get() != ""
+            int(self.num_txt.get())
+            if self.num_txt.get() is not None and self.num_txt.get() != ""
             else 0
         )
         self.party_subnum = (
-            int(self.subNumTxt.get())
-            if self.subNumTxt.get() is not None and self.subNumTxt.get() != ""
+            int(self.sub_num_txt.get())
+            if self.sub_num_txt.get() is not None and self.sub_num_txt.get() != ""
             else 0
         )
         self.title_var.set("ＫＰと勝率")
-        self.mainTitleLabel["state"] = (
+        self.main_title_label["state"] = (
             "disable" if self.party_num == 0 and self.party_subnum == 0 else "normal"
         )
         if self.party_num != 0 and self.party_subnum != 0:
@@ -233,10 +218,10 @@ class Analytics(tkinter.Toplevel):
                 self.party_num,
                 self.party_subnum,
             )
-            self.recordCount = DB_battle.count_record_for_party_subnum(
+            self.record_count = DB_battle.count_record_for_party_subnum(
                 self.from_date, self.to_date, self.party_num, self.party_subnum
             )
-            self.winCount = DB_battle.count_win_for_party_subnum(
+            self.win_count = DB_battle.count_win_for_party_subnum(
                 self.from_date, self.to_date, self.party_num, self.party_subnum
             )
         elif self.party_num != 0:
@@ -255,10 +240,10 @@ class Analytics(tkinter.Toplevel):
             self.result_2_list = DB_battle.get_win_rate_for_party_num(
                 self.pokemon_list, self.from_date, self.to_date, self.party_num
             )
-            self.recordCount = DB_battle.count_record_for_party_num(
+            self.record_count = DB_battle.count_record_for_party_num(
                 self.from_date, self.to_date, self.party_num
             )
-            self.winCount = DB_battle.count_win_for_party_num(
+            self.win_count = DB_battle.count_win_for_party_num(
                 self.from_date, self.to_date, self.party_num
             )
         else:
@@ -271,31 +256,31 @@ class Analytics(tkinter.Toplevel):
             self.result_2_list = DB_battle.get_win_rate(
                 self.pokemon_list, self.from_date, self.to_date
             )
-            self.recordCount = DB_battle.count_record(self.from_date, self.to_date)
-            self.winCount = DB_battle.count_win(self.from_date, self.to_date)
+            self.record_count = DB_battle.count_record(self.from_date, self.to_date)
+            self.win_count = DB_battle.count_win(self.from_date, self.to_date)
         self.display_result_1()
         self.display_result_2()
-        self.displayImage()
-        self.recordCountLabel = tkinter.Label(
+        self.display_image()
+        self.record_count_label = tkinter.Label(
             self,
-            text="対戦数：" + str(self.recordCount[0]),
+            text="対戦数：" + str(self.record_count[0]),
             font=Const.titleFont,
         )
-        self.recordCountLabel.place(x=Const.myPartyStartX + 50, y=Const.searchY)
-        wholeWinRate = (
-            self.winCount[0] * 100 / self.recordCount[0]
-            if self.recordCount[0] != 0
+        self.record_count_label.place(x=Const.myPartyStartX + 50, y=Const.searchY)
+        whole_win_rate = (
+            self.win_count[0] * 100 / self.record_count[0]
+            if self.record_count[0] != 0
             else 0
         )
-        self.wholeWinRateLabel = tkinter.Label(
+        self.whole_win_rate_label = tkinter.Label(
             self,
-            text=str("勝率：" + "{:.1f}".format(wholeWinRate)) + "%",
+            text=str("勝率：" + "{:.1f}".format(whole_win_rate)) + "%",
             font=Const.titleFont,
         )
-        self.wholeWinRateLabel.place(
+        self.whole_win_rate_label.place(
             x=Const.myPartyStartX + 50, y=Const.searchY + Const.searchDY * 2
         )
-        self.displayPartyDetail()
+        self.display_party_detail()
 
     def display_result_1(self):
         if self.title_var.get() == "ＫＰと勝率":
@@ -309,7 +294,7 @@ class Analytics(tkinter.Toplevel):
                             (
                                 int(self.result_1_list[i])
                                 * 100
-                                / int(self.recordCount[0])
+                                / int(self.record_count[0])
                             )
                         )
                     )
@@ -339,7 +324,7 @@ class Analytics(tkinter.Toplevel):
             self.result_2_label_list.append(result_2_label)
             i = i + 1
 
-    def displayImage(self):
+    def display_image(self):
         i = 0
         for pokemon in self.pokemon_list:
             if len(pokemon[0]) < 1:
@@ -350,8 +335,8 @@ class Analytics(tkinter.Toplevel):
             canvas = tkinter.Canvas(self, width=50, height=50)
             canvas.place(x=Const.list2[i][1], y=Const.list2[i][2] + 10)
             canvas.create_image(5, 5, image=img, anchor=tkinter.NW)
-            self.imgList.append(img)
-            self.canvasList.append(canvas)
+            self.img_list.append(img)
+            self.canvas_list.append(canvas)
             i = i + 1
             if i > 49:
                 break
@@ -378,7 +363,7 @@ class Analytics(tkinter.Toplevel):
 
         self.display_result_1()
         self.display_result_2()
-        self.displayImage()
+        self.display_image()
 
     def change_mode(self):
         self.delete_result()
@@ -488,11 +473,11 @@ class Analytics(tkinter.Toplevel):
 
         self.display_result_1()
         self.display_result_2()
-        self.displayImage()
+        self.display_image()
 
-    def displayPartyDetail(self):
-        partyCanvas = tkinter.Canvas(self, width=350, height=600)
-        partyCanvas.place(x=0, y=Const.myPartyStartY)
+    def display_party_detail(self):
+        party_canvas = tkinter.Canvas(self, width=350, height=600)
+        party_canvas.place(x=0, y=Const.myPartyStartY)
 
         if self.party_num != 0 and self.party_subnum != 0:
             pokemon_list = DB_battle.get_my_party_for_party_subnum(
@@ -551,7 +536,7 @@ class Analytics(tkinter.Toplevel):
                         y=Const.myPartyDetailList[i][1],
                     )
                     canvas.create_image(5, 5, image=img, anchor=tkinter.NW)
-                    self.imgList.append(img)
+                    self.img_list.append(img)
                     party_num_label = tkinter.Label(
                         self,
                         text="勝率："
@@ -571,7 +556,7 @@ class Analytics(tkinter.Toplevel):
                         y=Const.myPartyDetailList[i][1],
                     )
             else:
-                self.displayMyParty()
+                self.display_my_party()
 
         elif self.party_num != 0:
             pokemon_list = DB_battle.get_my_party_for_party_num(self.party_num)
@@ -621,7 +606,7 @@ class Analytics(tkinter.Toplevel):
                         y=Const.myPartyDetailList[i][1],
                     )
                     canvas.create_image(5, 5, image=img, anchor=tkinter.NW)
-                    self.imgList.append(img)
+                    self.img_list.append(img)
                     party_num_label = tkinter.Label(
                         self,
                         text="勝率："
@@ -641,11 +626,11 @@ class Analytics(tkinter.Toplevel):
                         y=Const.myPartyDetailList[i][1],
                     )
             else:
-                self.displayMyParty()
+                self.display_my_party()
         else:
-            self.displayMyParty()
+            self.display_my_party()
 
-    def displayMyParty(self):
+    def display_my_party(self):
         self.subtitle_var.set("直近使用したパーティ")
         pokemon_list = DB_battle.get_my_party()
         for i in range(len(pokemon_list)):
@@ -669,32 +654,32 @@ class Analytics(tkinter.Toplevel):
                         y=Const.myPartyPointList[i * 7 + j][1],
                     )
                     canvas.create_image(5, 5, image=img, anchor=tkinter.NW)
-                    self.imgList.append(img)
+                    self.img_list.append(img)
 
     def delete_result_page(self):
-        if self.recordCountLabel is not None:
-            self.recordCountLabel.destroy()
-        if self.wholeWinRateLabel is not None:
-            self.wholeWinRateLabel.destroy()
+        if self.record_count_label is not None:
+            self.record_count_label.destroy()
+        if self.whole_win_rate_label is not None:
+            self.whole_win_rate_label.destroy()
         if self.result_1_label_list is not []:
             for kpLabel in self.result_1_label_list:
                 kpLabel.destroy()
                 self.result_1_label_list = []
         if self.result_2_label_list is not []:
-            for winRateLabel in self.result_2_label_list:
-                winRateLabel.destroy()
-                self.winRateLabel = []
-        if self.canvasList is not []:
-            for canvas in self.canvasList:
+            for win_rate_label in self.result_2_label_list:
+                win_rate_label.destroy()
+                self.win_rate_label = []
+        if self.canvas_list is not []:
+            for canvas in self.canvas_list:
                 canvas.delete("all")
-                self.canvasList = []
+                self.canvas_list = []
 
     def delete_result(self):
         if self.result_1_label_list is not []:
-            for kpLabel in self.result_1_label_list:
-                kpLabel.destroy()
+            for kp_label in self.result_1_label_list:
+                kp_label.destroy()
                 self.result_1_label_list = []
         if self.result_2_label_list is not []:
-            for winRateLabel in self.result_2_label_list:
-                winRateLabel.destroy()
-                self.winRateLabel = []
+            for win_rate_label in self.result_2_label_list:
+                win_rate_label.destroy()
+                self.win_rate_label = []
