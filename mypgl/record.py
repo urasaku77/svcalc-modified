@@ -11,7 +11,7 @@ from mypgl.const import Const
 class Record(tkinter.Toplevel):
     def __init__(self):
         super().__init__()
-        self.title("対戦履歴画面")
+        self.title("対戦履歴")
 
         self.page_num_var = tkinter.IntVar(value=1)
         self.page_num_label = None

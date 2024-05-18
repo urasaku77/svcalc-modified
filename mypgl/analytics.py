@@ -10,7 +10,7 @@ from mypgl.const import Const
 class Analytics(tkinter.Toplevel):
     def __init__(self):
         super().__init__()
-        self.title("myPGL")
+        self.title("対戦分析")
 
         before_recent_date = DB_battle.get_recent_date()[0]
         self.recent_date = (
@@ -41,15 +41,7 @@ class Analytics(tkinter.Toplevel):
         self.sort_line_options = [("降順", False), ("昇順", True)]
 
         self.display_gui(self.recent_date)
-        self.update_result(
-            int(self.recent_date.year),
-            int(self.recent_date.month),
-            1,
-            int(self.recent_date.year),
-            int(self.recent_date.month),
-            int(self.recent_date.day),
-            True,
-        )
+        self.update_result()
 
         for i in range(50):
             rank_label = tkinter.Label(self, text=str(i + 1) + "位")
