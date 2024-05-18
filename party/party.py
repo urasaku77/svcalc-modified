@@ -2,7 +2,6 @@
 
 import csv
 import glob
-import json
 import math
 import os
 import tkinter
@@ -828,18 +827,19 @@ class PokemonInputDialog(tkinter.Toplevel):
         self._name_input.bind("<<submit>>", self.on_input_name)
         self._name_input.grid(row=0, column=0)
 
-        with open("stats/ranking.json", "r", encoding="utf-8") as ranking_json:
-            list = json.load(ranking_json)
+        with open("stats/ranking.txt", "r", encoding="utf-8") as ranking_json:
+            lines = ranking_json.readlines()
+            list = [line.rstrip("\n") for line in lines]
 
         pokes_frame = ttk.Frame(main_frame, padding=10)
         for i in range(100):
             row = int(i / 10)
             column = i % 10
 
-            no = list[i]["pid"].split("-")[0].lstrip("0")
+            no = list[i].split("-")[0].lstrip("0")
             form = (
-                list[i]["pid"].split("-")[1].lstrip("0")
-                if list[i]["pid"].split("-")[1].lstrip("0") != ""
+                list[i].split("-")[1].lstrip("0")
+                if list[i].split("-")[1].lstrip("0") != ""
                 else 0
             )
             pid = f"{no.lstrip('0')}-{form}"
