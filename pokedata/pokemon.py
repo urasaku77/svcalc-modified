@@ -614,6 +614,7 @@ class Pokemon:
             self.__form = next_form.__form
             self.__form_name = next_form.__form_name
             self.__syuzoku.set_values_from_stats(next_form.syuzoku)
+            self.__weight = next_form.__weight
             # self.__ability = next_form.ability
             # self.__type = list(next_form.type)
             self.statechanged()
