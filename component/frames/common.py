@@ -353,7 +353,7 @@ class ActivePokemonFrame(ttk.LabelFrame):
     def change_form(self):
         self._pokemon.form_change()
         self._pokemon_icon.set_pokemon_icon(pid=self._pokemon.pid, size=(60, 60))
-        self._status_frame.set(self._pokemon.status_text)
+        self._status_frame.update_pokemon(self._pokemon, False)
         self._stage.set_info(self._player)
         self._stage.calc_damage()
 
@@ -492,12 +492,13 @@ class StatusFrame(ttk.LabelFrame):
     def rank(self) -> Stats:
         return self._rank
 
-    def update_pokemon(self, poke: Pokemon):
+    def update_pokemon(self, poke: Pokemon, all=True):
         self._pokemon = poke
         self.set_stats()
-        self.change_all_doryoku_box(poke.doryoku)
-        self.change_all_rank_box(poke.rank)
-        self.on_kotai_check_change(poke.kotai)
+        if all:
+            self.change_all_doryoku_box(poke.doryoku)
+            self.change_all_rank_box(poke.rank)
+            self.on_kotai_check_change(poke.kotai)
 
     # ポケモン登録時に実数値を表示する
     def set_stats(self):

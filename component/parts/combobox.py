@@ -46,7 +46,9 @@ class AutoCompleteCombobox(MyCombobox):
         from database.pokemon import DB_pokemon
 
         return AutoCompleteCombobox(
-            master=master, suggest_values=DB_pokemon.get_pokemon_namelist(), **kwargs
+            master=master,
+            suggest_values=DB_pokemon.get_pokemon_namelist(form=True),
+            **kwargs,
         )
 
 
