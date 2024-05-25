@@ -485,14 +485,8 @@ class MainApp(ThemedTk):
     def open_records(self):
         dialog = record.Record()
         dialog.open()
-        self.withdraw()
-        self.wait_window(dialog)
-        return self.deiconify()
 
     # 対戦分析画面
     def open_analytics(self):
         dialog = analytics.Analytics()
         dialog.open()
-        self.withdraw()
-        self.wait_window(dialog)
-        return self.deiconify()

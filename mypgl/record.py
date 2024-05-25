@@ -41,7 +41,6 @@ class Record(tkinter.Toplevel):
         self.display_gui()
 
     def open(self):
-        self.grab_set()
         self.focus_set()
         self.geometry("1800x950")
 

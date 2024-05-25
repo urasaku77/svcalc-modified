@@ -48,7 +48,6 @@ class Analytics(tkinter.Toplevel):
             rank_label.place(x=Const.list2[i][1] - 40, y=Const.list2[i][2])
 
     def open(self):
-        self.grab_set()
         self.focus_set()
         self.geometry("1280x720")
 
