@@ -540,6 +540,10 @@ class Pokemon:
         self.item = item_data[0][0] if len(item_data) != 0 else "なし"
         seikaku_data = get_home_data(self.name, "./stats/home_seikaku.csv")
         self.seikaku = seikaku_data[0][0] if len(seikaku_data) != 0 else "まじめ"
+        teras_data = get_home_data(self.name, "./stats/home_terastal.csv")
+        self.terastype = (
+            Types.get(teras_data[0][0]) if len(teras_data) != 0 else Types.なし
+        )
 
     def set_default_doryoku_from_seikaku(self):
         doryoku = get_default_doryoku(self.seikaku, self.syuzoku)

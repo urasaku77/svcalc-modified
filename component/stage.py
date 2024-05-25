@@ -176,13 +176,13 @@ class Stage:
         pokemon = self._app.active_poke_frames[player]._pokemon
         if pokemon.is_empty:
             return
-        # テラスタイプの設定がある場合
-        if pokemon.terastype != Types.なし:
+        # 自分かつテラスタイプの設定がある場合
+        if player == 0 and pokemon.terastype != Types.なし:
             if pokemon.battle_terastype == Types.なし:
                 pokemon.battle_terastype = pokemon.terastype
             else:
                 pokemon.battle_terastype = Types.なし
-        # テラスタイプの設定がない場合、ダイアログ表示で選択する
+        # それ以外の場合、ダイアログ表示で選択する
         else:
             types: Types = self._app.select_type(player=player)
             if types is None:
