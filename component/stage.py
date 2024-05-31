@@ -40,7 +40,6 @@ class Stage:
                 self._app.party_frames[player].pokemon_list[index].no
             )
             if form != -1:
-                print(form)
                 self._app.party_frames[player].pokemon_list[index] = Pokemon.by_pid(
                     str(self._app.party_frames[player].pokemon_list[index].no)
                     + "-"

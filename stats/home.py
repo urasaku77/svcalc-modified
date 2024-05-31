@@ -6,6 +6,8 @@ import urllib.request
 
 import jaconv
 
+from pokedata.exception import unrecognizable_and_same_pokemon_in_home
+
 
 def get_pokemon_name_for_home(pokenum: str, p_detail_id: str) -> str:
     if pokenum == "26":
@@ -239,6 +241,13 @@ def get_pokemon_name_for_home(pokenum: str, p_detail_id: str) -> str:
             return "ランドロス(化身)"
         elif p_detail_id == "1":
             return "ランドロス(霊獣)"
+    elif pokenum == "646":
+        if p_detail_id == "0":
+            return "キュレム"
+        elif p_detail_id == "1":
+            return "ホワイトキュレム"
+        elif p_detail_id == "2":
+            return "ブラックキュレム"
     elif pokenum == "648":
         if p_detail_id == "0":
             return "メロエッタ(ボイス)"
@@ -285,6 +294,13 @@ def get_pokemon_name_for_home(pokenum: str, p_detail_id: str) -> str:
             return "ルガルガン(まよなか)"
         elif p_detail_id == "2":
             return "ルガルガン(たそがれ)"
+    elif pokenum == "800":
+        if p_detail_id == "0":
+            return "ネクロズマ"
+        elif p_detail_id == "1":
+            return "ネクロズマ(日食)"
+        elif p_detail_id == "2":
+            return "ネクロズマ(月食)"
     elif pokenum == "849":
         if p_detail_id == "0":
             return "ストリンダー(ハイ)"
@@ -477,6 +493,19 @@ class home:
                             waza["val"],
                         ]
                     )
+                    if name in unrecognizable_and_same_pokemon_in_home:
+                        writer.writerow(
+                            [
+                                name + "(王)",
+                                jaconv.z2h(
+                                    pokedex["waza"][waza["id"]],
+                                    kana=False,
+                                    digit=True,
+                                    ascii=True,
+                                ),
+                                waza["val"],
+                            ]
+                        )
 
             with open("stats/home_tokusei.csv", "a", encoding="utf-8") as tokusei_csv:
                 for tokusei in pdetail[pokenum][p_detail_id]["temoti"]["tokusei"]:
@@ -493,6 +522,19 @@ class home:
                             tokusei["val"],
                         ]
                     )
+                    if name in unrecognizable_and_same_pokemon_in_home:
+                        writer.writerow(
+                            [
+                                name + "(王)",
+                                jaconv.z2h(
+                                    pokedex["tokusei"][tokusei["id"]],
+                                    kana=False,
+                                    digit=True,
+                                    ascii=True,
+                                ),
+                                tokusei["val"],
+                            ]
+                        )
 
             with open("stats/home_seikaku.csv", "a", encoding="utf-8") as seikaku_csv:
                 for seikaku in pdetail[pokenum][p_detail_id]["temoti"]["seikaku"]:
@@ -509,6 +551,19 @@ class home:
                             seikaku["val"],
                         ]
                     )
+                    if name in unrecognizable_and_same_pokemon_in_home:
+                        writer.writerow(
+                            [
+                                name + "(王)",
+                                jaconv.z2h(
+                                    pokedex["seikaku"][seikaku["id"]],
+                                    kana=False,
+                                    digit=True,
+                                    ascii=True,
+                                ),
+                                seikaku["val"],
+                            ]
+                        )
 
             with open("stats/home_motimono.csv", "a", encoding="utf-8") as motimono_csv:
                 for motimono in pdetail[pokenum][p_detail_id]["temoti"]["motimono"]:
@@ -525,10 +580,28 @@ class home:
                             motimono["val"],
                         ]
                     )
+                    if name in unrecognizable_and_same_pokemon_in_home:
+                        writer.writerow(
+                            [
+                                name + "(王)",
+                                jaconv.z2h(
+                                    pokedex["itemname"][motimono["id"]],
+                                    kana=False,
+                                    digit=True,
+                                    ascii=True,
+                                ),
+                                motimono["val"],
+                            ]
+                        )
 
             with open("stats/home_terastal.csv", "a", encoding="utf-8") as terastal_csv:
                 for terastal in pdetail[pokenum][p_detail_id]["temoti"]["terastal"]:
                     teras = int(terastal["id"]) if int(terastal["id"]) != 99 else 18
                     writer = csv.writer(terastal_csv, lineterminator="\n")
                     writer.writerow([name, pokedex["pokeType"][teras], terastal["val"]])
+                    if name in unrecognizable_and_same_pokemon_in_home:
+                        writer.writerow(
+                            [name + "(王)", pokedex["pokeType"][teras], terastal["val"]]
+                        )
+
     print("CSV更新完了")

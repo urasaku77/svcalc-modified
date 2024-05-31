@@ -12,7 +12,10 @@ remove_pokemon_name_from_party = [
 base_names = ["イルカマン", "オーガポン", "テラパゴス"]
 
 # 選出画面で判別付かないポケモンリスト
-unrecognizable_pokemon = ["ウーラオス"]
+unrecognizable_pokemon = ["ウーラオス", "ザシアン", "ザマゼンタ"]
+
+# 選出画面で判別付かないポケモンでHOME上区別がないポケモン
+unrecognizable_and_same_pokemon_in_home = ["ザシアン", "ザマゼンタ"]
 
 
 def get_next_form(pid: str) -> Optional[str]:
