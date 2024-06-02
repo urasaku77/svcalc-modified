@@ -2,10 +2,12 @@
 import csv
 import json
 import os
+import sys
 import urllib.request
 
 import jaconv
 
+sys.path.append("../svcalc-modified")
 from pokedata.exception import unrecognizable_and_same_pokemon_in_home
 
 

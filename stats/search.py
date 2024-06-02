@@ -1,13 +1,15 @@
 import json
+import sys
 from functools import reduce
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
-# Pokemonクラスを読み込むとバッチファイルからうまく起動しないため省略している
+sys.path.append("../svcalc-modified")
+from pokedata.pokemon import Pokemon
 
 
-def get_similar_party(pids: list) -> list:
+def get_similar_party(pids: list[Pokemon]) -> list:
     all_urls = []
     undefines = []
     with open("stats/ranking.json", encoding="utf-8") as ranking_json:
