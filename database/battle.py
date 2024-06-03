@@ -6,6 +6,7 @@ from typing import Optional
 
 from component.frames.common import ChosenFrame, PartyFrame
 from component.frames.whole import RecordFrame
+from pokedata.exception import check_pokemon_form
 
 
 @dataclasses.dataclass
@@ -57,60 +58,24 @@ class Battle:
             record_frame.memo.get("1.0", "end-1c"),
             file.split("-")[0],
             file.split("-")[1].split("_")[0],
-            party_frames[0].pokemon_list[0].pid
-            if party_frames[0].pokemon_list[0].no != -1
-            else -1,
-            party_frames[0].pokemon_list[1].pid
-            if party_frames[0].pokemon_list[1].no != -1
-            else -1,
-            party_frames[0].pokemon_list[2].pid
-            if party_frames[0].pokemon_list[2].no != -1
-            else -1,
-            party_frames[0].pokemon_list[3].pid
-            if party_frames[0].pokemon_list[3].no != -1
-            else -1,
-            party_frames[0].pokemon_list[4].pid
-            if party_frames[0].pokemon_list[4].no != -1
-            else -1,
-            party_frames[0].pokemon_list[5].pid
-            if party_frames[0].pokemon_list[5].no != -1
-            else -1,
-            party_frames[1].pokemon_list[0].pid
-            if party_frames[1].pokemon_list[0].no != -1
-            else -1,
-            party_frames[1].pokemon_list[1].pid
-            if party_frames[1].pokemon_list[1].no != -1
-            else -1,
-            party_frames[1].pokemon_list[2].pid
-            if party_frames[1].pokemon_list[2].no != -1
-            else -1,
-            party_frames[1].pokemon_list[3].pid
-            if party_frames[1].pokemon_list[3].no != -1
-            else -1,
-            party_frames[1].pokemon_list[4].pid
-            if party_frames[1].pokemon_list[4].no != -1
-            else -1,
-            party_frames[1].pokemon_list[5].pid
-            if party_frames[1].pokemon_list[5].no != -1
-            else -1,
-            chosen_frames[0].pokemon_list[0].pid
-            if chosen_frames[0].pokemon_list[0].no != -1
-            else -1,
-            chosen_frames[0].pokemon_list[1].pid
-            if chosen_frames[0].pokemon_list[1].no != -1
-            else -1,
-            chosen_frames[0].pokemon_list[2].pid
-            if chosen_frames[0].pokemon_list[2].no != -1
-            else -1,
-            chosen_frames[1].pokemon_list[0].pid
-            if chosen_frames[1].pokemon_list[0].no != -1
-            else -1,
-            chosen_frames[1].pokemon_list[1].pid
-            if chosen_frames[1].pokemon_list[1].no != -1
-            else -1,
-            chosen_frames[1].pokemon_list[2].pid
-            if chosen_frames[1].pokemon_list[2].no != -1
-            else -1,
+            check_pokemon_form(party_frames[0].pokemon_list[0].pid),
+            check_pokemon_form(party_frames[0].pokemon_list[1].pid),
+            check_pokemon_form(party_frames[0].pokemon_list[2].pid),
+            check_pokemon_form(party_frames[0].pokemon_list[3].pid),
+            check_pokemon_form(party_frames[0].pokemon_list[4].pid),
+            check_pokemon_form(party_frames[0].pokemon_list[5].pid),
+            check_pokemon_form(party_frames[1].pokemon_list[0].pid),
+            check_pokemon_form(party_frames[1].pokemon_list[1].pid),
+            check_pokemon_form(party_frames[1].pokemon_list[2].pid),
+            check_pokemon_form(party_frames[1].pokemon_list[3].pid),
+            check_pokemon_form(party_frames[1].pokemon_list[4].pid),
+            check_pokemon_form(party_frames[1].pokemon_list[5].pid),
+            check_pokemon_form(chosen_frames[0].pokemon_list[0].pid),
+            check_pokemon_form(chosen_frames[0].pokemon_list[1].pid),
+            check_pokemon_form(chosen_frames[0].pokemon_list[2].pid),
+            check_pokemon_form(chosen_frames[1].pokemon_list[0].pid),
+            check_pokemon_form(chosen_frames[1].pokemon_list[1].pid),
+            check_pokemon_form(chosen_frames[1].pokemon_list[2].pid),
         )
 
 
