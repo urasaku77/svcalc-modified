@@ -11,6 +11,7 @@ stats/season.txt
 stats/party_members.json
 party/csv/*
 party/txt/*
+party/table/*
 party/setting.txt
 recog/outputImg/*
 bat/
