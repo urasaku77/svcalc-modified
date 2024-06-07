@@ -87,9 +87,9 @@ class Stage:
         terastype: Types = None,
         waza: tuple[int, str] = None,
         waza_effect: int = None,
-        critical: bool = False,
-        ailment: Ailments = Ailments.なし,
-        charging: bool = False,
+        critical: bool = None,
+        ailment: Ailments = None,
+        charging: bool = None,
         is_same: bool = False,
     ):
         pokemon = self._app.active_poke_frames[player]._pokemon
@@ -145,14 +145,12 @@ class Stage:
             self.set_waza_effect(player, wazabase)
         if ailment is not None:
             pokemon.ailment = ailment
-            self._app.set_active_pokemon(player, pokemon)
         if critical is not None:
             for w in pokemon.waza_list:
                 if w is not None:
                     w.critical = critical
         if charging is not None:
             pokemon.charging = charging
-            self._app.set_active_pokemon(player, pokemon)
 
         self.calc_damage()
 
