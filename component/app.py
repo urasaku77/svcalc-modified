@@ -362,6 +362,8 @@ class MainApp(ThemedTk):
         self.chosen_frames[1].on_push_clear_button()
         self.timer_frame.reset_button_clicked()
         self.counter_frame.clear_all_counters()
+        self.weather_frame.reset_weather()
+        self.field_frame.reset_field()
 
     # キャプチャ設定画面
     def capture_setting(self):

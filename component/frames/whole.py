@@ -37,6 +37,10 @@ class WeatherFrame(ttk.LabelFrame):
     def change_weather(self, *args):
         self._stage.change_weather(self._weather_combobox.get())
 
+    def reset_weather(self, *args):
+        self._weather_combobox.set(WEATHER_COMBOBOX_VALUES[0])
+        self._stage.change_weather(WEATHER_COMBOBOX_VALUES[0])
+
 
 # フィールドフレーム
 class FieldFrame(ttk.LabelFrame):
@@ -56,6 +60,10 @@ class FieldFrame(ttk.LabelFrame):
 
     def change_field(self, *args):
         self._stage.change_field(self._field_combobox.get())
+
+    def reset_field(self, *args):
+        self._field_combobox.set(FIELD_COMBOBOX_VALUES[0])
+        self._stage.change_field(FIELD_COMBOBOX_VALUES[0])
 
 
 # 比較ボタン
