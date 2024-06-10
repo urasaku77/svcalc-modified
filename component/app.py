@@ -298,9 +298,28 @@ class MainApp(ThemedTk):
     def set_active_pokemon(self, player: int, pokemon: Pokemon):
         self.active_poke_frames[player].set_pokemon(pokemon)
         self._waza_damage_frames[player].set_waza_info(pokemon.waza_list)
+        self.after_appear(pokemon)
         if player == 1:
             self._waza_damage_frames[player].set_waza_rate(pokemon.waza_rate_list)
             self.home_frame.set_home_data(pokemon.name)
+
+    def after_appear(self, pokemon: Pokemon):
+        if pokemon.name in ["カバルドン", "バンギラス"]:
+            self.weather_frame.change_weather_from_ability("砂嵐")
+        elif pokemon.name in ["コライドン", "グラードン", "コータス", "キュウコン"]:
+            self.weather_frame.change_weather_from_ability("晴れ")
+        elif pokemon.name in ["カイオーガ", "ペリッパー", "ニョロトノ"]:
+            self.weather_frame.change_weather_from_ability("雨")
+        elif pokemon.name in ["アローラキュウコン", "ユキノオー"]:
+            self.weather_frame.change_weather_from_ability("雪")
+        elif pokemon.name in ["ミライドン", "バチンウニ"]:
+            self.field_frame.change_field_from_ability("エレキ")
+        elif pokemon.name in ["ゴリランダー", "バチンキー"]:
+            self.field_frame.change_field_from_ability("グラス")
+        elif pokemon.name in ["ミライドン", "バチンウニ"]:
+            self.field_frame.change_field_from_ability("エレキ")
+        elif pokemon.name in ["イエッサン♂", "イエッサン♀"]:
+            self.field_frame.change_field_from_ability("サイコ")
 
     # ダメージ計算
     def set_calc_results(self, player: int, results):

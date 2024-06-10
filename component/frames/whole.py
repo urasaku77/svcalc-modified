@@ -37,6 +37,10 @@ class WeatherFrame(ttk.LabelFrame):
     def change_weather(self, *args):
         self._stage.change_weather(self._weather_combobox.get())
 
+    def change_weather_from_ability(self, weather: str, *args):
+        self._stage.change_weather(weather)
+        self._weather_combobox.set(weather)
+
     def reset_weather(self, *args):
         self._weather_combobox.set(WEATHER_COMBOBOX_VALUES[0])
         self._stage.change_weather(WEATHER_COMBOBOX_VALUES[0])
@@ -60,6 +64,10 @@ class FieldFrame(ttk.LabelFrame):
 
     def change_field(self, *args):
         self._stage.change_field(self._field_combobox.get())
+
+    def change_field_from_ability(self, field: str, *args):
+        self._stage.change_field(field)
+        self._field_combobox.set(field)
 
     def reset_field(self, *args):
         self._field_combobox.set(FIELD_COMBOBOX_VALUES[0])
