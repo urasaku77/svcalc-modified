@@ -284,6 +284,7 @@ class DamageCalc:
                 if field == Fields.サイコ:
                     power = 120
             case "テラバースト":
+                power = 80
                 if attacker.battle_terastype == Types.ステラ:
                     power = 100
             case _:
