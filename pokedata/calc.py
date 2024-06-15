@@ -454,6 +454,14 @@ class DamageCalc:
             case "ソーラービーム" | "ソーラーブレード":
                 if weather in [Weathers.雨, Weathers.砂嵐, Weathers.雪]:
                     hosei[key] = 2048
+            case "アクセルブレイク" | "イナズマドライブ":
+                if (
+                    defender.get_type_effective(
+                        waza, attacker.ability, defender.battle_terastype
+                    )
+                    == 2.0
+                ):
+                    hosei[key] = 5461
             case "ワイドフォース":
                 if field == Fields.サイコ and not attacker.is_flying:
                     hosei[key] = 6144
@@ -818,8 +826,6 @@ class DamageCalc:
             case "スナイパー":
                 if waza.critical and attacker.ability_enable:
                     hosei[key] = 6144
-            case "アクセルブレイク" | "イナズマドライブ":
-                pass  # 弱点突いたら1.33倍
             case "いろめがね":
                 if type_effective < 1.0:
                     hosei[key] = 8192
