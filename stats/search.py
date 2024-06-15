@@ -30,13 +30,11 @@ def get_similar_party(pids: list[Pokemon]) -> list:
 
     all_party = []
     if len(undefines) == 0:
-        print(f"見つかった個数：{len(list(results))}個")
         for result in list(results):
             if get_party_members(result) is not None:
                 all_party.append(get_party_members(result))
     else:
         result_undefines = (set(undefines[0]) | set(undefines[1])) & results
-        print(f"見つかった個数：{len(list(result_undefines))}個")
         for result_undefine in list(result_undefines):
             if get_party_members(result_undefine) is not None:
                 all_party.append(get_party_members(result_undefine))
@@ -122,7 +120,6 @@ class Search:
             num = 0
             while page_flag:
                 num = num + 1
-                print(num)
                 driver.get(
                     f"https://sv.pokedb.tokyo/trainer/list?season={str(int(season) - 1)}&rule=0&name=&party=1&page={num}"
                 )
