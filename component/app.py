@@ -1,3 +1,4 @@
+import copy
 import dataclasses
 import json
 import tkinter
@@ -37,6 +38,7 @@ from mypgl import analytics, record
 from party.party import PartyEditor
 from pokedata.const import Types
 from pokedata.pokemon import Pokemon
+from pokedata.stats import StatsKey
 from recog.capture import Capture
 from stats.search import get_similar_party
 
@@ -296,14 +298,15 @@ class MainApp(ThemedTk):
 
     # ポケモン選択
     def set_active_pokemon(self, player: int, pokemon: Pokemon):
+        change_flag = self.active_poke_frames[player]._pokemon.no == pokemon.no
         self.active_poke_frames[player].set_pokemon(pokemon)
         self._waza_damage_frames[player].set_waza_info(pokemon.waza_list)
-        self.after_appear(pokemon)
         if player == 1:
             self._waza_damage_frames[player].set_waza_rate(pokemon.waza_rate_list)
-            self.home_frame.set_home_data(pokemon.name)
+            if not change_flag:
+                self.home_frame.set_home_data(pokemon.name)
 
-    def after_appear(self, pokemon: Pokemon):
+    def after_appear(self, pokemon: Pokemon, player: int):
         if pokemon.name in ["カバルドン", "バンギラス"]:
             self.weather_frame.change_weather_from_ability("砂嵐")
         elif pokemon.name in ["コライドン", "グラードン", "コータス", "キュウコン"]:
@@ -320,6 +323,19 @@ class MainApp(ThemedTk):
             self.field_frame.change_field_from_ability("エレキ")
         elif pokemon.name in ["イエッサン♂", "イエッサン♀"]:
             self.field_frame.change_field_from_ability("サイコ")
+        elif pokemon.name == "メタモン":
+            after_ditto = (
+                copy.deepcopy(self.active_poke_frames[1]._pokemon)
+                if player == 0
+                else copy.deepcopy(self.active_poke_frames[0]._pokemon)
+            )
+            after_ditto.syuzoku.__setitem__(StatsKey.H, 48)
+            after_ditto.doryoku.__setitem__(StatsKey.H, 252)
+            self.active_poke_frames[player].set_pokemon(after_ditto)
+            if player == 1:
+                self._waza_damage_frames[player].set_waza_info(
+                    self.active_poke_frames[0]._pokemon.waza_list
+                )
 
     # ダメージ計算
     def set_calc_results(self, player: int, results):

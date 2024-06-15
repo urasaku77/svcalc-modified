@@ -55,7 +55,6 @@ class Stage:
                 self.calc_damage()
 
     def set_active_pokemon(self, player: int, pokemon: Pokemon):
-        self._app.active_poke_frames[player]._pokemon = pokemon
         self._app.set_active_pokemon(player=player, pokemon=pokemon)
 
         # JSONファイルから設定値を読み取り
@@ -67,6 +66,8 @@ class Stage:
 
         if self.setting_data["active_chosen_auto"] and player == 1:
             self.set_chosen(1)
+
+        self._app.after_appear(pokemon, player)
 
     def on_activepokemon_statechanged(self):
         pass
@@ -123,11 +124,13 @@ class Stage:
                 pokemon.item = ""
             else:
                 pokemon.item = item
+            self._app.set_active_pokemon(player, pokemon)
         if ability is not None:
             if is_same and pokemon.ability == ability:
                 pokemon.ability = ""
             else:
                 pokemon.ability = ability
+            self._app.set_active_pokemon(player, pokemon)
         if ability_value is not None:
             pokemon.ability_value = ability_value
         if wall is not None:
@@ -137,6 +140,7 @@ class Stage:
                 pokemon.battle_terastype = Types.なし
             else:
                 pokemon.battle_terastype = terastype
+            self._app.set_active_pokemon(player, pokemon)
         if waza is not None:
             pokemon.set_waza(waza_name=waza[1], index=waza[0])
             self._app.set_active_pokemon(player, pokemon)
