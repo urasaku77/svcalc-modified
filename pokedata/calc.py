@@ -848,7 +848,8 @@ class DamageCalc:
                     if waza.is_touch:
                         hosei["もふもふ(接触)"] = 2048
                 case "マルチスケイル" | "ファントムガード":
-                    hosei[key] = 2048
+                    if defender.ability_enable:
+                        hosei[key] = 2048
                 case "パンクロック":
                     if waza.name in DamageCalc.__sound_moves:
                         hosei[key] = 2048
