@@ -582,7 +582,7 @@ class DamageCalc:
             case "トランジスタ":
                 if waza.type == DamageCalc.__type_buff_abilities[attacker.ability]:
                     hosei[key] = 5325
-            case "ハイドロエンジン":
+            case "ハドロンエンジン":
                 if waza.category == 特殊 and field == Fields.エレキ:
                     hosei[key] = 5461
             case "ひひいろのこどう":
