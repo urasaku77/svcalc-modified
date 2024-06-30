@@ -913,10 +913,27 @@ class DB_battle:
         return from_date, to_date
 
     @staticmethod
-    def __select(sql: str) -> list:
+    def record_search_full(pokelist: list[str]):
+        paramList = tuple(pokelist)
+        sql = "SELECT * FROM battle WHERE opponent_pokemon1=? AND opponent_pokemon2=? AND opponent_pokemon3=? AND opponent_pokemon4=? AND opponent_pokemon5=? AND opponent_pokemon6 =?;"
+        result = DB_battle.__select(sql, paramList)
+        return result
+
+    @staticmethod
+    def record_search(pokelist: list[str]):
+        paramList = tuple(pokelist)
+        sql_full = "SELECT * FROM battle WHERE opponent_pokemon1=? AND opponent_pokemon2=? AND opponent_pokemon3=? AND opponent_pokemon4=? AND opponent_pokemon5=? AND opponent_pokemon6 =?;"
+        result_full = DB_battle.__select(sql_full, paramList)
+        sql_all = "SELECT * FROM battle WHERE (opponent_pokemon1 IN (?, ?, ?, ?, ?, ?)) AND (opponent_pokemon2 IN (?, ?, ?, ?, ?, ?)) AND (opponent_pokemon3 IN (?, ?, ?, ?, ?, ?)) AND (opponent_pokemon4 IN (?, ?, ?, ?, ?, ?)) AND (opponent_pokemon5 IN (?, ?, ?, ?, ?, ?)) AND (opponent_pokemon6 IN (?, ?, ?, ?, ?, ?)) AND (SELECT COUNT(DISTINCT col) FROM (SELECT opponent_pokemon1 AS col FROM battle UNION ALL SELECT opponent_pokemon2 AS col FROM battle UNION ALL SELECT opponent_pokemon3 AS col FROM battle UNION ALL SELECT opponent_pokemon4 AS col FROM battle UNION ALL SELECT opponent_pokemon5 AS col FROM battle UNION ALL SELECT opponent_pokemon6 AS col FROM battle) AS subquery WHERE col IN (?, ?, ?, ?, ?, ?)) = 6;"
+        result_all = DB_battle.__select(sql_all, paramList * 7)
+        # 完全一致のレコードを削除
+        return [item for item in result_all if item not in result_full]
+
+    @staticmethod
+    def __select(sql: str, param: tuple = ()) -> list:
         result = []
         cur = DB_battle.__db.cursor()
-        cur.execute(sql)
+        cur.execute(sql, param)
         for row in cur:
             result.append(row)
         return result

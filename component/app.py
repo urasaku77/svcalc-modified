@@ -202,11 +202,15 @@ class MainApp(ThemedTk):
         self.record_frame.grid(row=8, column=0, columnspan=3, sticky=N + E + W + S)
         self.record_frame.grid_propagate(False)
 
+        # 最終メニューフレーム
+        last_menu_frame = ttk.Frame(master=main_frame, width=150, height=55, padding=5)
+        last_menu_frame.grid(row=9, column=0, columnspan=3, sticky=N + W + S)
+
         # 制御フレーム
         control_frame = ttk.LabelFrame(
-            master=main_frame, text="制御", width=150, height=55, padding=5
+            master=last_menu_frame, text="制御", width=150, height=55, padding=5
         )
-        control_frame.grid(row=9, column=0, columnspan=3, sticky=N + E + W + S)
+        control_frame.pack(fill="both", expand=0, side="left")
 
         # Websocket接続ボタン
         self.websocket_var = tkinter.StringVar()
@@ -221,7 +225,7 @@ class MainApp(ThemedTk):
 
         # キャプチャ監視ボタン
         self.monitor_var = tkinter.StringVar()
-        self.monitor_var.set("キャプチャ監視開始")
+        self.monitor_var.set("監視開始")
         self.monitor_button = MyButton(
             control_frame,
             textvariable=self.monitor_var,
@@ -233,17 +237,31 @@ class MainApp(ThemedTk):
         # 手動キャプチャボタン
         self.shot_button = MyButton(
             control_frame,
-            text="選出画面キャプチャ",
+            text="選出画面取得",
             command=self.manual_capture,
             state=tkinter.DISABLED,
         )
         self.shot_button.pack(fill="both", expand=0, side="left")
 
+        # 検索フレーム
+        search_frame = ttk.LabelFrame(
+            master=last_menu_frame, text="類似パーティ", width=150, height=55, padding=5
+        )
+        search_frame.pack(fill="both", expand=0, side="left")
+
         # 類似パーティ検索ボタン
         self.search_button = MyButton(
-            control_frame,
-            text="類似パーティ検索",
+            search_frame,
+            text="構築記事から",
             command=self.search_similar_party,
+        )
+        self.search_button.pack(fill="both", expand=0, side="left")
+
+        # 対戦履歴から検索ボタン
+        self.search_button = MyButton(
+            search_frame,
+            text="対戦履歴から",
+            command=self.search_record,
         )
         self.search_button.pack(fill="both", expand=0, side="left")
 
@@ -461,10 +479,15 @@ class MainApp(ThemedTk):
                     with open("recog/setting.json", "r") as json_file:
                         self.setting_data = json.load(json_file)
                 except FileNotFoundError:
-                    self.setting_data = {"similar_party_auto": False}
+                    self.setting_data = {
+                        "similar_party_auto": False,
+                        "search_record_auto": False,
+                    }
 
                 if self.setting_data["similar_party_auto"]:
                     self.search_similar_party(isOpen=False)
+                if self.setting_data["search_record_auto"]:
+                    self.search_record(isOpen=False)
 
             case list():
                 if result != [-1, -1, -1]:
@@ -509,6 +532,19 @@ class MainApp(ThemedTk):
         if isOpen or party_list:
             dialog = SimilarParty(current_party=current_party, party_list=party_list)
             dialog.open(location=(self.winfo_x(), self.winfo_y()))
+
+    # 対戦履歴から検索
+    def search_record(self, isOpen: bool = True):
+        current_party = [pokemon.pid for pokemon in self.party_frames[1].pokemon_list]
+        dialog = record.ListRecord()
+        if (
+            isOpen
+            or len(dialog.full_frame.get_battle_data(current_party)) > 0
+            or len(dialog.part_frame.get_battle_data(current_party)) > 0
+        ):
+            dialog.full_frame.get_battle_data(current_party)
+            dialog.part_frame.get_battle_data(current_party)
+            dialog.open()
 
     # フォーム選択画面
     def form_select(self, no: int):

@@ -735,6 +735,7 @@ class ModeSetting(tkinter.Toplevel):
                 "capture_monitor_auto": True,
                 "doryoku_reset_auto": True,
                 "similar_party_auto": False,
+                "search_record_auto": False,
                 "panipani_auto": True,
             }
 
@@ -771,12 +772,22 @@ class ModeSetting(tkinter.Toplevel):
         self.similar_party_auto_var.set(self.initial_data["similar_party_auto"])
         self.similar_party_auto_checkbox = tkinter.Checkbutton(
             self,
-            text="類似パーティ自動検索モード",
+            text="類似パーティ自動検索モード（構築記事）",
             variable=self.similar_party_auto_var,
         )
         self.similar_party_auto_checkbox.grid(row=3, column=0, columnspan=2, pady=5)
 
         # チェックボックス5
+        self.search_record_auto_var = tkinter.BooleanVar()
+        self.search_record_auto_var.set(self.initial_data["search_record_auto"])
+        self.search_record_auto_checkbox = tkinter.Checkbutton(
+            self,
+            text="類似パーティ自動検索モード（対戦履歴）",
+            variable=self.search_record_auto_var,
+        )
+        self.search_record_auto_checkbox.grid(row=4, column=0, columnspan=2, pady=5)
+
+        # チェックボックス6
         self.panipani_auto_var = tkinter.BooleanVar()
         self.panipani_auto_var.set(self.initial_data["panipani_auto"])
         self.panipani_auto_checkbox = tkinter.Checkbutton(
@@ -784,14 +795,14 @@ class ModeSetting(tkinter.Toplevel):
             text="ぱにぱにツール自動起動モード",
             variable=self.panipani_auto_var,
         )
-        self.panipani_auto_checkbox.grid(row=4, column=0, columnspan=2, pady=5)
+        self.panipani_auto_checkbox.grid(row=5, column=0, columnspan=2, pady=5)
 
         self.submit_button = MyButton(self, text="保存", command=self.submit_form)
-        self.submit_button.grid(row=5, column=0, pady=10)
+        self.submit_button.grid(row=6, column=0, pady=10)
         self.cancel_button = MyButton(
             self, text="キャンセル", command=self.on_push_button
         )
-        self.cancel_button.grid(row=5, column=1, pady=10)
+        self.cancel_button.grid(row=6, column=1, pady=10)
 
     def open(self, location=tuple[int, int]):
         self.grab_set()
@@ -805,6 +816,7 @@ class ModeSetting(tkinter.Toplevel):
             "capture_monitor_auto": self.capture_monitor_auto_var.get(),
             "doryoku_reset_auto": self.doryoku_reset_auto_var.get(),
             "similar_party_auto": self.similar_party_auto_var.get(),
+            "search_record_auto": self.search_record_auto_var.get(),
             "panipani_auto": self.panipani_auto_var.get(),
         }
 
@@ -848,7 +860,7 @@ class FormSelect(tkinter.Toplevel):
         self.destroy()
 
 
-# フォーム選択画面
+# 類似パーティ検索結果画面
 class SimilarParty(tkinter.Toplevel):
     def __init__(
         self,

@@ -3,5 +3,6 @@
   "capture_monitor_auto": true,
   "doryoku_reset_auto": true,
   "similar_party_auto": false,
+  "search_record_auto": false,
   "panipani_auto": true
 }
