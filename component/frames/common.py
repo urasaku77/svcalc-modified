@@ -405,13 +405,27 @@ class StatusFrame(ttk.LabelFrame):
             )
             self.memo_btn.grid(column=0, row=0)
 
-        for i, text in enumerate(["実数値", "努力値", "ランク"]):
-            label = MyLabel(self, text=text)
-            label.grid(column=0, row=i + 1, padx=5)
+        jissu_label = MyLabel(self, text="実数値")
+        jissu_label.grid(column=0, row=1, padx=2)
+
+        doryoku_label = tkinter.Button(
+            self, text="努力値", command=lambda: self.on_push_doryoku_clear_button()
+        )
+        doryoku_label.grid(column=0, row=2, padx=2)
+
+        rank_label = tkinter.Button(
+            self, text="ランク", command=self.on_push_rank_clear_button
+        )
+        rank_label.grid(column=0, row=3, padx=2)
 
         for i, statskey in enumerate([x for x in StatsKey]):
-            label = ttk.Label(self, text=statskey.name, anchor=tkinter.CENTER)
-            label.grid(column=i + 1, row=0, padx=2, sticky=W + E)
+            label = tkinter.Button(
+                self,
+                text=statskey.name,
+                anchor=tkinter.CENTER,
+                command=lambda statskey=statskey: self.on_kotai_value_change(statskey),
+            )
+            label.grid(column=i + 1, row=0, padx=2)
 
             stats_value = tkinter.IntVar()
             stats_value.set(0)
@@ -446,42 +460,6 @@ class StatusFrame(ttk.LabelFrame):
                 )
                 rank_spin.grid(column=i + 1, row=3, padx=2, pady=3)
                 self._rank_spinbox_dict[statskey] = rank_spin
-
-        self.a0 = tkinter.BooleanVar()
-        self.a0_check = tkinter.Checkbutton(
-            self,
-            text="A0",
-            variable=self.a0,
-            command=self.on_kotai_value_change,
-        )
-        self.a0.set(False)
-        self.a0_check.grid(column=7, row=0, columnspan=2, sticky=W)
-
-        self.s0 = tkinter.BooleanVar()
-        self.s0_check = tkinter.Checkbutton(
-            self,
-            text="S0",
-            variable=self.s0,
-            command=self.on_kotai_value_change,
-        )
-        self.s0.set(False)
-        self.s0_check.grid(column=7, row=1, columnspan=2, sticky=W)
-
-        doryoku_clear_btn = MyButton(
-            master=self,
-            image=images.get_menu_icon("trush"),
-            padding=0,
-            command=lambda: self.on_push_doryoku_clear_button(),
-        )
-        doryoku_clear_btn.grid(column=7, row=2)
-
-        rank_clear_btn = MyButton(
-            master=self,
-            image=images.get_menu_icon("trush"),
-            padding=0,
-            command=self.on_push_rank_clear_button,
-        )
-        rank_clear_btn.grid(column=7, row=3)
 
     def set_stage(self, stage: Stage):
         self._stage = stage
@@ -524,13 +502,13 @@ class StatusFrame(ttk.LabelFrame):
             self.s0.set(False)
 
     # 個体値のチェックボックス更新時処理
-    def on_kotai_value_change(self):
-        kotai = Stats(31)
-        if self.a0.get():
-            kotai[StatsKey.A] = 0
-        if self.s0.get():
-            kotai[StatsKey.S] = 0
-        self._stage.set_value_to_active_pokemon(self._player, kotai=kotai)
+    def on_kotai_value_change(self, key: StatsKey):
+        if self._pokemon.kotai.__getitem__(key) != 0:
+            self._pokemon.kotai.__setitem__(key, 0)
+        else:
+            self._pokemon.kotai.__setitem__(key, 31)
+        print(self._pokemon.kotai.__getitem__(key))
+        self._stage.set_value_to_active_pokemon(self._player, kotai=self._pokemon.kotai)
 
     # 努力値Spinbox直接入力時処理（Enter押下後起動）
     def on_change_doryoku_spin(self, *args):

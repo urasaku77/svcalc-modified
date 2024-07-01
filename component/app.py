@@ -99,7 +99,7 @@ class MainApp(ThemedTk):
             info_frame = InfoFrame(
                 master=main_frame,
                 player=i,
-                width=480,
+                width=475,
                 height=105,
                 text=side + "基本情報",
             )
@@ -111,7 +111,7 @@ class MainApp(ThemedTk):
             poke_frame = ActivePokemonFrame(
                 master=main_frame,
                 player=i,
-                width=480,
+                width=475,
                 height=213,
                 text=side + "ポケモン",
             )
@@ -121,7 +121,7 @@ class MainApp(ThemedTk):
 
         # 技・ダメージ表示フレーム(自分)
         waza_frame_my = WazaDamageListFrame(
-            master=main_frame, index=0, width=480, height=60, text="自分わざ情報"
+            master=main_frame, index=0, width=475, height=60, text="自分わざ情報"
         )
         waza_frame_my.grid(row=4, column=0, columnspan=3, sticky=N + W + S)
         waza_frame_my.grid_propagate(False)
@@ -129,7 +129,7 @@ class MainApp(ThemedTk):
 
         # 技・ダメージ表示フレーム(相手)
         waza_frame_your = WazaDamageListFrame(
-            master=main_frame, index=1, width=480, height=320, text="相手わざ情報"
+            master=main_frame, index=1, width=475, height=320, text="相手わざ情報"
         )
         waza_frame_your.grid(row=4, column=3, rowspan=2, columnspan=3, sticky=N + E + S)
         waza_frame_your.grid_propagate(False)
@@ -137,13 +137,13 @@ class MainApp(ThemedTk):
 
         # HOME情報フレーム
         self.home_frame = HomeFrame(
-            master=main_frame, width=480, height=258, text="HOME情報"
+            master=main_frame, width=475, height=258, text="HOME情報"
         )
         self.home_frame.grid(row=6, column=3, rowspan=4, columnspan=3, sticky=N + E + S)
         self.home_frame.grid_propagate(False)
 
         # ツールフレーム（タイマー・カウンター・共通）
-        tool_frame = ttk.Frame(main_frame, width=150, height=55, padding=7)
+        tool_frame = ttk.Frame(main_frame, width=150, height=55, padding=4)
         tool_frame.grid(row=5, column=0, rowspan=3, sticky=N + W + S)
         tool_frame.grid_propagate(False)
 
@@ -198,13 +198,13 @@ class MainApp(ThemedTk):
 
         # 対戦記録フレーム
         self.record_frame = RecordFrame(
-            master=main_frame, width=480, height=203, text="対戦記録"
+            master=main_frame, width=474, height=203, text="対戦記録"
         )
         self.record_frame.grid(row=8, column=0, columnspan=3, sticky=N + W + S)
         self.record_frame.grid_propagate(False)
 
         # 最終メニューフレーム
-        last_menu_frame = ttk.Frame(master=main_frame, width=150, height=55, padding=7)
+        last_menu_frame = ttk.Frame(master=main_frame, width=150, height=55, padding=4)
         last_menu_frame.grid(row=9, column=0, columnspan=3, sticky=N + W + S)
 
         # 制御フレーム
