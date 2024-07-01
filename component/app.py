@@ -48,6 +48,8 @@ class MainApp(ThemedTk):
         super().__init__(theme="arc", **kwargs)
         self.title("SV Auto Damage Calculator")
         self.iconbitmap(default="image/favicon.ico")
+        self.isTransport = False
+
         self.capture = Capture()
         self.websocket = False
         self.monitor = False
@@ -60,7 +62,6 @@ class MainApp(ThemedTk):
 
         # メインフレーム
         main_frame = tkinter.Frame(self, bg="gray97")
-        self.bind("<Configure>", self.on_configure)
         main_frame.grid(row=0, column=0, sticky=N + E + W + S)
 
         menu = tkinter.Menu(self)
@@ -70,6 +71,7 @@ class MainApp(ThemedTk):
         menu.add_cascade(label="パーティ編集", command=self.edit_party_csv)
         menu.add_cascade(label="対戦履歴", command=self.open_records)
         menu.add_cascade(label="対戦分析", command=self.open_analytics)
+        menu.add_cascade(label="透明化", command=self.change_transport)
 
         for i, side in enumerate(["自分側", "相手側"]):
             sticky = N + W + S if side == "自分側" else N + E + S
@@ -565,17 +567,9 @@ class MainApp(ThemedTk):
         dialog = analytics.Analytics()
         dialog.open()
 
-    def on_configure(self, event):
-        # 画面の幅と高さを取得
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
-
-        # ウィンドウの幅と高さを取得
-        window_width = self.winfo_width()
-        window_height = self.winfo_height()
-
-        # ウィンドウが最大化されたかどうかをチェック
-        if window_width >= screen_width and window_height >= screen_height - 200:
+    def change_transport(self):
+        if self.isTransport:
             self.attributes("-transparentcolor", "gray97")
         else:
             self.attributes("-transparentcolor", "")
+        self.isTransport = not self.isTransport
