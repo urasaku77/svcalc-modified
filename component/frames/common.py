@@ -478,7 +478,6 @@ class StatusFrame(ttk.LabelFrame):
         if all:
             self.change_all_doryoku_box(poke.doryoku)
             self.change_all_rank_box(poke.rank)
-            self.on_kotai_check_change(poke.kotai)
 
     # ポケモン登録時に実数値を表示する
     def set_stats(self):
@@ -490,24 +489,12 @@ class StatusFrame(ttk.LabelFrame):
         for i in range(len(self.stats)):
             self._stats_value_list[i].set(self.stats[i])
 
-    # ポケモン登録時に個体値のチェックボックスを更新する
-    def on_kotai_check_change(self, kotai: Stats):
-        if kotai[StatsKey.A] == 0:
-            self.a0.set(True)
-        else:
-            self.a0.set(False)
-        if kotai[StatsKey.S] == 0:
-            self.s0.set(True)
-        else:
-            self.s0.set(False)
-
     # 個体値のチェックボックス更新時処理
     def on_kotai_value_change(self, key: StatsKey):
         if self._pokemon.kotai.__getitem__(key) != 0:
             self._pokemon.kotai.__setitem__(key, 0)
         else:
             self._pokemon.kotai.__setitem__(key, 31)
-        print(self._pokemon.kotai.__getitem__(key))
         self._stage.set_value_to_active_pokemon(self._player, kotai=self._pokemon.kotai)
 
     # 努力値Spinbox直接入力時処理（Enter押下後起動）
