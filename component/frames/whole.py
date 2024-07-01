@@ -186,7 +186,7 @@ class TimerFrame(ttk.LabelFrame):
         self.button_text.set("スタート")
 
         self.bg = tkinter.StringVar()
-        self.canvas_time = tkinter.Canvas(self, width=140, height=70, bg="lightgreen")
+        self.canvas_time = tkinter.Canvas(self, width=130, height=70, bg="lightgreen")
         self.canvas_time.grid(column=0, row=0, columnspan=2)
 
         start_button = tkinter.Button(
@@ -299,7 +299,7 @@ class CounterFrame(tkinter.Canvas):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
 
-        self.name_label = tkinter.Entry(self, width=15)
+        self.name_label = tkinter.Entry(self, width=7)
         self.name_label.grid(column=0, row=0, columnspan=3)
         self.count_num = tkinter.IntVar()
         self.count_num.set(0)
@@ -317,7 +317,7 @@ class CounterFrame(tkinter.Canvas):
         self.btn_count_down.grid(column=0, row=2)
 
         self.btn_count_reset = tkinter.Button(
-            self, text="リセット", command=self.CountReset, height=2
+            self, text="0", command=self.CountReset, height=2
         )
         self.btn_count_reset.grid(column=1, row=2)
 
@@ -384,7 +384,7 @@ class RecordFrame(ttk.LabelFrame):
 
         self.memo_lbl = MyLabel(self, text="メモ")
         self.memo_lbl.grid(column=0, row=2)
-        self.memo = ScrolledText(self, font=("", 15), height=6, width=45)
+        self.memo = ScrolledText(self, font=("", 15), height=6, width=41)
         self.memo.grid(column=1, row=2, columnspan=4, sticky=N + E + W + S)
 
         self.favo = tkinter.BooleanVar()

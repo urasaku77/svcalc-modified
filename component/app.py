@@ -59,7 +59,8 @@ class MainApp(ThemedTk):
         self._waza_damage_frames: list[WazaDamageListFrame] = []
 
         # メインフレーム
-        main_frame = ttk.Frame(self, padding=5)
+        main_frame = tkinter.Frame(self, bg="gray97")
+        self.bind("<Configure>", self.on_configure)
         main_frame.grid(row=0, column=0, sticky=N + E + W + S)
 
         menu = tkinter.Menu(self)
@@ -71,35 +72,38 @@ class MainApp(ThemedTk):
         menu.add_cascade(label="対戦分析", command=self.open_analytics)
 
         for i, side in enumerate(["自分側", "相手側"]):
+            sticky = N + W + S if side == "自分側" else N + E + S
+            # パーティ＆選出フレーム
+            top_frame = ttk.Frame(master=main_frame, width=500, height=60, padding=5)
+            top_frame.grid(row=0, column=i * 3, rowspan=2, columnspan=3, sticky=sticky)
+            top_frame.grid_propagate(False)
             # パーティ表示フレーム
             party_frame = PartyFrame(
-                master=main_frame,
+                master=top_frame,
                 player=i,
                 width=350,
                 height=60,
                 text=side + "パーティ",
             )
-            party_frame.grid(row=1, column=i * 3, columnspan=2, sticky=N + E + W + S)
-            party_frame.grid_propagate(False)
+            party_frame.pack(fill="both", expand=0, side="left")
             self.party_frames.append(party_frame)
 
             # 選出表示フレーム
             chosen_frame = ChosenFrame(
-                master=main_frame, player=i, width=180, height=60, text=side + "選出"
+                master=top_frame, player=i, width=180, height=60, text=side + "選出"
             )
-            chosen_frame.grid(row=1, column=i * 3 + 2, sticky=N + E + W + S)
-            chosen_frame.grid_propagate(False)
+            chosen_frame.pack(fill="both", expand=0, side="left")
             self.chosen_frames.append(chosen_frame)
 
             # 選択ポケモン基本情報表示フレーム
             info_frame = InfoFrame(
                 master=main_frame,
                 player=i,
-                width=530,
+                width=480,
                 height=105,
                 text=side + "基本情報",
             )
-            info_frame.grid(row=2, column=i * 3, columnspan=3, sticky=N + E + W + S)
+            info_frame.grid(row=2, column=i * 3, columnspan=3, sticky=sticky)
             info_frame.grid_propagate(False)
             self._info_frames.append(info_frame)
 
@@ -107,44 +111,41 @@ class MainApp(ThemedTk):
             poke_frame = ActivePokemonFrame(
                 master=main_frame,
                 player=i,
-                width=530,
+                width=480,
                 height=213,
                 text=side + "ポケモン",
             )
-            poke_frame.grid(row=3, column=i * 3, columnspan=3, sticky=N + E + W + S)
+            poke_frame.grid(row=3, column=i * 3, columnspan=3, sticky=sticky)
             poke_frame.grid_propagate(False)
             self.active_poke_frames.append(poke_frame)
 
         # 技・ダメージ表示フレーム(自分)
         waza_frame_my = WazaDamageListFrame(
-            master=main_frame, index=0, width=530, height=60, text="自分わざ情報"
+            master=main_frame, index=0, width=480, height=60, text="自分わざ情報"
         )
-        waza_frame_my.grid(row=4, column=0, columnspan=3, sticky=N + E + W + S)
+        waza_frame_my.grid(row=4, column=0, columnspan=3, sticky=N + W + S)
         waza_frame_my.grid_propagate(False)
         self._waza_damage_frames.append(waza_frame_my)
 
         # 技・ダメージ表示フレーム(相手)
         waza_frame_your = WazaDamageListFrame(
-            master=main_frame, index=1, width=530, height=320, text="相手わざ情報"
+            master=main_frame, index=1, width=480, height=320, text="相手わざ情報"
         )
-        waza_frame_your.grid(
-            row=4, column=3, rowspan=2, columnspan=3, sticky=N + E + W + S
-        )
+        waza_frame_your.grid(row=4, column=3, rowspan=2, columnspan=3, sticky=N + E + S)
         waza_frame_your.grid_propagate(False)
         self._waza_damage_frames.append(waza_frame_your)
 
         # HOME情報フレーム
         self.home_frame = HomeFrame(
-            master=main_frame, width=530, height=258, text="HOME情報"
+            master=main_frame, width=480, height=258, text="HOME情報"
         )
-        self.home_frame.grid(
-            row=6, column=3, rowspan=4, columnspan=3, sticky=N + E + W + S
-        )
+        self.home_frame.grid(row=6, column=3, rowspan=4, columnspan=3, sticky=N + E + S)
         self.home_frame.grid_propagate(False)
 
         # ツールフレーム（タイマー・カウンター・共通）
-        tool_frame = ttk.Frame(main_frame)
-        tool_frame.grid(row=5, column=0, rowspan=3, columnspan=3, sticky=N + E + W)
+        tool_frame = ttk.Frame(main_frame, width=150, height=55, padding=7)
+        tool_frame.grid(row=5, column=0, rowspan=3, sticky=N + W + S)
+        tool_frame.grid_propagate(False)
 
         # タイマーフレーム
         self.timer_frame = TimerFrame(master=tool_frame, text="タイマー")
@@ -197,13 +198,13 @@ class MainApp(ThemedTk):
 
         # 対戦記録フレーム
         self.record_frame = RecordFrame(
-            master=main_frame, width=530, height=203, text="対戦記録"
+            master=main_frame, width=480, height=203, text="対戦記録"
         )
-        self.record_frame.grid(row=8, column=0, columnspan=3, sticky=N + E + W + S)
+        self.record_frame.grid(row=8, column=0, columnspan=3, sticky=N + W + S)
         self.record_frame.grid_propagate(False)
 
         # 最終メニューフレーム
-        last_menu_frame = ttk.Frame(master=main_frame, width=150, height=55, padding=5)
+        last_menu_frame = ttk.Frame(master=main_frame, width=150, height=55, padding=7)
         last_menu_frame.grid(row=9, column=0, columnspan=3, sticky=N + W + S)
 
         # 制御フレーム
@@ -237,7 +238,7 @@ class MainApp(ThemedTk):
         # 手動キャプチャボタン
         self.shot_button = MyButton(
             control_frame,
-            text="選出画面取得",
+            text="選出取得",
             command=self.manual_capture,
             state=tkinter.DISABLED,
         )
@@ -252,7 +253,7 @@ class MainApp(ThemedTk):
         # 類似パーティ検索ボタン
         self.search_button = MyButton(
             search_frame,
-            text="構築記事から",
+            text="構築記事",
             command=self.search_similar_party,
         )
         self.search_button.pack(fill="both", expand=0, side="left")
@@ -260,7 +261,7 @@ class MainApp(ThemedTk):
         # 対戦履歴から検索ボタン
         self.search_button = MyButton(
             search_frame,
-            text="対戦履歴から",
+            text="対戦履歴",
             command=self.search_record,
         )
         self.search_button.pack(fill="both", expand=0, side="left")
@@ -563,3 +564,18 @@ class MainApp(ThemedTk):
     def open_analytics(self):
         dialog = analytics.Analytics()
         dialog.open()
+
+    def on_configure(self, event):
+        # 画面の幅と高さを取得
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+
+        # ウィンドウの幅と高さを取得
+        window_width = self.winfo_width()
+        window_height = self.winfo_height()
+
+        # ウィンドウが最大化されたかどうかをチェック
+        if window_width >= screen_width and window_height >= screen_height - 200:
+            self.attributes("-transparentcolor", "gray97")
+        else:
+            self.attributes("-transparentcolor", "")
