@@ -273,7 +273,7 @@ class TimerFrame(ttk.LabelFrame):
     def update_min_text(self):
         self.canvas_time.delete("min_text")  # 表示時間（分）を消去
         self.canvas_time.create_text(
-            71,
+            74,
             38,
             text=str(self.left_min).zfill(2) + ":",
             font=("MSゴシック体", "36", "bold"),
@@ -285,7 +285,7 @@ class TimerFrame(ttk.LabelFrame):
     def update_sec_text(self):
         self.canvas_time.delete("sec_text")  # 表示時間（秒）を消去
         self.canvas_time.create_text(
-            80,
+            76,
             38,
             text=str(self.left_sec).zfill(2),
             font=("MSゴシック体", "36", "bold"),
