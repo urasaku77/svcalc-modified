@@ -153,14 +153,16 @@ class Search:
                             else 0
                         )
                         urls.append(f"{no.lstrip('0')}-{form}")
+
+                    elements = trainer_classes[i].find_elements(
+                        By.XPATH,
+                        ".//a[@class='icon-text is-hidden-mobile is-flex is-flex-direction-column is-align-items-center is-justify-content-center link-team-article']",
+                    )
                     ranking_list.append(
                         {
-                            "url": trainer_classes[i]
-                            .find_element(
-                                By.XPATH,
-                                ".//a[@class='icon-text is-hidden-mobile is-flex is-flex-direction-column is-align-items-center is-justify-content-center link-team-article']",
-                            )
-                            .get_attribute("href"),
+                            "url": elements[0].get_attribute("href")
+                            if len(elements) > 0
+                            else "",
                             "icons": urls,
                         }
                     )
