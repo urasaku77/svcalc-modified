@@ -111,7 +111,7 @@ class HomeFrame(ttk.LabelFrame):
             elif i == 1:
                 tree.column(self._type[i][0], width=74)
             else:
-                tree.column(self._type[i][0], width=60)
+                tree.column(self._type[i][0], width=45)
             tree.column("%", width=22)
             # 列の見出し設定
             tree.heading("No", text="No")
@@ -384,7 +384,7 @@ class RecordFrame(ttk.LabelFrame):
 
         self.memo_lbl = MyLabel(self, text="メモ")
         self.memo_lbl.grid(column=0, row=2)
-        self.memo = ScrolledText(self, font=("", 15), height=6, width=41)
+        self.memo = ScrolledText(self, font=("", 15), height=4, width=41)
         self.memo.grid(column=1, row=2, columnspan=4, sticky=N + E + W + S)
 
         self.favo = tkinter.BooleanVar()

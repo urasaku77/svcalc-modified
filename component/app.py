@@ -48,7 +48,7 @@ class MainApp(ThemedTk):
         super().__init__(theme="arc", **kwargs)
         self.title("SV Auto Damage Calculator")
         self.iconbitmap(default="image/favicon.ico")
-        self.isTransport = False
+        self.geometry("950x915")
 
         self.capture = Capture()
         self.websocket = False
@@ -62,6 +62,7 @@ class MainApp(ThemedTk):
 
         # メインフレーム
         main_frame = tkinter.Frame(self, bg="gray97")
+        self.bind("<Configure>", self.on_change_transport)
         main_frame.grid(row=0, column=0, sticky=N + E + W + S)
 
         menu = tkinter.Menu(self)
@@ -71,7 +72,6 @@ class MainApp(ThemedTk):
         menu.add_cascade(label="パーティ編集", command=self.edit_party_csv)
         menu.add_cascade(label="対戦履歴", command=self.open_records)
         menu.add_cascade(label="対戦分析", command=self.open_analytics)
-        menu.add_cascade(label="透明化", command=self.change_transport)
 
         for i, side in enumerate(["自分側", "相手側"]):
             sticky = N + W + S if side == "自分側" else N + E + S
@@ -102,7 +102,7 @@ class MainApp(ThemedTk):
                 master=main_frame,
                 player=i,
                 width=475,
-                height=105,
+                height=80,
                 text=side + "基本情報",
             )
             info_frame.grid(row=2, column=i * 3, columnspan=3, sticky=sticky)
@@ -131,7 +131,7 @@ class MainApp(ThemedTk):
 
         # 技・ダメージ表示フレーム(相手)
         waza_frame_your = WazaDamageListFrame(
-            master=main_frame, index=1, width=475, height=320, text="相手わざ情報"
+            master=main_frame, index=1, width=475, height=313, text="相手わざ情報"
         )
         waza_frame_your.grid(row=4, column=3, rowspan=2, columnspan=3, sticky=N + E + S)
         waza_frame_your.grid_propagate(False)
@@ -200,14 +200,14 @@ class MainApp(ThemedTk):
 
         # 対戦記録フレーム
         self.record_frame = RecordFrame(
-            master=main_frame, width=474, height=203, text="対戦記録"
+            master=main_frame, width=474, height=157, text="対戦記録"
         )
         self.record_frame.grid(row=8, column=0, columnspan=3, sticky=N + W + S)
         self.record_frame.grid_propagate(False)
 
         # 最終メニューフレーム
-        last_menu_frame = ttk.Frame(master=main_frame, width=150, height=55, padding=4)
-        last_menu_frame.grid(row=9, column=0, columnspan=3, sticky=N + W + S)
+        last_menu_frame = ttk.Frame(master=main_frame, width=150, height=30, padding=4)
+        last_menu_frame.grid(row=9, column=0, columnspan=3, sticky=N + W)
 
         # 制御フレーム
         control_frame = ttk.LabelFrame(
@@ -567,9 +567,9 @@ class MainApp(ThemedTk):
         dialog = analytics.Analytics()
         dialog.open()
 
-    def change_transport(self):
-        if self.isTransport:
+    def on_change_transport(self, event):
+        # ウィンドウが最大化されたかどうかをチェック
+        if self.winfo_width() >= 1200:
             self.attributes("-transparentcolor", "gray97")
         else:
             self.attributes("-transparentcolor", "")
-        self.isTransport = not self.isTransport
