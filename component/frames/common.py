@@ -768,24 +768,6 @@ class InfoFrame(ttk.LabelFrame):
             text.grid(column=i * 2 + 1, row=1)
             self.syuzoku[statskey] = value
 
-        self.ketaguri_label = ttk.Label(
-            self, text=" けたぐりの威力： ", font=(const.FONT_FAMILY, 11)
-        )
-        self.ketaguri_label.grid(column=0, row=2, columnspan=7, sticky=E)
-        self.ketaguri = tkinter.StringVar()
-        self.ketaguri.set("")
-        self.ketaguri_text = ttk.Label(
-            self, textvariable=self.ketaguri, font=(const.FONT_FAMILY, 11, "bold")
-        )
-        self.ketaguri_text.grid(column=7, row=2, columnspan=1, sticky=W)
-
-        self.weight = tkinter.StringVar()
-        self.weight.set("")
-        self.weight_text = ttk.Label(
-            self, textvariable=self.weight, font=(const.FONT_FAMILY, 11)
-        )
-        self.weight_text.grid(column=8, row=2, columnspan=8, sticky=W)
-
         buttons = ttk.Frame(self)
         self.poketetsu_button = MyButton(
             buttons,
@@ -822,20 +804,6 @@ class InfoFrame(ttk.LabelFrame):
             )
             for _i, statskey in enumerate([x for x in StatsKey]):
                 self.syuzoku[statskey].set(pokemon.syuzoku[statskey])
-
-            self.weight.set("(重さ：" + str(pokemon.weight) + " kg )")
-            if pokemon.weight < 10:
-                self.ketaguri.set("20")
-            elif pokemon.weight < 25:
-                self.ketaguri.set("40")
-            elif pokemon.weight < 50:
-                self.ketaguri.set("60")
-            elif pokemon.weight < 100:
-                self.ketaguri.set("80")
-            elif pokemon.weight < 200:
-                self.ketaguri.set("100")
-            else:
-                self.ketaguri.set("120")
 
     def open_poketetsu(self):
         if self._no != 0:
