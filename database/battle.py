@@ -6,7 +6,7 @@ from typing import Optional
 
 from component.frames.common import ChosenFrame, PartyFrame
 from component.frames.whole import RecordFrame
-from pokedata.exception import check_pokemon_form
+from pokedata.exception import check_pokemon_form, unrecognizable_pokemon_no
 
 
 @dataclasses.dataclass
@@ -916,16 +916,51 @@ class DB_battle:
     def record_search_full(pokelist: list[str]):
         paramList = tuple(pokelist)
         sql = "SELECT * FROM battle WHERE opponent_pokemon1=? AND opponent_pokemon2=? AND opponent_pokemon3=? AND opponent_pokemon4=? AND opponent_pokemon5=? AND opponent_pokemon6 =?;"
-        result = DB_battle.__select(sql, paramList)
-        return result
+        result1 = DB_battle.__select(sql, paramList)
+
+        for no in unrecognizable_pokemon_no:
+            if str(no) + "-0" in pokelist or str(no) + "-1" in pokelist:
+                paramList = (
+                    [
+                        str(no) + "-1" if item == str(no) + "-0" else item
+                        for item in pokelist
+                    ]
+                    if str(no) + "-0" in pokelist
+                    else [
+                        str(no) + "-0" if item == str(no) + "-1" else item
+                        for item in pokelist
+                    ]
+                )
+                result2 = DB_battle.__select(sql, paramList)
+                result1.extend(result2)
+
+        return list(set(result1))
 
     @staticmethod
     def record_search(pokelist: list[str]):
         paramList = tuple(pokelist)
-        sql_full = "SELECT * FROM battle WHERE opponent_pokemon1=? AND opponent_pokemon2=? AND opponent_pokemon3=? AND opponent_pokemon4=? AND opponent_pokemon5=? AND opponent_pokemon6 =?;"
-        result_full = DB_battle.__select(sql_full, paramList)
-        sql_all = "SELECT * FROM battle WHERE (opponent_pokemon1 IN (?, ?, ?, ?, ?, ?)) AND (opponent_pokemon2 IN (?, ?, ?, ?, ?, ?)) AND (opponent_pokemon3 IN (?, ?, ?, ?, ?, ?)) AND (opponent_pokemon4 IN (?, ?, ?, ?, ?, ?)) AND (opponent_pokemon5 IN (?, ?, ?, ?, ?, ?)) AND (opponent_pokemon6 IN (?, ?, ?, ?, ?, ?)) AND (SELECT COUNT(DISTINCT col) FROM (SELECT opponent_pokemon1 AS col FROM battle UNION ALL SELECT opponent_pokemon2 AS col FROM battle UNION ALL SELECT opponent_pokemon3 AS col FROM battle UNION ALL SELECT opponent_pokemon4 AS col FROM battle UNION ALL SELECT opponent_pokemon5 AS col FROM battle UNION ALL SELECT opponent_pokemon6 AS col FROM battle) AS subquery WHERE col IN (?, ?, ?, ?, ?, ?)) = 6;"
-        result_all = DB_battle.__select(sql_all, paramList * 7)
+        result_full = DB_battle.record_search_full(pokelist)
+
+        sql = "SELECT * FROM battle WHERE (opponent_pokemon1 IN (?, ?, ?, ?, ?, ?)) AND (opponent_pokemon2 IN (?, ?, ?, ?, ?, ?)) AND (opponent_pokemon3 IN (?, ?, ?, ?, ?, ?)) AND (opponent_pokemon4 IN (?, ?, ?, ?, ?, ?)) AND (opponent_pokemon5 IN (?, ?, ?, ?, ?, ?)) AND (opponent_pokemon6 IN (?, ?, ?, ?, ?, ?)) AND (SELECT COUNT(DISTINCT col) FROM (SELECT opponent_pokemon1 AS col FROM battle UNION ALL SELECT opponent_pokemon2 AS col FROM battle UNION ALL SELECT opponent_pokemon3 AS col FROM battle UNION ALL SELECT opponent_pokemon4 AS col FROM battle UNION ALL SELECT opponent_pokemon5 AS col FROM battle UNION ALL SELECT opponent_pokemon6 AS col FROM battle) AS subquery WHERE col IN (?, ?, ?, ?, ?, ?)) = 6;"
+        result_all_1 = DB_battle.__select(sql, paramList * 7)
+
+        for no in unrecognizable_pokemon_no:
+            if str(no) + "-0" in pokelist or str(no) + "-1" in pokelist:
+                paramList = (
+                    [
+                        str(no) + "-1" if item == str(no) + "-0" else item
+                        for item in pokelist
+                    ]
+                    if str(no) + "-0" in pokelist
+                    else [
+                        str(no) + "-0" if item == str(no) + "-1" else item
+                        for item in pokelist
+                    ]
+                )
+                result_all_2 = DB_battle.__select(sql, paramList * 7)
+                result_all_1.extend(result_all_2)
+
+        result_all = list(set(result_all_1))
         # 完全一致のレコードを削除
         return [item for item in result_all if item not in result_full]
 

@@ -18,6 +18,9 @@ base_names = ["イルカマン", "オーガポン", "テラパゴス"]
 # 選出画面で判別付かないポケモンリスト
 unrecognizable_pokemon = ["ウーラオス", "ザシアン", "ザマゼンタ"]
 
+# 選出画面で判別付かないポケモン+途中で姿が変わるポケモンの番号
+unrecognizable_pokemon_no = [888, 889, 892, 964, 1024]
+
 # 選出画面で判別付かないポケモンでHOME上区別がないポケモン
 unrecognizable_and_same_pokemon_in_home = ["ザシアン", "ザマゼンタ"]
 
