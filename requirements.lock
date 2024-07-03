@@ -7,6 +7,7 @@
 #   all-features: false
 
 -e file:.
+altgraph==0.17.4
 attrs==23.2.0
 certifi==2024.2.2
 cffi==1.16.0
@@ -18,13 +19,18 @@ msgpack==1.0.7
 numpy==1.26.3
 opencv-python==4.9.0.80
 outcome==1.3.0.post0
+packaging==24.0
 pandas==2.1.4
+pefile==2023.2.7
 pillow==10.2.0
 pycparser==2.21
+pyinstaller==6.7.0
+pyinstaller-hooks-contrib==2024.6
 pyocr==0.8.5
 pysocks==1.7.1
 python-dateutil==2.8.2
 pytz==2023.3.post1
+pywin32-ctypes==0.2.2
 selenium==4.17.2
 simpleobsws==1.4.0
 six==1.16.0
@@ -38,3 +44,5 @@ tzdata==2023.4
 urllib3==2.2.0
 websockets==12.0
 wsproto==1.2.0
+# The following packages are considered to be unsafe in a requirements file:
+setuptools==70.0.0
