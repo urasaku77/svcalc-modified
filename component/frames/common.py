@@ -396,14 +396,13 @@ class StatusFrame(ttk.LabelFrame):
         self.is_rank.set(True)
         self.is_rank__check.grid(column=1, row=3, sticky=W + E)
 
-        if player == 0:
-            self.memo_btn = MyButton(
-                master=self,
-                image=images.get_menu_icon("load"),
-                padding=0,
-                command=self.show_memo,
-            )
-            self.memo_btn.grid(column=0, row=0)
+        memo_btn = MyButton(
+            master=self,
+            image=images.get_menu_icon("load"),
+            padding=0,
+            command=self.show_pokemon_memo if player == 0 else self.show_party_memo,
+        )
+        memo_btn.grid(column=0, row=0)
 
         jissu_label = MyLabel(self, text="実数値")
         jissu_label.grid(column=0, row=1, padx=2)
@@ -561,10 +560,24 @@ class StatusFrame(ttk.LabelFrame):
                 "steel blue" if value < 0 else ""
             )
 
-    def show_memo(self):
+    def show_pokemon_memo(self):
         dialog = PokemonMemoLabelDialog()
         dialog.open(self._pokemon.memo, location=(self.winfo_x(), self.winfo_y()))
         self.wait_window(dialog)
+
+    def show_party_memo(self):
+        from party.party import PokemonMemoInputDialog
+        from pokedata.loader import get_party_csv
+
+        party_file = get_party_csv().replace("csv", "txt")
+        memo = ""
+
+        with open(party_file, "r") as txt:
+            memo = txt.read()
+            txt.close()
+
+        dialog = PokemonMemoInputDialog()
+        dialog.open(memo=memo, location=(self.winfo_x(), self.winfo_y()))
 
 
 # 技・ダメージ表示リストフレーム
