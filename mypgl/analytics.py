@@ -1,4 +1,5 @@
 import datetime
+import re
 import tkinter
 
 from PIL import Image, ImageTk
@@ -25,6 +26,7 @@ class Analytics(tkinter.Toplevel):
         self.party_num = 0
         self.party_subnum = 0
 
+        self.kp_list = []
         self.pokemon_list = []
         self.result_1_list = []
         self.result_2_list = []
@@ -249,9 +251,8 @@ class Analytics(tkinter.Toplevel):
             )
             self.record_count = DB_battle.count_record(self.from_date, self.to_date)
             self.win_count = DB_battle.count_win(self.from_date, self.to_date)
-        self.display_result_1()
-        self.display_result_2()
-        self.display_image()
+        self.kp_list = list(self.pokemon_list)
+        self.change_sort_condition()
         self.record_count_label = tkinter.Label(
             self,
             text="対戦数：" + str(self.record_count[0]),
@@ -343,10 +344,17 @@ class Analytics(tkinter.Toplevel):
             )
         )
 
+        name_order_dict = {name: index for index, name in enumerate(self.kp_list)}
         if self.sort_condition_var.get() == 0:
-            new_result_list.sort(key=lambda x: x[1], reverse=self.sort_line_var.get())
+            new_result_list.sort(
+                key=lambda x: (x[1], x[2], name_order_dict[x[0]]),
+                reverse=self.sort_line_var.get(),
+            )
         elif self.sort_condition_var.get() == 1:
-            new_result_list.sort(key=lambda x: x[2], reverse=self.sort_line_var.get())
+            new_result_list.sort(
+                key=lambda x: (x[2], x[1], name_order_dict[x[0]]),
+                reverse=self.sort_line_var.get(),
+            )
 
         self.pokemon_list = [item[0] for item in new_result_list]
         self.result_1_list = [item[1] for item in new_result_list]
@@ -357,7 +365,6 @@ class Analytics(tkinter.Toplevel):
         self.display_image()
 
     def change_mode(self):
-        self.delete_result()
         if self.title_var.get() == "ＫＰと勝率":
             self.title_var.set("選出と勝率")
             self.result_1_list = (
@@ -461,10 +468,7 @@ class Analytics(tkinter.Toplevel):
                     self.party_subnum,
                 )
             )
-
-        self.display_result_1()
-        self.display_result_2()
-        self.display_image()
+        self.change_sort_condition()
 
     def display_party_detail(self):
         party_canvas = tkinter.Canvas(self, width=350, height=600)
@@ -674,3 +678,14 @@ class Analytics(tkinter.Toplevel):
             for win_rate_label in self.result_2_label_list:
                 win_rate_label.destroy()
                 self.win_rate_label = []
+
+    def zero_pad_number(self, s):
+        # 正規表現で最初の数字部分を抽出
+        match = re.match(r"(\d{1,4})-\d", s)
+        if match:
+            number = match.group(1)
+            # 4桁に0埋め
+            padded_number = number.zfill(4)
+            # 元の文字列と置換
+            return s.replace(number, padded_number, 1)
+        return s
