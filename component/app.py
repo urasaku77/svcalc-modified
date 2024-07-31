@@ -50,8 +50,6 @@ class MainApp(ThemedTk):
         self.title("SV Auto Damage Calculator")
         if sys.platform == "win32":
             self.iconbitmap(default="image/favicon.ico")
-        else:
-            self.iconbitmap(default="@/image/favicon.xbm")
         self.geometry("950x915")
 
         self.capture = Capture()
