@@ -1,6 +1,7 @@
 import copy
 import dataclasses
 import json
+import sys
 import tkinter
 from tkinter import E, N, S, W, messagebox, ttk
 
@@ -47,7 +48,10 @@ class MainApp(ThemedTk):
     def __init__(self, **kwargs):
         super().__init__(theme="arc", **kwargs)
         self.title("SV Auto Damage Calculator")
-        self.iconbitmap(default="image/favicon.ico")
+        if sys.platform == "win32":
+            self.iconbitmap(default="image/favicon.ico")
+        else:
+            self.iconbitmap(default="image/favicon.xbm")
         self.geometry("950x915")
 
         self.capture = Capture()
