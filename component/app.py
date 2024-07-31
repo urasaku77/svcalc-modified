@@ -51,7 +51,7 @@ class MainApp(ThemedTk):
         if sys.platform == "win32":
             self.iconbitmap(default="image/favicon.ico")
         else:
-            self.iconbitmap(default="image/favicon.xbm")
+            self.iconbitmap(default="@/image/favicon.xbm")
         self.geometry("950x915")
 
         self.capture = Capture()
