@@ -687,11 +687,13 @@ class EvEditor(ttk.Frame):
         self._ev_min_button = tkinter.Button(
             self, text="0", command=lambda: self.set_value(0, True)
         )
+        self._ev_min_button["takefocus"] = False
         self._ev_min_button.pack(side="left")
 
         self._ev_count_down = tkinter.Button(
             self, text="↓", command=lambda: self.set_value(-4, False)
         )
+        self._ev_count_down["takefocus"] = False
         self._ev_count_down.pack(side="left")
 
         self._ev_entry = ModifiedEntry(
@@ -706,11 +708,13 @@ class EvEditor(ttk.Frame):
         self._ev_count_up = tkinter.Button(
             self, text="↑", command=lambda: self.set_value(4, False)
         )
+        self._ev_count_up["takefocus"] = False
         self._ev_count_up.pack(side="left")
 
         self._ev_max_button = tkinter.Button(
             self, text="252", command=lambda: self.set_value(252, True)
         )
+        self._ev_max_button["takefocus"] = False
         self._ev_max_button.pack(side="left")
 
     def set_value(self, value: int, override: bool):
@@ -766,11 +770,13 @@ class IvEditor(ttk.Frame):
         self._iv_min_button = tkinter.Button(
             self, text="0", command=lambda: self.set_value(0, True)
         )
+        self._iv_min_button["takefocus"] = False
         self._iv_min_button.pack(side="left")
 
         self._iv_count_down = tkinter.Button(
             self, text="↓", command=lambda: self.set_value(-1, False)
         )
+        self._iv_count_down["takefocus"] = False
         self._iv_count_down.pack(side="left")
 
         self._iv_entry = ModifiedEntry(
@@ -785,11 +791,13 @@ class IvEditor(ttk.Frame):
         self._iv_count_up = tkinter.Button(
             self, text="↑", command=lambda: self.set_value(1, False)
         )
+        self._iv_count_up["takefocus"] = False
         self._iv_count_up.pack(side="left")
 
         self._iv_max_button = tkinter.Button(
             self, text="31", command=lambda: self.set_value(31, True)
         )
+        self._iv_max_button["takefocus"] = False
         self._iv_max_button.pack(side="left")
 
     def set_value(self, value: int, override: bool):

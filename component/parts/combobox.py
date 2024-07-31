@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import Event, ttk
 
 import jaconv
 
@@ -84,6 +84,12 @@ class ModifiedEntry(tk.Entry):
         self.value.trace_add("write", self.var_changed)
         # EntryとStringVarを紐づけ。
         self.configure(textvariable=self.value)
+        # フォーカス時に全選択
+        self.bind("<FocusIn>", self.select_all)
+        # フォーカスされていたら解除
+        self.bind("<Button-1>", self.clear_selection)
+        # Enterを押したら次のウィジェットへ
+        self.bind("<Return>", self.focus_next_widget)
 
     # argsにはtrace発生元のVarの_nameが入っている
     # argsのnameと内包StringVarの_nameが一致したらイベントを発生させる。
@@ -91,3 +97,15 @@ class ModifiedEntry(tk.Entry):
         if args[0] == self.value._name:
             s = self.value.get()
             self.event_generate("<<TextModified>>")
+
+    def select_all(self, event: Event, *args):
+        event.widget.select_range(0, tk.END)
+        event.widget.icursor(tk.END)
+
+    def clear_selection(self, event: Event, *args):
+        event.widget.icursor(tk.END)
+        event.widget.select_clear()
+
+    def focus_next_widget(self, event: Event, *args):
+        event.widget.tk_focusNext().focus()
+        return "break"
