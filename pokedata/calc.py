@@ -296,86 +296,101 @@ class DamageCalc:
 
         # region 攻撃側の特性補正
         key: str = "攻撃特性:" + attacker.ability
-        match attacker.ability:
-            case (
-                "エレキスキン"
-                | "スカイスキン"
-                | "フェアリースキン"
-                | "フリーズスキン"
-            ):
-                if waza.type == Types.ノーマル:
-                    waza.type = DamageCalc.__skin_abilities[attacker.ability]
-                    hosei[key] = 4915
-            case "ノーマルスキン":
-                if waza.type != Types.ノーマル:
-                    waza.type = Types.ノーマル
-                    hosei[key] = 4915
-            case "てつのこぶし":
-                if waza.name in DamageCalc.__punch_moves:
-                    hosei[key] = 4915
-            case "すてみ":
-                if waza.name in DamageCalc.__recoil_moves:
-                    hosei[key] = 4915
-            case "ちからずく":
-                if waza.has_effect:
-                    hosei[key] = 5325
-            case "すなのちから":
-                if (
-                    waza.type in [Types.じめん, Types.いわ, Types.はがね]
-                    and weather == Weathers.砂嵐
+        if defender.ability != "かがくへんかガス":
+            match attacker.ability:
+                case (
+                    "エレキスキン"
+                    | "スカイスキン"
+                    | "フェアリースキン"
+                    | "フリーズスキン"
                 ):
-                    hosei[key] = 5325
-            case "アナライズ":
-                if attacker.ability_enable:
-                    hosei[key] = 5325
-            case "かたいツメ":
-                if waza.is_touch:
-                    hosei[key] = 5325
-            case "パンクロック":
-                if waza.name in DamageCalc.__sound_moves:
-                    hosei[key] = 4915
-            case "フェアリーオーラ":
-                if waza.type == Types.フェアリー:
-                    hosei[key] = 3072 if defender.ability == "オーラブレイク" else 5448
-            case "ダークオーラ":
-                if waza.type == Types.あく:
-                    hosei[key] = 3072 if defender.ability == "オーラブレイク" else 5448
-            case "きれあじ":
-                if waza.name in DamageCalc.__slash_moves:
-                    hosei[key] = 6144
-            case "テクニシャン":
-                if waza.power <= 60:
-                    hosei[key] = 6144
-            case "ねつぼうそう":
-                if waza.category == 特殊 and attacker.ability_enable:
-                    hosei[key] = 6144
-            case "どくぼうそう":
-                if waza.category == 物理 and attacker.ability_enable:
-                    hosei[key] = 6144
-            case "がんじょうあご":
-                if waza.name in DamageCalc.__fung_moves:
-                    hosei[key] = 6144
-            case "メガランチャー":
-                if waza.name in DamageCalc.__blast_moves:
-                    hosei[key] = 6144
-            case "はがねのせいしん":
-                if waza.type == Types.はがね:
-                    hosei[key] = 6144
-            case "そうだいしょう":
-                value = attacker.ability_value
-                if len(value) > 0:
-                    hosei[key] = DamageCalc.__soudaisyou_values[attacker.ability_value]
-            case "とうそうしん":
-                value = attacker.ability_value
-                if len(value) > 0:
-                    hosei[key] = DamageCalc.__tousoushin_values[attacker.ability_value]
+                    if waza.type == Types.ノーマル:
+                        waza.type = DamageCalc.__skin_abilities[attacker.ability]
+                        hosei[key] = 4915
+                case "ノーマルスキン":
+                    if waza.type != Types.ノーマル:
+                        waza.type = Types.ノーマル
+                        hosei[key] = 4915
+                case "てつのこぶし":
+                    if waza.name in DamageCalc.__punch_moves:
+                        hosei[key] = 4915
+                case "すてみ":
+                    if waza.name in DamageCalc.__recoil_moves:
+                        hosei[key] = 4915
+                case "ちからずく":
+                    if waza.has_effect:
+                        hosei[key] = 5325
+                case "すなのちから":
+                    if (
+                        waza.type in [Types.じめん, Types.いわ, Types.はがね]
+                        and weather == Weathers.砂嵐
+                    ):
+                        hosei[key] = 5325
+                case "アナライズ":
+                    if attacker.ability_enable:
+                        hosei[key] = 5325
+                case "かたいツメ":
+                    if waza.is_touch:
+                        hosei[key] = 5325
+                case "パンクロック":
+                    if waza.name in DamageCalc.__sound_moves:
+                        hosei[key] = 4915
+                case "フェアリーオーラ":
+                    if waza.type == Types.フェアリー:
+                        hosei[key] = (
+                            3072 if defender.ability == "オーラブレイク" else 5448
+                        )
+                case "ダークオーラ":
+                    if waza.type == Types.あく:
+                        hosei[key] = (
+                            3072 if defender.ability == "オーラブレイク" else 5448
+                        )
+                case "きれあじ":
+                    if waza.name in DamageCalc.__slash_moves:
+                        hosei[key] = 6144
+                case "テクニシャン":
+                    if waza.power <= 60:
+                        hosei[key] = 6144
+                case "ねつぼうそう":
+                    if waza.category == 特殊 and attacker.ability_enable:
+                        hosei[key] = 6144
+                case "どくぼうそう":
+                    if waza.category == 物理 and attacker.ability_enable:
+                        hosei[key] = 6144
+                case "がんじょうあご":
+                    if waza.name in DamageCalc.__fung_moves:
+                        hosei[key] = 6144
+                case "メガランチャー":
+                    if waza.name in DamageCalc.__blast_moves:
+                        hosei[key] = 6144
+                case "はがねのせいしん":
+                    if waza.type == Types.はがね:
+                        hosei[key] = 6144
+                case "そうだいしょう":
+                    value = attacker.ability_value
+                    if len(value) > 0:
+                        hosei[key] = DamageCalc.__soudaisyou_values[
+                            attacker.ability_value
+                        ]
+                case "とうそうしん":
+                    value = attacker.ability_value
+                    if len(value) > 0:
+                        hosei[key] = DamageCalc.__tousoushin_values[
+                            attacker.ability_value
+                        ]
 
         # endregion
 
         # region 防御側の特性補正
         key: str = "防御特性:" + defender.ability
         if (
-            attacker.ability not in ["かたやぶり", "テラボルテージ", "ターボブレイズ"]
+            attacker.ability
+            not in [
+                "かたやぶり",
+                "テラボルテージ",
+                "ターボブレイズ",
+                "かがくへんかガス",
+            ]
             or attacker.ability_enable is False
         ) and waza.name not in ["メテオドライブ", "シャドーレイ"]:
             match defender.ability:
@@ -552,7 +567,12 @@ class DamageCalc:
                     defender.ability == "てんねん"
                     and (
                         attacker.ability
-                        not in ["かたやぶり", "テラボルテージ", "ターボブレイズ"]
+                        not in [
+                            "かたやぶり",
+                            "テラボルテージ",
+                            "ターボブレイズ",
+                            "かがくへんかガス",
+                        ]
                         or attacker.ability_enable is False
                     )
                     and waza.name not in ["メテオドライブ", "シャドーレイ"]
@@ -565,59 +585,67 @@ class DamageCalc:
 
         # region 攻撃側の特性補正
         key = "攻撃特性:" + attacker.ability
-        match attacker.ability:
-            case "はりきり":  # 攻撃補正でなく攻撃力そのものに乗る
-                if waza.category == 物理:
-                    power = (power * 6144 / 4096).quantize(
-                        DECIMAI_ZERO, rounding=ROUND_FLOOR
-                    )
-            case "スロースタート" | "よわき":
-                if attacker.ability_enable:
-                    hosei[key] = 2048
-            case "こだいかっせい" | "クォークチャージ":
-                if attacker.ability_value == "A" and waza.category == 物理:
-                    hosei[key] = 5325
-                elif attacker.ability_value == "C" and waza.category == 特殊:
-                    hosei[key] = 5325
-            case "トランジスタ":
-                if waza.type == DamageCalc.__type_buff_abilities[attacker.ability]:
-                    hosei[key] = 5325
-            case "ハドロンエンジン":
-                if waza.category == 特殊 and field == Fields.エレキ:
-                    hosei[key] = 5461
-            case "ひひいろのこどう":
-                if waza.category == 物理 and weather == Weathers.晴れ:
-                    hosei[key] = 5461
-            case "フラワーギフト":
-                if weather == Weathers.晴れ and waza.category == 物理:
-                    hosei[key] = 6144
-            case "こんじょう":
-                if attacker.ailment != Ailments.なし and waza.category == 物理:
-                    hosei[key] = 6144
-            case "しんりょく" | "もうか" | "もらいび" | "げきりゅう" | "むしのしらせ":
-                if (
-                    attacker.ability_enable
-                    and waza.type == DamageCalc.__type_buff_abilities[attacker.ability]
+        if defender.ability != "かがくへんかガス":
+            match attacker.ability:
+                case "はりきり":  # 攻撃補正でなく攻撃力そのものに乗る
+                    if waza.category == 物理:
+                        power = (power * 6144 / 4096).quantize(
+                            DECIMAI_ZERO, rounding=ROUND_FLOOR
+                        )
+                case "スロースタート" | "よわき":
+                    if attacker.ability_enable:
+                        hosei[key] = 2048
+                case "こだいかっせい" | "クォークチャージ":
+                    if attacker.ability_value == "A" and waza.category == 物理:
+                        hosei[key] = 5325
+                    elif attacker.ability_value == "C" and waza.category == 特殊:
+                        hosei[key] = 5325
+                case "トランジスタ":
+                    if waza.type == DamageCalc.__type_buff_abilities[attacker.ability]:
+                        hosei[key] = 5325
+                case "ハドロンエンジン":
+                    if waza.category == 特殊 and field == Fields.エレキ:
+                        hosei[key] = 5461
+                case "ひひいろのこどう":
+                    if waza.category == 物理 and weather == Weathers.晴れ:
+                        hosei[key] = 5461
+                case "フラワーギフト":
+                    if weather == Weathers.晴れ and waza.category == 物理:
+                        hosei[key] = 6144
+                case "こんじょう":
+                    if attacker.ailment != Ailments.なし and waza.category == 物理:
+                        hosei[key] = 6144
+                case (
+                    "しんりょく"
+                    | "もうか"
+                    | "もらいび"
+                    | "げきりゅう"
+                    | "むしのしらせ"
                 ):
-                    hosei[key] = 6144
-            case "サンパワー":
-                if weather == Weathers.晴れ and waza.category == 特殊:
-                    hosei[key] = 6144
-            case "プラス" | "マイナス":
-                if attacker.ability_enable and waza.category == 特殊:
-                    hosei[key] = 6144
-            case "いわはこび" | "はがねつかい" | "りゅうのあぎと":
-                if waza.type == DamageCalc.__type_buff_abilities[attacker.ability]:
-                    hosei[key] = 6144
-            case "ごりむちゅう":
-                if waza.category == 物理:
-                    hosei[key] = 6144
-            case "ちからもち" | "ヨガパワー":
-                if waza.category == 物理:
-                    hosei[key] = 8192
-            case "すいほう":
-                if waza.type == Types.みず:
-                    hosei[key] = 8192
+                    if (
+                        attacker.ability_enable
+                        and waza.type
+                        == DamageCalc.__type_buff_abilities[attacker.ability]
+                    ):
+                        hosei[key] = 6144
+                case "サンパワー":
+                    if weather == Weathers.晴れ and waza.category == 特殊:
+                        hosei[key] = 6144
+                case "プラス" | "マイナス":
+                    if attacker.ability_enable and waza.category == 特殊:
+                        hosei[key] = 6144
+                case "いわはこび" | "はがねつかい" | "りゅうのあぎと":
+                    if waza.type == DamageCalc.__type_buff_abilities[attacker.ability]:
+                        hosei[key] = 6144
+                case "ごりむちゅう":
+                    if waza.category == 物理:
+                        hosei[key] = 6144
+                case "ちからもち" | "ヨガパワー":
+                    if waza.category == 物理:
+                        hosei[key] = 8192
+                case "すいほう":
+                    if waza.type == Types.みず:
+                        hosei[key] = 8192
         # endregion
 
         # region 防御側の特性補正
@@ -625,14 +653,26 @@ class DamageCalc:
         match defender.ability:
             case "わざわいのおふだ":
                 # イカサマ、ボディプレスのダメージも下げる
-                if waza.category == 物理 and attacker.ability != "わざわいのおふだ":
+                if waza.category == 物理 and attacker.ability not in [
+                    "わざわいのおふだ",
+                    "かがくへんかガス",
+                ]:
                     hosei[key] = 3072
             case "わざわいのうつわ":
-                if waza.category == 特殊 and attacker.ability != "わざわいのうつわ":
+                if waza.category == 特殊 and attacker.ability not in [
+                    "わざわいのうつわ",
+                    "かがくへんかガス",
+                ]:
                     hosei[key] = 3072
 
         if (
-            attacker.ability not in ["かたやぶり", "テラボルテージ", "ターボブレイズ"]
+            attacker.ability
+            not in [
+                "かたやぶり",
+                "テラボルテージ",
+                "ターボブレイズ",
+                "かがくへんかガス",
+            ]
             or attacker.ability_enable is False
         ) and waza.name not in ["メテオドライブ", "シャドーレイ"]:
             match defender.ability:
@@ -713,11 +753,11 @@ class DamageCalc:
         if (
             df_key == StatsKey.B
             and attacker.ability == "わざわいのつるぎ"
-            and defender.ability != "わざわいのつるぎ"
+            and defender.ability not in ["わざわいのつるぎ", "かがくへんかガス"]
         ) or (
             df_key == StatsKey.D
             and attacker.ability == "わざわいのたま"
-            and defender.ability != "わざわいのたま"
+            and defender.ability not in ["わざわいのたま", "かがくへんかガス"]
         ):
             power = (power * 3072 / 4096).quantize(DECIMAI_ZERO, rounding=ROUND_FLOOR)
         # endregion
@@ -748,7 +788,13 @@ class DamageCalc:
                     hosei[key] = 5325
 
         if (
-            attacker.ability not in ["かたやぶり", "テラボルテージ", "ターボブレイズ"]
+            attacker.ability
+            not in [
+                "かたやぶり",
+                "テラボルテージ",
+                "ターボブレイズ",
+                "かがくへんかガス",
+            ]
             or attacker.ability_enable is False
         ) and waza.name not in ["メテオドライブ", "シャドーレイ"]:
             match defender.ability:
@@ -820,27 +866,38 @@ class DamageCalc:
 
         # region 攻撃側の特性補正
         key = "攻撃特性:" + attacker.ability
-        match attacker.ability:
-            case "ブレインフォース":
-                pass  # 自分の技のタイプ相性が効果抜群の場合、さらに威力が1.25倍になるらしい。
-            case "スナイパー":
-                if waza.critical and attacker.ability_enable:
-                    hosei[key] = 6144
-            case "いろめがね":
-                if type_effective < 1.0:
-                    hosei[key] = 8192
+        if defender.ability != "かがくへんかガス":
+            match attacker.ability:
+                case "ブレインフォース":
+                    pass  # 自分の技のタイプ相性が効果抜群の場合、さらに威力が1.25倍になるらしい。
+                case "スナイパー":
+                    if waza.critical and attacker.ability_enable:
+                        hosei[key] = 6144
+                case "いろめがね":
+                    if type_effective < 1.0:
+                        hosei[key] = 8192
         # endregion
 
         # region 防御側の特性補正
         key = "防御特性:" + defender.ability
-        match defender.ability:
-            case "ファントムガード":
-                hosei[key] = 2048
-            case "プリズムアーマー":
-                if type_effective > 1.0:
-                    hosei[key] = 3072
+        if defender.ability != "かがくへんかガス":
+            match defender.ability:
+                case "ファントムガード":
+                    hosei[key] = 2048
+                case "プリズムアーマー":
+                    if type_effective > 1.0:
+                        hosei[key] = 3072
 
-        if attacker.ability != "かたやぶり" or attacker.ability_enable is False:
+        if (
+            attacker.ability
+            not in [
+                "かたやぶり",
+                "テラボルテージ",
+                "ターボブレイズ",
+                "かがくへんかガス",
+            ]
+            or attacker.ability_enable is False
+        ) and waza.name not in ["メテオドライブ", "シャドーレイ"]:
             match defender.ability:
                 case "もふもふ":
                     if waza.type == Types.ほのお:
@@ -962,34 +1019,40 @@ class DamageCalc:
             type_equal: bool = waza.type in attacker.type
             teras_type_equal: bool = waza.type == attacker.battle_terastype
 
-            match attacker.ability:
-                case "へんげんじざい" | "リベロ":
-                    if attacker.ability_value == "有効":
-                        value = (
-                            8192
-                            if teras_type_equal
+            if attacker.ability != "かがくへんかガス":
+                match attacker.ability:
+                    case "へんげんじざい" | "リベロ":
+                        if attacker.ability_value == "有効":
+                            value = (
+                                8192
+                                if teras_type_equal
+                                or attacker.battle_terastype == Types.ステラ
+                                else 6144
+                            )
+                        elif attacker.ability_value == "無効" and (
+                            teras_type_equal
                             or attacker.battle_terastype == Types.ステラ
-                            else 6144
-                        )
-                    elif attacker.ability_value == "無効" and (
-                        teras_type_equal or attacker.battle_terastype == Types.ステラ
-                    ):
-                        value = 6144
-                case "てきおうりょく":
-                    # テラスタイプのみ一致判定がある。一致で2倍、元タイプとも一致した場合、2.25倍
-                    if teras_type_equal or attacker.battle_terastype == Types.ステラ:
-                        value = 9216 if type_equal else 8192
-                    elif attacker.battle_terastype == Types.なし and type_equal:
-                        value = 8192
-                case _:
-                    if type_equal and (
-                        teras_type_equal or attacker.battle_terastype == Types.ステラ
-                    ):
-                        value = 8192
-                    elif attacker.battle_terastype == Types.ステラ:
-                        value = 4915
-                    elif type_equal or teras_type_equal:
-                        value = 6144
+                        ):
+                            value = 6144
+                    case "てきおうりょく":
+                        # テラスタイプのみ一致判定がある。一致で2倍、元タイプとも一致した場合、2.25倍
+                        if (
+                            teras_type_equal
+                            or attacker.battle_terastype == Types.ステラ
+                        ):
+                            value = 9216 if type_equal else 8192
+                        elif attacker.battle_terastype == Types.なし and type_equal:
+                            value = 8192
+                    case _:
+                        if type_equal and (
+                            teras_type_equal
+                            or attacker.battle_terastype == Types.ステラ
+                        ):
+                            value = 8192
+                        elif attacker.battle_terastype == Types.ステラ:
+                            value = 4915
+                        elif type_equal or teras_type_equal:
+                            value = 6144
 
             if value != 4096:
                 rnd_damage = (rnd_damage * value / 4096).quantize(
