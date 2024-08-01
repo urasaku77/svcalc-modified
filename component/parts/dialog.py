@@ -1,7 +1,8 @@
+import csv
 import json
 import tkinter
 import webbrowser
-from tkinter import E, N, S, W, ttk
+from tkinter import E, N, S, W, messagebox, ttk
 from tkinter.font import Font
 
 from component.parts import images
@@ -1048,3 +1049,210 @@ class WeightComparing(tkinter.Toplevel):
         self.grab_set()
         self.focus_set()
         self.geometry("+{0}+{1}".format(location[0], location[1]))
+
+
+class BoxDialog(tkinter.Toplevel):
+    def __init__(self):
+        super().__init__()
+        self.title("ボックス管理")
+        self.geometry("1650x900")
+
+        self.pokemon = Pokemon()
+        self.file_path = "party\\csv\\box.csv"
+        self.all_box_data = self.read_csv(self.file_path)
+
+        self.current_page_num = tkinter.IntVar()
+        self.all_page_num = tkinter.IntVar()
+
+        self.pokes_frame = ttk.Frame(self, padding=10)
+        self.top_frame = ttk.Frame(self, padding=10)
+        self.top_frame.pack(side="top", padx=20, fill="x")
+        self.top_left_frame = ttk.Frame(self.top_frame)
+        self.top_left_frame.pack(side="left", padx=20, fill="x", expand=True)
+        self.top_right_frame = ttk.Frame(self.top_frame)
+        self.top_right_frame.pack(side="right", padx=20, fill="x", expand=True)
+
+        self._labelframe = ttk.LabelFrame(self.top_left_frame, text="ポケモン名を入力")
+        self._labelframe.pack(side="left", padx=20, expand=True)
+        self._name_input: AutoCompleteCombobox = AutoCompleteCombobox.pokemons(
+            self._labelframe
+        )
+        if self.pokemon.no != -1:
+            self._name_input.set(self.pokemon.name)
+        self._name_input.bind("<<submit>>", self.on_input_name)
+        self._name_input.pack(side="left")
+
+        proceed_button = MyButton(
+            self.top_right_frame,
+            text="次へ",
+            command=self.click_paging_right,
+        )
+        proceed_button.pack(side="right", padx=20)
+        all_page_num = MyLabel(
+            self.top_right_frame,
+            textvariable=self.all_page_num,
+        )
+        all_page_num.pack(side="right", padx=20)
+        slash_label = MyLabel(
+            self.top_right_frame,
+            text=" / ",
+        )
+        slash_label.pack(side="right", padx=20)
+        current_page_num = MyLabel(
+            self.top_right_frame,
+            textvariable=self.current_page_num,
+        )
+        current_page_num.pack(side="right", padx=20)
+        back_button = MyButton(
+            self.top_right_frame,
+            text="前へ",
+            command=self.click_paging_left,
+        )
+        back_button.pack(side="right", padx=20)
+        clear_button = MyButton(
+            self.top_right_frame,
+            text="リセット",
+            command=self.reset,
+        )
+        clear_button.pack(side="right", padx=20)
+
+        self.update_box_list()
+        self.set_pokemon_list()
+
+    def update_box_list(self):
+        self.box_data = self.read_csv(self.file_path)
+        self.box_data.reverse()
+        if self.pokemon.no != -1:
+            box = [
+                pokemon for pokemon in self.box_data if pokemon[0] == self.pokemon.name
+            ]
+            if len(box) > 0:
+                self.box_data = box
+        self.current_page_num.set(1)
+        self.all_page_num.set((len(self.box_data) // 15) + 1)
+
+    def set_pokemon_list(self):
+        self.pokes_frame.destroy()
+        self.pokes_frame = ttk.Frame(self, padding=10)
+        column_title = [
+            "名前",
+            "個体値",
+            "努力値",
+            "性格",
+            "持ち物",
+            "特性",
+            "テラス",
+        ]
+
+        for i, value in enumerate(column_title):
+            label = MyLabel(self.pokes_frame, text=value)
+            label.grid(row=0, column=i + 1, padx=15, pady=10)
+
+        label = MyLabel(self.pokes_frame, text="技")
+        label.grid(row=0, column=8, columnspan=4)
+
+        for i, row in enumerate(
+            self.box_data[
+                (self.current_page_num.get() - 1) * 15 : (
+                    (self.current_page_num.get() - 1) * 15
+                )
+                + 15
+            ],
+            start=(self.current_page_num.get() - 1) * 15,
+        ):
+            choose_button = MyButton(
+                master=self.pokes_frame,
+                image=images.get_menu_icon("trush"),
+                command=lambda idx=i: self.on_delete_pokemon(idx),
+            )
+            choose_button.grid(row=i + 1, column=0, padx=15, pady=10)
+            for j, value in enumerate(row):
+                if j != 7:
+                    label = MyLabel(self.pokes_frame, text=value)
+                    label.grid(
+                        row=i + 1,
+                        column=j + 1 if j < 7 else j,
+                        padx=15,
+                        pady=10,
+                    )
+                else:
+                    memo_button = MyButton(
+                        master=self.pokes_frame,
+                        image=images.get_menu_icon("load"),
+                        command=lambda memo=value: self.show_pokemon_memo(memo),
+                    )
+                    memo_button.grid(row=i + 1, column=12, padx=15, pady=10)
+
+        self.pokes_frame.pack(fill="both", expand=True, side="top")
+
+    def open(self, location=tuple[int, int]):
+        self.grab_set()
+        self.focus_set()
+        self.geometry("+{0}+{1}".format(location[0], location[1]))
+
+    def read_csv(self, file_path):
+        rows = []
+        with open(file_path, mode="r", newline="") as file:
+            reader = csv.reader(file)
+            next(reader)
+            for row in reader:
+                rows.append(row)
+        return rows
+
+    def on_input_name(self, *args):
+        pokemon_name = self._name_input.get()
+        self.pokemon = Pokemon.by_name(pokemon_name, default=True)
+        self.update_box_list()
+        self.set_pokemon_list()
+
+    def show_pokemon_memo(self, memo: str):
+        dialog = PokemonMemoLabelDialog()
+        dialog.open(memo, location=(self.winfo_x(), self.winfo_y()))
+        self.wait_window(dialog)
+
+    def on_delete_pokemon(self, index: int):
+        ret = messagebox.askyesno(
+            "確認",
+            "表示されているデータをすべてクリアしますか？(この操作は元に戻せません)",
+        )
+        if ret is True:
+            with open(self.file_path, "w") as box_csv:
+                writer = csv.writer(box_csv, lineterminator="\n")
+                writer.writerow(
+                    [
+                        "名前",
+                        "個体値",
+                        "努力値",
+                        "性格",
+                        "持ち物",
+                        "特性",
+                        "テラス",
+                        "メモ",
+                        "技",
+                        "技",
+                        "技",
+                        "技",
+                    ]
+                )
+                rows = [row for row in self.all_box_data if row != self.box_data[index]]
+                for row in rows:
+                    writer.writerow(row)
+
+            self.update_box_list()
+            self.set_pokemon_list()
+
+    def reset(self):
+        self.pokemon = Pokemon()
+        self._name_input.set("")
+        self.update_box_list()
+        self.set_pokemon_list()
+
+    def click_paging_left(self):
+        if self.current_page_num.get() > 1:
+            self.current_page_num.set(self.current_page_num.get() - 1)
+            self.set_pokemon_list()
+
+    def click_paging_right(self):
+        if self.current_page_num.get() < self.all_page_num.get():
+            self.current_page_num.set(self.current_page_num.get() + 1)
+            self.set_pokemon_list()

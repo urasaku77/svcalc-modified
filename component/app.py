@@ -25,6 +25,7 @@ from component.frames.whole import (
 )
 from component.parts.button import MyButton
 from component.parts.dialog import (
+    BoxDialog,
     CaptureSetting,
     FormSelect,
     ModeSetting,
@@ -72,6 +73,7 @@ class MainApp(ThemedTk):
         menu.add_cascade(label="キャプチャ設定", command=self.capture_setting)
         menu.add_cascade(label="モード切替", command=self.mode_setting)
         menu.add_cascade(label="パーティ編集", command=self.edit_party_csv)
+        menu.add_cascade(label="ボックス編集", command=self.open_box)
         menu.add_cascade(label="対戦履歴", command=self.open_records)
         menu.add_cascade(label="対戦分析", command=self.open_analytics)
 
@@ -558,6 +560,11 @@ class MainApp(ThemedTk):
         dialog.open(location=(self.winfo_x(), self.winfo_y()))
         self.wait_window(dialog)
         return dialog.form_num
+
+    # 個体管理画面
+    def open_box(self):
+        dialog = BoxDialog()
+        dialog.open(location=(self.winfo_x(), self.winfo_y()))
 
     # 対戦履歴画面
     def open_records(self):

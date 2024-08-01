@@ -1004,6 +1004,7 @@ class PokemonFromBoxDialog(ttk.Frame):
 
     def update_box_list(self):
         self.box_data = self.read_csv("party\\csv\\box.csv")
+        self.box_data.reverse()
         if self.pokemon.no != -1:
             box = [
                 pokemon for pokemon in self.box_data if pokemon[0] == self.pokemon.name
