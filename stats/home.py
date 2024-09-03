@@ -2,10 +2,13 @@
 import csv
 import json
 import os
+import ssl
 import sys
 import urllib.request
 
 import jaconv
+
+ssl._create_default_https_context = ssl._create_unverified_context
 
 sys.path.append("../svcalc-modified")
 from pokedata.exception import unrecognizable_and_same_pokemon_in_home
