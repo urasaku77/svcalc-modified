@@ -512,7 +512,7 @@ class MainApp(ThemedTk):
                 pass
         after_id = self.after(1000, self.loop_image_recognize)
         self.monitor = True
-        self.monitor_var.set("キャプチャ監視停止")
+        self.monitor_var.set("監視停止")
         self.websocket_button["state"] = tkinter.DISABLED
         self.shot_button["state"] = tkinter.DISABLED
 
@@ -521,7 +521,7 @@ class MainApp(ThemedTk):
         if self.monitor:
             self.after_cancel(after_id)
             self.monitor = False
-            self.monitor_var.set("キャプチャ監視開始")
+            self.monitor_var.set("監視開始")
             self.websocket_button["state"] = tkinter.NORMAL
             self.shot_button["state"] = tkinter.NORMAL
 
