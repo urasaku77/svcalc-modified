@@ -88,7 +88,7 @@ class Search:
 
         try:
             driver.get(
-                f"https://sv.pokedb.tokyo/pokemon/show/{pid}?season={season}&rule=0"
+                f"https://sv.pokedb.tokyo/pokemon/show/{pid}?season={str(int(season) - 1)}&rule=0"
             )
 
             party_classes = driver.find_elements(
