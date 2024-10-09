@@ -98,17 +98,20 @@ class PartyEditor(tkinter.Toplevel):
 
         # 新規登録時の採番処理
         file_list = sorted(glob.glob("party/csv/*"))
-        last_file = file_list[len(file_list) - 1]
         if self.num == "":
-            self.num = str(int(last_file.replace("party/csv\\", "")[0]) + 1)
-            self.sub_num = "0"
+            messagebox.showinfo("警告", "番号を入力してください")
+            return
         elif self.sub_num == "":
             same_num_list = [
                 file
                 for file in file_list
                 if file.startswith("party/csv\\" + self.num + "-")
             ]
-            last_same_num_file = sorted(same_num_list)[len(same_num_list) - 1]
+            last_same_num_file = (
+                sorted(same_num_list)[len(same_num_list) - 1]
+                if len(same_num_list) > 0
+                else "1-0"
+            )
             self.sub_num = str(int(last_same_num_file.split("-")[1][0]) + 1)
 
         # CSV書き込み処理
