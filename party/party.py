@@ -8,6 +8,8 @@ import tkinter
 from tkinter import E, N, S, W, filedialog, messagebox, ttk
 from tkinter.scrolledtext import ScrolledText
 
+from natsort import natsorted
+
 from component.parts import images
 from component.parts.button import MyButton, TypeButton
 from component.parts.combobox import (
@@ -108,11 +110,11 @@ class PartyEditor(tkinter.Toplevel):
                 if file.startswith("party/csv\\" + self.num + "-")
             ]
             last_same_num_file = (
-                sorted(same_num_list)[len(same_num_list) - 1]
+                natsorted(same_num_list)[len(same_num_list) - 1]
                 if len(same_num_list) > 0
                 else "1-0"
             )
-            self.sub_num = str(int(last_same_num_file.split("-")[1][0]) + 1)
+            self.sub_num = str(int(last_same_num_file.split("-")[1].split("_")[0]) + 1)
 
         # CSV書き込み処理
         filepath = (

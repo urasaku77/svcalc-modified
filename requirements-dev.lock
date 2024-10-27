@@ -22,6 +22,7 @@ jaconv==0.3.4
 msgpack==1.0.7
 mypy==1.8.0
 mypy-extensions==1.0.0
+natsort==8.4.0
 nodeenv==1.8.0
 numpy==1.26.3
 opencv-python==4.9.0.80
