@@ -1213,7 +1213,7 @@ class BoxDialog(tkinter.Toplevel):
     def on_delete_pokemon(self, index: int):
         ret = messagebox.askyesno(
             "確認",
-            "表示されているデータをすべてクリアしますか？(この操作は元に戻せません)",
+            "選択したポケモンを削除しますか？(この操作は元に戻せません)",
         )
         if ret is True:
             with open(self.file_path, "w") as box_csv:
