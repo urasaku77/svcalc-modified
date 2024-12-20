@@ -107,13 +107,75 @@ class Analytics(tkinter.Toplevel):
         self.sub_num_txt.place(
             x=Const.searchX + 130, y=Const.searchY + Const.searchDY * 3
         )
+
+        self.regend_filter_bln = tkinter.BooleanVar()
+        self.regend_filter_bln.set(False)
+        self.regend_filter_btn = tkinter.Checkbutton(
+            self,
+            variable=self.regend_filter_bln,
+            text="伝説絞込",
+            command=self.set_regend,
+        )
+        self.regend_filter_btn.place(
+            x=Const.searchX + 200, y=Const.searchY + Const.searchDY * 2.7
+        )
+        self.regends_dict = {
+            "コライドン": "1007-0",
+            "ミライドン": "1008-0",
+            "黒バドレックス": "898-2",
+            "ザシアン（王）": "888-1",
+            "テラパゴス": "1024-0",
+            "ホウオウ": "250-0",
+            "ルギア": "249-0",
+            "ルナアーラ": "792-0",
+            "白バドレックス": "898-1",
+            "ムゲンダイナ": "10",
+            "カイオーガ": "382-0",
+            "レックウザ": "384-0",
+            "日食ネクロズマ": "800-1",
+            "黒キュレム": "646-2",
+            "ザマゼンタ（王）": "889-1",
+            "グラードン": "383-0",
+            "白キュレム": "646-1",
+            "ソルガレオ": "791-0",
+            "月食ネクロズマ": "800-2",
+            "レシラム": "643-0",
+            "ゼクロム": "644-0",
+            "ギラティナ（アナザー）": "487-0",
+            "ギラティナ（オリジン）": "487-1",
+            "ディアルガ": "483-0",
+            "ディアルガ（オリジン）": "483-1",
+            "パルキア": "484-0",
+            "パルキア（オリジン）": "484-1",
+            "ザシアン": "888-0",
+            "ザマゼンタ": "889-0",
+            "ミュウツー": "150-0",
+            "キュレム": "646-0",
+            "ネクロズマ": "800-0",
+            "バドレックス": "898-0",
+        }
+
+        self.regend_num = tkinter.StringVar()
+        self.regend_num.set("0")
+        self.selected_regend = tkinter.StringVar()
+        self.selected_regend.set(list(self.regends_dict.keys())[0])
+        self.regends_filter = tkinter.OptionMenu(
+            self,
+            self.selected_regend,
+            *list(self.regends_dict.keys()),
+            command=self.set_regend,
+        )
+        self.regends_filter.place(
+            x=Const.searchX + 270, y=Const.searchY + Const.searchDY * 2.6
+        )
+
         search_button = tkinter.Button(
             self,
             text="検索",
             command=self.update_result,
         )
         search_button.place(
-            x=Const.searchX + 200, y=Const.searchY + Const.searchDY * 2.7
+            x=Const.searchX + 450, y=Const.searchY + Const.searchDY * 2.7
         )
         self.title_var = tkinter.StringVar()
         self.title_var.set("ＫＰと勝率")
@@ -158,6 +220,14 @@ class Analytics(tkinter.Toplevel):
         )
         self.sub_title_label.place(x=Const.myPartyStartX, y=Const.myPartyStartY - 30)
 
+    def set_regend(self, *args):
+        if self.regend_filter_bln.get():
+            self.regends_filter.config(state="normal")
+            self.regend_num.set(self.selected_regend.get())
+        else:
+            self.regends_filter.config(state="disabled")
+            self.regend_num.set("0")
+
     def update_result(self):
         self.from_date, self.to_date = DB_battle.chenge_date_from_datetime_to_unix(
             self.from_year_var.get(),
@@ -185,72 +255,60 @@ class Analytics(tkinter.Toplevel):
         self.main_title_label["state"] = (
             "disable" if self.party_num == 0 and self.party_subnum == 0 else "normal"
         )
-        if self.party_num != 0 and self.party_subnum != 0:
-            self.pokemon_list = [
-                item[0]
-                for item in DB_battle.calc_kp_for_party_subnum(
-                    self.from_date,
-                    self.to_date,
-                    self.party_num,
-                    self.party_subnum,
-                )
-            ]
-            self.result_1_list = [
-                item[1]
-                for item in DB_battle.calc_kp_for_party_subnum(
-                    self.from_date,
-                    self.to_date,
-                    self.party_num,
-                    self.party_subnum,
-                )
-            ]
-            self.result_2_list = DB_battle.get_win_rate_for_party_subnum(
-                self.pokemon_list,
+        self.pokemon_list = [
+            item[0]
+            for item in DB_battle.calc_kp(
                 self.from_date,
                 self.to_date,
                 self.party_num,
                 self.party_subnum,
+                self.regends_dict[self.regend_num.get()]
+                if self.regend_num.get() != "0"
+                else "0",
             )
-            self.record_count = DB_battle.count_record_for_party_subnum(
-                self.from_date, self.to_date, self.party_num, self.party_subnum
+        ]
+        self.result_1_list = [
+            item[1]
+            for item in DB_battle.calc_kp(
+                self.from_date,
+                self.to_date,
+                self.party_num,
+                self.party_subnum,
+                self.regends_dict[self.regend_num.get()]
+                if self.regend_num.get() != "0"
+                else "0",
             )
-            self.win_count = DB_battle.count_win_for_party_subnum(
-                self.from_date, self.to_date, self.party_num, self.party_subnum
-            )
-        elif self.party_num != 0:
-            self.pokemon_list = [
-                item[0]
-                for item in DB_battle.calc_kp_for_party_num(
-                    self.from_date, self.to_date, self.party_num
-                )
-            ]
-            self.result_1_list = [
-                item[1]
-                for item in DB_battle.calc_kp_for_party_num(
-                    self.from_date, self.to_date, self.party_num
-                )
-            ]
-            self.result_2_list = DB_battle.get_win_rate_for_party_num(
-                self.pokemon_list, self.from_date, self.to_date, self.party_num
-            )
-            self.record_count = DB_battle.count_record_for_party_num(
-                self.from_date, self.to_date, self.party_num
-            )
-            self.win_count = DB_battle.count_win_for_party_num(
-                self.from_date, self.to_date, self.party_num
-            )
-        else:
-            self.pokemon_list = [
-                item[0] for item in DB_battle.calc_kp(self.from_date, self.to_date)
-            ]
-            self.result_1_list = [
-                item[1] for item in DB_battle.calc_kp(self.from_date, self.to_date)
-            ]
-            self.result_2_list = DB_battle.get_win_rate(
-                self.pokemon_list, self.from_date, self.to_date
-            )
-            self.record_count = DB_battle.count_record(self.from_date, self.to_date)
-            self.win_count = DB_battle.count_win(self.from_date, self.to_date)
+        ]
+        self.result_2_list = DB_battle.get_win_rate(
+            self.pokemon_list,
+            self.from_date,
+            self.to_date,
+            self.party_num,
+            self.party_subnum,
+            self.regends_dict[self.regend_num.get()]
+            if self.regend_num.get() != "0"
+            else "0",
+        )
+
+        self.record_count = DB_battle.count_record(
+            self.from_date,
+            self.to_date,
+            self.party_num,
+            self.party_subnum,
+            self.regends_dict[self.regend_num.get()]
+            if self.regend_num.get() != "0"
+            else "0",
+        )
+        self.win_count = DB_battle.count_win(
+            self.from_date,
+            self.to_date,
+            self.party_num,
+            self.party_subnum,
+            self.regends_dict[self.regend_num.get()]
+            if self.regend_num.get() != "0"
+            else "0",
+        )
+
         self.kp_list = list(self.pokemon_list)
         self.change_sort_condition()
         self.record_count_label = tkinter.Label(
@@ -367,106 +425,86 @@ class Analytics(tkinter.Toplevel):
     def change_mode(self):
         if self.title_var.get() == "ＫＰと勝率":
             self.title_var.set("選出と勝率")
-            self.result_1_list = (
-                DB_battle.get_oppo_chosen_rate_for_party_num(
-                    self.pokemon_list, self.from_date, self.to_date, self.party_num
-                )
-                if self.party_subnum == 0
-                else DB_battle.get_oppo_chosen_rate_for_party_subnum(
-                    self.pokemon_list,
-                    self.from_date,
-                    self.to_date,
-                    self.party_num,
-                    self.party_subnum,
-                )
+            self.result_1_list = DB_battle.get_oppo_chosen_rate(
+                self.pokemon_list,
+                self.from_date,
+                self.to_date,
+                self.party_num,
+                self.party_subnum,
+                self.regends_dict[self.regend_num.get()]
+                if self.regend_num.get() != "0"
+                else "0",
             )
-            self.result_2_list = (
-                DB_battle.get_oppo_chosen_and_win_rate_for_party_num(
-                    self.pokemon_list, self.from_date, self.to_date, self.party_num
-                )
-                if self.party_subnum == 0
-                else DB_battle.get_oppo_chosen_and_win_rate_for_party_subnum(
-                    self.pokemon_list,
-                    self.from_date,
-                    self.to_date,
-                    self.party_num,
-                    self.party_subnum,
-                )
+            self.result_2_list = DB_battle.get_oppo_chosen_and_win_rate(
+                self.pokemon_list,
+                self.from_date,
+                self.to_date,
+                self.party_num,
+                self.party_subnum,
+                self.regends_dict[self.regend_num.get()]
+                if self.regend_num.get() != "0"
+                else "0",
             )
 
         elif self.title_var.get() == "選出と勝率":
             self.title_var.set("初手と勝率")
-            self.result_1_list = (
-                DB_battle.get_oppo_first_chosen_rate_for_party_num(
-                    self.pokemon_list, self.from_date, self.to_date, self.party_num
-                )
-                if self.party_subnum == 0
-                else DB_battle.get_oppo_first_chosen_rate_for_party_subnum(
-                    self.pokemon_list,
-                    self.from_date,
-                    self.to_date,
-                    self.party_num,
-                    self.party_subnum,
-                )
+            self.result_1_list = DB_battle.get_oppo_first_chosen_rate(
+                self.pokemon_list,
+                self.from_date,
+                self.to_date,
+                self.party_num,
+                self.party_subnum,
+                self.regends_dict[self.regend_num.get()]
+                if self.regend_num.get() != "0"
+                else "0",
             )
-            self.result_2_list = (
-                DB_battle.get_oppo_first_chosen_and_win_rate_for_party_num(
-                    self.pokemon_list, self.from_date, self.to_date, self.party_num
-                )
-                if self.party_subnum == 0
-                else DB_battle.get_oppo_first_chosen_and_win_rate_for_party_subnum(
-                    self.pokemon_list,
-                    self.from_date,
-                    self.to_date,
-                    self.party_num,
-                    self.party_subnum,
-                )
+            self.result_2_list = DB_battle.get_oppo_first_chosen_and_win_rate(
+                self.pokemon_list,
+                self.from_date,
+                self.to_date,
+                self.party_num,
+                self.party_subnum,
+                self.regends_dict[self.regend_num.get()]
+                if self.regend_num.get() != "0"
+                else "0",
             )
 
         elif self.title_var.get() == "初手と勝率":
             self.title_var.set("ＫＰと勝率")
-            self.pokemon_list = (
-                [
-                    item[0]
-                    for item in DB_battle.calc_kp_for_party_num(
-                        self.from_date, self.to_date, self.party_num
-                    )
-                ]
-                if self.party_subnum == 0
-                else [
-                    item[0]
-                    for item in DB_battle.calc_kp_for_party_subnum(
-                        self.from_date, self.to_date, self.party_num, self.party_subnum
-                    )
-                ]
-            )
-            self.result_1_list = (
-                [
-                    item[1]
-                    for item in DB_battle.calc_kp_for_party_num(
-                        self.from_date, self.to_date, self.party_num
-                    )
-                ]
-                if self.party_subnum == 0
-                else [
-                    item[1]
-                    for item in DB_battle.calc_kp_for_party_subnum(
-                        self.from_date, self.to_date, self.party_num, self.party_subnum
-                    )
-                ]
-            )
-            self.result_2_list = (
-                DB_battle.get_win_rate_for_party_num(
-                    self.pokemon_list, self.from_date, self.to_date, self.party_num
-                )
-                if self.party_subnum == 0
-                else DB_battle.get_win_rate_for_party_subnum(
-                    self.pokemon_list,
+            self.pokemon_list = [
+                item[0]
+                for item in DB_battle.calc_kp(
                     self.from_date,
                     self.to_date,
                     self.party_num,
                     self.party_subnum,
+                    self.regends_dict[self.regend_num.get()]
+                    if self.regend_num.get() != "0"
+                    else "0",
                 )
+            ]
+            self.result_1_list = [
+                item[1]
+                for item in DB_battle.calc_kp(
+                    self.from_date,
+                    self.to_date,
+                    self.party_num,
+                    self.party_subnum,
+                    self.regends_dict[self.regend_num.get()]
+                    if self.regend_num.get() != "0"
+                    else "0",
+                )
+            ]
+
+            self.result_2_list = DB_battle.get_win_rate(
+                self.pokemon_list,
+                self.from_date,
+                self.to_date,
+                self.party_num,
+                self.party_subnum,
+                self.regends_dict[self.regend_num.get()]
+                if self.regend_num.get() != "0"
+                else "0",
             )
         self.change_sort_condition()
 
@@ -475,49 +513,64 @@ class Analytics(tkinter.Toplevel):
         party_canvas.place(x=0, y=Const.myPartyStartY)
 
         if self.party_num != 0 and self.party_subnum != 0:
-            pokemon_list = DB_battle.get_my_party_for_party_subnum(
-                self.party_num, self.party_subnum
+            pokemon_list = DB_battle.get_my_party(
+                self.party_num,
+                self.party_subnum,
+                self.regends_dict[self.regend_num.get()]
+                if self.regend_num.get() != "0"
+                else "0",
             )
             if pokemon_list != -1:
-                win_rate_list = DB_battle.get_win_rate_per_pokemon_for_party_subnum(
+                win_rate_list = DB_battle.get_win_rate_per_pokemon(
                     list(pokemon_list[0]),
                     self.from_date,
                     self.to_date,
                     self.party_num,
                     self.party_subnum,
+                    self.regends_dict[self.regend_num.get()]
+                    if self.regend_num.get() != "0"
+                    else "0",
                 )
-                chosen_rate_list = DB_battle.get_chosen_rate_for_party_subnum(
+                chosen_rate_list = DB_battle.get_chosen_rate(
                     list(pokemon_list[0]),
                     self.from_date,
                     self.to_date,
                     self.party_num,
                     self.party_subnum,
+                    self.regends_dict[self.regend_num.get()]
+                    if self.regend_num.get() != "0"
+                    else "0",
                 )
-                chosen_and_win_rate_list = (
-                    DB_battle.get_chosen_and_win_rate_for_party_subnum(
-                        list(pokemon_list[0]),
-                        self.from_date,
-                        self.to_date,
-                        self.party_num,
-                        self.party_subnum,
-                    )
+                chosen_and_win_rate_list = DB_battle.get_chosen_and_win_rate(
+                    list(pokemon_list[0]),
+                    self.from_date,
+                    self.to_date,
+                    self.party_num,
+                    self.party_subnum,
+                    self.regends_dict[self.regend_num.get()]
+                    if self.regend_num.get() != "0"
+                    else "0",
                 )
-                first_chosen_rate_list = (
-                    DB_battle.get_first_chosen_rate_for_party_subnum(
-                        list(pokemon_list[0]),
-                        self.from_date,
-                        self.to_date,
-                        self.party_num,
-                        self.party_subnum,
-                    )
+                first_chosen_rate_list = DB_battle.get_first_chosen_rate(
+                    list(pokemon_list[0]),
+                    self.from_date,
+                    self.to_date,
+                    self.party_num,
+                    self.party_subnum,
+                    self.regends_dict[self.regend_num.get()]
+                    if self.regend_num.get() != "0"
+                    else "0",
                 )
                 first_chosen_and_win_rate_list = (
-                    DB_battle.get_first_chosen_and_win_rate_for_party_subnum(
+                    DB_battle.get_first_chosen_and_win_rate(
                         list(pokemon_list[0]),
                         self.from_date,
                         self.to_date,
                         self.party_num,
                         self.party_subnum,
+                        self.regends_dict[self.regend_num.get()]
+                        if self.regend_num.get() != "0"
+                        else "0",
                     )
                 )
                 self.subtitle_var.set("パーティ詳細")
@@ -554,40 +607,59 @@ class Analytics(tkinter.Toplevel):
                 self.display_my_party()
 
         elif self.party_num != 0:
-            pokemon_list = DB_battle.get_my_party_for_party_num(self.party_num)
+            pokemon_list = DB_battle.get_my_party(
+                self.party_num,
+                self.party_subnum,
+                self.regends_dict[self.regend_num.get()]
+                if self.regend_num.get() != "0"
+                else "0",
+            )
             if pokemon_list != -1:
-                win_rate_list = DB_battle.get_win_rate_per_pokemon_for_party_num(
+                win_rate_list = DB_battle.get_win_rate_per_pokemon(
                     list(pokemon_list[0]),
                     self.from_date,
                     self.to_date,
                     self.party_num,
+                    self.regends_dict[self.regend_num.get()]
+                    if self.regend_num.get() != "0"
+                    else "0",
                 )
-                chosen_rate_list = DB_battle.get_chosen_rate_for_party_num(
+                chosen_rate_list = DB_battle.get_chosen_rate(
                     list(pokemon_list[0]),
                     self.from_date,
                     self.to_date,
                     self.party_num,
+                    self.regends_dict[self.regend_num.get()]
+                    if self.regend_num.get() != "0"
+                    else "0",
                 )
-                chosen_and_win_rate_list = (
-                    DB_battle.get_chosen_and_win_rate_for_party_num(
-                        list(pokemon_list[0]),
-                        self.from_date,
-                        self.to_date,
-                        self.party_num,
-                    )
-                )
-                first_chosen_rate_list = DB_battle.get_first_chosen_rate_for_party_num(
+                chosen_and_win_rate_list = DB_battle.get_chosen_and_win_rate(
                     list(pokemon_list[0]),
                     self.from_date,
                     self.to_date,
                     self.party_num,
+                    self.regends_dict[self.regend_num.get()]
+                    if self.regend_num.get() != "0"
+                    else "0",
+                )
+                first_chosen_rate_list = DB_battle.get_first_chosen_rate(
+                    list(pokemon_list[0]),
+                    self.from_date,
+                    self.to_date,
+                    self.party_num,
+                    self.regends_dict[self.regend_num.get()]
+                    if self.regend_num.get() != "0"
+                    else "0",
                 )
                 first_chosen_and_win_rate_list = (
-                    DB_battle.get_first_chosen_and_win_rate_for_party_num(
+                    DB_battle.get_first_chosen_and_win_rate(
                         list(pokemon_list[0]),
                         self.from_date,
                         self.to_date,
                         self.party_num,
+                        self.regends_dict[self.regend_num.get()]
+                        if self.regend_num.get() != "0"
+                        else "0",
                     )
                 )
                 self.subtitle_var.set("パーティ詳細")
@@ -627,7 +699,7 @@ class Analytics(tkinter.Toplevel):
 
     def display_my_party(self):
         self.subtitle_var.set("直近使用したパーティ")
-        pokemon_list = DB_battle.get_my_party()
+        pokemon_list = DB_battle.get_my_recent_party()
         for i in range(len(pokemon_list)):
             party_num = f"{pokemon_list[i][6]}-{pokemon_list[i][7]}"
             for j in range(7):

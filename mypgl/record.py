@@ -98,13 +98,75 @@ class Record(tkinter.Toplevel):
         self.sub_num_txt.place(
             x=Const.searchX + 130, y=Const.searchY + Const.searchDY * 3
         )
+
+        self.regend_filter_bln = tkinter.BooleanVar()
+        self.regend_filter_bln.set(False)
+        self.regend_filter_btn = tkinter.Checkbutton(
+            self,
+            variable=self.regend_filter_bln,
+            text="伝説絞込",
+            command=self.set_regend,
+        )
+        self.regend_filter_btn.place(
+            x=Const.searchX + 200, y=Const.searchY + Const.searchDY * 2.7
+        )
+        self.regends_dict = {
+            "コライドン": "1007-0",
+            "ミライドン": "1008-0",
+            "黒バドレックス": "898-2",
+            "ザシアン（王）": "888-1",
+            "テラパゴス": "1024-0",
+            "ホウオウ": "250-0",
+            "ルギア": "249-0",
+            "ルナアーラ": "792-0",
+            "白バドレックス": "898-1",
+            "ムゲンダイナ": "10",
+            "カイオーガ": "382-0",
+            "レックウザ": "384-0",
+            "日食ネクロズマ": "800-1",
+            "黒キュレム": "646-2",
+            "ザマゼンタ（王）": "889-1",
+            "グラードン": "383-0",
+            "白キュレム": "646-1",
+            "ソルガレオ": "791-0",
+            "月食ネクロズマ": "800-2",
+            "レシラム": "643-0",
+            "ゼクロム": "644-0",
+            "ギラティナ（アナザー）": "487-0",
+            "ギラティナ（オリジン）": "487-1",
+            "ディアルガ": "483-0",
+            "ディアルガ（オリジン）": "483-1",
+            "パルキア": "484-0",
+            "パルキア（オリジン）": "484-1",
+            "ザシアン": "888-0",
+            "ザマゼンタ": "889-0",
+            "ミュウツー": "150-0",
+            "キュレム": "646-0",
+            "ネクロズマ": "800-0",
+            "バドレックス": "898-0",
+        }
+
+        self.regend_num = tkinter.StringVar()
+        self.regend_num.set("0")
+        self.selected_regend = tkinter.StringVar()
+        self.selected_regend.set(list(self.regends_dict.keys())[0])
+        self.regends_filter = tkinter.OptionMenu(
+            self,
+            self.selected_regend,
+            *list(self.regends_dict.keys()),
+            command=self.set_regend,
+        )
+        self.regends_filter.place(
+            x=Const.searchX + 270, y=Const.searchY + Const.searchDY * 2.6
+        )
+
         search_button = tkinter.Button(
             self,
             text="検索",
             command=self.get_battle_data,
         )
         search_button.place(
-            x=Const.searchX + 200, y=Const.searchY + Const.searchDY * 2.7
+            x=Const.searchX + 550, y=Const.searchY + Const.searchDY * 2.7
         )
         self.favorite_var = tkinter.BooleanVar()
         self.favorite_var.set(False)
@@ -115,7 +177,7 @@ class Record(tkinter.Toplevel):
             command=self.filter_favorites,
         )
         favorite_check.place(
-            x=Const.searchX + 270, y=Const.searchY + Const.searchDY * 2.7
+            x=Const.searchX + 450, y=Const.searchY + Const.searchDY * 2.7
         )
 
         koumoku_label0 = tkinter.Label(
@@ -150,6 +212,14 @@ class Record(tkinter.Toplevel):
         )
         paging_right_button.place(x=1600, y=Const.koumokuY)
 
+    def set_regend(self, *args):
+        if self.regend_filter_bln.get():
+            self.regends_filter.config(state="normal")
+            self.regend_num.set(self.selected_regend.get())
+        else:
+            self.regends_filter.config(state="disabled")
+            self.regend_num.set("0")
+
     def get_battle_data(self):
         self.from_date, self.to_date = DB_battle.chenge_date_from_datetime_to_unix(
             self.from_year_var.get(),
@@ -170,18 +240,16 @@ class Record(tkinter.Toplevel):
             if self.sub_num_txt.get() is not None and self.sub_num_txt.get() != ""
             else 0
         )
-        if self.party_num != 0 and self.party_subnum != 0:
-            self.battle_data_list = DB_battle.get_battle_data_by_date_and_party_subnum(
-                self.from_date, self.to_date, self.party_num, self.party_subnum
-            )
-        elif self.party_num != 0:
-            self.battleDataList = DB_battle.get_battle_data_by_date_and_party_num(
-                self.from_date, self.to_date, self.party_num
-            )
-        else:
-            self.battle_data_list = DB_battle.get_battle_data_by_date(
-                self.from_date, self.to_date
-            )
+        self.battle_data_list = DB_battle.get_battle_data_by_date(
+            self.from_date,
+            self.to_date,
+            self.party_num,
+            self.party_subnum,
+            self.regends_dict[self.regend_num.get()]
+            if self.regend_num.get() != "0"
+            else "0",
+        )
+
         self.page_num_var.set(1)
         self.update_result()
 
