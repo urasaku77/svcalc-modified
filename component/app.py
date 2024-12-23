@@ -478,6 +478,9 @@ class MainApp(ThemedTk):
         global after_id
         result = self.capture.image_recognize()
         match result:
+            case int():
+                if result != -1:
+                    self.record_frame.rank.insert(0, result)
             case tuple():
                 self.party_frames[1].set_party_from_capture(result[0])
                 self.record_frame.tn.insert(0, result[1])
@@ -508,7 +511,7 @@ class MainApp(ThemedTk):
                     self.party_frames[0].set_first_chosen_to_active()
                     self.stop_image_recognize()
                     return
-            case int():
+            case _:
                 pass
         after_id = self.after(1000, self.loop_image_recognize)
         self.monitor = True

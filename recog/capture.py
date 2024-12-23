@@ -21,7 +21,7 @@ class Capture:
         self.path_tesseract = r"E:\Tesseract-OCR"
 
         # party(相手パーティ待ち)→chosen(対戦画面待ち)→一旦終了
-        self.phase = "party"
+        self.phase = "wait"
         self.banme = 0
         # OBSの設定値を読み込む
         with open("recog/capture.json", "r") as json_file:
@@ -70,12 +70,14 @@ class Capture:
     # フェーズに応じて画像認識処理
     def image_recognize(self):
         match self.phase:
+            case "wait":
+                return self.recognize_rank()
             case "party":
                 return self.recognize_chosen_capture()
             case "chosen":
                 chosen = self.started_battle()
                 if chosen:
-                    self.phase = "party"
+                    self.phase = "wait"
                     return chosen
                 elif self.chose_pokemon():
                     banme_list = [
@@ -86,7 +88,6 @@ class Capture:
                             banme_list, len(banme_list) - banme_list.count(-1)
                         )
                     return banme_list
-        return -1
 
     # 選出画面検知
     def chose_pokemon(self):
@@ -103,6 +104,181 @@ class Capture:
             self.phase = "chosen"
             oppo_tn = self.recognize_oppo_tn()
             return (self.recognize_oppo_party(), oppo_tn)
+
+    # 各順位を取得する
+    def recognize_rank(self):
+        self.get_screenshot()
+        opoRank = -1
+        # myRank = -1
+
+        recogResult = self.is_exist_image(
+            "recog/recogImg/situation/juni.jpg", 0.8, "juni"
+        )
+        recogChosen = self.chose_pokemon()
+        if recogResult:
+            self.phase = "party"
+            opoKuraiCoord = self.get_coordinate_for_recognize(
+                "recog/recogImg/other/kurai.jpg", 0.8, "kurai"
+            )
+            if opoKuraiCoord != [-1, -1, -1, -1]:
+                opoRank = self.recognize_opo_rank(opoKuraiCoord)
+            # myKuraiCoord = self.get_coordinate_for_recognize(
+            #     "recog/recogImg/other/myKurai.jpg", 0.7, "myKurai"
+            # )
+
+            # if myKuraiCoord == [-1, -1, -1, -1]:
+            #     myRank = -1
+            # else:
+            #     myRank = self.recognize_my_rank(myKuraiCoord)
+
+            # if myRank == -1 and opoRank == -1:
+            #     opoRateCoord = self.get_coordinate_for_recognize(
+            #         "recog/recogImg/situation/rate.jpg", 0.8, "kurai"
+            #     )
+            #     if opoRateCoord == [-1, -1, -1, -1]:
+            #         opoRank = -1
+            #     else:
+            #         opoRank = self.recognize_opo_rate(opoRateCoord)
+
+            #     myRank = self.recognize_my_rate()
+        elif recogChosen:
+            self.phase = "party"
+        return opoRank
+
+    # 相手の順位を取得する
+    def recognize_opo_rank(self, kuraiCoord):
+        coord = self.coords.dicCoord["kurai"]
+
+        digit = 1
+        rank = 0
+        blNumExist = True
+        blRank = False
+        recLeft = coord.left + kuraiCoord[0] - 35
+        recRight = coord.left + kuraiCoord[0] + 5
+        while blNumExist:
+            self.coords.add_coord("opoNum", coord.top, coord.bottom, recLeft, recRight)
+            for i in range(10):
+                if self.is_exist_image(
+                    "recog/recogImg/num/opo/" + str(i) + ".jpg", 0.8, "opoNum"
+                ):
+                    rank = rank + digit * i
+                    blRank = True
+                    break
+                if i == 9:
+                    blNumExist = False
+            digit = digit * 10
+            recLeft = recLeft - 30
+            recRight = recRight - 30
+
+        if not blRank:
+            return -1
+        return rank
+
+    # 相手のレートを取得する（仲間大会など）
+    def recognize_opo_rate(self, rateCoord):
+        coord = self.coords.dicCoord["kurai"]
+
+        digit = 1000
+        rate = 0
+
+        recLeft = coord.left + rateCoord[2] - 10
+        recRight = coord.left + rateCoord[2] + 35
+        while digit >= 1:
+            self.coords.add_coord("opoRate", coord.top, coord.bottom, recLeft, recRight)
+            for i in range(10):
+                if self.is_exist_image(
+                    "recog/recogImg/num/opo/" + str(i) + ".jpg", 0.8, "opoRate"
+                ):
+                    if rate == -1:
+                        rate = digit * i
+                    else:
+                        rate = rate + digit * i
+                    break
+            digit = digit / 10
+            recLeft = recLeft + 30
+            recRight = recRight + 30
+
+        if rate == 0:
+            return -1
+        return int(rate) * -1
+
+    # 自分の順位を取得する
+    def recognize_my_rank(self, kuraiCoord):
+        if kuraiCoord == [-1, -1, -1, -1]:
+            return -1
+        coord = self.coords.dicCoord["myKurai"]
+        digit = 1
+        rank = 0
+        blRank = False
+        blNumExist = True
+        recLeft = coord.left + kuraiCoord[0] - 47
+        recRight = coord.left + kuraiCoord[0] + 5
+
+        while blNumExist:
+            self.coords.add_coord("myNum", coord.top, coord.bottom, recLeft, recRight)
+            match = 0
+            num = 0
+            for i in range(10):
+                numImg = cv2.imread("recog/recogImg/num/my/" + str(i) + ".jpg")
+                result = self.is_exist_image_for_my_sensyutsu(numImg, self.img, "myNum")
+                if result > 0.85:
+                    rank = rank + digit * i
+                    blRank = True
+                    break
+                if match < result:
+                    match = result
+                    num = i
+
+                if i == 9:
+                    if match < 0.7:
+                        blNumExist = False
+                    else:
+                        blRank = True
+                        rank = rank + digit * num
+            digit = digit * 10
+            recLeft = recLeft - 41
+            recRight = recRight - 41
+            if not blRank:
+                return -1
+        return rank
+
+    # 自分のレートを取得する（仲間大会など）
+    def recognize_my_rate(self):
+        coord = self.coords.dicCoord["myRate"]
+        digit = 1
+        rank = 0
+        blRank = False
+        recLeft = coord.left
+        recRight = coord.left + 40
+        for j in range(4):
+            self.coords.add_coord("Rate", coord.top, coord.bottom, recLeft, recRight)
+            match = 0
+            num = 0
+            for i in range(10):
+                numImg = cv2.imread("recog/recogImg/num/opo/" + str(i) + ".jpg")
+                result = self.is_exist_image_for_my_sensyutsu(numImg, self.img, "Rate")
+
+                if result > 0.85:
+                    rank = rank + digit * i
+                    blRank = True
+                    break
+                if match < result:
+                    match = result
+                    num = i
+
+                if i == 9:
+                    if match < 0.7:
+                        return -1
+                    else:
+                        blRank = True
+                        rank = rank + digit * num
+
+            digit = digit * 10
+            recLeft = recLeft - 31
+            recRight = recRight - 31
+            if not blRank:
+                return -1
+        return rank * -1
 
     # 相手パーティの解析
     def recognize_oppo_party(self):
@@ -224,6 +400,40 @@ class Capture:
         for _pt in zip(*loc[::-1], strict=False):
             result = True
         return result
+
+    # テンプレートマッチング（順位取得用）
+    def is_exist_image_for_my_sensyutsu(self, temp, capImg, coordName):
+        coord = self.coords.dicCoord[coordName]
+        img1 = capImg[coord.top : coord.bottom, coord.left : coord.right]
+        gray = cv2.cvtColor(img1, cv2.COLOR_RGB2GRAY)
+        temp = cv2.cvtColor(temp, cv2.COLOR_RGB2GRAY)
+        match = cv2.matchTemplate(temp, gray, cv2.TM_CCOEFF_NORMED)
+        return max(list(map(lambda x: max(x), match)))
+
+    # 座標を取得（順位取得用）
+    def get_coordinate_for_recognize(self, tempImgName, accuracy, coordName):
+        coord = self.coords.dicCoord[coordName]
+        img1 = self.img[coord.top : coord.bottom, coord.left : coord.right]
+        temp = cv2.imread(tempImgName)
+        coordinate = [-1, -1, -1, -1]
+        if temp is None:
+            print(tempImgName + "が見つかりません")
+            return coordinate
+        h, w, a = temp.shape
+        gray = cv2.cvtColor(img1, cv2.COLOR_RGB2GRAY)
+        temp = cv2.cvtColor(temp, cv2.COLOR_RGB2GRAY)
+        th, gray = cv2.threshold(gray, 240, 255, cv2.THRESH_TOZERO)
+        th, temp = cv2.threshold(temp, 240, 255, cv2.THRESH_TOZERO)
+        match = cv2.matchTemplate(gray, temp, cv2.TM_CCOEFF_NORMED)
+
+        min_value, max_value, min_pt, max_pt = cv2.minMaxLoc(match)
+        pt = min_pt
+        loc = np.where(match >= accuracy)
+        for pt in zip(*loc[::-1], strict=False):
+            coordinate = pt
+            coordinate = coordinate + (coordinate[0] + w, coordinate[1] + h)
+            break
+        return coordinate
 
     # ポケモンの画像からPIDを取得
     def shape_poke_num(self, origin: str):
