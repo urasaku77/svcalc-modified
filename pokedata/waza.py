@@ -21,6 +21,7 @@ class Waza:
         self.__power_hosei = base.value if base.is_power_hosei else -1
         self.__multi_hit = base.value if base.is_multi_hit else -1
         self.__critical = base.critical if base is not None else False
+        self.__priority = "先制" in self.__description
 
     # region プロパティ
     @property
@@ -74,6 +75,10 @@ class Waza:
     @property
     def multi_hit(self) -> int:
         return self.__multi_hit
+
+    @property
+    def priority(self) -> bool:
+        return self.__priority
 
     # endregion
 

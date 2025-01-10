@@ -526,7 +526,12 @@ class DamageCalc:
         )
 
         # 一致テラス時に威力が60以下のときは60にする
-        if waza.type == attacker.battle_terastype and power < 60:
+        if (
+            waza.type == attacker.battle_terastype
+            and power < 60
+            and not waza.priority
+            and waza.multi_hit == -1
+        ):
             power = 60
 
         return int(power) if power > 0 else 1
