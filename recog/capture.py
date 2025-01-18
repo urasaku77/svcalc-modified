@@ -39,6 +39,7 @@ class Capture:
         try:
             self.loop = asyncio.get_event_loop()
             self.obs = Obs(self.loop, self.account["port"], self.account["password"])
+            self.phase = "wait"
             return True
         except:
             return False
@@ -116,12 +117,12 @@ class Capture:
         )
         recogChosen = self.chose_pokemon()
         if recogResult:
-            self.phase = "party"
             opoKuraiCoord = self.get_coordinate_for_recognize(
                 "recog/recogImg/other/kurai.jpg", 0.8, "kurai"
             )
             if opoKuraiCoord != [-1, -1, -1, -1]:
                 opoRank = self.recognize_opo_rank(opoKuraiCoord)
+                self.phase = "party"
             # myKuraiCoord = self.get_coordinate_for_recognize(
             #     "recog/recogImg/other/myKurai.jpg", 0.7, "myKurai"
             # )
