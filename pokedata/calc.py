@@ -888,7 +888,8 @@ class DamageCalc:
         if defender.ability != "かがくへんかガス":
             match defender.ability:
                 case "ファントムガード":
-                    hosei[key] = 2048
+                    if defender.ability_enable:
+                        hosei[key] = 2048
                 case "プリズムアーマー":
                     if type_effective > 1.0:
                         hosei[key] = 3072
@@ -909,7 +910,7 @@ class DamageCalc:
                         hosei["もふもふ(ほのお)"] = 6144
                     if waza.is_touch:
                         hosei["もふもふ(接触)"] = 2048
-                case "マルチスケイル" | "ファントムガード":
+                case "マルチスケイル":
                     if defender.ability_enable:
                         hosei[key] = 2048
                 case "パンクロック":
