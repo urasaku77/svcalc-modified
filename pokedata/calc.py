@@ -281,7 +281,7 @@ class DamageCalc:
                         power = 100
             case "サイコブレイド":
                 power = 80
-                if field == Fields.サイコ:
+                if field == Fields.エレキ:
                     power = 120
             case "テラバースト":
                 power = 80
