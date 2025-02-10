@@ -562,6 +562,10 @@ class DamageCalc:
                     base_power = attacker.rankedB
             case "フォトンゲイザー":
                 base_power = max([attacker.rankedA, attacker.rankedC])
+                if attacker.rankedA > attacker.rankedC:
+                    waza.category = 物理
+                else:
+                    waza.category = 特殊
             case _:
                 statskey = StatsKey.A if waza.category == 物理 else StatsKey.C
                 # 急所時、攻撃ランクが0未満なら0として扱う
