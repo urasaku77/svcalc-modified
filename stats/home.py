@@ -498,7 +498,7 @@ class home:
                             waza["val"],
                         ]
                     )
-                    if name in unrecognizable_and_same_pokemon_in_home:
+                    if name in unrecognizable_and_same_pokemon_in_home.keys():
                         writer.writerow(
                             [
                                 name + "(王)",
@@ -507,7 +507,15 @@ class home:
                                     kana=False,
                                     digit=True,
                                     ascii=True,
-                                ),
+                                )
+                                if jaconv.z2h(
+                                    pokedex["waza"][waza["id"]],
+                                    kana=False,
+                                    digit=True,
+                                    ascii=True,
+                                )
+                                != "アイアンヘッド"
+                                else unrecognizable_and_same_pokemon_in_home[name],
                                 waza["val"],
                             ]
                         )
@@ -527,7 +535,7 @@ class home:
                             tokusei["val"],
                         ]
                     )
-                    if name in unrecognizable_and_same_pokemon_in_home:
+                    if name in unrecognizable_and_same_pokemon_in_home.keys():
                         writer.writerow(
                             [
                                 name + "(王)",
@@ -556,7 +564,7 @@ class home:
                             seikaku["val"],
                         ]
                     )
-                    if name in unrecognizable_and_same_pokemon_in_home:
+                    if name in unrecognizable_and_same_pokemon_in_home.keys():
                         writer.writerow(
                             [
                                 name + "(王)",
@@ -585,7 +593,7 @@ class home:
                             motimono["val"],
                         ]
                     )
-                    if name in unrecognizable_and_same_pokemon_in_home:
+                    if name in unrecognizable_and_same_pokemon_in_home.keys():
                         writer.writerow(
                             [
                                 name + "(王)",
@@ -604,7 +612,7 @@ class home:
                     teras = int(terastal["id"]) if int(terastal["id"]) != 99 else 18
                     writer = csv.writer(terastal_csv, lineterminator="\n")
                     writer.writerow([name, pokedex["pokeType"][teras], terastal["val"]])
-                    if name in unrecognizable_and_same_pokemon_in_home:
+                    if name in unrecognizable_and_same_pokemon_in_home.keys():
                         writer.writerow(
                             [name + "(王)", pokedex["pokeType"][teras], terastal["val"]]
                         )

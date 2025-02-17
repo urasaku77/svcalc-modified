@@ -22,7 +22,10 @@ unrecognizable_pokemon = ["ウーラオス", "ザシアン", "ザマゼンタ"]
 unrecognizable_pokemon_no = [888, 889, 892, 964, 1024]
 
 # 選出画面で判別付かないポケモンでHOME上区別がないポケモン
-unrecognizable_and_same_pokemon_in_home = ["ザシアン", "ザマゼンタ"]
+unrecognizable_and_same_pokemon_in_home = {
+    "ザシアン": "きょじゅうざん",
+    "ザマゼンタ": "きょじゅうだん",
+}
 
 
 def get_next_form(pid: str) -> Optional[str]:
