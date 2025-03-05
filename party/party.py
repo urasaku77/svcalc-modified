@@ -755,9 +755,12 @@ class EvEditor(ttk.Frame):
             self._ev_entry.value.set(value)
         else:
             increase_num = self._ev_entry.value.get() + value
-            if 0 <= increase_num <= 252:
+            if increase_num == 0 or increase_num == 4:
                 self._ev_entry.delete(0, tkinter.END)
                 self._ev_entry.value.set(increase_num)
+            elif 0 <= increase_num <= 252:
+                self._ev_entry.delete(0, tkinter.END)
+                self._ev_entry.value.set(increase_num + value)
 
     def setCallback(self, func):
         self._ev_entry.bind("<<TextModified>>", func)
