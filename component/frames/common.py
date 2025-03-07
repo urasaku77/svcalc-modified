@@ -436,7 +436,7 @@ class StatusFrame(ttk.LabelFrame):
                 self,
                 from_=0,
                 to=252,
-                increment=252,
+                increment=8,
                 width=4,
                 validate="key",
                 validatecommand=(self.doryoku_validate, "%P"),
@@ -508,6 +508,8 @@ class StatusFrame(ttk.LabelFrame):
 
     # 努力値Spinboxの上下ボタン押下時処理
     def on_push_doryoku_spin(self, key: StatsKey):
+        if int(self._doryoku_spinbox_dict[key].get()) == 8:
+            self._doryoku_spinbox_dict[key].set("4")
         self._doryoku[key] = int(self._doryoku_spinbox_dict[key].get())
         if self._stage is not None:
             self._stage.set_value_to_active_pokemon(
