@@ -1,7 +1,12 @@
+import math
 import tkinter as tk
 from tkinter import Event, ttk
 
 import jaconv
+
+from database.pokemon import DB_pokemon
+from pokedata.const import Types
+from pokedata.waza import Waza
 
 
 class MyCombobox(ttk.Combobox):
@@ -19,6 +24,7 @@ class AutoCompleteCombobox(MyCombobox):
         self._suggest_values = suggest_values
         self.bind("<Return>", self.on_enter)
         self.bind("<<ComboboxSelected>>", self.on_selected)
+        self.bind("<Button-3>", self.show_popup)
 
     # エンター押下時
     def on_enter(self, *args):
@@ -37,6 +43,9 @@ class AutoCompleteCombobox(MyCombobox):
     def on_selected(self, *args):
         self["values"] = []
         self.event_generate(MyCombobox.EVENT_SUBMIT)
+
+    def show_popup(self, *args):
+        pass
 
     def filtered_list(self, value) -> list[str]:
         return list(filter(lambda x: value in x, self._suggest_values))
@@ -72,6 +81,48 @@ class WazaNameCombobox(AutoCompleteCombobox):
             self.event_generate(MyCombobox.EVENT_SUBMIT)
         else:
             super().on_enter(*args)
+
+    def show_popup(self, *args):
+        detail = Waza(db_data=DB_pokemon.get_waza_data_by_name(self.get()))
+        if detail is None:
+            return
+
+        popup = tk.Toplevel(self)
+        popup.title("技詳細")
+        width = 350
+
+        # 説明文が長い場合に高さを調整
+        popup.update_idletasks()
+        height = 250 + (len(detail.description) / 2)
+        popup.geometry(f"{width}x{math.ceil(height)}")
+
+        # 技名を一番上に中央揃え & 太字表示
+        title_label = tk.Label(
+            popup,
+            text=detail.name,
+            font=("Arial", 14, "bold"),  # フォントサイズ14, 太字
+            anchor="center",
+        )
+        title_label.pack(side="top", pady=10)
+
+        # 表形式で表示
+        data = [
+            ("タイプ", Types(detail.type).name),
+            ("威力", str(detail.power) if detail.power != -1 else "-"),
+            ("分類", detail.category),
+            ("PP", detail.pp),
+            ("接触", "接触" if detail.is_touch == 1 else "非接触"),
+            ("まもる", "有効" if detail.is_guard == 1 else "無効"),
+            ("説明", detail.description),
+        ]
+
+        # テーブル風に表示
+        for label_text, value in data:
+            row = f"{label_text}：{value}"
+            label = tk.Label(
+                popup, text=row, anchor="w", justify="left", wraplength=width - 40
+            )
+            label.pack(fill="x", padx=10, pady=2)
 
 
 # 入力変更監視フォーム

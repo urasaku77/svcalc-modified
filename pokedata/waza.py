@@ -15,13 +15,14 @@ class Waza:
             self.__pp: int = db_data["pp"]
             self.__is_touch: bool = db_data["is_touch"]
             self.__is_guard: bool = db_data["is_guard"]
-            self.__description: bool = db_data["description"]
+            self.__description: str = db_data["description"]
+            self.__priority = "先制" in self.__description
 
-        self.__add_power = base.value if base.is_add_power else -1
-        self.__power_hosei = base.value if base.is_power_hosei else -1
-        self.__multi_hit = base.value if base.is_multi_hit else -1
-        self.__critical = base.critical if base is not None else False
-        self.__priority = "先制" in self.__description
+        if base is not None:
+            self.__add_power = base.value if base.is_add_power else -1
+            self.__power_hosei = base.value if base.is_power_hosei else -1
+            self.__multi_hit = base.value if base.is_multi_hit else -1
+            self.__critical = base.critical if base is not None else False
 
     # region プロパティ
     @property
@@ -49,8 +50,24 @@ class Waza:
         return self.__power
 
     @property
+    def hit(self) -> int:
+        return self.__hit
+
+    @property
+    def pp(self) -> int:
+        return self.__pp
+
+    @property
     def is_touch(self) -> bool:
         return self.__is_touch
+
+    @property
+    def is_guard(self) -> bool:
+        return self.__is_guard
+
+    @property
+    def description(self) -> str:
+        return self.__description
 
     @property
     def critical(self) -> bool:
