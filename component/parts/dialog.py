@@ -219,23 +219,23 @@ class SpeedComparing(tkinter.Toplevel):
             tkinter.BooleanVar(value=False),
         ]
 
-        base_stat_label = tkinter.Label(self, text="種族値")
+        base_stat_label = ttk.Label(self, text="種族値")
         base_stat_label.grid(row=3, column=1)
-        iv_label = tkinter.Label(self, text="個体値")
+        iv_label = ttk.Label(self, text="個体値")
         iv_label.grid(row=4, column=1)
-        ev_label = tkinter.Label(self, text="努力値")
+        ev_label = ttk.Label(self, text="努力値")
         ev_label.grid(row=5, column=1)
-        nature_label = tkinter.Label(self, text="性格")
+        nature_label = ttk.Label(self, text="性格")
         nature_label.grid(row=6, column=1)
-        rank_label = tkinter.Label(self, text="ランク")
+        rank_label = ttk.Label(self, text="ランク")
         rank_label.grid(row=7, column=1)
-        ability_label = tkinter.Label(self, text="特性")
+        ability_label = ttk.Label(self, text="特性")
         ability_label.grid(row=8, column=1)
-        item_label = tkinter.Label(self, text="道具")
+        item_label = ttk.Label(self, text="道具")
         item_label.grid(row=9, column=1)
-        tailwind_label = tkinter.Label(self, text="おいかぜ")
+        tailwind_label = ttk.Label(self, text="おいかぜ")
         tailwind_label.grid(row=10, column=1)
-        paralysis_label = tkinter.Label(self, text="まひ")
+        paralysis_label = ttk.Label(self, text="まひ")
         paralysis_label.grid(row=11, column=1)
 
         self.validate_cmd_2 = self.register(self.on_validate_2)
@@ -243,15 +243,15 @@ class SpeedComparing(tkinter.Toplevel):
 
         self.pokemon_icon: list[MyLabel] = [MyLabel(self), MyLabel(self)]
         self.name_label = [
-            tkinter.Label(self, textvariable=self.name_var[i]) for i in range(2)
+            ttk.Label(self, textvariable=self.name_var[i]) for i in range(2)
         ]
 
-        self.compare = tkinter.Label(
+        self.compare = ttk.Label(
             self, textvariable=self.compare_mark, font=Font(weight="bold", size=16)
         )
         self.compare.grid(row=2, column=1, pady=5)
         self.speed_label = [
-            tkinter.Label(
+            ttk.Label(
                 self, textvariable=self.speed_var[i], font=Font(weight="bold", size=32)
             )
             for i in range(2)
@@ -259,7 +259,7 @@ class SpeedComparing(tkinter.Toplevel):
 
         # 種族値
         self.base_stat = [
-            tkinter.Label(self, textvariable=self.base_stat_var[i]) for i in range(2)
+            ttk.Label(self, textvariable=self.base_stat_var[i]) for i in range(2)
         ]
 
         # 個体値
@@ -366,8 +366,7 @@ class SpeedComparing(tkinter.Toplevel):
             for i in range(2)
         ]
         self.rank = [
-            tkinter.Label(self.rank_box[i], textvariable=self.rank_var[i])
-            for i in range(2)
+            ttk.Label(self.rank_box[i], textvariable=self.rank_var[i]) for i in range(2)
         ]
         self.rank_plus = [
             MyButton(
@@ -659,25 +658,25 @@ class CaptureSetting(tkinter.Toplevel):
             }
 
         # ラベルとエントリーの作成
-        self.source_label = tkinter.Label(self, text="ソース名:")
+        self.source_label = ttk.Label(self, text="ソース名:")
         self.source_label.grid(row=0, column=0, padx=10, pady=5, sticky="e")
         self.source_entry = tkinter.Entry(self)
         self.source_entry.insert(0, self.initial_data["source_name"])
         self.source_entry.grid(row=0, column=1, padx=10, pady=5)
 
-        self.host_label = tkinter.Label(self, text="ホスト名:")
+        self.host_label = ttk.Label(self, text="ホスト名:")
         self.host_label.grid(row=1, column=0, padx=10, pady=5, sticky="e")
         self.host_entry = tkinter.Entry(self)
         self.host_entry.insert(0, self.initial_data["host_name"])
         self.host_entry.grid(row=1, column=1, padx=10, pady=5)
 
-        self.port_label = tkinter.Label(self, text="ポート:")
+        self.port_label = ttk.Label(self, text="ポート:")
         self.port_label.grid(row=2, column=0, padx=10, pady=5, sticky="e")
         self.port_entry = tkinter.Entry(self)
         self.port_entry.insert(0, self.initial_data["port"])
         self.port_entry.grid(row=2, column=1, padx=10, pady=5)
 
-        self.password_label = tkinter.Label(self, text="パスワード:")
+        self.password_label = ttk.Label(self, text="パスワード:")
         self.password_label.grid(row=3, column=0, padx=10, pady=5, sticky="e")
         self.password_entry = tkinter.Entry(self)
         self.password_entry.insert(0, self.initial_data["password"])
@@ -965,28 +964,28 @@ class WeightComparing(tkinter.Toplevel):
 
         self.pokemon_icon: list[MyLabel] = [MyLabel(self), MyLabel(self)]
         self.name_label = [
-            tkinter.Label(self, textvariable=self.name_var[i]) for i in range(2)
+            ttk.Label(self, textvariable=self.name_var[i]) for i in range(2)
         ]
         self.weight_label = [
-            tkinter.Label(
+            ttk.Label(
                 self, textvariable=self.weight_var[i], font=Font(weight="bold", size=32)
             )
             for i in range(2)
         ]
 
         self.power_label = [
-            tkinter.Label(
+            ttk.Label(
                 self, textvariable=self.power_var[i], font=Font(weight="bold", size=32)
             )
             for i in range(2)
         ]
 
-        self.compare = tkinter.Label(
+        self.compare = ttk.Label(
             self, textvariable=self.compare_mark, font=Font(weight="bold", size=16)
         )
         self.compare.grid(row=2, column=1, pady=5)
 
-        self.power_name_label = tkinter.Label(
+        self.power_name_label = ttk.Label(
             self, text="威力", font=Font(weight="bold", size=16)
         )
         self.power_name_label.grid(row=3, column=1, pady=5)

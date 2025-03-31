@@ -7,7 +7,7 @@ class Const(object):
     list2 = []
     kpStartX = 400
     kpStartY = 210
-    kpMargin = 10
+    kpMargin = 15
     kpMojiDX = 25
     kpPictureDX = 55
     kpPictureDY = 65

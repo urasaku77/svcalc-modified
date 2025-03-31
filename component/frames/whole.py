@@ -25,7 +25,7 @@ class WeatherFrame(ttk.LabelFrame):
 
         self._stage: Stage | None = None
         self._weather_combobox = MyCombobox(
-            self, width=17, height=30, values=WEATHER_COMBOBOX_VALUES
+            self, width=12, height=30, values=WEATHER_COMBOBOX_VALUES
         )
         self._weather_combobox.set(WEATHER_COMBOBOX_VALUES[0])
         self._weather_combobox.bind("<<ComboboxSelected>>", self.change_weather)
@@ -53,7 +53,7 @@ class FieldFrame(ttk.LabelFrame):
 
         self._stage: Stage | None = None
         self._field_combobox = MyCombobox(
-            self, width=17, height=30, values=FIELD_COMBOBOX_VALUES
+            self, width=12, height=30, values=FIELD_COMBOBOX_VALUES
         )
         self._field_combobox.set(FIELD_COMBOBOX_VALUES[0])
         self._field_combobox.bind("<<ComboboxSelected>>", self.change_field)
@@ -189,17 +189,16 @@ class TimerFrame(ttk.LabelFrame):
         self.canvas_time = tkinter.Canvas(self, width=130, height=70, bg="lightgreen")
         self.canvas_time.grid(column=0, row=0, columnspan=2)
 
-        start_button = tkinter.Button(
+        start_button = ttk.Button(
             self,
-            width=9,
-            height=2,
+            width=7,
             textvariable=self.button_text,
             command=self.start_button_clicked,
         )
         start_button.grid(column=0, row=1)
 
-        self.reset_button = tkinter.Button(
-            self, width=9, height=2, text="リセット", command=self.reset_button_clicked
+        self.reset_button = ttk.Button(
+            self, width=7, text="リセット", command=self.reset_button_clicked
         )
         self.reset_button.grid(column=1, row=1)
 
@@ -300,31 +299,29 @@ class CounterFrame(tkinter.Canvas):
         super().__init__(master, **kwargs)
 
         self.name_label = tkinter.Entry(self, width=7)
-        self.name_label.grid(column=0, row=0, columnspan=3)
+        self.name_label.grid(column=0, row=0, columnspan=2)
         self.count_num = tkinter.IntVar()
         self.count_num.set(0)
-        self.label_count = tkinter.Label(
+        self.label_count = ttk.Label(
             self,
             textvariable=self.count_num,
             anchor="center",
             font=(const.FONT_FAMILY, 24, "bold"),
         )
-        self.label_count.grid(column=0, row=1, columnspan=3)
+        self.label_count.grid(column=0, row=1, columnspan=2)
 
-        self.btn_count_down = tkinter.Button(
-            self, text="  -  ", command=self.CountDown, height=2
+        self.btn_count_down = ttk.Button(
+            self, text="-", command=self.CountDown, width=3
         )
         self.btn_count_down.grid(column=0, row=2)
 
-        self.btn_count_reset = tkinter.Button(
-            self, text="0", command=self.CountReset, height=2
-        )
+        self.btn_count_reset = ttk.Button(self, text="+", command=self.CountUp, width=3)
         self.btn_count_reset.grid(column=1, row=2)
 
-        self.btn_count_reset = tkinter.Button(
-            self, text="  ＋  ", command=self.CountUp, height=2
+        self.btn_count_reset = ttk.Button(
+            self, text="0", command=self.CountReset, width=2
         )
-        self.btn_count_reset.grid(column=2, row=2)
+        self.btn_count_reset.grid(column=0, row=3, columnspan=2)
 
     def CountDown(self):
         decrease_num = self.count_num.get()

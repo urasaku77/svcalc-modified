@@ -407,24 +407,27 @@ class StatusFrame(ttk.LabelFrame):
         jissu_label = MyLabel(self, text="実数値")
         jissu_label.grid(column=0, row=1, padx=2)
 
-        doryoku_label = tkinter.Button(
-            self, text="努力値", command=lambda: self.on_push_doryoku_clear_button()
+        doryoku_label = ttk.Button(
+            self,
+            text="努力値",
+            command=lambda: self.on_push_doryoku_clear_button(),
+            width=5.5,
         )
         doryoku_label.grid(column=0, row=2, padx=2)
 
-        rank_label = tkinter.Button(
-            self, text="ランク", command=self.on_push_rank_clear_button
+        rank_label = ttk.Button(
+            self, text="ランク", command=self.on_push_rank_clear_button, width=5.5
         )
         rank_label.grid(column=0, row=3, padx=2)
 
         for i, statskey in enumerate([x for x in StatsKey]):
-            label = tkinter.Button(
+            label = ttk.Button(
                 self,
                 text=statskey.name,
-                anchor=tkinter.CENTER,
                 command=lambda statskey=statskey: self.on_kotai_value_change(statskey),
+                width=2,
             )
-            label.grid(column=i + 1, row=0, padx=2)
+            label.grid(column=i + 1, row=0, padx=1)
 
             stats_value = tkinter.IntVar()
             stats_value.set(0)
@@ -443,7 +446,7 @@ class StatusFrame(ttk.LabelFrame):
                 command=lambda key=statskey: self.on_push_doryoku_spin(key),
             )
             doryoku_spin.bind("<Return>", self.on_change_doryoku_spin)
-            doryoku_spin.grid(column=i + 1, row=2, padx=2, pady=3)
+            doryoku_spin.grid(column=i + 1, row=2, padx=0.5, pady=2)
             self._doryoku_spinbox_dict[statskey] = doryoku_spin
 
             if statskey != StatsKey.H:

@@ -1,6 +1,7 @@
 import datetime
 import re
 import tkinter
+from tkinter import ttk
 
 from PIL import Image, ImageTk
 
@@ -46,17 +47,17 @@ class Analytics(tkinter.Toplevel):
         self.update_result()
 
         for i in range(50):
-            rank_label = tkinter.Label(self, text=str(i + 1) + "位")
+            rank_label = ttk.Label(self, text=str(i + 1) + "位")
             rank_label.place(x=Const.list2[i][1] - 40, y=Const.list2[i][2])
 
     def open(self):
         self.focus_set()
-        self.geometry("1280x720")
+        self.geometry("1320x720")
 
     def display_gui(self, search_date: datetime.datetime):
-        kikan_label = tkinter.Label(self, text="期間")
+        kikan_label = ttk.Label(self, text="期間")
         kikan_label.place(x=Const.searchX, y=Const.searchY - Const.searchDY)
-        rank_label = tkinter.Label(self, text="パーティ絞り込み")
+        rank_label = ttk.Label(self, text="パーティ絞り込み")
         rank_label.place(x=Const.searchX, y=Const.searchY + Const.searchDY * 2)
 
         self.from_year_var = tkinter.IntVar(self)
@@ -74,7 +75,7 @@ class Analytics(tkinter.Toplevel):
         from_date_menu = tkinter.OptionMenu(self, self.from_date_var, *Const.dateList)
         from_date_menu.place(x=Const.searchX + 120, y=Const.searchY)
 
-        mack_label = tkinter.Label(self, text=" ~ ", font=Const.titleFont)
+        mack_label = ttk.Label(self, text=" ~ ", font=Const.titleFont)
         mack_label.place(x=Const.searchX + 170, y=Const.searchY)
 
         self.to_year_var = tkinter.IntVar(self)
@@ -97,11 +98,11 @@ class Analytics(tkinter.Toplevel):
         )
         time9_check.place(x=Const.searchX + 400, y=Const.searchY)
 
-        num_label = tkinter.Label(self, text="番号")
+        num_label = ttk.Label(self, text="番号")
         num_label.place(x=Const.searchX, y=Const.searchY + Const.searchDY * 3)
         self.num_txt = tkinter.Entry(self, width=Const.txtboxWidth)
         self.num_txt.place(x=Const.searchX + 40, y=Const.searchY + Const.searchDY * 3)
-        sub_num_label = tkinter.Label(self, text="連番")
+        sub_num_label = ttk.Label(self, text="連番")
         sub_num_label.place(x=Const.searchX + 90, y=Const.searchY + Const.searchDY * 3)
         self.sub_num_txt = tkinter.Entry(self, width=Const.txtboxWidth)
         self.sub_num_txt.place(
@@ -123,7 +124,7 @@ class Analytics(tkinter.Toplevel):
             "コライドン": "1007-0",
             "ミライドン": "1008-0",
             "黒バドレックス": "898-2",
-            "ザシアン（王）": "888-1",
+            "ザシアン": "888-0",
             "テラパゴス": "1024-0",
             "ホウオウ": "250-0",
             "ルギア": "249-0",
@@ -134,7 +135,7 @@ class Analytics(tkinter.Toplevel):
             "レックウザ": "384-0",
             "日食ネクロズマ": "800-1",
             "黒キュレム": "646-2",
-            "ザマゼンタ（王）": "889-1",
+            "ザマゼンタ": "889-0",
             "グラードン": "383-0",
             "白キュレム": "646-1",
             "ソルガレオ": "791-0",
@@ -147,8 +148,6 @@ class Analytics(tkinter.Toplevel):
             "ディアルガ（オリジン）": "483-1",
             "パルキア": "484-0",
             "パルキア（オリジン）": "484-1",
-            "ザシアン": "888-0",
-            "ザマゼンタ": "889-0",
             "ミュウツー": "150-0",
             "キュレム": "646-0",
             "ネクロズマ": "800-0",
@@ -169,7 +168,7 @@ class Analytics(tkinter.Toplevel):
             x=Const.searchX + 270, y=Const.searchY + Const.searchDY * 2.6
         )
 
-        search_button = tkinter.Button(
+        search_button = ttk.Button(
             self,
             text="検索",
             command=self.update_result,
@@ -179,10 +178,9 @@ class Analytics(tkinter.Toplevel):
         )
         self.title_var = tkinter.StringVar()
         self.title_var.set("ＫＰと勝率")
-        self.main_title_label = tkinter.Button(
+        self.main_title_label = ttk.Button(
             self,
             textvariable=self.title_var,
-            font=Const.titleFont,
             state="disable",
             command=self.change_mode,
         )
@@ -215,7 +213,7 @@ class Analytics(tkinter.Toplevel):
         self.main_title_label.place(x=Const.kpStartX, y=Const.kpStartY - 60)
         self.subtitle_var = tkinter.StringVar()
         self.subtitle_var.set("直近使用したパーティ")
-        self.sub_title_label = tkinter.Label(
+        self.sub_title_label = ttk.Label(
             self, textvariable=self.subtitle_var, font=Const.titleFont
         )
         self.sub_title_label.place(x=Const.myPartyStartX, y=Const.myPartyStartY - 30)
@@ -311,7 +309,7 @@ class Analytics(tkinter.Toplevel):
 
         self.kp_list = list(self.pokemon_list)
         self.change_sort_condition()
-        self.record_count_label = tkinter.Label(
+        self.record_count_label = ttk.Label(
             self,
             text="対戦数：" + str(self.record_count[0]),
             font=Const.titleFont,
@@ -322,7 +320,7 @@ class Analytics(tkinter.Toplevel):
             if self.record_count[0] != 0
             else 0
         )
-        self.whole_win_rate_label = tkinter.Label(
+        self.whole_win_rate_label = ttk.Label(
             self,
             text=str("勝率：" + "{:.1f}".format(whole_win_rate)) + "%",
             font=Const.titleFont,
@@ -337,7 +335,7 @@ class Analytics(tkinter.Toplevel):
             for i in range(len(self.result_1_list)):
                 if i > 49:
                     break
-                result_1_label = tkinter.Label(
+                result_1_label = ttk.Label(
                     self,
                     text=str(
                         "{:.1f}".format(
@@ -356,7 +354,7 @@ class Analytics(tkinter.Toplevel):
             for i in range(len(self.result_1_list)):
                 if i > 49:
                     break
-                result_1_label = tkinter.Label(
+                result_1_label = ttk.Label(
                     self,
                     text=str("{:.1f}".format(self.result_1_list[i] * 100)) + "%",
                 )
@@ -367,7 +365,7 @@ class Analytics(tkinter.Toplevel):
         for i in range(len(self.result_2_list)):
             if i > 49:
                 break
-            result_2_label = tkinter.Label(
+            result_2_label = ttk.Label(
                 self, text=str("{:.1f}".format(self.result_2_list[i] * 100)) + "%"
             )
             result_2_label.place(x=Const.list2[i][1] - 40, y=Const.list2[i][2] + 40)
@@ -585,7 +583,7 @@ class Analytics(tkinter.Toplevel):
                     )
                     canvas.create_image(5, 5, image=img, anchor=tkinter.NW)
                     self.img_list.append(img)
-                    party_num_label = tkinter.Label(
+                    party_num_label = ttk.Label(
                         self,
                         text="勝率："
                         + "{:.1f}".format(win_rate_list[i] * 100)
@@ -674,7 +672,7 @@ class Analytics(tkinter.Toplevel):
                     )
                     canvas.create_image(5, 5, image=img, anchor=tkinter.NW)
                     self.img_list.append(img)
-                    party_num_label = tkinter.Label(
+                    party_num_label = ttk.Label(
                         self,
                         text="勝率："
                         + "{:.1f}".format(win_rate_list[i] * 100)
@@ -704,7 +702,7 @@ class Analytics(tkinter.Toplevel):
             party_num = f"{pokemon_list[i][6]}-{pokemon_list[i][7]}"
             for j in range(7):
                 if j == 6:
-                    party_num_label = tkinter.Label(
+                    party_num_label = ttk.Label(
                         self, text=party_num, font=Const.titleFont
                     )
                     party_num_label.place(

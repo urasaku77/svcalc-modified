@@ -716,14 +716,14 @@ class EvEditor(ttk.Frame):
         super().__init__(master=master, **kwargs)
         self.validate_cmd_3 = self.register(self.on_validate_3)
 
-        self._ev_min_button = tkinter.Button(
-            self, text="0", command=lambda: self.set_value(0, True)
+        self._ev_min_button = ttk.Button(
+            self, text="0", command=lambda: self.set_value(0, True), width=1
         )
         self._ev_min_button["takefocus"] = False
         self._ev_min_button.pack(side="left")
 
-        self._ev_count_down = tkinter.Button(
-            self, text="↓", command=lambda: self.set_value(-4, False)
+        self._ev_count_down = ttk.Button(
+            self, text="↓", command=lambda: self.set_value(-4, False), width=1
         )
         self._ev_count_down["takefocus"] = False
         self._ev_count_down.pack(side="left")
@@ -737,14 +737,14 @@ class EvEditor(ttk.Frame):
         self._ev_entry.insert(0, 0)
         self._ev_entry.pack(side="left")
 
-        self._ev_count_up = tkinter.Button(
-            self, text="↑", command=lambda: self.set_value(4, False)
+        self._ev_count_up = ttk.Button(
+            self, text="↑", command=lambda: self.set_value(4, False), width=1
         )
         self._ev_count_up["takefocus"] = False
         self._ev_count_up.pack(side="left")
 
-        self._ev_max_button = tkinter.Button(
-            self, text="252", command=lambda: self.set_value(252, True)
+        self._ev_max_button = ttk.Button(
+            self, text="252", command=lambda: self.set_value(252, True), width=3
         )
         self._ev_max_button["takefocus"] = False
         self._ev_max_button.pack(side="left")
@@ -802,14 +802,14 @@ class IvEditor(ttk.Frame):
         super().__init__(master=master, **kwargs)
         self.validate_cmd_2 = self.register(self.on_validate_2)
 
-        self._iv_min_button = tkinter.Button(
-            self, text="0", command=lambda: self.set_value(0, True)
+        self._iv_min_button = ttk.Button(
+            self, text="0", command=lambda: self.set_value(0, True), width=1
         )
         self._iv_min_button["takefocus"] = False
         self._iv_min_button.pack(side="left")
 
-        self._iv_count_down = tkinter.Button(
-            self, text="↓", command=lambda: self.set_value(-1, False)
+        self._iv_count_down = ttk.Button(
+            self, text="↓", command=lambda: self.set_value(-1, False), width=1
         )
         self._iv_count_down["takefocus"] = False
         self._iv_count_down.pack(side="left")
@@ -823,14 +823,14 @@ class IvEditor(ttk.Frame):
         self._iv_entry.insert(0, 31)
         self._iv_entry.pack(side="left")
 
-        self._iv_count_up = tkinter.Button(
-            self, text="↑", command=lambda: self.set_value(1, False)
+        self._iv_count_up = ttk.Button(
+            self, text="↑", command=lambda: self.set_value(1, False), width=1
         )
         self._iv_count_up["takefocus"] = False
         self._iv_count_up.pack(side="left")
 
-        self._iv_max_button = tkinter.Button(
-            self, text="31", command=lambda: self.set_value(31, True)
+        self._iv_max_button = ttk.Button(
+            self, text="31", command=lambda: self.set_value(31, True), width=2
         )
         self._iv_max_button["takefocus"] = False
         self._iv_max_button.pack(side="left")

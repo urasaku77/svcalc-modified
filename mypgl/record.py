@@ -1,6 +1,7 @@
 import datetime
 import math
 import tkinter
+from tkinter import ttk
 
 from PIL import Image, ImageTk
 
@@ -45,9 +46,9 @@ class Record(tkinter.Toplevel):
         self.geometry("1800x950")
 
     def display_gui(self):
-        kikan_label = tkinter.Label(self, text="期間")
+        kikan_label = ttk.Label(self, text="期間")
         kikan_label.place(x=Const.searchX, y=Const.searchY - Const.searchDY)
-        rank_label = tkinter.Label(self, text="パーティ絞り込み")
+        rank_label = ttk.Label(self, text="パーティ絞り込み")
         rank_label.place(x=Const.searchX, y=Const.searchY + Const.searchDY * 2)
 
         self.from_year_var = tkinter.IntVar(self)
@@ -65,7 +66,7 @@ class Record(tkinter.Toplevel):
         from_date_menu = tkinter.OptionMenu(self, self.from_date_var, *Const.dateList)
         from_date_menu.place(x=Const.searchX + 120, y=Const.searchY)
 
-        mack_label = tkinter.Label(self, text=" ~ ", font=Const.titleFont)
+        mack_label = ttk.Label(self, text=" ~ ", font=Const.titleFont)
         mack_label.place(x=Const.searchX + 170, y=Const.searchY)
 
         self.to_year_var = tkinter.IntVar(self)
@@ -88,11 +89,11 @@ class Record(tkinter.Toplevel):
         )
         time9_check.place(x=Const.searchX + 400, y=Const.searchY)
 
-        num_label = tkinter.Label(self, text="番号")
+        num_label = ttk.Label(self, text="番号")
         num_label.place(x=Const.searchX, y=Const.searchY + Const.searchDY * 3)
         self.num_txt = tkinter.Entry(self, width=Const.txtboxWidth)
         self.num_txt.place(x=Const.searchX + 40, y=Const.searchY + Const.searchDY * 3)
-        sub_num_label = tkinter.Label(self, text="連番")
+        sub_num_label = ttk.Label(self, text="連番")
         sub_num_label.place(x=Const.searchX + 90, y=Const.searchY + Const.searchDY * 3)
         self.sub_num_txt = tkinter.Entry(self, width=Const.txtboxWidth)
         self.sub_num_txt.place(
@@ -114,7 +115,7 @@ class Record(tkinter.Toplevel):
             "コライドン": "1007-0",
             "ミライドン": "1008-0",
             "黒バドレックス": "898-2",
-            "ザシアン（王）": "888-1",
+            "ザシアン": "888-0",
             "テラパゴス": "1024-0",
             "ホウオウ": "250-0",
             "ルギア": "249-0",
@@ -125,7 +126,7 @@ class Record(tkinter.Toplevel):
             "レックウザ": "384-0",
             "日食ネクロズマ": "800-1",
             "黒キュレム": "646-2",
-            "ザマゼンタ（王）": "889-1",
+            "ザマゼンタ": "889-0",
             "グラードン": "383-0",
             "白キュレム": "646-1",
             "ソルガレオ": "791-0",
@@ -138,8 +139,6 @@ class Record(tkinter.Toplevel):
             "ディアルガ（オリジン）": "483-1",
             "パルキア": "484-0",
             "パルキア（オリジン）": "484-1",
-            "ザシアン": "888-0",
-            "ザマゼンタ": "889-0",
             "ミュウツー": "150-0",
             "キュレム": "646-0",
             "ネクロズマ": "800-0",
@@ -160,7 +159,7 @@ class Record(tkinter.Toplevel):
             x=Const.searchX + 270, y=Const.searchY + Const.searchDY * 2.6
         )
 
-        search_button = tkinter.Button(
+        search_button = ttk.Button(
             self,
             text="検索",
             command=self.get_battle_data,
@@ -180,34 +179,32 @@ class Record(tkinter.Toplevel):
             x=Const.searchX + 450, y=Const.searchY + Const.searchDY * 2.7
         )
 
-        koumoku_label0 = tkinter.Label(
+        koumoku_label0 = ttk.Label(
             self,
             text="対戦時間",
         )
         koumoku_label0.place(x=Const.summaryX + 20, y=Const.koumokuY)
-        koumoku_label1 = tkinter.Label(
+        koumoku_label1 = ttk.Label(
             self,
             text="自分のパーティ",
         )
         koumoku_label1.place(x=Const.myPokemonX, y=Const.koumokuY)
-        koumoku_label2 = tkinter.Label(self, text="選出")
+        koumoku_label2 = ttk.Label(self, text="選出")
         koumoku_label2.place(x=Const.mysensyutuX, y=Const.koumokuY)
-        koumoku_label3 = tkinter.Label(self, text="勝敗")
+        koumoku_label3 = ttk.Label(self, text="勝敗")
         koumoku_label3.place(x=Const.winLoseX - 20, y=Const.koumokuY)
-        koumoku_label4 = tkinter.Label(self, text="相手のパーティ")
+        koumoku_label4 = ttk.Label(self, text="相手のパーティ")
         koumoku_label4.place(x=Const.opoPokemonX + 50, y=Const.koumokuY)
-        koumoku_label4 = tkinter.Label(self, text="選出")
+        koumoku_label4 = ttk.Label(self, text="選出")
         koumoku_label4.place(x=Const.opposensyutuX + 50, y=Const.koumokuY)
-        koumoku_label5 = tkinter.Label(self, text="TN")
+        koumoku_label5 = ttk.Label(self, text="TN")
         koumoku_label5.place(x=Const.tnX, y=Const.koumokuY)
-        koumoku_label6 = tkinter.Label(self, text="相手の順位")
+        koumoku_label6 = ttk.Label(self, text="相手の順位")
         koumoku_label6.place(x=Const.rankX, y=Const.koumokuY)
 
-        paging_left_button = tkinter.Button(
-            self, text="◀", command=self.click_paging_left
-        )
+        paging_left_button = ttk.Button(self, text="◀", command=self.click_paging_left)
         paging_left_button.place(x=1500, y=Const.koumokuY)
-        paging_right_button = tkinter.Button(
+        paging_right_button = ttk.Button(
             self, text="▶", command=self.click_paging_right
         )
         paging_right_button.place(x=1600, y=Const.koumokuY)
@@ -280,12 +277,12 @@ class Record(tkinter.Toplevel):
             self.page_position_label.destroy()
         if self.page_num_label is not None:
             self.page_num_label.destroy()
-        self.page_num_label = tkinter.Label(
+        self.page_num_label = ttk.Label(
             self,
             textvariable=self.page_num_var,
         )
         self.page_num_label.place(x=1540, y=Const.koumokuY)
-        self.page_position_label = tkinter.Label(
+        self.page_position_label = ttk.Label(
             self,
             text=f"/ {math.ceil(len(self.battle_data_list) / 15)}",
         )
@@ -454,34 +451,32 @@ class SearchRecord(tkinter.Frame):
         self.display_gui()
 
     def display_gui(self):
-        koumoku_label0 = tkinter.Label(
+        koumoku_label0 = ttk.Label(
             self,
             text="対戦時間",
         )
         koumoku_label0.place(x=Const.summaryX + 20, y=Const.searchY)
-        koumoku_label1 = tkinter.Label(
+        koumoku_label1 = ttk.Label(
             self,
             text="自分のパーティ",
         )
         koumoku_label1.place(x=Const.myPokemonX, y=Const.searchY)
-        koumoku_label2 = tkinter.Label(self, text="選出")
+        koumoku_label2 = ttk.Label(self, text="選出")
         koumoku_label2.place(x=Const.mysensyutuX, y=Const.searchY)
-        koumoku_label3 = tkinter.Label(self, text="勝敗")
+        koumoku_label3 = ttk.Label(self, text="勝敗")
         koumoku_label3.place(x=Const.winLoseX - 20, y=Const.searchY)
-        koumoku_label4 = tkinter.Label(self, text="相手のパーティ")
+        koumoku_label4 = ttk.Label(self, text="相手のパーティ")
         koumoku_label4.place(x=Const.opoPokemonX + 50, y=Const.searchY)
-        koumoku_label4 = tkinter.Label(self, text="選出")
+        koumoku_label4 = ttk.Label(self, text="選出")
         koumoku_label4.place(x=Const.opposensyutuX + 50, y=Const.searchY)
-        koumoku_label5 = tkinter.Label(self, text="TN")
+        koumoku_label5 = ttk.Label(self, text="TN")
         koumoku_label5.place(x=Const.tnX, y=Const.searchY)
-        koumoku_label6 = tkinter.Label(self, text="相手の順位")
+        koumoku_label6 = ttk.Label(self, text="相手の順位")
         koumoku_label6.place(x=Const.rankX, y=Const.searchY)
 
-        paging_left_button = tkinter.Button(
-            self, text="◀", command=self.click_paging_left
-        )
+        paging_left_button = ttk.Button(self, text="◀", command=self.click_paging_left)
         paging_left_button.place(x=1500, y=Const.searchY)
-        paging_right_button = tkinter.Button(
+        paging_right_button = ttk.Button(
             self, text="▶", command=self.click_paging_right
         )
         paging_right_button.place(x=1600, y=Const.searchY)
@@ -503,7 +498,7 @@ class SearchRecord(tkinter.Frame):
         result_label = (
             "完全一致の検索結果" if self.source == "full" else "6匹同じポケモン"
         )
-        result_num_label = tkinter.Label(
+        result_num_label = ttk.Label(
             self,
             text=f"{result_label}：{len(self.battle_data_list)}件",
             font=Const.titleFont,
@@ -534,12 +529,12 @@ class SearchRecord(tkinter.Frame):
             self.page_position_label.destroy()
         if self.page_num_label is not None:
             self.page_num_label.destroy()
-        self.page_num_label = tkinter.Label(
+        self.page_num_label = ttk.Label(
             self,
             textvariable=self.page_num_var,
         )
         self.page_num_label.place(x=1540, y=Const.searchY)
-        self.page_position_label = tkinter.Label(
+        self.page_position_label = ttk.Label(
             self,
             text=f"/ {math.ceil(len(self.battle_data_list) / 5)}",
         )

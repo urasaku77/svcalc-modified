@@ -127,7 +127,7 @@ class MainApp(ThemedTk):
 
         # 技・ダメージ表示フレーム(自分)
         waza_frame_my = WazaDamageListFrame(
-            master=main_frame, index=0, width=475, height=60, text="自分わざ情報"
+            master=main_frame, index=0, width=475, height=30, text="自分わざ情報"
         )
         waza_frame_my.grid(row=4, column=0, columnspan=3, sticky=N + W + S)
         waza_frame_my.grid_propagate(False)
@@ -167,14 +167,14 @@ class MainApp(ThemedTk):
 
         # 天候フレーム
         self.weather_frame = WeatherFrame(
-            master=common_frame, text="天候", width=150, height=55, padding=6
+            master=common_frame, text="天候", width=90, height=55, padding=6
         )
 
         self.weather_frame.pack(fill="x", expand=0)
 
         # フィールドフレーム
         self.field_frame = FieldFrame(
-            master=common_frame, text="フィールド", width=150, height=55, padding=6
+            master=common_frame, text="フィールド", width=90, height=55, padding=6
         )
         self.field_frame.pack(fill="x", expand=0)
 
@@ -186,7 +186,7 @@ class MainApp(ThemedTk):
         self.speed_button = CompareButton(
             master=compare_frame,
             text="素早さ比較",
-            width=10,
+            width=9.5,
             padding=5,
             command=self.speed_comparing,
         )
@@ -196,7 +196,7 @@ class MainApp(ThemedTk):
         self.weight_button = CompareButton(
             master=compare_frame,
             text="重さ比較",
-            width=8,
+            width=6.5,
             padding=5,
             command=self.weight_comparing,
         )
