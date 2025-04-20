@@ -1026,7 +1026,14 @@ class DamageCalc:
 
             # × タイプ一致 6144  (更にテラス一致なら8192) (適応力なら8192) ÷ 4096 → 五捨五超入
             value = 4096
-            type_equal: bool = waza.type in attacker.type
+            type_equal: bool = (
+                waza.type in attacker.type
+                if not (
+                    waza.name == "テラクラスター"
+                    and attacker.battle_terastype == Types.ステラ
+                )
+                else False
+            )
             teras_type_equal: bool = waza.type == attacker.battle_terastype
 
             if attacker.ability != "かがくへんかガス":
