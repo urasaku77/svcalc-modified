@@ -577,11 +577,14 @@ class Pokemon:
             else:
                 value = value * Decimal(type_effective.value)
         if (
-            (waza.name == "テラバースト" or waza.name == "テラクラスター")
+            (waza.name == "テラバースト")
             and self.battle_terastype == Types.ステラ
-            and defender_terastype == Types.ステラ
+            and not defender_terastype == Types.なし
         ):
             value = Decimal(2.0)
+        if waza.name == "テラクラスター" and not defender_terastype == Types.なし:
+            value = Decimal(2.0)
+
         return float(value)
 
     # 技の編集
