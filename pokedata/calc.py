@@ -94,6 +94,13 @@ class DamageCalc:
                 waza.category = 物理 if attacker.rankedA >= attacker.rankedC else 特殊
                 waza.type = attacker.battle_terastype
 
+            if (
+                waza.name == "テラクラスター"
+                and attacker.battle_terastype != Types.なし
+            ):
+                waza.category = 物理 if attacker.rankedA >= attacker.rankedC else 特殊
+                waza.type = Types.ステラ
+
             if waza.name == "ツタこんぼう":
                 if attacker.name == "オーガポン(水)":
                     waza.type = Types.みず
