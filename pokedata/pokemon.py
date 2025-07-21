@@ -552,7 +552,11 @@ class Pokemon:
     # タイプ相性値
     # テラスタイプがある場合、そのタイプで算出
     def get_type_effective(
-        self, waza: Waza, ability: str, defender_terastype: Types = Types.なし
+        self,
+        waza: Waza,
+        ability: str,
+        attacker_terastype: Types = Types.なし,
+        defender_terastype: Types = Types.なし,
     ) -> float:
         value = Decimal(1.0)
         types: list[Types] = (
@@ -582,7 +586,11 @@ class Pokemon:
             and not defender_terastype == Types.なし
         ):
             value = Decimal(2.0)
-        if waza.name == "テラクラスター" and not defender_terastype == Types.なし:
+        if (
+            waza.name == "テラクラスター"
+            and not attacker_terastype == Types.なし
+            and not defender_terastype == Types.なし
+        ):
             value = Decimal(2.0)
 
         return float(value)

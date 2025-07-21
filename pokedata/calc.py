@@ -479,7 +479,10 @@ class DamageCalc:
             case "アクセルブレイク" | "イナズマドライブ":
                 if (
                     defender.get_type_effective(
-                        waza, attacker.ability, defender.battle_terastype
+                        waza,
+                        attacker.ability,
+                        attacker.battle_terastype,
+                        defender.battle_terastype,
                     )
                     == 2.0
                 ):
@@ -857,7 +860,7 @@ class DamageCalc:
     ) -> int:
         hosei: dict[str, int] = {}
         type_effective: float = defender.get_type_effective(
-            waza, attacker.ability, defender.battle_terastype
+            waza, attacker.ability, attacker.battle_terastype, defender.battle_terastype
         )
 
         # region 壁の補正
@@ -1088,7 +1091,10 @@ class DamageCalc:
                 rnd_damage
                 * Decimal(
                     defender.get_type_effective(
-                        waza, attacker.ability, defender.battle_terastype
+                        waza,
+                        attacker.ability,
+                        attacker.battle_terastype,
+                        defender.battle_terastype,
                     )
                 )
             ).quantize(DECIMAI_ZERO, rounding=ROUND_FLOOR)
