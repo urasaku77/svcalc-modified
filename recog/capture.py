@@ -1,7 +1,6 @@
 import asyncio
 import base64
 import glob
-import json
 import os
 
 import cv2
@@ -13,6 +12,7 @@ from pokedata.exception import unrecognizable_pokemon
 from pokedata.pokemon import Pokemon
 from recog.coodinate import ConfCoordinate
 from recog.obs import Obs
+from recog.recog import get_recog_value
 
 
 class Capture:
@@ -23,16 +23,8 @@ class Capture:
         # party(相手パーティ待ち)→chosen(対戦画面待ち)→一旦終了
         self.phase = "wait"
         self.banme = 0
-        # OBSの設定値を読み込む
-        with open("recog/capture.json", "r") as json_file:
-            self.account = json.load(json_file)
-        try:
-            with open("recog/setting.json", "r") as json_file:
-                self.setting_data = json.load(json_file)
-        except FileNotFoundError:
-            self.setting_data = {"panipani_auto": False}
 
-        self.is_panipani = self.setting_data["panipani_auto"]
+        self.is_panipani = get_recog_value("panipani_auto")
 
     # Websocket接続
     def connect_websocket(self):

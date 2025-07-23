@@ -1,5 +1,3 @@
-import json
-
 from component.app import MainApp
 from pokedata.calc import DamageCalc
 from pokedata.const import Ailments, Fields, Types, Walls, Weathers
@@ -7,6 +5,7 @@ from pokedata.nature import get_default_doryoku
 from pokedata.pokemon import Pokemon
 from pokedata.stats import Stats
 from pokedata.waza import WazaBase
+from recog.recog import get_recog_value
 
 
 class Stage:
@@ -15,12 +14,6 @@ class Stage:
         self._weather: Weathers = Weathers.なし
         self._field: Fields = Fields.なし
         self._app.set_stage(self)
-
-        try:
-            with open("recog/setting.json", "r") as json_file:
-                self.setting_data = json.load(json_file)
-        except FileNotFoundError:
-            self.setting_data = {"doryoku_reset_auto": False}
 
     def get_party(self, index: int) -> list[Pokemon]:
         return self._app.party_frames[index].pokemon_list
@@ -57,14 +50,7 @@ class Stage:
     def set_active_pokemon(self, player: int, pokemon: Pokemon):
         self._app.set_active_pokemon(player=player, pokemon=pokemon)
 
-        # JSONファイルから設定値を読み取り
-        try:
-            with open("recog/setting.json", "r") as json_file:
-                self.setting_data = json.load(json_file)
-        except FileNotFoundError:
-            self.setting_data = {"active_chosen_auto": False}
-
-        if self.setting_data["active_chosen_auto"] and player == 1:
+        if get_recog_value("active_chosen_auto") and player == 1:
             self.set_chosen(1)
 
         self._app.after_appear(pokemon, player)
@@ -99,7 +85,7 @@ class Stage:
                 pokemon.seikaku = "まじめ"
             else:
                 pokemon.seikaku = seikaku
-            if player == 1 and self.setting_data["doryoku_reset_auto"]:
+            if player == 1 and get_recog_value("doryoku_reset_auto"):
                 pokemon.doryoku.init_values(0)
                 pokemon.doryoku.set_values_from_stats(
                     get_default_doryoku(seikaku, pokemon.syuzoku)

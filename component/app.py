@@ -1,6 +1,5 @@
 import copy
 import dataclasses
-import json
 import sys
 import tkinter
 from tkinter import E, N, S, W, messagebox, ttk
@@ -26,9 +25,7 @@ from component.frames.whole import (
 from component.parts.button import MyButton
 from component.parts.dialog import (
     BoxDialog,
-    CaptureSetting,
     FormSelect,
-    ModeSetting,
     PartyInputDialog,
     SimilarParty,
     SpeedComparing,
@@ -42,6 +39,7 @@ from pokedata.const import Types
 from pokedata.pokemon import Pokemon
 from pokedata.stats import StatsKey
 from recog.capture import Capture
+from recog.recog import CaptureSetting, ModeSetting, get_recog_value
 from stats.search import get_similar_party
 
 
@@ -447,14 +445,7 @@ class MainApp(ThemedTk):
                 self.shot_button["state"] = tkinter.NORMAL
                 self.websocket = True
 
-                # JSONファイルから設定値を読み取り
-                try:
-                    with open("recog/setting.json", "r") as json_file:
-                        self.setting_data = json.load(json_file)
-                except FileNotFoundError:
-                    self.setting_data = {"capture_monitor_auto": False}
-
-                if self.setting_data["capture_monitor_auto"]:
+                if get_recog_value("capture_monitor_auto"):
                     self.image_recognize()
 
         else:
@@ -481,19 +472,10 @@ class MainApp(ThemedTk):
             case tuple():
                 self.party_frames[1].set_party_from_capture(result[0])
                 self.record_frame.tn.insert(0, result[1])
-                # JSONファイルから設定値を読み取り
-                try:
-                    with open("recog/setting.json", "r") as json_file:
-                        self.setting_data = json.load(json_file)
-                except FileNotFoundError:
-                    self.setting_data = {
-                        "similar_party_auto": False,
-                        "search_record_auto": False,
-                    }
 
-                if self.setting_data["similar_party_auto"]:
+                if get_recog_value("similar_party_auto"):
                     self.search_similar_party(isOpen=False)
-                if self.setting_data["search_record_auto"]:
+                if get_recog_value("search_record_auto"):
                     self.search_record(isOpen=False)
             case list():
                 if result != [-1, -1, -1]:
