@@ -100,6 +100,7 @@ class ModeSetting(tkinter.Toplevel):
                 self.initial_data = json.load(json_file)
         except FileNotFoundError:
             self.initial_data = {
+                "rule": 1,
                 "active_chosen_auto": True,
                 "capture_monitor_auto": True,
                 "doryoku_reset_auto": True,
@@ -107,6 +108,18 @@ class ModeSetting(tkinter.Toplevel):
                 "search_record_auto": False,
                 "panipani_auto": True,
             }
+
+        # ルールの選択
+        self.rule_var = tkinter.IntVar()
+        self.rule_var.set(1)
+        self.rule_button1 = tkinter.Radiobutton(
+            self, text="シングル", variable=self.rule_var, value=1
+        )
+        self.rule_button1.grid(row=0, column=0, pady=5)
+        self.rule_button2 = tkinter.Radiobutton(
+            self, text="ダブル", variable=self.rule_var, value=2
+        )
+        self.rule_button2.grid(row=0, column=1, pady=5)
 
         # チェックボックス1
         self.active_chosen_auto_var = tkinter.BooleanVar()
@@ -188,6 +201,7 @@ class ModeSetting(tkinter.Toplevel):
     def submit_form(self):
         # 入力された値をJSONファイルに保存
         data = {
+            "rule": self.rule_var.get(),
             "active_chosen_auto": self.active_chosen_auto_var.get(),
             "capture_monitor_auto": self.capture_monitor_auto_var.get(),
             "doryoku_reset_auto": self.doryoku_reset_auto_var.get(),
@@ -213,6 +227,7 @@ def get_recog_value(key: str):
     """
 
     if key not in [
+        "rule",
         "active_chosen_auto",
         "capture_monitor_auto",
         "doryoku_reset_auto",
@@ -228,6 +243,7 @@ def get_recog_value(key: str):
             return settings_json[key]
     except FileNotFoundError:
         return {
+            "rule": 1,
             "active_chosen_auto": True,
             "capture_monitor_auto": True,
             "doryoku_reset_auto": True,
