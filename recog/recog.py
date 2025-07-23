@@ -111,7 +111,7 @@ class ModeSetting(tkinter.Toplevel):
 
         # ルールの選択
         self.rule_var = tkinter.IntVar()
-        self.rule_var.set(1)
+        self.rule_var.set(self.initial_data["rule"])
         self.rule_button1 = tkinter.Radiobutton(
             self, text="シングル", variable=self.rule_var, value=1
         )

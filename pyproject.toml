@@ -16,7 +16,7 @@ dependencies = [
     "selenium>=4.17.2",
     "pyinstaller>=6.7.0",
     "natsort>=8.4.0",
-]
+    ]
 readme = "README.md"
 requires-python = ">= 3.10"
 
@@ -32,7 +32,7 @@ build-backend = "hatchling.build"
 [tool.rye]
 managed = true
 dev-dependencies = [
-    "mypy>=1.8.0",
+    "mypy>=1.15.0",
     "ruff>=0.1.13",
     "pre-commit>=3.6.0",
 ]

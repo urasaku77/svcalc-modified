@@ -70,6 +70,7 @@ class DamageCalc:
         defender: "Pokemon",
         weather: Weathers = Weathers.なし,
         field: Fields = Fields.なし,
+        double_params: dict[str, bool] = None,
     ) -> list[DamageCalcResult]:
         result_all: list[DamageCalcResult] = []
         for wazabase in attacker.waza_list:
@@ -136,6 +137,7 @@ class DamageCalc:
                 waza=waza,
                 weather=weather,
                 field=field,
+                double_params=double_params,
             )
             result = DamageCalcResult(
                 attacker=attacker, defender=defender, waza=waza, damages=damages
@@ -150,6 +152,7 @@ class DamageCalc:
         waza: Waza,
         weather: Weathers,
         field: Fields,
+        double_params: dict[str, bool] = None,
     ) -> Optional[list[int]]:
         # 変化技は計算しない
         if waza.category == 変化:
@@ -157,7 +160,7 @@ class DamageCalc:
 
         # 攻撃回数分だけ繰り返す
         total_damages = [0 for x in range(16)]
-        for count in range(max(1, waza.multi_hit)):
+        for _count in range(max(1, waza.multi_hit)):
             # 技威力
             waza_power: int = DamageCalc.__get_waza_power(
                 attacker=attacker,
@@ -165,6 +168,7 @@ class DamageCalc:
                 waza=waza,
                 weather=weather,
                 field=field,
+                double_params=double_params,
             )
             if waza_power == -1:
                 return None
@@ -175,6 +179,7 @@ class DamageCalc:
                 waza=waza,
                 weather=weather,
                 field=field,
+                double_params=double_params,
             )
             # 防御力
             defence_power: int = DamageCalc.__get_defence_power(
@@ -183,10 +188,14 @@ class DamageCalc:
                 waza=waza,
                 weather=weather,
                 field=field,
+                double_params=double_params,
             )
             # ダメージ補正
             damage_hosei: int = DamageCalc.__get_damage_hosei(
-                attacker=attacker, defender=defender, waza=waza, count=count
+                attacker=attacker,
+                defender=defender,
+                waza=waza,
+                double_params=double_params,
             )
             # 最終ダメージ
             damages = DamageCalc.__get_fix_damages(
@@ -198,6 +207,7 @@ class DamageCalc:
                 defence_power=defence_power,
                 damage_hosei=damage_hosei,
                 weather=weather,
+                double_params=double_params,
             )
             # 合計ダメージに合算する
             total_damages = [sum(x) for x in zip(total_damages, damages, strict=False)]
@@ -212,6 +222,7 @@ class DamageCalc:
         waza: Waza,
         weather: Weathers,
         field: Fields,
+        double_params: dict[str, bool] = None,
     ) -> int:
         hosei: dict[str, int] = {}
 
@@ -524,6 +535,12 @@ class DamageCalc:
                     hosei[key] = 2048
         # endregion
 
+        # region ダブル用補正
+        key = "ダブル用: てだすけ"
+        if double_params is not None and double_params["is_tedasuke"]:
+            hosei[key] = 6144
+        # endregion
+
         # 最終補正値の計算
         hosei_total = Decimal("4096")
         for value in hosei.values():
@@ -554,6 +571,7 @@ class DamageCalc:
         waza: Waza,
         weather: Weathers,
         field: Fields,
+        double_params: dict[str, bool] = None,
     ) -> int:
         base_power: int
         hosei: dict[str, int] = {}
@@ -601,6 +619,26 @@ class DamageCalc:
                     base_power = attacker.get_ranked_stats(statskey)
 
         power: Decimal = Decimal(base_power)
+
+        # region SV準伝のわざわいシリーズ対応、攻撃力が25%減少。暫定実装
+        key = "わざわい:" + defender.ability
+        if (
+            waza.category == 物理
+            and attacker.ability not in ["わざわいのおふだ", "かがくへんかガス"]
+            and (
+                defender.ability == "わざわいのおふだ"
+                or (double_params is not None and double_params["is_wazawai_a"])
+            )
+        ) or (
+            waza.category == 特殊
+            and attacker.ability not in ["わざわいのうつわ", "かがくへんかガス"]
+            and (
+                defender.ability == "わざわいのうつわ"
+                or (double_params is not None and double_params["is_wazawai_c"])
+            )
+        ):
+            hosei[key] = 3072
+        # endregion
 
         # region 攻撃側の特性補正
         key = "攻撃特性:" + attacker.ability
@@ -669,21 +707,6 @@ class DamageCalc:
 
         # region 防御側の特性補正
         key = "防御特性:" + defender.ability
-        match defender.ability:
-            case "わざわいのおふだ":
-                # イカサマ、ボディプレスのダメージも下げる
-                if waza.category == 物理 and attacker.ability not in [
-                    "わざわいのおふだ",
-                    "かがくへんかガス",
-                ]:
-                    hosei[key] = 3072
-            case "わざわいのうつわ":
-                if waza.category == 特殊 and attacker.ability not in [
-                    "わざわいのうつわ",
-                    "かがくへんかガス",
-                ]:
-                    hosei[key] = 3072
-
         if (
             attacker.ability
             not in [
@@ -749,6 +772,7 @@ class DamageCalc:
         waza: Waza,
         weather: Weathers,
         field: Fields,
+        double_params: dict[str, bool] = None,
     ) -> int:
         power: Decimal
         hosei: dict[str, int] = {}
@@ -768,19 +792,6 @@ class DamageCalc:
         else:
             power = Decimal(defender.get_ranked_stats(df_key))
 
-        # region SV準伝のわざわいシリーズ対応、防御力が25%減少。暫定実装
-        if (
-            df_key == StatsKey.B
-            and attacker.ability == "わざわいのつるぎ"
-            and defender.ability not in ["わざわいのつるぎ", "かがくへんかガス"]
-        ) or (
-            df_key == StatsKey.D
-            and attacker.ability == "わざわいのたま"
-            and defender.ability not in ["わざわいのたま", "かがくへんかガス"]
-        ):
-            power = (power * 3072 / 4096).quantize(DECIMAI_ZERO, rounding=ROUND_FLOOR)
-        # endregion
-
         # 岩タイプは砂嵐で特防が1.5倍
         if (
             weather == Weathers.砂嵐
@@ -796,6 +807,26 @@ class DamageCalc:
             and df_key == StatsKey.B
         ):
             power = (power * 6144 / 4096).quantize(DECIMAI_ZERO, rounding=ROUND_FLOOR)
+
+        # region SV準伝のわざわいシリーズ対応、防御力が25%減少。暫定実装
+        key = "わざわい:" + attacker.ability
+        if (
+            df_key == StatsKey.B
+            and defender.ability not in ["わざわいのつるぎ", "かがくへんかガス"]
+            and (
+                attacker.ability == "わざわいのつるぎ"
+                or (double_params is not None and double_params["is_wazawai_b"])
+            )
+        ) or (
+            df_key == StatsKey.D
+            and defender.ability not in ["わざわいのたま", "かがくへんかガス"]
+            and (
+                attacker.ability == "わざわいのたま"
+                or (double_params is not None and double_params["is_wazawai_d"])
+            )
+        ):
+            hosei[key] = 3072
+        # endregion
 
         # region 防御側の特性補正
         key = "防御特性:" + defender.ability
@@ -856,7 +887,10 @@ class DamageCalc:
     # ダメージ補正値の算出
     @staticmethod
     def __get_damage_hosei(
-        attacker: "Pokemon", defender: "Pokemon", waza: Waza, count: int
+        attacker: "Pokemon",
+        defender: "Pokemon",
+        waza: Waza,
+        double_params: dict[str, bool] = None,
     ) -> int:
         hosei: dict[str, int] = {}
         type_effective: float = defender.get_type_effective(
@@ -880,7 +914,7 @@ class DamageCalc:
             and not waza.critical
             and attacker.ability != "すりぬけ"
         ):
-            hosei[key] = 2048
+            hosei[key] = 2048 if double_params is None else 3072
         # endregion
 
         # region 攻撃側の特性補正
@@ -963,6 +997,12 @@ class DamageCalc:
                 hosei[attacker.item] = 2048
         # endregion
 
+        # region ダブル用補正
+        key = "ダブル用: フレンドガード"
+        if double_params is not None and double_params["is_friend_guard"]:
+            hosei[key] = 3072
+        # endregion
+
         # 最終補正値の計算
         hosei_total = Decimal("4096")
         for value in hosei.values():
@@ -982,6 +1022,7 @@ class DamageCalc:
         defence_power: int,
         damage_hosei: int,
         weather: Weathers,
+        double_params: dict[str, bool],
     ) -> list[int]:
         # 攻撃側のレベル × 2 ÷ 5 ＋ 2 → 切り捨て
         damage: Decimal = Decimal(attacker.lv * 2 / 5 + 2).quantize(
@@ -1021,6 +1062,16 @@ class DamageCalc:
                         damage = (damage * 2048 / 4096).quantize(
                             DECIMAI_ZERO, rounding=ROUND_HALF_DOWN
                         )
+
+        # 全体攻撃（ダブル用）
+        if (
+            double_params is not None
+            and double_params["is_overall"] is True
+            and waza.target == "相手全体"
+        ):
+            damage = (damage * 3072 / 4096).quantize(
+                DECIMAI_ZERO, rounding=ROUND_HALF_UP
+            )
 
         # × 急所 6144 ÷ 4096 → 五捨五超入
         if waza.critical:

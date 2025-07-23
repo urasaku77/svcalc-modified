@@ -14,6 +14,15 @@ class Stage:
         self._weather: Weathers = Weathers.なし
         self._field: Fields = Fields.なし
         self._app.set_stage(self)
+        self.double_params: dict[str, bool] = {
+            "is_wazawai_a": False,
+            "is_wazawai_b": False,
+            "is_wazawai_c": False,
+            "is_wazawai_d": False,
+            "is_overall": True,
+            "is_tedasuke": False,
+            "is_friend_guard": True,
+        }
 
     def get_party(self, index: int) -> list[Pokemon]:
         return self._app.party_frames[index].pokemon_list
@@ -158,6 +167,33 @@ class Stage:
                 self._field = f
         self.calc_damage()
 
+    # ダブルバトルのパラメータ変更
+    def change_double_params(
+        self,
+        is_wazawai_a: bool = None,
+        is_wazawai_b: bool = None,
+        is_wazawai_c: bool = None,
+        is_wazawai_d: bool = None,
+        is_overall: bool = None,
+        is_tedasuke: bool = None,
+        is_friend_guard: bool = None,
+    ):
+        if is_wazawai_a is not None:
+            self.double_params["is_wazawai_a"] = is_wazawai_a
+        if is_wazawai_b is not None:
+            self.double_params["is_wazawai_b"] = is_wazawai_b
+        if is_wazawai_c is not None:
+            self.double_params["is_wazawai_c"] = is_wazawai_c
+        if is_wazawai_d is not None:
+            self.double_params["is_wazawai_d"] = is_wazawai_d
+        if is_overall is not None:
+            self.double_params["is_overall"] = is_overall
+        if is_tedasuke is not None:
+            self.double_params["is_tedasuke"] = is_tedasuke
+        if is_friend_guard is not None:
+            self.double_params["is_friend_guard"] = is_friend_guard
+        self.calc_damage()
+
     # 戦闘時テラスタイプ変更
     def select_terastype(self, player: int):
         pokemon = self._app.active_poke_frames[player]._pokemon
@@ -237,15 +273,26 @@ class Stage:
         pokemon2 = self._app.active_poke_frames[1]._pokemon
         if pokemon1.is_empty or pokemon2.is_empty:
             return
-        calc_result = DamageCalc.get_all_damages(
-            pokemon1, pokemon2, self._weather, self._field
-        )
-        self._app.set_calc_results(0, calc_result)
+        if get_recog_value("rule") == 2:
+            calc_result = DamageCalc.get_all_damages(
+                pokemon1, pokemon2, self._weather, self._field, self.double_params
+            )
+            self._app.set_calc_results(0, calc_result)
 
-        calc_result = DamageCalc.get_all_damages(
-            pokemon2, pokemon1, self._weather, self._field
-        )
-        self._app.set_calc_results(1, calc_result)
+            calc_result = DamageCalc.get_all_damages(
+                pokemon2, pokemon1, self._weather, self._field, self.double_params
+            )
+            self._app.set_calc_results(1, calc_result)
+        else:
+            calc_result = DamageCalc.get_all_damages(
+                pokemon1, pokemon2, self._weather, self._field
+            )
+            self._app.set_calc_results(0, calc_result)
+
+            calc_result = DamageCalc.get_all_damages(
+                pokemon2, pokemon1, self._weather, self._field
+            )
+            self._app.set_calc_results(1, calc_result)
 
     # パーティ編集
     def edit_party(self, player: int):
@@ -316,7 +363,7 @@ class Stage:
 
     # 選出のクリア
     def clear_chosen(self, player: int):
-        for i in range(3):
+        for i in range(len(self._app.chosen_frames[player].pokemon_list)):
             self.delete_chosen(player, i)
 
     # 自分一番手のポケモンを探す

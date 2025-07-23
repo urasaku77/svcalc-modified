@@ -25,7 +25,7 @@ class WeatherFrame(ttk.LabelFrame):
 
         self._stage: Stage | None = None
         self._weather_combobox = MyCombobox(
-            self, width=17, height=30, values=WEATHER_COMBOBOX_VALUES
+            self, width=10, height=30, values=WEATHER_COMBOBOX_VALUES
         )
         self._weather_combobox.set(WEATHER_COMBOBOX_VALUES[0])
         self._weather_combobox.bind("<<ComboboxSelected>>", self.change_weather)
@@ -53,7 +53,7 @@ class FieldFrame(ttk.LabelFrame):
 
         self._stage: Stage | None = None
         self._field_combobox = MyCombobox(
-            self, width=17, height=30, values=FIELD_COMBOBOX_VALUES
+            self, width=10, height=30, values=FIELD_COMBOBOX_VALUES
         )
         self._field_combobox.set(FIELD_COMBOBOX_VALUES[0])
         self._field_combobox.bind("<<ComboboxSelected>>", self.change_field)
@@ -294,7 +294,7 @@ class TimerFrame(ttk.LabelFrame):
         )  # 秒を表示
 
 
-# カウンターフレーム(2個)
+# カウンターフレーム(1個)
 class CounterFrame(tkinter.Canvas):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -346,23 +346,118 @@ class CounterFrame(tkinter.Canvas):
             self.label_count["text"] = self.count_num.get()
 
 
-# カウンターフレーム(単体)
+# カウンターフレーム(複数)
 class CountersFrame(ttk.LabelFrame):
+    def __init__(self, master, num, **kwargs):
+        super().__init__(master, **kwargs)
+
+        self.counter_list: list[CounterFrame] = []
+        for i in range(num):
+            if i != 0:
+                separator = ttk.Separator(self, orient="vertical")
+                separator.grid(column=1, row=0, rowspan=3, sticky="ns", padx=5)
+            counter = CounterFrame(self)
+            counter.grid(column=i * 2, row=0)
+            self.counter_list.append(counter)
+
+    def clear_all_counters(self):
+        for counter in self.counter_list:
+            counter.CountReset()
+
+
+# ダブル用フレーム
+class DoubleFrame(ttk.Frame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
 
-        self.counter_1 = CounterFrame(self)
-        self.counter_1.grid(column=0, row=0)
+        self._stage: Stage | None = None
+        self.wazawai_a = tkinter.BooleanVar()
+        self.wazawai_a.set(False)
+        self.wazawai_b = tkinter.BooleanVar()
+        self.wazawai_b.set(False)
+        self.wazawai_c = tkinter.BooleanVar()
+        self.wazawai_c.set(False)
+        self.wazawai_d = tkinter.BooleanVar()
+        self.wazawai_d.set(False)
+        self.overall = tkinter.BooleanVar()
+        self.overall.set(True)
+        self.tedasuke = tkinter.BooleanVar()
+        self.tedasuke.set(False)
+        self.friend_guard = tkinter.BooleanVar()
+        self.friend_guard.set(False)
 
-        separator = ttk.Separator(self, orient="vertical")
-        separator.grid(column=1, row=0, rowspan=3, sticky="ns", padx=5)
+        self.wazawai_frame = ttk.LabelFrame(master=self, text="わざわい", padding=4)
+        self.wazawai_frame.pack(fill="x", expand=0)
+        # わざわいのおふだチェックボックス
+        self.wazawai_a_checkbox = ttk.Checkbutton(
+            master=self.wazawai_frame,
+            text="A",
+            variable=self.wazawai_a,
+            command=self.change_double,
+        )
+        self.wazawai_a_checkbox.grid(column=0, row=0)
+        # わざわいのつるぎチェックボックス
+        self.wazawai_b_checkbox = ttk.Checkbutton(
+            master=self.wazawai_frame,
+            text="B",
+            variable=self.wazawai_b,
+            command=self.change_double,
+        )
+        self.wazawai_b_checkbox.grid(column=1, row=0)
+        # わざわいのうつわチェックボックス
+        self.wazawai_c_checkbox = ttk.Checkbutton(
+            master=self.wazawai_frame,
+            text="C",
+            variable=self.wazawai_c,
+            command=self.change_double,
+        )
+        self.wazawai_c_checkbox.grid(column=0, row=1)
+        # わざわいのたまチェックボックス
+        self.wazawai_d_checkbox = ttk.Checkbutton(
+            master=self.wazawai_frame,
+            text="D",
+            variable=self.wazawai_d,
+            command=self.change_double,
+        )
+        self.wazawai_d_checkbox.grid(column=1, row=1)
+        # 全体攻撃チェックボックス
+        self.overall_checkbox = ttk.Checkbutton(
+            master=self,
+            text="全体攻撃",
+            variable=self.overall,
+            command=self.change_double,
+        )
+        self.overall_checkbox.pack(fill="x", expand=0)
+        # てだすけチェックボックス
+        self.tedasuke_checkbox = ttk.Checkbutton(
+            master=self,
+            text="てだすけ",
+            variable=self.tedasuke,
+            command=self.change_double,
+        )
+        self.tedasuke_checkbox.pack(fill="x", expand=0)
+        # フレンドガードチェックボックス
+        self.friend_guard_checkbox = ttk.Checkbutton(
+            master=self,
+            text="フレンドガード",
+            variable=self.friend_guard,
+            command=self.change_double,
+        )
+        self.friend_guard_checkbox.pack(fill="x", expand=0)
 
-        self.counter_2 = CounterFrame(self)
-        self.counter_2.grid(column=2, row=0)
+    def set_stage(self, stage: Stage):
+        self._stage = stage
 
-    def clear_all_counters(self):
-        self.counter_1.CountReset()
-        self.counter_2.CountReset()
+    def change_double(self, *args):
+        self._stage.change_double_params(
+            is_wazawai_a=self.wazawai_a.get(),
+            is_wazawai_b=self.wazawai_b.get(),
+            is_wazawai_c=self.wazawai_c.get(),
+            is_wazawai_d=self.wazawai_d.get(),
+            is_overall=self.overall.get(),
+            is_tedasuke=self.tedasuke.get(),
+            is_friend_guard=self.friend_guard.get(),
+        )
 
 
 # 対戦記録フレーム

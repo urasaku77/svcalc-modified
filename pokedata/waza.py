@@ -15,6 +15,7 @@ class Waza:
             self.__pp: int = db_data["pp"]
             self.__is_touch: bool = db_data["is_touch"]
             self.__is_guard: bool = db_data["is_guard"]
+            self.__target: str = db_data["target"]
             self.__description: str = db_data["description"]
             self.__priority = "先制" in self.__description
 
@@ -64,6 +65,10 @@ class Waza:
     @property
     def is_guard(self) -> bool:
         return self.__is_guard
+
+    @property
+    def target(self) -> str:
+        return self.__target
 
     @property
     def description(self) -> str:

@@ -6,6 +6,7 @@ from PIL import Image, ImageTk
 
 from database.battle import DB_battle
 from mypgl.const import Const
+from recog.recog import get_recog_value
 
 
 class Record(tkinter.Toplevel):
@@ -87,6 +88,17 @@ class Record(tkinter.Toplevel):
             self, variable=self.time9_bln, text="初日を9時以降にする"
         )
         time9_check.place(x=Const.searchX + 400, y=Const.searchY)
+
+        self.rule = tkinter.IntVar()
+        self.rule.set(get_recog_value("rule"))
+        rb_single = tkinter.Radiobutton(
+            self, text="シングル", variable=self.rule, value=1
+        )
+        rb_single.place(x=Const.searchX + 550, y=Const.searchY)
+        rb_double = tkinter.Radiobutton(
+            self, text="ダブル", variable=self.rule, value=2
+        )
+        rb_double.place(x=Const.searchX + 620, y=Const.searchY)
 
         num_label = tkinter.Label(self, text="番号")
         num_label.place(x=Const.searchX, y=Const.searchY + Const.searchDY * 3)
@@ -243,6 +255,7 @@ class Record(tkinter.Toplevel):
         self.battle_data_list = DB_battle.get_battle_data_by_date(
             self.from_date,
             self.to_date,
+            self.rule.get(),
             self.party_num,
             self.party_subnum,
             self.regends_dict[self.regend_num.get()]
@@ -337,7 +350,7 @@ class Record(tkinter.Toplevel):
                 break
 
     def display_my_sensyutu(self, battle_data, i):
-        for index, value in enumerate(range(21, 24)):
+        for index, value in enumerate(range(22, 25)):
             if not (battle_data[value] is None or battle_data[value] == "-1"):
                 img = Image.open(Const.createPass(battle_data[value]))
                 img = img.resize((40, 40))
@@ -351,7 +364,7 @@ class Record(tkinter.Toplevel):
                 self.sensyutu_img_list.append(img)
 
     def display_oppo_sensyutu(self, battle_data, i):
-        for index, value in enumerate(range(24, 27)):
+        for index, value in enumerate(range(26, 29)):
             if not (battle_data[value] is None or battle_data[value] == "-1"):
                 img = Image.open(Const.createPass(battle_data[value]))
                 img = img.resize((40, 40))
@@ -365,7 +378,7 @@ class Record(tkinter.Toplevel):
                 self.sensyutu_img_list.append(img)
 
     def display_opo_pokemon(self, battle_data, i):
-        for index, value in enumerate(range(15, 21)):
+        for index, value in enumerate(range(16, 21)):
             if not battle_data[value] == "-1":
                 img = Image.open(Const.createPass(battle_data[value]))
                 img = img.resize((40, 40))
@@ -379,7 +392,7 @@ class Record(tkinter.Toplevel):
                 self.sensyutu_img_list.append(img)
 
     def display_my_pokemon(self, battle_data, i):
-        for index, value in enumerate(range(9, 15)):
+        for index, value in enumerate(range(10, 15)):
             if not battle_data[value] == "-1":
                 img = Image.open(Const.createPass(battle_data[value]))
                 img = img.resize((40, 40))

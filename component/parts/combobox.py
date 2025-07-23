@@ -93,7 +93,7 @@ class WazaNameCombobox(AutoCompleteCombobox):
 
         # 説明文が長い場合に高さを調整
         popup.update_idletasks()
-        height = 250 + (len(detail.description) / 2)
+        height = 270 + (len(detail.description) / 2)
         popup.geometry(f"{width}x{math.ceil(height)}")
 
         # 技名を一番上に中央揃え & 太字表示
@@ -111,6 +111,7 @@ class WazaNameCombobox(AutoCompleteCombobox):
             ("威力", str(detail.power) if detail.power != -1 else "-"),
             ("分類", detail.category),
             ("PP", detail.pp),
+            ("対象", detail.target),
             ("接触", "接触" if detail.is_touch == 1 else "非接触"),
             ("まもる", "有効" if detail.is_guard == 1 else "無効"),
             ("説明", detail.description),

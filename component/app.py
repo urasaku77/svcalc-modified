@@ -16,6 +16,7 @@ from component.frames.common import (
 from component.frames.whole import (
     CompareButton,
     CountersFrame,
+    DoubleFrame,
     FieldFrame,
     HomeFrame,
     RecordFrame,
@@ -146,8 +147,8 @@ class MainApp(ThemedTk):
         self.home_frame.grid(row=6, column=3, rowspan=4, columnspan=3, sticky=N + E + S)
         self.home_frame.grid_propagate(False)
 
-        # ツールフレーム（タイマー・カウンター・共通）
-        tool_frame = ttk.Frame(main_frame, width=150, height=55, padding=4)
+        # ツールフレーム（タイマー・カウンター・ダブル・共通）
+        tool_frame = ttk.Frame(main_frame, padding=4)
         tool_frame.grid(row=5, column=0, rowspan=3, sticky=N + W + S)
         tool_frame.grid_propagate(False)
 
@@ -156,24 +157,28 @@ class MainApp(ThemedTk):
         self.timer_frame.pack(fill="both", expand=0, side="left")
 
         # カウンターフレーム
-        self.counter_frame = CountersFrame(master=tool_frame, text="カウンター")
+        self.counter_frame = CountersFrame(
+            master=tool_frame,
+            num=2 if get_recog_value("rule") == 1 else 1,
+            text="カウンター",
+        )
         self.counter_frame.pack(fill="both", expand=0, side="left")
+
+        if get_recog_value("rule") == 2:
+            # ダブルフレーム
+            self.double_frame = DoubleFrame(tool_frame)
+            self.double_frame.pack(fill="both", expand=0, side="left")
 
         # 共通フレーム（天気・フィールド）
         common_frame = ttk.Frame(tool_frame)
         common_frame.pack(fill="both", expand=0, side="left")
 
         # 天候フレーム
-        self.weather_frame = WeatherFrame(
-            master=common_frame, text="天候", width=150, height=55, padding=6
-        )
-
+        self.weather_frame = WeatherFrame(master=common_frame, text="天候", padding=6)
         self.weather_frame.pack(fill="x", expand=0)
 
         # フィールドフレーム
-        self.field_frame = FieldFrame(
-            master=common_frame, text="フィールド", width=150, height=55, padding=6
-        )
+        self.field_frame = FieldFrame(master=common_frame, text="フィールド", padding=6)
         self.field_frame.pack(fill="x", expand=0)
 
         # 比較ボタンフレーム（素早さ・重さ）
@@ -183,8 +188,8 @@ class MainApp(ThemedTk):
         # 素早さ比較ボタン
         self.speed_button = CompareButton(
             master=compare_frame,
-            text="素早さ比較",
-            width=10,
+            text="S比較",
+            width=6,
             padding=5,
             command=self.speed_comparing,
         )
@@ -208,13 +213,11 @@ class MainApp(ThemedTk):
         self.record_frame.grid_propagate(False)
 
         # 最終メニューフレーム
-        last_menu_frame = ttk.Frame(master=main_frame, width=150, height=30, padding=4)
+        last_menu_frame = ttk.Frame(master=main_frame, padding=4)
         last_menu_frame.grid(row=9, column=0, columnspan=3, sticky=N + W)
 
         # 制御フレーム
-        control_frame = ttk.LabelFrame(
-            master=last_menu_frame, text="制御", width=150, height=55, padding=5
-        )
+        control_frame = ttk.LabelFrame(master=last_menu_frame, text="制御", padding=5)
         control_frame.pack(fill="both", expand=0, side="left")
 
         # Websocket接続ボタン
@@ -250,7 +253,7 @@ class MainApp(ThemedTk):
 
         # 検索フレーム
         search_frame = ttk.LabelFrame(
-            master=last_menu_frame, text="類似パーティ", width=150, height=55, padding=5
+            master=last_menu_frame, text="類似パーティ", padding=5
         )
         search_frame.pack(fill="both", expand=0, side="left")
 
@@ -298,6 +301,8 @@ class MainApp(ThemedTk):
             self.speed_button.set_stage(stage)
             self.weight_button.set_stage(stage)
             self.record_frame.set_stage(stage)
+        if get_recog_value("rule") == 2:
+            self.double_frame.set_stage(stage)
 
     # パーティCSV編集
     def edit_party_csv(self):

@@ -18,6 +18,7 @@ from pokedata.nature import get_seikaku_list
 from pokedata.pokemon import Pokemon
 from pokedata.stats import Stats, StatsKey
 from pokedata.waza import WazaBase
+from recog.recog import get_recog_value
 
 if TYPE_CHECKING:
     from component.stage import Stage
@@ -110,12 +111,14 @@ class PartyFrame(ttk.LabelFrame):
 class ChosenFrame(ttk.LabelFrame):
     def __init__(self, master, player: int, **kwargs):
         super().__init__(master, **kwargs)
+        sensyutu_num = 3 if get_recog_value("rule") == 1 else 4
         self._player: int = player
         self._stage: Stage | None = None
         self._button_list: list[MyButton] = []
-        self.pokemon_list: list[Pokemon] = [Pokemon()] * 3
+        self.pokemon_list: list[Pokemon] = [Pokemon()] * sensyutu_num
         # ポケモン表示ボタン
-        for i in range(3):
+
+        for i in range(sensyutu_num):
             btn = MyButton(
                 self,
                 size=(30, 30),

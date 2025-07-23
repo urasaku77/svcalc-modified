@@ -6,6 +6,7 @@ from PIL import Image, ImageTk
 
 from database.battle import DB_battle
 from mypgl.const import Const
+from recog.recog import get_recog_value
 
 
 class Analytics(tkinter.Toplevel):
@@ -169,13 +170,23 @@ class Analytics(tkinter.Toplevel):
             x=Const.searchX + 270, y=Const.searchY + Const.searchDY * 2.6
         )
 
+        self.rule = tkinter.IntVar()
+        self.rule.set(get_recog_value("rule"))
+        rb_single = tkinter.Radiobutton(
+            self, text="シングル", variable=self.rule, value=1
+        )
+        rb_single.place(x=Const.searchX + 400, y=Const.searchY + Const.searchDY * 2.7)
+        rb_double = tkinter.Radiobutton(
+            self, text="ダブル", variable=self.rule, value=2
+        )
+        rb_double.place(x=Const.searchX + 470, y=Const.searchY + Const.searchDY * 2.7)
         search_button = tkinter.Button(
             self,
             text="検索",
             command=self.update_result,
         )
         search_button.place(
-            x=Const.searchX + 450, y=Const.searchY + Const.searchDY * 2.7
+            x=Const.searchX + 550, y=Const.searchY + Const.searchDY * 2.7
         )
         self.title_var = tkinter.StringVar()
         self.title_var.set("ＫＰと勝率")
@@ -260,6 +271,7 @@ class Analytics(tkinter.Toplevel):
             for item in DB_battle.calc_kp(
                 self.from_date,
                 self.to_date,
+                self.rule.get(),
                 self.party_num,
                 self.party_subnum,
                 self.regends_dict[self.regend_num.get()]
@@ -272,6 +284,7 @@ class Analytics(tkinter.Toplevel):
             for item in DB_battle.calc_kp(
                 self.from_date,
                 self.to_date,
+                self.rule.get(),
                 self.party_num,
                 self.party_subnum,
                 self.regends_dict[self.regend_num.get()]
@@ -283,6 +296,7 @@ class Analytics(tkinter.Toplevel):
             self.pokemon_list,
             self.from_date,
             self.to_date,
+            self.rule.get(),
             self.party_num,
             self.party_subnum,
             self.regends_dict[self.regend_num.get()]
@@ -293,6 +307,7 @@ class Analytics(tkinter.Toplevel):
         self.record_count = DB_battle.count_record(
             self.from_date,
             self.to_date,
+            self.rule.get(),
             self.party_num,
             self.party_subnum,
             self.regends_dict[self.regend_num.get()]
@@ -302,6 +317,7 @@ class Analytics(tkinter.Toplevel):
         self.win_count = DB_battle.count_win(
             self.from_date,
             self.to_date,
+            self.rule.get(),
             self.party_num,
             self.party_subnum,
             self.regends_dict[self.regend_num.get()]
@@ -429,6 +445,7 @@ class Analytics(tkinter.Toplevel):
                 self.pokemon_list,
                 self.from_date,
                 self.to_date,
+                self.rule.get(),
                 self.party_num,
                 self.party_subnum,
                 self.regends_dict[self.regend_num.get()]
@@ -439,6 +456,7 @@ class Analytics(tkinter.Toplevel):
                 self.pokemon_list,
                 self.from_date,
                 self.to_date,
+                self.rule.get(),
                 self.party_num,
                 self.party_subnum,
                 self.regends_dict[self.regend_num.get()]
@@ -452,6 +470,7 @@ class Analytics(tkinter.Toplevel):
                 self.pokemon_list,
                 self.from_date,
                 self.to_date,
+                self.rule.get(),
                 self.party_num,
                 self.party_subnum,
                 self.regends_dict[self.regend_num.get()]
@@ -462,6 +481,7 @@ class Analytics(tkinter.Toplevel):
                 self.pokemon_list,
                 self.from_date,
                 self.to_date,
+                self.rule.get(),
                 self.party_num,
                 self.party_subnum,
                 self.regends_dict[self.regend_num.get()]
@@ -476,6 +496,7 @@ class Analytics(tkinter.Toplevel):
                 for item in DB_battle.calc_kp(
                     self.from_date,
                     self.to_date,
+                    self.rule.get(),
                     self.party_num,
                     self.party_subnum,
                     self.regends_dict[self.regend_num.get()]
@@ -488,6 +509,7 @@ class Analytics(tkinter.Toplevel):
                 for item in DB_battle.calc_kp(
                     self.from_date,
                     self.to_date,
+                    self.rule.get(),
                     self.party_num,
                     self.party_subnum,
                     self.regends_dict[self.regend_num.get()]
@@ -500,6 +522,7 @@ class Analytics(tkinter.Toplevel):
                 self.pokemon_list,
                 self.from_date,
                 self.to_date,
+                self.rule.get(),
                 self.party_num,
                 self.party_subnum,
                 self.regends_dict[self.regend_num.get()]
@@ -525,6 +548,7 @@ class Analytics(tkinter.Toplevel):
                     list(pokemon_list[0]),
                     self.from_date,
                     self.to_date,
+                    self.rule.get(),
                     self.party_num,
                     self.party_subnum,
                     self.regends_dict[self.regend_num.get()]
@@ -535,6 +559,7 @@ class Analytics(tkinter.Toplevel):
                     list(pokemon_list[0]),
                     self.from_date,
                     self.to_date,
+                    self.rule.get(),
                     self.party_num,
                     self.party_subnum,
                     self.regends_dict[self.regend_num.get()]
@@ -545,6 +570,7 @@ class Analytics(tkinter.Toplevel):
                     list(pokemon_list[0]),
                     self.from_date,
                     self.to_date,
+                    self.rule.get(),
                     self.party_num,
                     self.party_subnum,
                     self.regends_dict[self.regend_num.get()]
@@ -555,6 +581,7 @@ class Analytics(tkinter.Toplevel):
                     list(pokemon_list[0]),
                     self.from_date,
                     self.to_date,
+                    self.rule.get(),
                     self.party_num,
                     self.party_subnum,
                     self.regends_dict[self.regend_num.get()]
@@ -566,6 +593,7 @@ class Analytics(tkinter.Toplevel):
                         list(pokemon_list[0]),
                         self.from_date,
                         self.to_date,
+                        self.rule.get(),
                         self.party_num,
                         self.party_subnum,
                         self.regends_dict[self.regend_num.get()]
@@ -619,6 +647,7 @@ class Analytics(tkinter.Toplevel):
                     list(pokemon_list[0]),
                     self.from_date,
                     self.to_date,
+                    self.rule.get(),
                     self.party_num,
                     self.regends_dict[self.regend_num.get()]
                     if self.regend_num.get() != "0"
@@ -628,6 +657,7 @@ class Analytics(tkinter.Toplevel):
                     list(pokemon_list[0]),
                     self.from_date,
                     self.to_date,
+                    self.rule.get(),
                     self.party_num,
                     self.regends_dict[self.regend_num.get()]
                     if self.regend_num.get() != "0"
@@ -637,6 +667,7 @@ class Analytics(tkinter.Toplevel):
                     list(pokemon_list[0]),
                     self.from_date,
                     self.to_date,
+                    self.rule.get(),
                     self.party_num,
                     self.regends_dict[self.regend_num.get()]
                     if self.regend_num.get() != "0"
@@ -646,6 +677,7 @@ class Analytics(tkinter.Toplevel):
                     list(pokemon_list[0]),
                     self.from_date,
                     self.to_date,
+                    self.rule.get(),
                     self.party_num,
                     self.regends_dict[self.regend_num.get()]
                     if self.regend_num.get() != "0"
@@ -656,6 +688,7 @@ class Analytics(tkinter.Toplevel):
                         list(pokemon_list[0]),
                         self.from_date,
                         self.to_date,
+                        self.rule.get(),
                         self.party_num,
                         self.regends_dict[self.regend_num.get()]
                         if self.regend_num.get() != "0"
