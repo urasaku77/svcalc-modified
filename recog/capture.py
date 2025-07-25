@@ -30,7 +30,9 @@ class Capture:
     def connect_websocket(self):
         try:
             self.loop = asyncio.get_event_loop()
-            self.obs = Obs(self.loop, self.account["port"], self.account["password"])
+            self.obs = Obs(
+                self.loop, get_recog_value("port"), get_recog_value("password")
+            )
             self.phase = "wait"
             return True
         except:
@@ -47,7 +49,7 @@ class Capture:
     # キャプチャ画像取得
     def get_screenshot(self):
         responseData = self.loop.run_until_complete(
-            self.obs.get_screenshot(self.account["source_name"])
+            self.obs.get_screenshot(get_recog_value("source_name"))
         )
         screenshotBase64 = responseData.responseData["imageData"].split(",")[1]
         img_binary = base64.b64decode(screenshotBase64)

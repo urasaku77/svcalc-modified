@@ -234,13 +234,22 @@ def get_recog_value(key: str):
         "similar_party_auto",
         "search_record_auto",
         "panipani_auto",
+        "source_name",
+        "host_name",
+        "port",
+        "password",
     ]:
         raise ValueError("Invalid key provided for recognition settings.")
 
     try:
-        with open("recog/setting.json", "r") as json_file:
-            settings_json = json.load(json_file)
-            return settings_json[key]
+        if key in ["source_name", "host_name", "port", "password"]:
+            with open("recog/capture.json", "r") as json_file:
+                capture_json = json.load(json_file)
+                return capture_json[key]
+        else:
+            with open("recog/setting.json", "r") as json_file:
+                settings_json = json.load(json_file)
+                return settings_json[key]
     except FileNotFoundError:
         return {
             "rule": 1,
@@ -250,4 +259,8 @@ def get_recog_value(key: str):
             "similar_party_auto": False,
             "search_record_auto": False,
             "panipani_auto": True,
+            "source_name": "",
+            "host_name": "",
+            "port": "",
+            "password": "",
         }[key]
