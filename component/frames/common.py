@@ -780,38 +780,33 @@ class InfoFrame(ttk.LabelFrame):
             [tkinter.PhotoImage(file=Types.なし.icon).subsample(3, 3)] * 2,
             [tkinter.PhotoImage(file=Types.なし.icon).subsample(3, 3)] * 2,
         ]
-
+        self.size = (457, 77)
+        self.pack_propagate(False)
+        basic_info_flame = ttk.Frame(self, width=457, height=37)
+        basic_info_flame.pack_propagate(False)
+        basic_info_flame.columnconfigure(0, minsize=210)
+        basic_info_flame.columnconfigure(1, minsize=70)
+        basic_info_flame.columnconfigure(2, minsize=100)
+        basic_info_flame.columnconfigure(3, minsize=50)
         self.name = tkinter.StringVar()
         self.name.set("")
         self.name_text = ttk.Label(
-            self,
+            basic_info_flame,
             textvariable=self.name,
             font=(const.FONT_FAMILY, 12, "italic"),
+            padding=5,
         )
-        self.name_text.grid(column=0, row=0, columnspan=4)
+        self.name_text.grid(column=0, row=0)
 
         self.type1_img = img[self._player][0]
-        self.type1_icon = ttk.Label(self, image=self.type1_img)
-        self.type1_icon.grid(column=5, row=0, columnspan=3)
+        self.type1_icon = ttk.Label(basic_info_flame, image=self.type1_img)
+        self.type1_icon.grid(column=1, row=0, sticky="w")
 
         self.type2_img = img[self._player][1]
-        self.type2_icon = ttk.Label(self, image=self.type2_img)
-        self.type2_icon.grid(column=8, row=0, columnspan=3)
+        self.type2_icon = ttk.Label(basic_info_flame, image=self.type2_img)
+        self.type2_icon.grid(column=2, row=0, sticky="w")
 
-        for i, statskey in enumerate([x for x in StatsKey]):
-            label = ttk.Label(
-                self, text=f" {statskey.name} ", font=(const.FONT_FAMILY, 15)
-            )
-            label.grid(column=i * 2, row=1)
-            value = tkinter.StringVar()
-            value.set("")
-            text = ttk.Label(
-                self, textvariable=value, font=(const.FONT_FAMILY, 15, "bold")
-            )
-            text.grid(column=i * 2 + 1, row=1)
-            self.syuzoku[statskey] = value
-
-        buttons = ttk.Frame(self)
+        buttons = ttk.Frame(basic_info_flame)
         self.poketetsu_button = MyButton(
             buttons,
             image=images.get_menu_icon("poketetsu"),
@@ -824,7 +819,29 @@ class InfoFrame(ttk.LabelFrame):
         )
         self.db_button.pack(fill="both", expand=0, side="left")
 
-        buttons.grid(column=11, row=0, columnspan=4)
+        buttons.grid(column=3, row=0)
+        basic_info_flame.pack(side="top", anchor="w")
+
+        status_flame = ttk.Frame(
+            self,
+            width=457,
+            height=35,
+        )
+        status_flame.pack_propagate(False)
+        for i, statskey in enumerate([x for x in StatsKey]):
+            label = ttk.Label(
+                status_flame, text=f" {statskey.name} ", font=(const.FONT_FAMILY, 15)
+            )
+            label.grid(column=i * 2, row=1)
+            value = tkinter.StringVar()
+            value.set("")
+            text = ttk.Label(
+                status_flame, textvariable=value, font=(const.FONT_FAMILY, 15, "bold")
+            )
+            status_flame.columnconfigure(i * 2 + 1, minsize=45)
+            text.grid(column=i * 2 + 1, row=1)
+            self.syuzoku[statskey] = value
+        status_flame.pack(side="top", anchor="w")
 
     def set_info(self, pokemon: Pokemon):
         if pokemon.is_empty is False:
