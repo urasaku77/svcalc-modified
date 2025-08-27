@@ -124,6 +124,13 @@ class DamageCalc:
                 elif attacker.name == "ケンタロス(パルデア水)":
                     waza.type = Types.みず
 
+            if (
+                waza.name == "さばきのつぶて"
+                or waza.name == "テクノバスター"
+                or waza.name == "マルチアタック"
+            ):
+                waza.type = attacker.type[0]
+
             if attacker.ability == "トレース":
                 if defender.ability not in DamageCalc.__un_trace_abillity:
                     attacker.ability = defender.ability
@@ -1349,6 +1356,22 @@ class DamageCalc:
         "がんせきおこう": Types.いわ,
         "あやしいおこう": Types.エスパー,
         "ようせいのハネ": Types.フェアリー,
+        "ひのたまプレート": Types.ほのお,
+        "しずくプレート": Types.みず,
+        "いかずちプレート": Types.でんき,
+        "みどりのプレート": Types.くさ,
+        "つららのプレート": Types.こおり,
+        "こぶしのプレート": Types.かくとう,
+        "もうどくプレート": Types.どく,
+        "だいちのプレート": Types.じめん,
+        "あおぞらプレート": Types.ひこう,
+        "ふしぎのプレート": Types.エスパー,
+        "たまむしプレート": Types.むし,
+        "がんせきプレート": Types.いわ,
+        "もののけプレート": Types.ゴースト,
+        "りゅうのプレート": Types.ドラゴン,
+        "こわもてプレート": Types.あく,
+        "こうてつプレート": Types.はがね,
     }
 
     # 半減きのみ

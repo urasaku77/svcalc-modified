@@ -1,7 +1,7 @@
 from typing import Optional
 
 # フォルムチェンジ可能なポケモンの番号リスト
-changeble_form_in_battle = [964, 1024]
+changeble_form_in_battle = [493, 964, 1024]
 
 # 統計上同じポケモンとしてカウントしたいポケモンの番号リスト
 same_pokemon_in_stats = [888, 889, 964, 1024]

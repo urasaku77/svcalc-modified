@@ -4,6 +4,7 @@ import math
 from decimal import Decimal
 from typing import Optional
 
+from component.parts.const import PLATE_TO_TYPE
 from database.pokemon import DB_pokemon
 from pokedata.const import ABILITY_VALUES, Ailments, Types, Walls
 from pokedata.exception import changeble_form_in_battle, get_next_form
@@ -158,6 +159,15 @@ class Pokemon:
     @property
     def type(self) -> list[Types]:
         return self.__type
+
+    def type_set(self, value: list[Types]):
+        self.__type = value
+        self.statechanged()
+
+    # アルセウス用
+    def type_change_from_item(self):
+        if self.no == 493 and self.item in PLATE_TO_TYPE:
+            self.type_set([Types.get(PLATE_TO_TYPE.get(self.item))])
 
     @property
     def terastype(self) -> Types:
