@@ -371,15 +371,23 @@ class PokemonEditors(ttk.LabelFrame):
 
     def change_line(self, up: bool, num: int):
         if up and num != 0:
-            pokemon1 = self.pokemon_panel_list[num - 1].pokemon
-            pokemon2 = self.pokemon_panel_list[num].pokemon
+            pokemon1_row = self.pokemon_panel_list[num - 1].set_csv_row()
+            pokemon1: Pokemon = Pokemon.by_name(pokemon1_row[0], False)
+            pokemon1.set_load_data(pokemon1_row, True)
+            pokemon2_row = self.pokemon_panel_list[num].set_csv_row()
+            pokemon2: Pokemon = Pokemon.by_name(pokemon2_row[0], False)
+            pokemon2.set_load_data(pokemon2_row, True)
 
             self.pokemon_panel_list[num - 1].set_pokemon(pokemon2)
             self.pokemon_panel_list[num].set_pokemon(pokemon1)
 
         elif not up and num != 5:
-            pokemon1 = self.pokemon_panel_list[num].pokemon
-            pokemon2 = self.pokemon_panel_list[num + 1].pokemon
+            pokemon1_row = self.pokemon_panel_list[num].set_csv_row()
+            pokemon1: Pokemon = Pokemon.by_name(pokemon1_row[0], False)
+            pokemon1.set_load_data(pokemon1_row, True)
+            pokemon2_row = self.pokemon_panel_list[num + 1].set_csv_row()
+            pokemon2: Pokemon = Pokemon.by_name(pokemon2_row[0], False)
+            pokemon2.set_load_data(pokemon2_row, True)
 
             self.pokemon_panel_list[num].set_pokemon(pokemon2)
             self.pokemon_panel_list[num + 1].set_pokemon(pokemon1)
@@ -500,7 +508,7 @@ class PokemonEditor(ttk.LabelFrame):
         )
 
     def edit_pokemon(self):
-        dialog = PokemonInputDialog(pokemon=self.pokemon)
+        dialog = PokemonInputDialog(base_pokemon_name=self.pokemon.name)
         dialog.open(location=(self.winfo_x(), self.winfo_y()))
         self.wait_window(dialog)
         if dialog.pokemon.no != -1:
@@ -851,11 +859,16 @@ class IvEditor(ttk.Frame):
 
 class PokemonInputDialog(tkinter.Toplevel):
     def __init__(
-        self, pokemon: Pokemon, title: str = "", width: int = 400, height: int = 300
+        self,
+        base_pokemon_name: str = "",
+        title: str = "",
+        width: int = 400,
+        height: int = 300,
     ):
         super().__init__()
         self.title("ポケモン入力")
-        self.pokemon = pokemon
+        self.pokemon = Pokemon()
+        self.base_pokemon_name = base_pokemon_name
 
         notebook = ttk.Notebook(self)
 
@@ -950,7 +963,6 @@ class PokemonFromBoxDialog(ttk.Frame):
         super().__init__(master, **kwargs)
 
         self.parent: PokemonInputDialog = parent
-        self.pokemon = self.parent.pokemon
 
         self.current_page_num = tkinter.IntVar()
         self.all_page_num = tkinter.IntVar()
@@ -968,8 +980,8 @@ class PokemonFromBoxDialog(ttk.Frame):
         self._name_input: AutoCompleteCombobox = AutoCompleteCombobox.pokemons(
             self._labelframe
         )
-        if self.parent.pokemon.no != -1:
-            self._name_input.set(self.parent.pokemon.name)
+        if self.parent.base_pokemon_name != "":
+            self._name_input.set(self.parent.base_pokemon_name)
         self._name_input.bind("<<submit>>", self.on_input_name)
         self._name_input.pack(side="left")
 
@@ -1013,7 +1025,7 @@ class PokemonFromBoxDialog(ttk.Frame):
     def update_box_list(self):
         self.box_data = self.read_csv("party\\csv\\box.csv")
         self.box_data.reverse()
-        if self.pokemon.no != -1:
+        if self.parent.pokemon.no != -1:
             box = [
                 pokemon for pokemon in self.box_data if pokemon[0] == self.pokemon.name
             ]
