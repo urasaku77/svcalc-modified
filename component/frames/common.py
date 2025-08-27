@@ -458,6 +458,10 @@ class StatusFrame(ttk.LabelFrame):
                 command=lambda key=statskey: self.on_push_doryoku_spin(key),
             )
             doryoku_spin.bind("<Return>", self.on_change_doryoku_spin)
+            doryoku_spin.bind(
+                "<Button-3>",
+                lambda e, key=statskey: self.on_right_click_doryoku_spin(key),
+            )
             doryoku_spin.grid(column=i + 1, row=2, padx=2, pady=3)
             self._doryoku_spinbox_dict[statskey] = doryoku_spin
 
@@ -526,6 +530,15 @@ class StatusFrame(ttk.LabelFrame):
         if int(self._doryoku_spinbox_dict[key].get()) == 8:
             self._doryoku_spinbox_dict[key].set("4")
         self._doryoku[key] = int(self._doryoku_spinbox_dict[key].get())
+        if self._stage is not None:
+            self._stage.set_value_to_active_pokemon(
+                self._player,
+                doryoku_number=self._doryoku,
+            )
+
+    # 努力値Spinboxの右クリック時処理
+    def on_right_click_doryoku_spin(self, key: StatsKey):
+        self._doryoku[key] = 252 if self._doryoku[key] != 252 else 0
         if self._stage is not None:
             self._stage.set_value_to_active_pokemon(
                 self._player,
