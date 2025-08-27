@@ -41,3 +41,10 @@ if __name__ == "__main__":
         print(result)
         for key in result[0]:
             print(key)
+
+
+def get_default_data(name: str) -> list[str]:
+    with open("party/csv/default.csv", encoding="sjis") as csv_file:
+        default_data = [x for x in csv.reader(csv_file)]
+        lst = [x for x in default_data if x[0] == name]
+        return lst[0] if len(lst) else []

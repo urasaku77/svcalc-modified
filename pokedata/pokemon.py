@@ -505,6 +505,13 @@ class Pokemon:
         self.set_default_doryoku_from_seikaku()
         self.set_ability_from_home()
         self.set_waza_from_home()
+        if self.seikaku == "まじめ":
+            from pokedata.loader import get_default_data
+
+            data = get_default_data(self.name)
+            self.set_load_data(
+                data, use_data=True if self.__waza_list[0] is None else False
+            )
 
     # CSV読み込みデータの設定
     def set_load_data(self, data, use_data: bool):
