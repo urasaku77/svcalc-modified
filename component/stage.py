@@ -119,7 +119,6 @@ class Stage:
                 pokemon.item = ""
             else:
                 pokemon.item = item
-            pokemon.type_change_from_item()
             self._app.set_active_pokemon(player, pokemon)
         if ability is not None:
             if is_same and pokemon.ability == ability:

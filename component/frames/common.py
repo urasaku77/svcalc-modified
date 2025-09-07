@@ -9,7 +9,7 @@ from component.parts import const, images
 from component.parts.button import MyButton, TypeIconButton
 from component.parts.combobox import MyCombobox, WazaNameCombobox
 from component.parts.const import ITEM_COMBOBOX_VALUES, WALL_COMBOBOX_VALUES
-from component.parts.dialog import PokemonMemoLabelDialog, TypeSelectDialog
+from component.parts.dialog import PokemonMemoLabelDialog
 from component.parts.label import MyLabel
 from pokedata.calc import DamageCalcResult
 from pokedata.const import ABILITY_VALUES, Ailments, Types, Walls
@@ -278,7 +278,6 @@ class ActivePokemonFrame(ttk.LabelFrame):
     def set_pokemon(self, poke: Pokemon):
         if not self._pokemon.no == poke.no:
             self.all_check_reset()
-        poke.type_change_from_item()
         self._pokemon_icon.set_pokemon_icon(pid=poke.pid, size=(60, 60))
         self._status_frame.update_pokemon(poke)
         self._seikaku_combobox.set(poke.seikaku)
@@ -357,20 +356,9 @@ class ActivePokemonFrame(ttk.LabelFrame):
         self._stage.select_terastype(self._player)
 
     def change_form(self):
-        if self._pokemon.no == 493:  # アルセウス
-            dialog = TypeSelectDialog()
-            dialog.open(location=(self.winfo_x(), self.winfo_y()))
-            self.wait_window(dialog)
-            self._pokemon.type_set([dialog.selected_type, Types.なし])
-            if dialog.selected_type != Types.ノーマル:
-                self._item_combobox.set("タイプ強化アイテム")
-                self._stage.set_value_to_active_pokemon(
-                    player=self._player, item="タイプ強化アイテム"
-                )
-        else:
-            self._pokemon.form_change()
-            self._pokemon_icon.set_pokemon_icon(pid=self._pokemon.pid, size=(60, 60))
-            self._status_frame.update_pokemon(self._pokemon, False)
+        self._pokemon.form_change()
+        self._pokemon_icon.set_pokemon_icon(pid=self._pokemon.pid, size=(60, 60))
+        self._status_frame.update_pokemon(self._pokemon, False)
         self._stage.set_info(self._player)
         self._stage.calc_damage()
 
