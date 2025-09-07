@@ -319,17 +319,17 @@ class Record(tkinter.Toplevel):
             self.canvas.create_text(
                 Const.winLoseX,
                 Const.textStartY + Const.imageStartY + Const.battleDataDY * int(i % 15),
-                text="win" if battle_data[2] == 1 else "lose",
+                text="win" if battle_data[3] == 1 else "lose",
                 font=Const.titleFont,
             )
             self.canvas.create_text(
                 Const.tnX + Const.tnDX,
                 Const.textStartY + Const.imageStartY + Const.battleDataDY * int(i % 15),
-                text=battle_data[4],
+                text=battle_data[5],
                 font=Const.titleFont,
             )
-            if battle_data[5] is not None and battle_data[5] != "":
-                rankTxt = str(battle_data[5]) + "位"
+            if battle_data[6] is not None and battle_data[6] != "":
+                rankTxt = str(battle_data[6]) + "位"
             else:
                 rankTxt = "-位"
             self.canvas.create_text(
@@ -341,7 +341,7 @@ class Record(tkinter.Toplevel):
             self.canvas.create_text(
                 Const.memoX,
                 Const.textStartY + Const.imageStartY + Const.battleDataDY * int(i % 15),
-                text=battle_data[6],
+                text=battle_data[7],
                 font=Const.smallFont,
             )
 
@@ -350,7 +350,7 @@ class Record(tkinter.Toplevel):
                 break
 
     def display_my_sensyutu(self, battle_data, i):
-        for index, value in enumerate(range(22, 25)):
+        for index, value in enumerate(range(22, 26)):
             if not (battle_data[value] is None or battle_data[value] == "-1"):
                 img = Image.open(Const.createPass(battle_data[value]))
                 img = img.resize((40, 40))
@@ -364,7 +364,7 @@ class Record(tkinter.Toplevel):
                 self.sensyutu_img_list.append(img)
 
     def display_oppo_sensyutu(self, battle_data, i):
-        for index, value in enumerate(range(26, 29)):
+        for index, value in enumerate(range(26, 30)):
             if not (battle_data[value] is None or battle_data[value] == "-1"):
                 img = Image.open(Const.createPass(battle_data[value]))
                 img = img.resize((40, 40))
@@ -378,7 +378,7 @@ class Record(tkinter.Toplevel):
                 self.sensyutu_img_list.append(img)
 
     def display_opo_pokemon(self, battle_data, i):
-        for index, value in enumerate(range(16, 21)):
+        for index, value in enumerate(range(16, 22)):
             if not battle_data[value] == "-1":
                 img = Image.open(Const.createPass(battle_data[value]))
                 img = img.resize((40, 40))
@@ -392,7 +392,7 @@ class Record(tkinter.Toplevel):
                 self.sensyutu_img_list.append(img)
 
     def display_my_pokemon(self, battle_data, i):
-        for index, value in enumerate(range(10, 15)):
+        for index, value in enumerate(range(10, 16)):
             if not battle_data[value] == "-1":
                 img = Image.open(Const.createPass(battle_data[value]))
                 img = img.resize((40, 40))
@@ -407,7 +407,7 @@ class Record(tkinter.Toplevel):
 
     def filter_favorites(self):
         if self.favorite_var.get():
-            self.battle_data_list = [x for x in self.battle_data_list if x[3] == "1"]
+            self.battle_data_list = [x for x in self.battle_data_list if x[4] == "1"]
             self.page_num_var.set(1)
             self.update_result()
         else:
@@ -560,7 +560,7 @@ class SearchRecord(tkinter.Frame):
         for battle_data in self.battle_data_list[
             (self.page_num_var.get()) * 5 - 5 : (self.page_num_var.get()) * 5
         ]:
-            battle_time = datetime.datetime.fromtimestamp(battle_data[1])
+            battle_time = datetime.datetime.fromtimestamp(battle_data[2])
             self.canvas.create_text(
                 Const.summaryX + 50,
                 Const.textStartY + Const.imageStartY + Const.battleDataDY * int(i % 5),
@@ -573,17 +573,17 @@ class SearchRecord(tkinter.Frame):
             self.canvas.create_text(
                 Const.winLoseX,
                 Const.textStartY + Const.imageStartY + Const.battleDataDY * int(i % 5),
-                text="win" if battle_data[2] == 1 else "lose",
+                text="win" if battle_data[3] == 1 else "lose",
                 font=Const.titleFont,
             )
             self.canvas.create_text(
                 Const.tnX + Const.tnDX,
                 Const.textStartY + Const.imageStartY + Const.battleDataDY * int(i % 5),
-                text=battle_data[4],
+                text=battle_data[5],
                 font=Const.titleFont,
             )
-            if battle_data[5] is not None and battle_data[5] != "":
-                rankTxt = str(battle_data[5]) + "位"
+            if battle_data[6] is not None and battle_data[6] != "":
+                rankTxt = str(battle_data[6]) + "位"
             else:
                 rankTxt = "-位"
             self.canvas.create_text(
@@ -595,7 +595,7 @@ class SearchRecord(tkinter.Frame):
             self.canvas.create_text(
                 Const.memoX,
                 Const.textStartY + Const.imageStartY + Const.battleDataDY * int(i % 5),
-                text=battle_data[6],
+                text=battle_data[7],
                 font=Const.smallFont,
             )
 
@@ -604,7 +604,7 @@ class SearchRecord(tkinter.Frame):
                 break
 
     def display_my_sensyutu(self, battle_data, i):
-        for index, value in enumerate(range(21, 24)):
+        for index, value in enumerate(range(22, 26)):
             if not (battle_data[value] is None or battle_data[value] == "-1"):
                 img = Image.open(Const.createPass(battle_data[value]))
                 img = img.resize((40, 40))
@@ -618,7 +618,7 @@ class SearchRecord(tkinter.Frame):
                 self.sensyutu_img_list.append(img)
 
     def display_oppo_sensyutu(self, battle_data, i):
-        for index, value in enumerate(range(24, 27)):
+        for index, value in enumerate(range(26, 30)):
             if not (battle_data[value] is None or battle_data[value] == "-1"):
                 img = Image.open(Const.createPass(battle_data[value]))
                 img = img.resize((40, 40))
@@ -632,7 +632,7 @@ class SearchRecord(tkinter.Frame):
                 self.sensyutu_img_list.append(img)
 
     def display_opo_pokemon(self, battle_data, i):
-        for index, value in enumerate(range(15, 21)):
+        for index, value in enumerate(range(16, 22)):
             if not battle_data[value] == "-1":
                 img = Image.open(Const.createPass(battle_data[value]))
                 img = img.resize((40, 40))
@@ -646,7 +646,7 @@ class SearchRecord(tkinter.Frame):
                 self.sensyutu_img_list.append(img)
 
     def display_my_pokemon(self, battle_data, i):
-        for index, value in enumerate(range(9, 15)):
+        for index, value in enumerate(range(10, 16)):
             if not battle_data[value] == "-1":
                 img = Image.open(Const.createPass(battle_data[value]))
                 img = img.resize((40, 40))
