@@ -649,6 +649,7 @@ class Analytics(tkinter.Toplevel):
                     self.to_date,
                     self.rule.get(),
                     self.party_num,
+                    0,
                     self.regends_dict[self.regend_num.get()]
                     if self.regend_num.get() != "0"
                     else "0",
@@ -659,6 +660,7 @@ class Analytics(tkinter.Toplevel):
                     self.to_date,
                     self.rule.get(),
                     self.party_num,
+                    0,
                     self.regends_dict[self.regend_num.get()]
                     if self.regend_num.get() != "0"
                     else "0",
@@ -669,6 +671,7 @@ class Analytics(tkinter.Toplevel):
                     self.to_date,
                     self.rule.get(),
                     self.party_num,
+                    0,
                     self.regends_dict[self.regend_num.get()]
                     if self.regend_num.get() != "0"
                     else "0",
@@ -679,6 +682,7 @@ class Analytics(tkinter.Toplevel):
                     self.to_date,
                     self.rule.get(),
                     self.party_num,
+                    0,
                     self.regends_dict[self.regend_num.get()]
                     if self.regend_num.get() != "0"
                     else "0",
@@ -690,6 +694,7 @@ class Analytics(tkinter.Toplevel):
                         self.to_date,
                         self.rule.get(),
                         self.party_num,
+                        0,
                         self.regends_dict[self.regend_num.get()]
                         if self.regend_num.get() != "0"
                         else "0",
