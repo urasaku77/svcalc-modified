@@ -360,16 +360,25 @@ class Capture:
         max_val_list: list[float] = []
         for image in temp_imgge_name:
             tmp_max_val: list[float] = []
-            for shrink_rate in (0.56, 0.69, 0.86):
+            if "493" in image:
                 try:
-                    temp = cv2.imread(image)
-                    temp = cv2.cvtColor(temp, cv2.COLOR_RGB2GRAY)
-                    temp = cv2.resize(temp, None, None, shrink_rate, shrink_rate)
-                    match = cv2.matchTemplate(gray, temp, cv2.TM_CCOEFF_NORMED)
+                    temp = cv2.imread(image, cv2.IMREAD_COLOR)
+                    match = cv2.matchTemplate(img1, temp, cv2.TM_CCOEFF_NORMED)
                     _, max_val, _, max_loc = cv2.minMaxLoc(match)
                     tmp_max_val.append(max_val)
                 except:
                     pass
+            else:
+                for shrink_rate in (0.56, 0.69, 0.86):
+                    try:
+                        temp = cv2.imread(image)
+                        temp = cv2.cvtColor(temp, cv2.COLOR_RGB2GRAY)
+                        temp = cv2.resize(temp, None, None, shrink_rate, shrink_rate)
+                        match = cv2.matchTemplate(gray, temp, cv2.TM_CCOEFF_NORMED)
+                        _, max_val, _, max_loc = cv2.minMaxLoc(match)
+                        tmp_max_val.append(max_val)
+                    except:
+                        pass
 
             max_val_list.append(max(tmp_max_val))
 
