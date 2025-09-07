@@ -483,7 +483,7 @@ class MainApp(ThemedTk):
                 if get_recog_value("search_record_auto"):
                     self.search_record(isOpen=False)
             case list():
-                if result != [-1, -1, -1]:
+                if not all(x == -1 for x in result):
                     self.chosen_frames[0].set_chosen_from_capture(result)
             case bool():
                 if result:

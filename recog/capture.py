@@ -23,7 +23,7 @@ class Capture:
         # party(相手パーティ待ち)→chosen(対戦画面待ち)→一旦終了
         self.phase = "wait"
         self.banme = 0
-
+        self.sensyutu_num = 3 if get_recog_value("rule") == 1 else 4
         self.is_panipani = get_recog_value("panipani_auto")
 
     # Websocket接続
@@ -76,9 +76,10 @@ class Capture:
                     return chosen
                 elif self.chose_pokemon():
                     banme_list = [
-                        self.recognize_chosen_num(banme) for banme in range(3)
+                        self.recognize_chosen_num(banme)
+                        for banme in range(self.sensyutu_num)
                     ]
-                    if self.is_panipani and banme_list != [-1, -1, -1]:
+                    if self.is_panipani and banme_list != [-1] * self.sensyutu_num:
                         self.create_my_chosen_image(
                             banme_list, len(banme_list) - banme_list.count(-1)
                         )
