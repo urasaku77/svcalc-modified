@@ -296,7 +296,6 @@ class DB_battle:
 
         # SQL文を作成
         sql = f"select player_pokemon1, player_pokemon2, player_pokemon3, player_pokemon4, player_pokemon5, player_pokemon6 from battle where 1=1 {where_clause}"
-        print(sql)
 
         # SQLを実行し、結果を取得
         result = DB_battle.__select(sql)
