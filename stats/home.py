@@ -199,6 +199,43 @@ def get_pokemon_name_for_home(pokenum: str, p_detail_id: str) -> str:
             return "ギラティナ(アナザー)"
         elif p_detail_id == "1":
             return "ギラティナ(オリジン)"
+    elif pokenum == "493":
+        if p_detail_id == "0":
+            return "アルセウス"
+        elif p_detail_id == "1":
+            return "アルセウス(かくとう)"
+        elif p_detail_id == "2":
+            return "アルセウス(ひこう)"
+        elif p_detail_id == "3":
+            return "アルセウス(どく)"
+        elif p_detail_id == "4":
+            return "アルセウス(じめん)"
+        elif p_detail_id == "5":
+            return "アルセウス(いわ)"
+        elif p_detail_id == "6":
+            return "アルセウス(むし)"
+        elif p_detail_id == "7":
+            return "アルセウス(ゴースト)"
+        elif p_detail_id == "8":
+            return "アルセウス(はがね)"
+        elif p_detail_id == "9":
+            return "アルセウス(ほのお)"
+        elif p_detail_id == "10":
+            return "アルセウス(みず)"
+        elif p_detail_id == "11":
+            return "アルセウス(くさ)"
+        elif p_detail_id == "12":
+            return "アルセウス(でんき)"
+        elif p_detail_id == "13":
+            return "アルセウス(エスパー)"
+        elif p_detail_id == "14":
+            return "アルセウス(こおり)"
+        elif p_detail_id == "15":
+            return "アルセウス(ドラゴン)"
+        elif p_detail_id == "16":
+            return "アルセウス(あく)"
+        elif p_detail_id == "17":
+            return "アルセウス(フェアリー)"
     elif pokenum == "503":
         if p_detail_id == "0":
             return "ダイケンキ"
