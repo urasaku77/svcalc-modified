@@ -102,6 +102,40 @@ class Pokemon:
             return "くちたけん"
         elif name == "ザマゼンタ(王)":
             return "くちたたて"
+        elif name == "アルセウス(かくとう)":
+            return "こぶしのプレート"
+        elif name == "アルセウス(ひこう)":
+            return "あおぞらプレート"
+        elif name == "アルセウス(どく)":
+            return "もうどくプレート"
+        elif name == "アルセウス(じめん)":
+            return "だいちのプレート"
+        elif name == "アルセウス(いわ)":
+            return "がんせきプレート"
+        elif name == "アルセウス(むし)":
+            return "たまむしプレート"
+        elif name == "アルセウス(ゴースト)":
+            return "もののけプレート"
+        elif name == "アルセウス(はがね)":
+            return "こうてつプレート"
+        elif name == "アルセウス(ほのお)":
+            return "ひのたまプレート"
+        elif name == "アルセウス(みず)":
+            return "しずくプレート"
+        elif name == "アルセウス(くさ)":
+            return "みどりのプレート"
+        elif name == "アルセウス(でんき)":
+            return "いかずちプレート"
+        elif name == "アルセウス(エスパー)":
+            return "ふしぎのプレート"
+        elif name == "アルセウス(こおり)":
+            return "つららのプレート"
+        elif name == "アルセウス(ドラゴン)":
+            return "りゅうのプレート"
+        elif name == "アルセウス(あく)":
+            return "こわもてプレート"
+        elif name == "アルセウス(フェアリー)":
+            return "せいれいプレート"
         else:
             return "なし"
 
