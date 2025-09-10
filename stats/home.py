@@ -290,11 +290,6 @@ def get_pokemon_name_for_home(pokenum: str, p_detail_id: str) -> str:
             return "ホワイトキュレム"
         elif p_detail_id == "2":
             return "ブラックキュレム"
-    elif pokenum == "648":
-        if p_detail_id == "0":
-            return "メロエッタ(ボイス)"
-        elif p_detail_id == "1":
-            return "メロエッタ(ステップ)"
     elif pokenum == "705":
         if p_detail_id == "0":
             return "ヌメイル"

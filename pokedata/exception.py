@@ -1,25 +1,26 @@
 from typing import Optional
 
 # フォルムチェンジ可能なポケモンの番号リスト
-changeble_form_in_battle = [964, 1024]
+changeble_form_in_battle = [648, 964, 1024]
 
 # 統計上同じポケモンとしてカウントしたいポケモンの番号リスト
-same_pokemon_in_stats = [888, 889, 964, 1024]
+same_pokemon_in_stats = [648, 888, 889, 964, 1024]
 
 # パーティ選択時に表示させたくないポケモンリスト
 remove_pokemon_name_from_party = [
+    "メロエッタ(ステップ)",
     "イルカマン(マイティ)",
     "テラパゴス(テラスタル)",
     "テラパゴス(ステラ)",
 ]
 # フォルムの違いはあるが、HOME上では区別されていないポケモンリスト
-base_names = ["イルカマン", "イッカネズミ", "オーガポン", "テラパゴス"]
+base_names = ["メロエッタ", "イルカマン", "イッカネズミ", "オーガポン", "テラパゴス"]
 
 # 選出画面で判別付かないポケモンリスト
 unrecognizable_pokemon = ["ウーラオス", "ザシアン", "ザマゼンタ"]
 
 # 選出画面で判別付かないポケモン+途中で姿が変わるポケモンの番号
-unrecognizable_pokemon_no = [888, 889, 892, 964, 1024]
+unrecognizable_pokemon_no = [648, 888, 889, 892, 964, 1024]
 
 # 選出画面で判別付かないポケモンでHOME上区別がないポケモン
 unrecognizable_and_same_pokemon_in_home = {
@@ -30,6 +31,10 @@ unrecognizable_and_same_pokemon_in_home = {
 
 def get_next_form(pid: str) -> Optional[str]:
     match pid:
+        case "648-0":
+            return "648-1"
+        case "648-1":
+            return "648-0"
         case "964-0":
             return "964-1"
         case "964-1":
